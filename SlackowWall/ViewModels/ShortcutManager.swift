@@ -2,7 +2,7 @@
 //  ShortcutManager.swift
 //  SlackowWall
 //
-//  Created by Dominic Thompson on 1/8/23.
+//  Created by Kihron on 1/8/23.
 //
 
 import SwiftUI
@@ -79,12 +79,16 @@ import KeyboardShortcuts
     }
     
     func sendKeys(pid: pid_t) {
-        let src = CGEventSource(stateID: CGEventSourceStateID.hidSystemState)
-            
-        let kspd = CGEvent(keyboardEventSource: src, virtualKey: 0x61, keyDown: true)   // f6-down
-        let kspu = CGEvent(keyboardEventSource: src, virtualKey: 0x61, keyDown: false)  // f6-up https://gist.github.com/eegrok/949034
+        pressKey(key: 0x61, pid: pid)
+    }
+    
+    func pressKey(key: CGKeyCode, pid: pid_t) {
+        print("Sending key \(key) to \(pid)")
+        let src = CGEventSource(stateID: .hidSystemState)
+        let kspd = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: true)
+        let kspu = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: false)
+        
         kspd?.postToPid( pid );
         kspu?.postToPid( pid );
     }
-    
 }
