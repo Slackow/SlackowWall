@@ -39,6 +39,7 @@ import KeyboardShortcuts
             let num = getInstanceNum(app: $0)
             if num > 0 {
                 print("name \($0.localizedName ?? "")")
+                print("")
             }
         }
     }
@@ -79,8 +80,9 @@ import KeyboardShortcuts
     }
     
     func sendKeys(pid: pid_t) {
-        let src = CGEventSource(stateID: CGEventSourceStateID.hidSystemState)
-            
+        print("keys sent to \(pid)")
+        let src = CGEventSource(stateID: CGEventSourceStateID.combinedSessionState)
+
         let kspd = CGEvent(keyboardEventSource: src, virtualKey: 0x61, keyDown: true)   // f6-down
         let kspu = CGEvent(keyboardEventSource: src, virtualKey: 0x61, keyDown: false)  // f6-up https://gist.github.com/eegrok/949034
         kspd?.postToPid( pid );
