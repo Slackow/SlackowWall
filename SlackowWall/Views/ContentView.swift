@@ -9,11 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        Text("Slackow's Wall Active")
-            .padding(200)
-//        Button("adasd") {
-//
-//        }
+        InstancePreviewView()
     }
 }
 
