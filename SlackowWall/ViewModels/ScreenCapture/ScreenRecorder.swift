@@ -45,9 +45,7 @@ class ScreenRecorder: ObservableObject {
     private var scaleFactor: Int { Int(NSScreen.main?.backingScaleFactor ?? 2) }
     
     /// A view that renders the screen content.
-    lazy var capturePreview: CapturePreview = {
-        CapturePreview()
-    }()
+    var capturePreviews: [CapturePreview] = []
     
     private var availableApps = [SCRunningApplication]()
     @Published private(set) var availableDisplays = [SCDisplay]()
@@ -106,6 +104,8 @@ class ScreenRecorder: ObservableObject {
             // Update the running state.
             isRunning = true
             // Start the stream and await new video frames.
+            let capturePreview = CapturePreview()
+            capturePreviews.append(capturePreview)
             for try await frame in captureEngine.startCapture(configuration: config, filter: filter) {
                 capturePreview.updateFrame(frame)
                 if contentSize != frame.size {
@@ -168,6 +168,7 @@ class ScreenRecorder: ObservableObject {
         
         // Configure audio capture.
         streamConfig.capturesAudio = false
+        streamConfig.showsCursor = false
         streamConfig.excludesCurrentProcessAudio = isAppAudioExcluded
         
         // Configure the display content width and height.
@@ -183,7 +184,7 @@ class ScreenRecorder: ObservableObject {
         }
         
         // Set the capture interval at 60 fps.
-        streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: 60)
+        streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: 15)
         
         // Increase the depth of the frame queue to ensure high fps at the expense of increasing
         // the memory footprint of WindowServer.

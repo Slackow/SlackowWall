@@ -27,7 +27,7 @@ class CaptureEngine: NSObject, @unchecked Sendable {
     
     private let logger = Logger()
     
-    private var stream: SCStream?
+    private var streams: [SCStream] = []
     private let videoSampleBufferQueue = DispatchQueue(label: "com.example.apple-samplecode.VideoSampleBufferQueue")
     
     // Store the the startCapture continuation, so that you can cancel it when you call stopCapture().
@@ -41,11 +41,12 @@ class CaptureEngine: NSObject, @unchecked Sendable {
             streamOutput.capturedFrameHandler = { continuation.yield($0) }
             
             do {
-                stream = SCStream(filter: filter, configuration: configuration, delegate: streamOutput)
+                let stream = SCStream(filter: filter, configuration: configuration, delegate: streamOutput)
                 
                 // Add a stream output to capture screen content.
-                try stream?.addStreamOutput(streamOutput, type: .screen, sampleHandlerQueue: videoSampleBufferQueue)
-                stream?.startCapture()
+                try stream.addStreamOutput(streamOutput, type: .screen, sampleHandlerQueue: videoSampleBufferQueue)
+                stream.startCapture()
+                streams.append(stream)
             } catch {
                 continuation.finish(throwing: error)
             }
@@ -54,7 +55,9 @@ class CaptureEngine: NSObject, @unchecked Sendable {
     
     func stopCapture() async {
         do {
-            try await stream?.stopCapture()
+            for stream in streams {
+                try await stream.stopCapture()
+            }
             continuation?.finish()
         } catch {
             continuation?.finish(throwing: error)
@@ -64,10 +67,12 @@ class CaptureEngine: NSObject, @unchecked Sendable {
     /// - Tag: UpdateStreamConfiguration
     func update(configuration: SCStreamConfiguration, filter: SCContentFilter) async {
         do {
-            try await stream?.updateConfiguration(configuration)
-            try await stream?.updateContentFilter(filter)
+            for stream in streams {
+                try await stream.updateConfiguration(configuration)
+                try await stream.updateContentFilter(filter)
+            }
         } catch {
-            logger.error("Failed to update the stream session: \(String(describing: error))")
+            logger.error("Failed to update the stream sessions: \(String(describing: error))")
         }
     }
 }
