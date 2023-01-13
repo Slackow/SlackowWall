@@ -11,11 +11,11 @@ import ScreenCaptureKit
 
 public final class ShortcutManager: ObservableObject {
     
-    @Published public var instanceNums = [pid_t:Int]()
+    @Published var instanceNums = [pid_t:Int]()
+    @Published var byInstanceNum = [Int:pid_t]()
+    @Published var instanceIDs = [pid_t]()
     
-    @Published public var byInstanceNum = [Int:pid_t]()
-    
-    public static let shared = ShortcutManager();
+    public static let shared = ShortcutManager()
     
     init() {
         KeyboardShortcuts.onKeyUp(for: .reset) {
@@ -23,13 +23,9 @@ public final class ShortcutManager: ObservableObject {
             let apps = NSWorkspace.shared.runningApplications.filter{  $0.activationPolicy == .regular }
             if apps.first(where:{$0.isActive}) != nil {
                 NSApplication.shared.activate(ignoringOtherApps: true)
-                if self.byInstanceNum.isEmpty {
-                    self.byInstanceNum = self.instanceNums.swapKeyValues()
-                }
                 if let firstInstance = self.byInstanceNum[1] {
                     self.sendKeys(pid: firstInstance)
                     //apps.first(where: {app in app.processIdentifier == firstInstance})
-                
                 } else {
                     print("didn't find instance")
                 }
@@ -49,8 +45,11 @@ public final class ShortcutManager: ObservableObject {
             let num = getInstanceNum(app: $0)
             if num > 0 {
                 print("name \($0.localizedName ?? "")")
-                print("")
             }
+        }
+        if byInstanceNum.isEmpty {
+            byInstanceNum = instanceNums.swapKeyValues()
+            instanceIDs = Array((1..<byInstanceNum.count).map({ byInstanceNum[$0] ?? 0 }))
         }
     }
     
@@ -99,7 +98,7 @@ public final class ShortcutManager: ObservableObject {
         let kspd = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: true)
         let kspu = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: false)
         
-        kspd?.postToPid( pid );
-        kspu?.postToPid( pid );
+        kspd?.postToPid( pid )
+        kspu?.postToPid( pid )
     }
 }

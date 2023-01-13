@@ -21,11 +21,12 @@ class ScreenRecorder: ObservableObject {
     }
     
     private let logger = Logger()
+    private var shortcutManager = ShortcutManager.shared
     
     @Published var isRunning = false
     
     // MARK: - Video Properties
-    @Published var captureType: CaptureType = .display {
+    @Published var captureType: CaptureType = .window {
         didSet { updateEngine() }
     }
     
@@ -100,17 +101,18 @@ class ScreenRecorder: ObservableObject {
         
         do {
             let config = streamConfiguration
-            let filter = contentFilter
-            // Update the running state.
-            isRunning = true
-            // Start the stream and await new video frames.
-            let capturePreview = CapturePreview()
-            capturePreviews.append(capturePreview)
-            for try await frame in captureEngine.startCapture(configuration: config, filter: filter) {
-                capturePreview.updateFrame(frame)
-                if contentSize != frame.size {
-                    // Update the content size if it changed.
-                    contentSize = frame.size
+            for filter in contentFilters {
+                // Update the running state.
+                isRunning = true
+                // Start the stream and await new video frames.
+                let capturePreview = CapturePreview()
+                capturePreviews.append(capturePreview)
+                for try await frame in captureEngine.startCapture(configuration: config, filter: filter) {
+                    capturePreview.updateFrame(frame)
+                    if contentSize != frame.size {
+                        // Update the content size if it changed.
+                        contentSize = frame.size
+                    }
                 }
             }
         } catch {
@@ -131,35 +133,21 @@ class ScreenRecorder: ObservableObject {
     private func updateEngine() {
         guard isRunning else { return }
         Task {
-            await captureEngine.update(configuration: streamConfiguration, filter: contentFilter)
+            for filter in contentFilters {
+                await captureEngine.update(configuration: streamConfiguration, filter: filter)
+            }
         }
     }
     
     /// - Tag: UpdateFilter
-    private var contentFilter: SCContentFilter {
-        let filter: SCContentFilter
-        switch captureType {
-        case .display:
-            guard let display = selectedDisplay else { fatalError("No display selected.") }
-            var excludedApps = [SCRunningApplication]()
-            // If a user chooses to exclude the app from the stream,
-            // exclude it by matching its bundle identifier.
-            if isAppExcluded {
-                excludedApps = availableApps.filter { app in
-                    Bundle.main.bundleIdentifier == app.bundleIdentifier
-                }
-            }
-            // Create a content filter with excluded apps.
-            filter = SCContentFilter(display: display,
-                                     excludingApplications: excludedApps,
-                                     exceptingWindows: [])
-        case .window:
-            guard let window = selectedWindow else { fatalError("No window selected.") }
-            
+    private var contentFilters: [SCContentFilter] {
+        var filters: [SCContentFilter] = []
+        for window in availableWindows {
             // Create a content filter that includes a single window.
-            filter = SCContentFilter(desktopIndependentWindow: window)
+            filters.append(SCContentFilter(desktopIndependentWindow: window))
         }
-        return filter
+
+        return filters
     }
     
     private var streamConfiguration: SCStreamConfiguration {
@@ -179,8 +167,8 @@ class ScreenRecorder: ObservableObject {
         
         // Configure the window content width and height.
         if captureType == .window, let window = selectedWindow {
-            streamConfig.width = Int(window.frame.width) * 2
-            streamConfig.height = Int(window.frame.height) * 2
+            streamConfig.width = Int(window.frame.width)
+            streamConfig.height = Int(window.frame.height)
         }
         
         // Set the capture interval at 60 fps.
@@ -197,8 +185,7 @@ class ScreenRecorder: ObservableObject {
     private func refreshAvailableContent() async {
         do {
             // Retrieve the available screen content to capture.
-            let availableContent = try await SCShareableContent.excludingDesktopWindows(false,
-                                                                                        onScreenWindowsOnly: true)
+            let availableContent = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
             availableDisplays = availableContent.displays
             
             let windows = filterWindows(availableContent.windows)
@@ -220,12 +207,8 @@ class ScreenRecorder: ObservableObject {
     
     private func filterWindows(_ windows: [SCWindow]) -> [SCWindow] {
         windows
-        // Sort the windows by app name.
-            .sorted { $0.owningApplication?.applicationName ?? "" < $1.owningApplication?.applicationName ?? "" }
-        // Remove windows that don't have an associated .app bundle.
-            .filter { $0.owningApplication != nil && $0.owningApplication?.applicationName != "" }
-        // Remove this app's window from the list.
-            .filter { $0.owningApplication?.bundleIdentifier != Bundle.main.bundleIdentifier }
+        // Remove all windows that are not Minecraft Instances
+            .filter({ shortcutManager.instanceIDs.contains($0.owningApplication?.processID ?? 0) })
     }
 }
 
