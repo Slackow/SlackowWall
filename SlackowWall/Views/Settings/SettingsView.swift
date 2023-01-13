@@ -2,7 +2,7 @@
 //  SettingsView.swift
 //  SlackowWall
 //
-//  Created by Dominic Thompson on 1/8/23.
+//  Created by Kihron on 1/8/23.
 //
 
 import SwiftUI

@@ -9,7 +9,7 @@ import SwiftUI
 
 @main
 struct SlackowWallApp: App {
-    @StateObject private var shortcutManager = ShortcutManager()
+    @StateObject private var shortcutManager = ShortcutManager.shared;
     
     var body: some Scene {
         WindowGroup {

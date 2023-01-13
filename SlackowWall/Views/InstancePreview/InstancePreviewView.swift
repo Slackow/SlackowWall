@@ -9,22 +9,9 @@ import SwiftUI
 import ScreenCaptureKit
 
 struct InstancePreviewView: View {
-    @StateObject var screenRecorder = ScreenRecorder()
-    
+    @ObservedObject public var a = InstancePreviewViewModel()
     var body: some View {
-        HStack{
-            screenRecorder.capturePreview
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .aspectRatio(screenRecorder.contentSize, contentMode: .fit)
-                .padding(8)
-        }
-        .onAppear {
-            Task {
-                if await screenRecorder.canRecord {
-                    await screenRecorder.start()
-                } 
-            }
-        }
+        Text("as")
     }
 }
 
