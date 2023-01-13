@@ -15,6 +15,11 @@
 		498FB3DE289A65B000405753 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498FB3DD289A65B000405753 /* Constants.swift */; };
 		B637DB35296B94B900A73F62 /* ShortcutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B637DB34296B94B900A73F62 /* ShortcutManager.swift */; };
 		B637DB38296B965D00A73F62 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B637DB37296B965D00A73F62 /* SettingsView.swift */; };
+		B640D52D296F2D7B005041CC /* InstancePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B640D52C296F2D7B005041CC /* InstancePreviewView.swift */; };
+		B640D52F296F2DA1005041CC /* InstancePreviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B640D52E296F2DA1005041CC /* InstancePreviewViewModel.swift */; };
+		B6E9E36E2970A42D00DF6466 /* ScreenRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E9E36D2970A42D00DF6466 /* ScreenRecorder.swift */; };
+		B6E9E3702970A52E00DF6466 /* CapturePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E9E36F2970A52E00DF6466 /* CapturePreview.swift */; };
+		B6E9E3722970A55800DF6466 /* CaptureEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E9E3712970A55800DF6466 /* CaptureEngine.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +32,11 @@
 		498FB3DD289A65B000405753 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		B637DB34296B94B900A73F62 /* ShortcutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutManager.swift; sourceTree = "<group>"; };
 		B637DB37296B965D00A73F62 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		B640D52C296F2D7B005041CC /* InstancePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstancePreviewView.swift; sourceTree = "<group>"; };
+		B640D52E296F2DA1005041CC /* InstancePreviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstancePreviewViewModel.swift; sourceTree = "<group>"; };
+		B6E9E36D2970A42D00DF6466 /* ScreenRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecorder.swift; sourceTree = "<group>"; };
+		B6E9E36F2970A52E00DF6466 /* CapturePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapturePreview.swift; sourceTree = "<group>"; };
+		B6E9E3712970A55800DF6466 /* CaptureEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureEngine.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,7 +76,6 @@
 				498FB3CF28987F5E00405753 /* Assets.xcassets */,
 				498FB3D428987F5E00405753 /* SlackowWall.entitlements */,
 				498FB3D128987F5E00405753 /* Preview Content */,
-				498FB3DD289A65B000405753 /* Constants.swift */,
 			);
 			path = SlackowWall;
 			sourceTree = "<group>";
@@ -82,6 +91,7 @@
 		B637DB32296B943F00A73F62 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				B640D52B296F2D65005041CC /* InstancePreview */,
 				B637DB36296B964F00A73F62 /* Settings */,
 				498FB3CD28987F5B00405753 /* ContentView.swift */,
 			);
@@ -91,7 +101,10 @@
 		B637DB33296B944600A73F62 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				B6E9E36C2970A41E00DF6466 /* ScreenCapture */,
+				B640D52E296F2DA1005041CC /* InstancePreviewViewModel.swift */,
 				B637DB34296B94B900A73F62 /* ShortcutManager.swift */,
+				498FB3DD289A65B000405753 /* Constants.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -102,6 +115,24 @@
 				B637DB37296B965D00A73F62 /* SettingsView.swift */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		B640D52B296F2D65005041CC /* InstancePreview */ = {
+			isa = PBXGroup;
+			children = (
+				B640D52C296F2D7B005041CC /* InstancePreviewView.swift */,
+				B6E9E36F2970A52E00DF6466 /* CapturePreview.swift */,
+			);
+			path = InstancePreview;
+			sourceTree = "<group>";
+		};
+		B6E9E36C2970A41E00DF6466 /* ScreenCapture */ = {
+			isa = PBXGroup;
+			children = (
+				B6E9E36D2970A42D00DF6466 /* ScreenRecorder.swift */,
+				B6E9E3712970A55800DF6466 /* CaptureEngine.swift */,
+			);
+			path = ScreenCapture;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -180,11 +211,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B6E9E3702970A52E00DF6466 /* CapturePreview.swift in Sources */,
+				B640D52D296F2D7B005041CC /* InstancePreviewView.swift in Sources */,
+				B6E9E3722970A55800DF6466 /* CaptureEngine.swift in Sources */,
 				B637DB38296B965D00A73F62 /* SettingsView.swift in Sources */,
 				498FB3CE28987F5B00405753 /* ContentView.swift in Sources */,
 				498FB3CC28987F5B00405753 /* SlackowWallApp.swift in Sources */,
 				498FB3DE289A65B000405753 /* Constants.swift in Sources */,
+				B6E9E36E2970A42D00DF6466 /* ScreenRecorder.swift in Sources */,
 				B637DB35296B94B900A73F62 /* ShortcutManager.swift in Sources */,
+				B640D52F296F2DA1005041CC /* InstancePreviewViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -318,8 +354,10 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -345,8 +383,10 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
