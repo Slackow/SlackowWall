@@ -14,7 +14,7 @@ extension KeyboardShortcuts.Name {
     static let planar = Self("Widen Instance", default: .init(.f8, modifiers: []))
 }
 
-public final class Utils {
+final class Utils {
     //https://stackoverflow.com/questions/72443976/how-to-get-arguments-of-nsrunningapplication
     static func processArguments(pid: pid_t) -> [String]? {
         

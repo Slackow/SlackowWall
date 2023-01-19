@@ -171,15 +171,13 @@ class ScreenRecorder: ObservableObject {
     /// - Tag: UpdateFilter
     private var contentFilters: [SCContentFilter] {
         var filters: [SCContentFilter] = []
-        var x = ShortcutManager.shared.instanceNums
-        //print ("\(availableWindows.map{$0.owningApplication?.processID ?? 0})")
+        let instances = ShortcutManager.shared.instanceNums
+
         availableWindows.sort { window, window2 in
-            (x[window.owningApplication?.processID ?? 0] ?? 0) < (x[window2.owningApplication?.processID ?? 0] ?? 0) }
+            (instances[window.owningApplication?.processID ?? 0] ?? 0) < (instances[window2.owningApplication?.processID ?? 0] ?? 0)
+        }
 
-
-        //print ("\(availableWindows.map{$0.owningApplication?.processID ?? 0})")
         for window in availableWindows {
-            // Create a content filter that includes a single window.
             filters.append(SCContentFilter(desktopIndependentWindow: window))
         }
 
@@ -242,9 +240,9 @@ class ScreenRecorder: ObservableObject {
     }
 
     private func filterWindows(_ windows: [SCWindow]) -> [SCWindow] {
+        // Remove all windows that are not Minecraft Instances
         windows
-                // Remove all windows that are not Minecraft Instances
-                .filter({ shortcutManager.instanceIDs.contains($0.owningApplication?.processID ?? 0) })
+            .filter({ shortcutManager.instanceIDs.contains($0.owningApplication?.processID ?? 0) })
     }
 }
 

@@ -9,30 +9,28 @@ import SwiftUI
 import KeyboardShortcuts
 import ScreenCaptureKit
 
-public final class ShortcutManager: ObservableObject {
-    
+final class ShortcutManager: ObservableObject {
     @Published var instanceNums = [pid_t:Int]()
     @Published var byInstanceNum = [Int:pid_t]()
     @Published var instanceIDs = [pid_t]()
     
-    public static let shared = ShortcutManager()
+    static let shared = ShortcutManager()
     
     init() {
-        KeyboardShortcuts.onKeyUp(for: .reset) {
+        KeyboardShortcuts.onKeyUp(for: .reset) { [self] in
             print("reset")
             let apps = NSWorkspace.shared.runningApplications.filter{  $0.activationPolicy == .regular }
             if let activeWindow = apps.first(where:{$0.isActive}) {
                 NSApplication.shared.activate(ignoringOtherApps: true)
                 let currPID = activeWindow.processIdentifier;
-                if self.instanceIDs.contains(currPID) {
-                    self.sendKeys(pid: currPID)
+                if instanceIDs.contains(currPID) {
+                    sendKeys(pid: currPID)
                 } else {
-                    self.instanceIDs.forEach {self.sendKeys(pid: $0)}
+                    instanceIDs.forEach { sendKeys(pid: $0) }
                 }
-
-
             }
         }
+
         KeyboardShortcuts.onKeyDown(for: .planar) {
             print("planar")
             let apps = self.getAllApps()
@@ -41,6 +39,7 @@ public final class ShortcutManager: ObservableObject {
                 NSApplication.shared.activate(ignoringOtherApps: true)
             }
         }
+
         getAllApps().forEach {
             print("\($0.localizedName ?? "nil") pid:\($0.processIdentifier) num: \(getInstanceNum(app: $0))")
             let num = getInstanceNum(app: $0)
@@ -48,6 +47,7 @@ public final class ShortcutManager: ObservableObject {
                 print("name \($0.localizedName ?? "")")
             }
         }
+
         if byInstanceNum.isEmpty {
             byInstanceNum = instanceNums.swapKeyValues()
             instanceIDs = Array((1..<byInstanceNum.count).map({ byInstanceNum[$0] ?? 0 }))
@@ -84,6 +84,7 @@ public final class ShortcutManager: ObservableObject {
             return 0
         }
     }
+
     func planar(app: NSRunningApplication) {
         if getInstanceNum(app: app) > 0 {
             
