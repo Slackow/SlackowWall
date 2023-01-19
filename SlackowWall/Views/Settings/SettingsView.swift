@@ -10,15 +10,21 @@ import KeyboardShortcuts
 
 struct SettingsView: View {
     var body: some View {
-        Form {
-            KeyboardShortcuts.Recorder("Reset:", name: .reset)
-            KeyboardShortcuts.Recorder("Widen Instance:", name: .planar)
-            Button("Reset To Defaults") {
-                UserDefaults.standard.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
-                UserDefaults.standard.synchronize()
+        HStack {
+            SettingsCardView(title: "Keybinds") {
+                Form {
+                    KeyboardShortcuts.Recorder("Reset:", name: .reset)
+                    KeyboardShortcuts.Recorder("Widen Instance:", name: .planar)
+                    Button("Reset To Defaults") {
+                        UserDefaults.standard.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
+                        UserDefaults.standard.synchronize()
+                    }
+                }
+                .padding()
             }
+            .padding(10)
         }
-        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 }
 

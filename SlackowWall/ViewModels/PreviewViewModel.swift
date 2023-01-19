@@ -48,7 +48,7 @@ class PreviewViewModel: ObservableObject {
         if hoveredInstance == idx {
             switch keyPressed {
                 case "r": openInstance(idx: idx)
-                case "e": ShortcutManager.shared.sendReset(pid: pid)
+                case "e": ShortcutManager.shared.resetInstance(pid: pid)
                 case "f": enterAndResetUnlocked(idx: idx)
                 case "t": resetAllUnlocked()
                 default: return
@@ -63,7 +63,7 @@ class PreviewViewModel: ObservableObject {
         openInstance(idx: idx)
         for instance in instanceIDs {
             if instance != pid && !lockedInstances.contains(instance) {
-                ShortcutManager.shared.sendReset(pid: instance)
+                ShortcutManager.shared.resetInstance(pid: instance)
             }
         }
     }
@@ -72,7 +72,7 @@ class PreviewViewModel: ObservableObject {
         let instanceIDs = ShortcutManager.shared.instanceIDs
         for instance in instanceIDs {
             if !lockedInstances.contains(instance) {
-                ShortcutManager.shared.sendReset(pid: instance)
+                ShortcutManager.shared.resetInstance(pid: instance)
             }
         }
     }
