@@ -21,20 +21,21 @@ public final class ShortcutManager: ObservableObject {
         KeyboardShortcuts.onKeyUp(for: .reset) {
             print("reset")
             let apps = NSWorkspace.shared.runningApplications.filter{  $0.activationPolicy == .regular }
-            if apps.first(where:{$0.isActive}) != nil {
+            if let activeWindow = apps.first(where:{$0.isActive}) {
                 NSApplication.shared.activate(ignoringOtherApps: true)
-                if let firstInstance = self.byInstanceNum[1] {
-                    self.sendKeys(pid: firstInstance)
-                    //apps.first(where: {app in app.processIdentifier == firstInstance})
+                let currPID = activeWindow.processIdentifier;
+                if self.instanceIDs.contains(currPID) {
+                    self.sendKeys(pid: currPID)
                 } else {
-                    print("didn't find instance")
+                    self.instanceIDs.forEach {self.sendKeys(pid: $0)}
                 }
-                
+
+
             }
         }
         KeyboardShortcuts.onKeyDown(for: .planar) {
             print("planar")
-            let apps = NSWorkspace.shared.runningApplications.filter{  $0.activationPolicy == .regular }
+            let apps = self.getAllApps()
             if let currentApp = apps.first(where:{$0.isActive}) {
                 let args = Utils.processArguments(pid: currentApp.processIdentifier)
                 NSApplication.shared.activate(ignoringOtherApps: true)
@@ -70,8 +71,9 @@ public final class ShortcutManager: ObservableObject {
             if app.localizedName == "java" {
                 if let args = Utils.processArguments(pid: pid) {
                     if let nativesArg = args.first(where: {$0.starts(with: "-Djava.library.path=")}) {
-                        let numChar = nativesArg.dropLast("/natives".count).suffix(1)
-                        if let num = Int(numChar) {
+                        let numTwo = nativesArg.dropLast("/natives".count).suffix(2)
+                        let numChar = numTwo.suffix(1);
+                        if let num = Int(numTwo) ?? Int(numChar) {
                             instanceNums[pid] = num
                             return num
                         }
@@ -89,10 +91,10 @@ public final class ShortcutManager: ObservableObject {
     }
     
     func sendKeys(pid: pid_t) {
-        pressKey(key: 0x61, pid: pid)
+        sendKey(key: 0x61, pid: pid)
     }
     
-    func pressKey(key: CGKeyCode, pid: pid_t) {
+    func sendKey(key: CGKeyCode, pid: pid_t) {
         print("Sending key \(key) to \(pid)")
         let src = CGEventSource(stateID: .hidSystemState)
         let kspd = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: true)

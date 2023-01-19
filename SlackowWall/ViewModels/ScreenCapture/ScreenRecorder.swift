@@ -171,6 +171,13 @@ class ScreenRecorder: ObservableObject {
     /// - Tag: UpdateFilter
     private var contentFilters: [SCContentFilter] {
         var filters: [SCContentFilter] = []
+        var x = ShortcutManager.shared.instanceNums
+        //print ("\(availableWindows.map{$0.owningApplication?.processID ?? 0})")
+        availableWindows.sort { window, window2 in
+            (x[window.owningApplication?.processID ?? 0] ?? 0) < (x[window2.owningApplication?.processID ?? 0] ?? 0) }
+
+
+        //print ("\(availableWindows.map{$0.owningApplication?.processID ?? 0})")
         for window in availableWindows {
             // Create a content filter that includes a single window.
             filters.append(SCContentFilter(desktopIndependentWindow: window))

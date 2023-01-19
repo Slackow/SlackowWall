@@ -11,7 +11,7 @@ import CloudKit
 
 extension KeyboardShortcuts.Name {
     static let reset = Self("Reset (In Instance)", default: .init(.f7, modifiers: []))
-    static let planar = Self("Widen Instance")
+    static let planar = Self("Widen Instance", default: .init(.f8, modifiers: []))
 }
 
 public final class Utils {
