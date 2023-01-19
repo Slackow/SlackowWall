@@ -24,9 +24,9 @@ final class ShortcutManager: ObservableObject {
                 NSApplication.shared.activate(ignoringOtherApps: true)
                 let currPID = activeWindow.processIdentifier;
                 if instanceIDs.contains(currPID) {
-                    sendKeys(pid: currPID)
+                    resetInstance(pid: currPID)
                 } else {
-                    instanceIDs.forEach { sendKeys(pid: $0) }
+                    instanceIDs.forEach { resetInstance(pid: $0) }
                 }
             }
         }
@@ -87,12 +87,13 @@ final class ShortcutManager: ObservableObject {
         }
     }
     
-    func sendKeys(pid: pid_t) {
+    func resetInstance(pid: pid_t) {
         sendReset(pid: pid)
     }
 
     func sendReset(pid: pid_t) {
         sendKey(key: 0x61, pid: pid)
+        sendKeyCombo(keys: 0x5E, 0x35, pid: pid)
     }
 
     func sendEscape(pid: pid_t) {
@@ -107,5 +108,15 @@ final class ShortcutManager: ObservableObject {
         
         kspd?.postToPid( pid )
         kspu?.postToPid( pid )
+    }
+
+    func sendKeyCombo(keys: CGKeyCode..., pid: pid_t) {
+        let src = CGEventSource(stateID: .hidSystemState)
+        for key in keys {
+            CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: true)?.postToPid(pid)
+        }
+        for key in keys.reversed() {
+            CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: false)?.postToPid(pid)
+        }
     }
 }
