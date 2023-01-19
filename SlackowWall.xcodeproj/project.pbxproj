@@ -14,9 +14,11 @@
 		498FB3D328987F5E00405753 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 498FB3D228987F5E00405753 /* Preview Assets.xcassets */; };
 		498FB3DE289A65B000405753 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498FB3DD289A65B000405753 /* Constants.swift */; };
 		6D8A74485D326CF633CE55DE /* RoundedCorners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D8A7481D1D9FE0A05D502EC /* RoundedCorners.swift */; };
+		6D8A799228DD26E62A8CBE16 /* PreviewShortcutListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D8A718314BED92CCAE7DD5C /* PreviewShortcutListener.swift */; };
 		6D8A79A5A9E467B05B05C742 /* PreviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D8A733BE10C0A7DC11C7BCF /* PreviewViewModel.swift */; };
 		6D8A7BB4FE451CD07D66619E /* click.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6D8A7AF390F8EAAD3C1D7FA2 /* click.mp3 */; };
 		B629D1D82978F35D00730A29 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B629D1D72978F35D00730A29 /* SoundManager.swift */; };
+		B63168C52979AE95005958E9 /* PreviewActionsListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63168C42979AE95005958E9 /* PreviewActionsListener.swift */; };
 		B637DB35296B94B900A73F62 /* ShortcutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B637DB34296B94B900A73F62 /* ShortcutManager.swift */; };
 		B637DB38296B965D00A73F62 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B637DB37296B965D00A73F62 /* SettingsView.swift */; };
 		B640D52D296F2D7B005041CC /* InstancePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B640D52C296F2D7B005041CC /* InstancePreviewView.swift */; };
@@ -33,10 +35,12 @@
 		498FB3D228987F5E00405753 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		498FB3D428987F5E00405753 /* SlackowWall.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SlackowWall.entitlements; sourceTree = "<group>"; };
 		498FB3DD289A65B000405753 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		6D8A718314BED92CCAE7DD5C /* PreviewShortcutListener.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewShortcutListener.swift; sourceTree = "<group>"; };
 		6D8A733BE10C0A7DC11C7BCF /* PreviewViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewViewModel.swift; sourceTree = "<group>"; };
 		6D8A7481D1D9FE0A05D502EC /* RoundedCorners.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundedCorners.swift; sourceTree = "<group>"; };
 		6D8A7AF390F8EAAD3C1D7FA2 /* click.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = click.mp3; sourceTree = "<group>"; };
 		B629D1D72978F35D00730A29 /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
+		B63168C42979AE95005958E9 /* PreviewActionsListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewActionsListener.swift; sourceTree = "<group>"; };
 		B637DB34296B94B900A73F62 /* ShortcutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutManager.swift; sourceTree = "<group>"; };
 		B637DB37296B965D00A73F62 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		B640D52C296F2D7B005041CC /* InstancePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstancePreviewView.swift; sourceTree = "<group>"; };
@@ -107,6 +111,8 @@
 			isa = PBXGroup;
 			children = (
 				6D8A7481D1D9FE0A05D502EC /* RoundedCorners.swift */,
+				B63168C42979AE95005958E9 /* PreviewActionsListener.swift */,
+				6D8A718314BED92CCAE7DD5C /* PreviewShortcutListener.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -249,6 +255,8 @@
 				B637DB35296B94B900A73F62 /* ShortcutManager.swift in Sources */,
 				6D8A74485D326CF633CE55DE /* RoundedCorners.swift in Sources */,
 				6D8A79A5A9E467B05B05C742 /* PreviewViewModel.swift in Sources */,
+				B63168C52979AE95005958E9 /* PreviewActionsListener.swift in Sources */,
+				6D8A799228DD26E62A8CBE16 /* PreviewShortcutListener.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

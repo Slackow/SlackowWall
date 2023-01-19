@@ -18,6 +18,7 @@ struct SettingsView: View {
                 UserDefaults.standard.synchronize()
             }
         }
+        .padding()
     }
 }
 

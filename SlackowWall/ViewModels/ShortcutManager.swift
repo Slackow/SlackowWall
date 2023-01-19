@@ -58,10 +58,6 @@ final class ShortcutManager: ObservableObject {
         return NSWorkspace.shared.runningApplications.filter{  $0.activationPolicy == .regular }
     }
     
-    func getCurrentApp() -> NSRunningApplication? {
-        return getAllApps().first { $0.isActive }
-    }
-    
     func getInstanceNum(app: NSRunningApplication) -> Int {
         let pid = app.processIdentifier
         if let num = instanceNums[pid] {
@@ -92,7 +88,15 @@ final class ShortcutManager: ObservableObject {
     }
     
     func sendKeys(pid: pid_t) {
+        sendReset(pid: pid)
+    }
+
+    func sendReset(pid: pid_t) {
         sendKey(key: 0x61, pid: pid)
+    }
+
+    func sendEscape(pid: pid_t) {
+        sendKey(key: 0x35, pid: pid)
     }
     
     func sendKey(key: CGKeyCode, pid: pid_t) {
