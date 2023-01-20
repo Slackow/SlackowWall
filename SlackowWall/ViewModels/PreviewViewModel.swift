@@ -45,6 +45,11 @@ class PreviewViewModel: ObservableObject {
 
     @MainActor func handleKeyEvent(idx: Int) {
         let pid = getInstanceProcess(idx: idx)
+
+        if hoveredInstance == nil {
+            keyPressed = nil
+        }
+
         if hoveredInstance == idx {
             switch keyPressed {
                 case "r": openInstance(idx: idx)

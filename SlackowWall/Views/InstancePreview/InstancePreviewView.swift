@@ -20,7 +20,7 @@ struct InstancePreviewView: View {
                         Button(action: { viewModel.openInstance(idx: idx) }) {
                             ZStack(alignment: .topTrailing) {
                                 screenRecorder.capturePreviews[idx]
-                                    .aspectRatio(screenRecorder.contentSize, contentMode: .fit)
+                                    .aspectRatio(screenRecorder.contentSizes[idx], contentMode: .fit)
                                     .roundedCorners(radius: 10, corners: .allCorners)
                                     .overlay(PreviewActionsListener(lockAction: {
                                         viewModel.lockInstance(idx: idx)

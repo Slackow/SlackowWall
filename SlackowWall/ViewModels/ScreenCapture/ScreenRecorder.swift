@@ -50,7 +50,7 @@ class ScreenRecorder: ObservableObject {
         }
     }
 
-    @Published var contentSize = CGSize(width: 1, height: 1)
+    @Published var contentSizes: [CGSize] = []
     private var scaleFactor: Int {
         Int(NSScreen.main?.backingScaleFactor ?? 2)
     }
@@ -126,17 +126,17 @@ class ScreenRecorder: ObservableObject {
         // Update the running state.
         isRunning = true
 
-        for filter in contentFilters {
+        for idx in contentFilters.indices {
             let capturePreview = CapturePreview()
             capturePreviews.append(capturePreview)
+
+            let contentSize = CGSize(width: 854, height: 508)
+            contentSizes.append(contentSize)
+
             Task {
                 do {
-                    for try await frame in captureEngine.startCapture(configuration: config, filter: filter) {
+                    for try await frame in captureEngine.startCapture(configuration: config, filter: contentFilters[idx]) {
                         capturePreview.updateFrame(frame)
-                        if contentSize != frame.size {
-                            // Update the content size if it changed.
-                            contentSize = frame.size
-                        }
                     }
                 } catch let error {
                     logger.error("\(error.localizedDescription)")
@@ -162,8 +162,8 @@ class ScreenRecorder: ObservableObject {
             return
         }
         Task {
-            for filter in contentFilters {
-                await captureEngine.update(configuration: streamConfiguration, filter: filter)
+            for idx in contentFilters.indices {
+                await captureEngine.update(configuration: streamConfiguration, filter: contentFilters[idx])
             }
         }
     }
@@ -200,9 +200,9 @@ class ScreenRecorder: ObservableObject {
         }
 
         // Configure the window content width and height.
-        if captureType == .window, let window = selectedWindow {
-            streamConfig.width = Int(window.frame.width)
-            streamConfig.height = Int(window.frame.height)
+        if captureType == .window {
+            streamConfig.width = 854
+            streamConfig.height = 508
         }
 
         // Set the capture interval at 60 fps.
