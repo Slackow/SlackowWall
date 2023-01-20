@@ -30,13 +30,13 @@ class ActionListener: NSView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func rightMouseDown(with theEvent: NSEvent) {
+    override func mouseDown(with theEvent: NSEvent) {
         if theEvent.modifierFlags.contains(.shift) {
             if let lockAction = lockAction {
                 lockAction()
             }
         } else {
-            print("right click detected")
+            print("left click detected")
         }
     }
 }
