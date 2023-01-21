@@ -192,6 +192,7 @@ class ScreenRecorder: ObservableObject {
         streamConfig.capturesAudio = false
         streamConfig.showsCursor = false
         streamConfig.excludesCurrentProcessAudio = isAppAudioExcluded
+        streamConfig.scalesToFit = true
 
         // Configure the display content width and height.
         if captureType == .display, let display = selectedDisplay {
@@ -205,7 +206,7 @@ class ScreenRecorder: ObservableObject {
             streamConfig.height = 508
         }
 
-        // Set the capture interval at 60 fps.
+        // Set the capture interval at 15 fps.
         streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: 15)
 
         // Increase the depth of the frame queue to ensure high fps at the expense of increasing

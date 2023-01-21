@@ -8,6 +8,7 @@
 import SwiftUI
 import KeyboardShortcuts
 import ScreenCaptureKit
+import AVFoundation
 
 final class ShortcutManager: ObservableObject {
     @Published var instanceNums = [pid_t:Int]()
@@ -89,6 +90,22 @@ final class ShortcutManager: ObservableObject {
     
     func resetInstance(pid: pid_t) {
         sendReset(pid: pid)
+        playResetSound()
+    }
+
+    var player: AVAudioPlayer?
+
+    func playResetSound() {
+        guard let url = Bundle.main.url(forResource: "reset", withExtension: "wav") else { return }
+
+        do {
+            player = try AVAudioPlayer(contentsOf: url)
+            guard let player = player else { return }
+            player.prepareToPlay()
+            player.play()
+        } catch let error {
+            print(error.localizedDescription)
+        }
     }
 
     func sendReset(pid: pid_t) {

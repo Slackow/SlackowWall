@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 struct PreviewActionsListener: NSViewRepresentable {
     var lockAction: (()->())?
@@ -35,8 +36,23 @@ class ActionListener: NSView {
             if let lockAction = lockAction {
                 lockAction()
             }
+            playLockSound()
         } else {
             print("left click detected")
+        }
+    }
+    var player: AVAudioPlayer?
+
+    func playLockSound() {
+        guard let url = Bundle.main.url(forResource: "lock", withExtension: "wav") else { return }
+
+        do {
+            player = try AVAudioPlayer(contentsOf: url)
+            guard let player = player else { return }
+            player.prepareToPlay()
+            player.play()
+        } catch let error {
+            print(error.localizedDescription)
         }
     }
 }
