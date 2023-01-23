@@ -25,6 +25,7 @@ class PreviewViewModel: ObservableObject {
             }
 
             print("pressed: \(pid) #(\(idx))")
+            lockedInstances.removeAll { $0 == pid }
         }
     }
     

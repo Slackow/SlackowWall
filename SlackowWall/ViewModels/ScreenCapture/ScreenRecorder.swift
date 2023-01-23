@@ -177,6 +177,7 @@ class ScreenRecorder: ObservableObject {
             (instances[window.owningApplication?.processID ?? 0] ?? 0) < (instances[window2.owningApplication?.processID ?? 0] ?? 0)
         }
 
+        OBSManager.shared.actOnOBS(info: availableWindows.map { ("minecraft\(instances[$0.owningApplication?.processID ?? 0] ?? 0)", $0.windowID) })
         for window in availableWindows {
             filters.append(SCContentFilter(desktopIndependentWindow: window))
         }
