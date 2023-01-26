@@ -54,7 +54,19 @@ final class ShortcutManager: ObservableObject {
             instanceIDs = Array((1..<byInstanceNum.count).map({ byInstanceNum[$0] ?? 0 }))
         }
     }
-    
+
+    /// kills all minecraft instances
+    func killAll() {
+        let task = Process()
+        let killProcess = "killall prismlauncher;" + instanceIDs
+                .map { "kill -9 \($0)" }
+                .joined(separator: ";")
+        task.launchPath = "/bin/sh"
+        task.arguments = ["-c", killProcess]
+        task.launch()
+        task.waitUntilExit()
+    }
+
     func getAllApps() -> [NSRunningApplication] {
         return NSWorkspace.shared.runningApplications.filter{  $0.activationPolicy == .regular }
     }

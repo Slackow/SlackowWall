@@ -15,7 +15,7 @@ struct InstancePreviewView: View {
     var body: some View {
         Group {
             if !screenRecorder.capturePreviews.isEmpty {
-                LazyHGrid(rows: Array(repeating: GridItem(.flexible()), count: 2), spacing: 10) {
+                LazyHGrid(rows: Array(repeating: GridItem(.flexible()), count: 3), spacing: 2) {
                     ForEach(screenRecorder.capturePreviews.indices, id: \.self) { idx in
                         ZStack(alignment: .topTrailing) {
                             screenRecorder.capturePreviews[idx]

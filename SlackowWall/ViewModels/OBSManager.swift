@@ -15,7 +15,10 @@ class OBSManager {
         var info = info
         if !acted {
             acted = true;
-            let obs = URL(filePath: "/Users/andrew/Library/Application Support/obs-studio/basic/scenes/Untitled.json")
+            let obs = URL(filePath: "~/Library/Application Support/obs-studio/basic/scenes/Untitled.json")
+            let num = info.count
+            let wallSceneName = "wall\(num)"
+            var wallScene: NSDictionary? = nil
             do {
                 let data = try Data(contentsOf: obs)
                 let jsonObject = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableContainers)
@@ -26,6 +29,8 @@ class OBSManager {
                             if let window = (info.first { $0.0 == name }) {
                                 (source["settings"] as? NSMutableDictionary)?["window"] = window.1
                                 info.removeAll(where: {$0 == window})
+                            } else if name == wallSceneName {
+                                wallScene = source
                             }
                         }
                     }
@@ -57,10 +62,86 @@ class OBSManager {
                                 "libobs.push-to-talk": [],
                                 "libobs.unmute": []
                             ]
-                        ] as [String: Any]
+                        ] as [String:Any]
                         sources.add(source)
                     }
-                    let jsonData = try JSONSerialization.data(withJSONObject: jsonObject, options: [])
+                    if wallScene == nil {
+                        let newSources = NSMutableArray(capacity: num)
+                        for i in 0..<num {
+                            newSources[i] = [
+                                "align": 5,
+                                "blend_method": "default",
+                                "blend_type": "normal",
+                                "bounds": [
+                                    "x": 1080,
+                                    "y": 920
+                                ],
+                                "bounds_align": 0,
+                                "bounds_type": 1,
+                                "crop_bottom": 0,
+                                "crop_left": 0,
+                                "crop_right": 0,
+                                "crop_top": 0,
+                                "group_item_backup": false,
+                                "hide_transition": [
+                                    "duration": 0
+                                ],
+                                "id": i + 1,
+                                "locked": true,
+                                "name": "minecraft\(i + 1)",
+                                "pos": [
+                                    "x": 0,
+                                    "y": 0
+                                ],
+                                "private_settings": [:],
+                                "rot": 0,
+                                "scale": [
+                                    "x": 1,
+                                    "y": 1
+                                ],
+                                "scale_filter": "disable",
+                                "show_transition": [
+                                    "duration": 0
+                                ],
+                                "visible": true
+                            ]
+                        }
+                        let scene = [
+                            "balance": 0.5,
+                            "deinterlace_field_order": 0,
+                            "deinterlace_mode": 0,
+                            "enabled": true,
+                            "flags": 0,
+                            "hotkeys": [
+                                "libobs.hide_scene_item.about": [],
+                                "libobs.show_scene_item.about": [],
+                                "OBSBasic.SelectScene": []
+                            ],
+                            "id": "scene",
+                            "mixers": 0,
+                            "monitoring_type": 0,
+                            "muted": false,
+                            "name": wallSceneName,
+                            "prev_ver": 486539264,
+                            "private_settings": [:],
+                            "push-to-mute": false,
+                            "push-to-mute-delay": 0,
+                            "push-to-talk": false,
+                            "push-to-talk-delay": 0,
+                            "settings": [
+                                "custom_size": false,
+                                "id_counter": num,
+                                "items": newSources
+                            ],
+                            "sync": 0,
+                            "versioned_id": "scene",
+                            "volume": 1
+                        ] as [String: Any]
+                        sources.add(scene)
+                    }
+
+
+                    let jsonData = try JSONSerialization.data(withJSONObject: jsonObject, options: [.sortedKeys])
                     try jsonData.write(to: obs)
                 }
             } catch {

@@ -9,8 +9,26 @@ import SwiftUI
 import KeyboardShortcuts
 
 struct SettingsView: View {
+    @State private var stopped = false
     var body: some View {
         HStack {
+            Form {
+                HStack {
+                    Text(stopped ? "Bye!" : "Stop Instances: ")
+                    Button (action: { [self] in
+                        stopped = true
+                        ShortcutManager.shared.killAll()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            exit(0)
+                        }
+                    }) {
+                        Image(systemName: "stop.fill")
+                                .foregroundColor(.red)
+                    }
+                            .disabled(stopped)
+                }
+
+            }.padding(10)
             SettingsCardView(title: "Keybinds") {
                 Form {
                     KeyboardShortcuts.Recorder("Reset:", name: .reset)
