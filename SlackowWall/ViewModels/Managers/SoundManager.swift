@@ -13,11 +13,12 @@ class SoundManager {
 
     var player: AVAudioPlayer?
 
-    func playSound(sound: String) {
-        guard let url = Bundle.main.url(forResource: sound, withExtension: ".mp3") else { return }
+    func playSound(sound: String, ext: String? = ".wav") {
+        guard let url = Bundle.main.url(forResource: sound, withExtension: ext) else { return }
 
         do {
             player = try AVAudioPlayer(contentsOf: url)
+            player?.prepareToPlay()
             player?.play()
         } catch let error {
             print(error.localizedDescription)

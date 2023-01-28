@@ -12,38 +12,20 @@ struct InstancePreviewView: View {
     @StateObject private var screenRecorder = ScreenRecorder()
     @ObservedObject private var viewModel = PreviewViewModel()
 
+    @AppStorage("rows") var rows: Int = AppDefaults.rows
+    @AppStorage("alignment") var alignment: Alignment = AppDefaults.alignment
+
     var body: some View {
         Group {
             if !screenRecorder.capturePreviews.isEmpty {
-                LazyHGrid(rows: Array(repeating: GridItem(.flexible()), count: 3), spacing: 2) {
-                    ForEach(screenRecorder.capturePreviews.indices, id: \.self) { idx in
-                        ZStack(alignment: .topTrailing) {
-                            screenRecorder.capturePreviews[idx]
-                                .aspectRatio(screenRecorder.contentSizes[idx], contentMode: .fit)
-                                .roundedCorners(radius: 10, corners: .allCorners)
-                                .overlay(PreviewActionsListener(lockAction: {
-                                    viewModel.lockInstance(idx: idx)
-                                }))
-                                .onHover { isHovered in
-                                    if isHovered {
-                                        viewModel.hoveredInstance = idx
-                                    }  else {
-                                        viewModel.hoveredInstance = nil
-                                    }
-                                }
-                                .onChange(of: viewModel.keyPressed) { _ in
-                                    viewModel.handleKeyEvent(idx: idx)
-                                }
-
-                            if viewModel.lockedInstances.contains(viewModel.getInstanceProcess(idx: idx)) {
-                                Image(systemName: "lock.fill")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .foregroundColor(.red)
-                                    .frame(width: 25, height: 30)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 25)
-                            }
+                Group {
+                    if alignment == .horizontal {
+                        LazyHGrid(rows: Array(repeating: GridItem(.flexible()), count: rows), spacing: 8) {
+                            content
+                        }
+                    } else {
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: rows), spacing: 8) {
+                            content
                         }
                     }
                 }
@@ -57,6 +39,39 @@ struct InstancePreviewView: View {
             Task {
                 if await screenRecorder.canRecord {
                     await screenRecorder.start()
+                }
+            }
+        }
+    }
+
+    var content: some View {
+        ForEach(screenRecorder.capturePreviews.indices, id: \.self) { idx in
+            ZStack(alignment: .topTrailing) {
+                screenRecorder.capturePreviews[idx]
+                    .aspectRatio(screenRecorder.contentSizes[idx], contentMode: .fit)
+                    .roundedCorners(radius: 10, corners: .allCorners)
+                    .overlay(PreviewActionsListener(lockAction: {
+                        viewModel.lockInstance(idx: idx)
+                    }))
+                    .onHover { isHovered in
+                        if isHovered {
+                            viewModel.hoveredInstance = idx
+                        }  else {
+                            viewModel.hoveredInstance = nil
+                        }
+                    }
+                    .onChange(of: viewModel.keyPressed) { _ in
+                        viewModel.handleKeyEvent(idx: idx)
+                    }
+
+                if viewModel.lockedInstances.contains(viewModel.getInstanceProcess(idx: idx)) {
+                    Image(systemName: "lock.fill")
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundColor(.red)
+                        .frame(width: 25, height: 30)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 25)
                 }
             }
         }

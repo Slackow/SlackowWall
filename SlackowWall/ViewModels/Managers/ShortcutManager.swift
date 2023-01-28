@@ -102,23 +102,10 @@ final class ShortcutManager: ObservableObject {
     
     func resetInstance(pid: pid_t) {
         sendReset(pid: pid)
-        playResetSound()
+        SoundManager.shared.playSound(sound: "reset")
     }
 
     var player: AVAudioPlayer?
-
-    func playResetSound() {
-        guard let url = Bundle.main.url(forResource: "reset", withExtension: "wav") else { return }
-
-        do {
-            player = try AVAudioPlayer(contentsOf: url)
-            guard let player = player else { return }
-            player.prepareToPlay()
-            player.play()
-        } catch let error {
-            print(error.localizedDescription)
-        }
-    }
 
     func sendReset(pid: pid_t) {
         sendKey(key: 0x61, pid: pid)

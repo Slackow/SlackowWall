@@ -34,6 +34,7 @@ class PreviewViewModel: ObservableObject {
         if !lockedInstances.contains(pid) {
             withAnimation {
                 lockedInstances.append(pid)
+                SoundManager.shared.playSound(sound: "lock")
             }
             print("Locking \(pid)")
             print(lockedInstances)
@@ -48,16 +49,18 @@ class PreviewViewModel: ObservableObject {
         let pid = getInstanceProcess(idx: idx)
 
         if hoveredInstance == nil {
+            if keyPressed == "t" {
+                resetAllUnlocked()
+            }
             keyPressed = nil
         }
 
         if hoveredInstance == idx {
             switch keyPressed {
-                case "r": openInstance(idx: idx)
-                case "e": ShortcutManager.shared.resetInstance(pid: pid)
-                case "f": enterAndResetUnlocked(idx: idx)
-                case "t": resetAllUnlocked()
-                default: return
+            case "r": openInstance(idx: idx)
+            case "e": ShortcutManager.shared.resetInstance(pid: pid)
+            case "f": enterAndResetUnlocked(idx: idx)
+            default: return
             }
             keyPressed = nil
         }

@@ -10,25 +10,56 @@ import KeyboardShortcuts
 
 struct SettingsView: View {
     @State private var stopped = false
-    var body: some View {
-        HStack {
-            Form {
-                HStack {
-                    Text(stopped ? "Bye!" : "Stop Instances: ")
-                    Button (action: { [self] in
-                        stopped = true
-                        ShortcutManager.shared.killAll()
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            exit(0)
-                        }
-                    }) {
-                        Image(systemName: "stop.fill")
-                                .foregroundColor(.red)
-                    }
-                            .disabled(stopped)
-                }
 
-            }.padding(10)
+    @AppStorage("rows") var rows: Int = AppDefaults.rows
+    @AppStorage("alignment") var alignment: Alignment = AppDefaults.alignment
+
+    var body: some View {
+        HStack(spacing: 10) {
+            SettingsCardView(title: "Configuration") {
+                Form {
+                    VStack(alignment: .leading) {
+                        VStack {
+                            HStack {
+                                Text("Direction")
+
+                                Picker("", selection: $alignment) {
+                                    ForEach(Alignment.allCases, id: \.self) { type in
+                                        Text(type == .vertical ? "Columns" : "Rows")
+                                    }
+                                }.pickerStyle(.segmented)
+                            }
+
+                            Picker("", selection: $rows) {
+                                ForEach(1..<10) {
+                                    Text("\($0)")
+                                }
+                            }
+                            .pickerStyle(.segmented)
+                        }
+
+                        HStack {
+                            Text(stopped ? "Bye!" : "Stop Instances: ")
+
+                            Button(action: { [self] in
+                                stopped = true
+                                ShortcutManager.shared.killAll()
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                    exit(0)
+                                }
+                            }) {
+                                Image(systemName: "stop.fill")
+                                    .foregroundColor(.red)
+                            }
+                            .disabled(stopped)
+                        }
+                    }
+                }
+                .padding()
+            }
+            .padding(.vertical, 10)
+            .frame(maxHeight: .infinity, alignment: .topLeading)
+
             SettingsCardView(title: "Keybinds") {
                 Form {
                     KeyboardShortcuts.Recorder("Reset:", name: .reset)
@@ -40,7 +71,8 @@ struct SettingsView: View {
                 }
                 .padding()
             }
-            .padding(10)
+            .padding(.vertical, 10)
+            .frame(maxHeight: .infinity, alignment: .topLeading)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }

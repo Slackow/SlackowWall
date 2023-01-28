@@ -19,6 +19,7 @@ struct SlackowWallApp: App {
         Settings {
             SettingsView()
                 .frame(width: 500, height: 300)
+                .padding(.horizontal)
         }
     }
 }

@@ -14,23 +14,10 @@ import SwiftUI
 @MainActor
 class ScreenRecorder: ObservableObject {
 
-    /// The supported capture types.
-    enum CaptureType {
-        case display
-        case window
-    }
-
     private let logger = Logger()
     private var shortcutManager = ShortcutManager.shared
 
     @Published var isRunning = false
-
-    // MARK: - Video Properties
-    @Published var captureType: CaptureType = .window {
-        didSet {
-            updateEngine()
-        }
-    }
 
     @Published var selectedDisplay: SCDisplay? {
         didSet {
@@ -95,17 +82,17 @@ class ScreenRecorder: ObservableObject {
         }
 
         // Refresh the lists of capturable content.
-        await self.refreshAvailableContent()
+        await refreshAvailableContent()
 
         Timer.publish(every: 3, on: .main, in: .common).autoconnect().sink { [weak self] _ in
-                    guard let self = self else {
-                        return
-                    }
-                    Task {
-                        await self.refreshAvailableContent()
-                    }
-                }
-                .store(in: &subscriptions)
+            guard let self = self else {
+                return
+            }
+            Task {
+                await self.refreshAvailableContent()
+            }
+        }
+        .store(in: &subscriptions)
     }
 
     /// Starts capturing screen content.
@@ -195,17 +182,9 @@ class ScreenRecorder: ObservableObject {
         streamConfig.excludesCurrentProcessAudio = isAppAudioExcluded
         streamConfig.scalesToFit = true
 
-        // Configure the display content width and height.
-        if captureType == .display, let display = selectedDisplay {
-            streamConfig.width = display.width * scaleFactor
-            streamConfig.height = display.height * scaleFactor
-        }
-
         // Configure the window content width and height.
-        if captureType == .window {
-            streamConfig.width = 854
-            streamConfig.height = 508
-        }
+        streamConfig.width = 854
+        streamConfig.height = 508
 
         // Set the capture interval at 15 fps.
         streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: 15)
