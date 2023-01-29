@@ -48,10 +48,12 @@ class PreviewViewModel: ObservableObject {
     @MainActor func handleKeyEvent(idx: Int) {
         let pid = getInstanceProcess(idx: idx)
 
+        if keyPressed == "t" {
+            resetAllUnlocked()
+            keyPressed = nil
+        }
+
         if hoveredInstance == nil {
-            if keyPressed == "t" {
-                resetAllUnlocked()
-            }
             keyPressed = nil
         }
 

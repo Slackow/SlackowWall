@@ -10,34 +10,10 @@ import KeyboardShortcuts
 import ScreenCaptureKit
 import AVFoundation
 
-enum InstState {
-    case INIT
-    case GENNING
-    case PREVIEW
-    case RUNNING
-}
-
-class InstInfo: CustomStringConvertible {
-    var state: InstState = .INIT
-    var logPath: String = ""
-    var logRead: UInt64 = 0
-    var onNextF3: Bool = false
-    var pid: pid_t
-
-    init (pid: pid_t) {
-        self.pid = pid
-    }
-
-    var description: String {
-        "s: \(state), p: \(logPath), r: \(logRead), pid: \(pid)"
-    }
-}
-
 final class ShortcutManager: ObservableObject {
     @Published var instanceNums = [pid_t:Int]()
     @Published var instanceIDs = [pid_t]()
-    @Published var states = [InstInfo]()
-
+    @Published var states = [InstanceInfo]()
 
     static let shared = ShortcutManager()
 
@@ -77,7 +53,7 @@ final class ShortcutManager: ObservableObject {
             let byInstanceNum = instanceNums.swapKeyValues()
             instanceIDs = Array((1..<byInstanceNum.count).map({ byInstanceNum[$0] ?? 0 }))
             states = instanceIDs.map { pid in
-                let data = InstInfo(pid: pid)
+                let data = InstanceInfo(pid: pid)
                 if let args = Utils.processArguments(pid: pid) {
                     if let nativesArg = args.first(where: {$0.starts(with: "-Djava.library.path=")}) {
                         let arg = nativesArg.dropLast("/natives".count)
@@ -146,19 +122,8 @@ final class ShortcutManager: ObservableObject {
         playResetSound()
     }
 
-    var player: AVAudioPlayer?
-
     func playResetSound() {
-        guard let url = Bundle.main.url(forResource: "reset", withExtension: "wav") else { return }
-
-        do {
-            player = try AVAudioPlayer(contentsOf: url)
-            guard let player = player else { return }
-            player.prepareToPlay()
-            player.play()
-        } catch let error {
-            print(error.localizedDescription)
-        }
+        SoundManager.shared.playSound(sound: "reset")
     }
 
     func updateStates() {
@@ -171,20 +136,20 @@ final class ShortcutManager: ObservableObject {
                 sendF3Esc(pid: data.pid)
             }
 
-            if data.state == InstState.GENNING || data.state == InstState.PREVIEW {
+            if data.state == InstanceState.GENNING || data.state == InstanceState.PREVIEW {
                 let path = URL(fileURLWithPath: data.logPath)
                 do {
                     let file = try FileHandle(forReadingFrom: path)
                     try file.seek(toOffset: data.logRead)
                     let rawData = String(data: try file.readToEnd() ?? Data(), encoding: .utf8)
                     data.logRead = try file.offset()
-                    if data.state == InstState.GENNING {
+                    if data.state == InstanceState.GENNING {
                         if rawData?.contains("Starting Preview at") ?? false {
-                            data.state = InstState.PREVIEW
+                            data.state = InstanceState.PREVIEW
                             data.onNextF3 = true
                         }
                     } else if rawData?.contains("joined the game") ?? false {
-                        data.state = InstState.RUNNING
+                        data.state = InstanceState.RUNNING
                         data.onNextF3 = true
                     }
                 } catch {
