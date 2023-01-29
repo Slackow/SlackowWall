@@ -10,13 +10,37 @@ import KeyboardShortcuts
 import ScreenCaptureKit
 import AVFoundation
 
+enum InstState {
+    case INIT
+    case GENNING
+    case PREVIEW
+    case RUNNING
+}
+
+class InstInfo: CustomStringConvertible {
+    var state: InstState = .INIT
+    var logPath: String = ""
+    var logRead: UInt64 = 0
+    var onNextF3: Bool = false
+    var pid: pid_t
+
+    init (pid: pid_t) {
+        self.pid = pid
+    }
+
+    var description: String {
+        "s: \(state), p: \(logPath), r: \(logRead), pid: \(pid)"
+    }
+}
+
 final class ShortcutManager: ObservableObject {
     @Published var instanceNums = [pid_t:Int]()
-    @Published var byInstanceNum = [Int:pid_t]()
     @Published var instanceIDs = [pid_t]()
-    
+    @Published var states = [InstInfo]()
+
+
     static let shared = ShortcutManager()
-    
+
     init() {
         KeyboardShortcuts.onKeyUp(for: .reset) { [self] in
             print("reset")
@@ -49,10 +73,24 @@ final class ShortcutManager: ObservableObject {
             }
         }
 
-        if byInstanceNum.isEmpty {
-            byInstanceNum = instanceNums.swapKeyValues()
+        if instanceIDs.isEmpty {
+            let byInstanceNum = instanceNums.swapKeyValues()
             instanceIDs = Array((1..<byInstanceNum.count).map({ byInstanceNum[$0] ?? 0 }))
+            states = instanceIDs.map { pid in
+                let data = InstInfo(pid: pid)
+                if let args = Utils.processArguments(pid: pid) {
+                    if let nativesArg = args.first(where: {$0.starts(with: "-Djava.library.path=")}) {
+                        let arg = nativesArg.dropLast("/natives".count)
+                                .dropFirst("-Djava.library.path=".count)
+                        data.logPath = "\(arg)/.minecraft/logs/latest.log"
+                    }
+                }
+                return data
+            }
+            print(instanceIDs)
+            print(states)
         }
+        updateStates()
     }
 
     /// kills all minecraft instances
@@ -70,7 +108,7 @@ final class ShortcutManager: ObservableObject {
     func getAllApps() -> [NSRunningApplication] {
         return NSWorkspace.shared.runningApplications.filter{  $0.activationPolicy == .regular }
     }
-    
+
     func getInstanceNum(app: NSRunningApplication) -> Int {
         let pid = app.processIdentifier
         if let num = instanceNums[pid] {
@@ -96,32 +134,93 @@ final class ShortcutManager: ObservableObject {
 
     func planar(app: NSRunningApplication) {
         if getInstanceNum(app: app) > 0 {
-            
+
         }
     }
-    
+
     func resetInstance(pid: pid_t) {
         sendReset(pid: pid)
-        SoundManager.shared.playSound(sound: "reset")
+        if let instNum = instanceNums[pid] {
+            states[instNum - 1].state = .GENNING
+        }
+        playResetSound()
     }
 
     var player: AVAudioPlayer?
 
+    func playResetSound() {
+        guard let url = Bundle.main.url(forResource: "reset", withExtension: "wav") else { return }
+
+        do {
+            player = try AVAudioPlayer(contentsOf: url)
+            guard let player = player else { return }
+            player.prepareToPlay()
+            player.play()
+        } catch let error {
+            print(error.localizedDescription)
+        }
+    }
+
+    func updateStates() {
+        let instCount = instanceIDs.count
+        for i in 0..<instCount {
+            let data = states[i]
+
+            if data.onNextF3 {
+                data.onNextF3 = false
+                sendF3Esc(pid: data.pid)
+            }
+
+            if data.state == InstState.GENNING || data.state == InstState.PREVIEW {
+                let path = URL(fileURLWithPath: data.logPath)
+                do {
+                    let file = try FileHandle(forReadingFrom: path)
+                    try file.seek(toOffset: data.logRead)
+                    let rawData = String(data: try file.readToEnd() ?? Data(), encoding: .utf8)
+                    data.logRead = try file.offset()
+                    if data.state == InstState.GENNING {
+                        if rawData?.contains("Starting Preview at") ?? false {
+                            data.state = InstState.PREVIEW
+                            data.onNextF3 = true
+                        }
+                    } else if rawData?.contains("joined the game") ?? false {
+                        data.state = InstState.RUNNING
+                        data.onNextF3 = true
+                    }
+                } catch {
+                    print(error)
+                }
+            }
+
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now().advanced(by: DispatchTimeInterval.milliseconds(50))) {
+            //print(self.states.map {"\($0.state) \($0.logRead)"})
+            self.updateStates()
+        }
+    }
+
+
     func sendReset(pid: pid_t) {
+        // send F6
         sendKey(key: 0x61, pid: pid)
-        sendKeyCombo(keys: 0x5E, 0x35, pid: pid)
+    }
+
+    func sendF3Esc(pid: pid_t) {
+        // send F3 + ESC
+        sendKeyCombo(keys: 0x63, 0x35, pid: pid)
+        print("\(pid) << f3 esc")
     }
 
     func sendEscape(pid: pid_t) {
         sendKey(key: 0x35, pid: pid)
     }
-    
+
     func sendKey(key: CGKeyCode, pid: pid_t) {
         print("Sending key \(key) to \(pid)")
         let src = CGEventSource(stateID: .hidSystemState)
         let kspd = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: true)
         let kspu = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: false)
-        
+
         kspd?.postToPid( pid )
         kspu?.postToPid( pid )
     }

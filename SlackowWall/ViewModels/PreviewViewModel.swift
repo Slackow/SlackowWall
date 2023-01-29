@@ -87,6 +87,6 @@ class PreviewViewModel: ObservableObject {
     }
 
     func getInstanceProcess(idx: Int) -> pid_t {
-        return ShortcutManager.shared.instanceIDs[idx]
+        return ShortcutManager.shared.states[idx].pid
     }
 }
