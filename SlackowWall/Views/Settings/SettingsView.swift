@@ -25,14 +25,14 @@ struct SettingsView: View {
 
                                 Picker("", selection: $alignment) {
                                     ForEach(Alignment.allCases, id: \.self) { type in
-                                        Text(type == .vertical ? "Columns" : "Rows")
+                                        Text(type == .vertical ? "Columns" : "Rows").tag(type)
                                     }
                                 }.pickerStyle(.segmented)
                             }
 
                             Picker("", selection: $rows) {
                                 ForEach(1..<10) {
-                                    Text("\($0)")
+                                    Text("\($0)").tag($0)
                                 }
                             }
                             .pickerStyle(.segmented)
