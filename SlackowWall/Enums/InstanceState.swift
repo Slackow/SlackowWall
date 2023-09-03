@@ -5,5 +5,5 @@
 import SwiftUI
 
 enum InstanceState {
-    case INIT, GENNING, PREVIEW, RUNNING
+    case INIT, GENNING, PREVIEW, PREPPING, RUNNING
 }

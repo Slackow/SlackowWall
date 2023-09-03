@@ -58,7 +58,7 @@ final class ShortcutManager: ObservableObject {
                     if let nativesArg = args.first(where: {$0.starts(with: "-Djava.library.path=")}) {
                         let arg = nativesArg.dropLast("/natives".count)
                                 .dropFirst("-Djava.library.path=".count)
-                        data.logPath = "\(arg)/.minecraft/logs/latest.log"
+                        data.statePath = "\(arg)/.minecraft/wpstateout.txt"
                     }
                 }
                 return data
@@ -115,11 +115,12 @@ final class ShortcutManager: ObservableObject {
     }
 
     func resetInstance(pid: pid_t) {
-        sendReset(pid: pid)
         if let instNum = instanceNums[pid] {
-            states[instNum - 1].state = .GENNING
+            let info = states[instNum - 1]
+            info.checkState = .GENNING
+            sendReset(pid: pid)
+            playResetSound()
         }
-        playResetSound()
     }
 
     func playResetSound() {
@@ -129,36 +130,38 @@ final class ShortcutManager: ObservableObject {
     func updateStates() {
         let instCount = instanceIDs.count
         for i in 0..<instCount {
-            let data = states[i]
-
-            if data.onNextF3 {
-                data.onNextF3 = false
-                sendF3Esc(pid: data.pid)
+            let stateData = states[i]
+            var sentF3 = false
+            if stateData.untilF3 > 0 {
+                stateData.untilF3 -= 1
+                if stateData.untilF3 == 0 {
+                    sendF3Esc(pid: stateData.pid)
+                    sentF3 = true
+                }
             }
-
-            if data.state == InstanceState.GENNING || data.state == InstanceState.PREVIEW {
-                let path = URL(fileURLWithPath: data.logPath)
-                do {
-                    let file = try FileHandle(forReadingFrom: path)
-                    try file.seek(toOffset: data.logRead)
-                    let rawData = String(data: try file.readToEnd() ?? Data(), encoding: .utf8)
-                    data.logRead = try file.offset()
-                    if data.state == InstanceState.GENNING {
-                        if rawData?.contains("Starting Preview at") ?? false {
-                            data.state = InstanceState.PREVIEW
-                            data.onNextF3 = true
-                        }
-                    } else if rawData?.contains("joined the game") ?? false {
-                        data.state = InstanceState.RUNNING
-                        data.onNextF3 = true
-                    }
-                } catch {
-                    print(error)
+            if !sentF3 && stateData.updateState() {
+                if stateData.state == 0x74 {} // if title
+                else if stateData.state == 0x70 { // if previewing
+                    stateData.untilF3 = 4
+                } else if stateData.prevState == 0x70 { // if prev state was world unpaused
+                    stateData.untilF3 = 4
+                    stateData.checkState = .ENSURING
+                } else if stateData.state == 0x61 { // current state is paused
+                    stateData.checkState = .NONE
+                }
+            }
+            if !sentF3 && stateData.checkState == .ENSURING {
+                let _ = stateData.updateState()
+                if stateData.state != 0x70 { // if not paused
+                    stateData.checkState = .NONE
+                    stateData.untilF3 = 0
+                } else {
+                    stateData.untilF3 = 10
                 }
             }
 
         }
-        DispatchQueue.main.asyncAfter(deadline: .now().advanced(by: DispatchTimeInterval.milliseconds(50))) {
+        DispatchQueue.main.asyncAfter(deadline: .now().advanced(by: DispatchTimeInterval.milliseconds(30))) {
             //print(self.states.map {"\($0.state) \($0.logRead)"})
             self.updateStates()
         }
@@ -173,7 +176,7 @@ final class ShortcutManager: ObservableObject {
     func sendF3Esc(pid: pid_t) {
         // send F3 + ESC
         sendKeyCombo(keys: 0x63, 0x35, pid: pid)
-        print("\(pid) << f3 esc")
+        //print("\(pid) << f3 esc")
     }
 
     func sendEscape(pid: pid_t) {

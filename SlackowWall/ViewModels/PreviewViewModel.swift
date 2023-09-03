@@ -3,6 +3,7 @@
 //
 
 import SwiftUI
+import ScriptingBridge
 
 class PreviewViewModel: ObservableObject {
 
@@ -13,17 +14,31 @@ class PreviewViewModel: ObservableObject {
     @MainActor func openInstance(idx: Int) {
         if (NSApplication.shared.isActive) {
             let pid = getInstanceProcess(idx: idx)
+            writePid(pid: pid)
+            DispatchQueue.global(qos: .background).async {
+                let systemEvents = SBApplication(bundleIdentifier: "com.apple.systemevents")!
+                if systemEvents.isRunning {
+                    // Your AppleScript code to interact with System Events goes here
+                } else {
+                    // System Events is not running, so activate it and then execute AppleScript commands
+                    systemEvents.activate()
+                    // Your AppleScript code to interact with System Events goes here
+                }
+                let script = "tell application \"System Events\" to set frontmost of the first process whose unix id is \(pid) to true"
 
-            let script = "tell application \"System Events\" to set frontmost of the first process whose unix id is \(pid) to true"
-
-            var error: NSDictionary?
-            if let scriptObject = NSAppleScript(source: script) {
-                scriptObject.executeAndReturnError(&error)
-                ShortcutManager.shared.sendEscape(pid: pid)
-            } else {
-                print("Failed to send apple script")
+                var error: NSDictionary?
+                if let scriptObject = NSAppleScript(source: script) {
+                    scriptObject.executeAndReturnError(&error)
+                    if error != nil {
+                        for (key, value) in error! {
+                            print("\(key): \(value)")
+                        }
+                    }
+                    ShortcutManager.shared.sendEscape(pid: pid)
+                } else {
+                    print("Failed to send apple script")
+                }
             }
-
             print("pressed: \(pid) #(\(idx))")
             lockedInstances.removeAll { $0 == pid }
         }
@@ -66,6 +81,26 @@ class PreviewViewModel: ObservableObject {
             }
             keyPressed = nil
         }
+    }
+
+    private func writePid(pid: pid_t) {
+        let filePath = "/Users/Shared/slackowwall.txt"
+        let fileContents = "\(UUID.init()):\(pid)"
+        let fileManager = FileManager.default
+
+        if !fileManager.fileExists(atPath: filePath) {
+            let success = fileManager.createFile(atPath: filePath, contents: nil, attributes: nil)
+            if !success {
+                print("Failed to create file at path: \(filePath)")
+            }
+        }
+
+        do {
+            try fileContents.write(toFile: filePath, atomically: true, encoding: .utf8)
+        } catch {
+            print("Error writing to file: \(error)")
+        }
+
     }
 
     @MainActor private func enterAndResetUnlocked(idx: Int) {

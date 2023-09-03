@@ -13,9 +13,9 @@ class OBSManager {
 
     func actOnOBS(info: [(String, CGWindowID)]) {
         var info = info
-        if !acted {
+        if !acted && false {
             acted = true;
-            let obs = URL(filePath: "~/Library/Application Support/obs-studio/basic/scenes/Untitled.json")
+            let obs = URL(filePath: "~/Library/Application Support/obs-studio/basic/scenes/Untitled.json", relativeTo: FileManager.default.homeDirectoryForCurrentUser)
             let num = info.count
             let wallSceneName = "wall\(num)"
             var wallScene: NSDictionary? = nil

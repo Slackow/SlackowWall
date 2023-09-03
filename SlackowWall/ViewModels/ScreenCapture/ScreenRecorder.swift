@@ -112,8 +112,8 @@ class ScreenRecorder: ObservableObject {
 
         // Update the running state.
         isRunning = true
-
-        for idx in contentFilters.indices {
+        let filters = contentFilters
+        for idx in filters.indices {
             let capturePreview = CapturePreview()
             capturePreviews.append(capturePreview)
 
@@ -122,7 +122,7 @@ class ScreenRecorder: ObservableObject {
 
             Task {
                 do {
-                    for try await frame in captureEngine.startCapture(configuration: config, filter: contentFilters[idx]) {
+                    for try await frame in captureEngine.startCapture(configuration: config, filter: filters[idx]) {
                         capturePreview.updateFrame(frame)
                     }
                 } catch let error {
@@ -159,14 +159,15 @@ class ScreenRecorder: ObservableObject {
     private var contentFilters: [SCContentFilter] {
         var filters: [SCContentFilter] = []
         let instances = ShortcutManager.shared.instanceNums
-
+        print("Getting Content Filters")
         availableWindows.sort { window, window2 in
             (instances[window.owningApplication?.processID ?? 0] ?? 0) < (instances[window2.owningApplication?.processID ?? 0] ?? 0)
         }
-
+        print("Sorted windows")
         OBSManager.shared.actOnOBS(info: availableWindows.map { ("minecraft\(instances[$0.owningApplication?.processID ?? 0] ?? 0)", $0.windowID) })
         for window in availableWindows {
             filters.append(SCContentFilter(desktopIndependentWindow: window))
+            print("Appended filter: \(window.displayName)")
         }
 
         return filters
@@ -191,7 +192,7 @@ class ScreenRecorder: ObservableObject {
 
         // Increase the depth of the frame queue to ensure high fps at the expense of increasing
         // the memory footprint of WindowServer.
-        streamConfig.queueDepth = 5
+        streamConfig.queueDepth = 3
 
         return streamConfig
     }
