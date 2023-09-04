@@ -140,22 +140,25 @@ final class ShortcutManager: ObservableObject {
                 }
             }
             if !sentF3 && stateData.updateState() {
-                if stateData.state == 0x74 {} // if title
-                else if stateData.state == 0x70 { // if previewing
+                print(stateData.description)
+                if stateData.state == TITLE {} // if title
+                else if stateData.state == PREVIEWING { // if previewing
                     stateData.untilF3 = 4
-                } else if stateData.prevState == 0x70 { // if prev state was world unpaused
+                } else if stateData.prevState == PREVIEWING && stateData.state == UNPAUSED { // if prev state was world previewing
                     stateData.untilF3 = 4
                     stateData.checkState = .ENSURING
-                } else if stateData.state == 0x61 { // current state is paused
+                    continue
+                } else if stateData.state == UNPAUSED { // disable checking if slipped
                     stateData.checkState = .NONE
                 }
             }
             if !sentF3 && stateData.checkState == .ENSURING {
+                print(stateData.description)
                 let _ = stateData.updateState()
-                if stateData.state != 0x70 { // if not paused
+                if stateData.state != UNPAUSED { // if not paused
                     stateData.checkState = .NONE
                     stateData.untilF3 = 0
-                } else {
+                } else if stateData.untilF3 <= 0 {
                     stateData.untilF3 = 10
                 }
             }
