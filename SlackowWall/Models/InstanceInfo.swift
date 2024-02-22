@@ -1,5 +1,5 @@
 //
-// Created by Dominic Thompson on 1/28/23.
+// Created by Kihron on 1/28/23.
 //
 
 
@@ -30,11 +30,13 @@ class InstanceInfo: CustomStringConvertible {
         self.pid = pid
     }
     // for any world preview state output, this will map it to a unique byte and store it into state.
-    func updateState() -> Bool {
+    func updateState(force: Bool = false) -> Bool {
         prevState = state
-        if checkState == .NONE {
+        print("Attempting to update state")
+        if !force && checkState == .NONE {
             return false
         }
+        print("Updating state")
         // Read the file into a data object
         if let fileData = FileManager.default.contents(atPath: statePath), !fileData.isEmpty {
             // Read the first byte of the file
@@ -49,6 +51,7 @@ class InstanceInfo: CustomStringConvertible {
         } else {
             print("Error: Failed to read file \(statePath)")
         }
+        
         return prevState != state
     }
 

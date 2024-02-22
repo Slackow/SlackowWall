@@ -2,7 +2,7 @@
 //  SoundManager.swift
 //  SlackowWall
 //
-//  Created by Dominic Thompson on 1/18/23.
+//  Created by Kihron on 1/18/23.
 //
 
 import SwiftUI

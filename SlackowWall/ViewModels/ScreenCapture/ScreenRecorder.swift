@@ -2,7 +2,7 @@
 //  ScreenRecorder.swift
 //  SlackowWall
 //
-//  Created by Dominic Thompson on 1/12/23.
+//  Created by Kihron on 1/12/23.
 //
 
 import Foundation
@@ -164,10 +164,12 @@ class ScreenRecorder: ObservableObject {
             (instances[window.owningApplication?.processID ?? 0] ?? 0) < (instances[window2.owningApplication?.processID ?? 0] ?? 0)
         }
         print("Sorted windows")
-        OBSManager.shared.actOnOBS(info: availableWindows.map { ("minecraft\(instances[$0.owningApplication?.processID ?? 0] ?? 0)", $0.windowID) })
+        if !OBSManager.shared.acted {
+            OBSManager.shared.storeWindowIDs(info: availableWindows.map { (instances[$0.owningApplication?.processID ?? 0] ?? 0, $0.windowID) })
+        }
         for window in availableWindows {
             filters.append(SCContentFilter(desktopIndependentWindow: window))
-            print("Appended filter: \(window.displayName)")
+            print("Appended filter: \(window.displayName) \(window.owningApplication?.processID ?? 0)")
         }
 
         return filters
@@ -184,7 +186,7 @@ class ScreenRecorder: ObservableObject {
         streamConfig.scalesToFit = true
 
         // Configure the window content width and height.
-        streamConfig.width = 854
+        streamConfig.width = 860
         streamConfig.height = 508
 
         // Set the capture interval at 15 fps.
@@ -192,7 +194,7 @@ class ScreenRecorder: ObservableObject {
 
         // Increase the depth of the frame queue to ensure high fps at the expense of increasing
         // the memory footprint of WindowServer.
-        streamConfig.queueDepth = 3
+        streamConfig.queueDepth = 6
 
         return streamConfig
     }
@@ -224,7 +226,7 @@ class ScreenRecorder: ObservableObject {
     private func filterWindows(_ windows: [SCWindow]) -> [SCWindow] {
         // Remove all windows that are not Minecraft Instances
         windows
-            .filter({ shortcutManager.instanceIDs.contains($0.owningApplication?.processID ?? 0) })
+            .filter({ $0.displayName.contains( "Minecraft") && shortcutManager.instanceIDs.contains($0.owningApplication?.processID ?? 0) })
     }
 }
 

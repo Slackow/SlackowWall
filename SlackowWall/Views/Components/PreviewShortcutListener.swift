@@ -1,5 +1,5 @@
 //
-// Created by Dominic Thompson on 1/19/23.
+// Created by Kihron on 1/19/23.
 //
 
 import SwiftUI
@@ -21,11 +21,13 @@ struct PreviewShortcutListener: NSViewRepresentable {
 
         override var acceptsFirstResponder: Bool { true }
         override func keyDown(with event: NSEvent) {
+            print(":) \(event.charactersIgnoringModifiers ?? "empty thingy")")
             switch event.charactersIgnoringModifiers {
                 case "r": key = "r"
                 case "e": key = "e"
                 case "f": key = "f"
                 case "t": key = "t"
+                case "p": key = "p"
                 default: return
             }
         }

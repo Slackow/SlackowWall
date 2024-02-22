@@ -2,7 +2,7 @@
 //  CaptureEngine.swift
 //  SlackowWall
 //
-//  Created by Dominic Thompson on 1/12/23.
+//  Created by Kihron on 1/12/23.
 //
 
 import Foundation
@@ -33,11 +33,14 @@ class CaptureEngine: NSObject, @unchecked Sendable {
     // Store the the startCapture continuation, so that you can cancel it when you call stopCapture().
     private var continuation: AsyncThrowingStream<CapturedFrame, Error>.Continuation?
     
+    private var streamOutputs = [CaptureEngineStreamOutput]()
+    
     /// - Tag: StartCapture
     func startCapture(configuration: SCStreamConfiguration, filter: SCContentFilter) -> AsyncThrowingStream<CapturedFrame, Error> {
         AsyncThrowingStream<CapturedFrame, Error> { continuation in
             // The stream output object.
             let streamOutput = CaptureEngineStreamOutput(continuation: continuation)
+            streamOutputs.append(streamOutput)
             streamOutput.capturedFrameHandler = { continuation.yield($0) }
             
             do {
@@ -104,8 +107,9 @@ private class CaptureEngineStreamOutput: NSObject, SCStreamOutput, SCStreamDeleg
             capturedFrameHandler?(frame)
         case .audio:
             // Create an AVAudioPCMBuffer from an audio sample buffer.
-            guard let samples = createPCMBuffer(for: sampleBuffer) else { return }
-            pcmBufferHandler?(samples)
+//            guard let samples = createPCMBuffer(for: sampleBuffer) else { return }
+//            pcmBufferHandler?(samples)
+            return
         @unknown default:
             fatalError("Encountered unknown stream output type: \(outputType)")
         }

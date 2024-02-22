@@ -1,21 +1,29 @@
 //
-// Created by Dominic Thompson on 1/18/23.
+// Created by Kihron on 1/18/23.
 //
 
 import SwiftUI
 import ScriptingBridge
 
+import CoreGraphics
+import Cocoa
+
 class PreviewViewModel: ObservableObject {
 
-    @Published var lockedInstances: [pid_t] = []
+    @Published var lockedInstances: Int64 = 0
     @Published var hoveredInstance: Int?
     @Published var keyPressed: Character?
+    
+    @AppStorage("f1OnJoin") var f1OnJoin: Bool = false
+    @AppStorage("fullscreen") var fullscreen: Bool = false
 
     @MainActor func openInstance(idx: Int) {
         if (NSApplication.shared.isActive) {
             let pid = getInstanceProcess(idx: idx)
-            writePid(pid: pid)
-            DispatchQueue.global(qos: .background).async {
+            let _ = OBSManager.shared.writeWID(idx: idx + 1)
+            print("User opened")
+            DispatchQueue.global(qos: .default).async {
+                print("Switching Window")
                 let systemEvents = SBApplication(bundleIdentifier: "com.apple.systemevents")!
                 if systemEvents.isRunning {
                     // Your AppleScript code to interact with System Events goes here
@@ -25,7 +33,6 @@ class PreviewViewModel: ObservableObject {
                     // Your AppleScript code to interact with System Events goes here
                 }
                 let script = "tell application \"System Events\" to set frontmost of the first process whose unix id is \(pid) to true"
-
                 var error: NSDictionary?
                 if let scriptObject = NSAppleScript(source: script) {
                     scriptObject.executeAndReturnError(&error)
@@ -35,28 +42,32 @@ class PreviewViewModel: ObservableObject {
                         }
                     }
                     ShortcutManager.shared.sendEscape(pid: pid)
+                    if self.f1OnJoin {
+                        ShortcutManager.shared.sendF1(pid: pid)
+                        print("Sent f1!!")
+                    }
+                    ShortcutManager.shared.states[idx].checkState = .NONE
                 } else {
                     print("Failed to send apple script")
                 }
+                print("Switched")
             }
             print("pressed: \(pid) #(\(idx))")
-            lockedInstances.removeAll { $0 == pid }
+            lockedInstances &= ~(1 << idx)
         }
     }
     
     func lockInstance(idx: Int) {
-        let pid = getInstanceProcess(idx: idx)
-        if !lockedInstances.contains(pid) {
+        let oldLocked = lockedInstances
+        lockedInstances ^= 1 << idx
+        
+        if oldLocked < lockedInstances {
             withAnimation {
-                lockedInstances.append(pid)
                 SoundManager.shared.playSound(sound: "lock")
             }
-            print("Locking \(pid)")
-            print(lockedInstances)
+            print("Locking \(idx)")
         } else {
-            lockedInstances.removeAll(where: { $0 == pid })
-            print("Unlocking \(pid)")
-            print(lockedInstances)
+            print("Unlocking \(idx)")
         }
     }
 
@@ -77,50 +88,52 @@ class PreviewViewModel: ObservableObject {
             case "r": openInstance(idx: idx)
             case "e": ShortcutManager.shared.resetInstance(pid: pid)
             case "f": enterAndResetUnlocked(idx: idx)
+            case "p": ShortcutManager.shared.sendF3Esc(pid: pid)
             default: return
             }
             keyPressed = nil
         }
     }
 
-    private func writePid(pid: pid_t) {
-        let filePath = "/Users/Shared/slackowwall.txt"
-        let fileContents = "\(UUID.init()):\(pid)"
-        let fileManager = FileManager.default
-
-        if !fileManager.fileExists(atPath: filePath) {
-            let success = fileManager.createFile(atPath: filePath, contents: nil, attributes: nil)
-            if !success {
-                print("Failed to create file at path: \(filePath)")
-            }
-        }
-
-        do {
-            try fileContents.write(toFile: filePath, atomically: true, encoding: .utf8)
-        } catch {
-            print("Error writing to file: \(error)")
-        }
-
-    }
+    
 
     @MainActor private func enterAndResetUnlocked(idx: Int) {
         let pid = getInstanceProcess(idx: idx)
         let instanceIDs = ShortcutManager.shared.instanceIDs
         openInstance(idx: idx)
+        var idx = 0
         for instance in instanceIDs {
-            if instance != pid && !lockedInstances.contains(instance) {
+            if instance != pid && canReset(idx: idx) {
                 ShortcutManager.shared.resetInstance(pid: instance)
             }
+            idx += 1
         }
+    }
+    
+    @inline(__always) public func isLocked(idx: Int) -> Bool {
+        return (lockedInstances & (1 << idx)) != 0
+    }
+    
+    @inline(__always) private func canReset(idx: Int) -> Bool {
+        if isLocked(idx: idx) { return false }
+        let state = ShortcutManager.shared.states[idx]
+        let _ = state.updateState(force: true)
+        return state.state != WAITING && state.state != GENERATING
     }
 
     private func resetAllUnlocked() {
+        print("\n\n\n\n")
         let instanceIDs = ShortcutManager.shared.instanceIDs
+        var idx = 0
         for instance in instanceIDs {
-            if !lockedInstances.contains(instance) {
+            if canReset(idx: idx) {
                 ShortcutManager.shared.resetInstance(pid: instance)
+            } else {
+                print("Did not reset: \(ShortcutManager.shared.states[idx].state)")
             }
+            idx += 1
         }
+        print("Reset All possible")
     }
 
     func getInstanceProcess(idx: Int) -> pid_t {

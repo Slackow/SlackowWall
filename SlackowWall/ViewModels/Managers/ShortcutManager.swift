@@ -23,7 +23,7 @@ final class ShortcutManager: ObservableObject {
             let apps = NSWorkspace.shared.runningApplications.filter{  $0.activationPolicy == .regular }
             if let activeWindow = apps.first(where:{$0.isActive}) {
                 NSApplication.shared.activate(ignoringOtherApps: true)
-                let currPID = activeWindow.processIdentifier;
+                let currPID = activeWindow.processIdentifier
                 if instanceIDs.contains(currPID) {
                     resetInstance(pid: currPID)
                 } else {
@@ -36,8 +36,15 @@ final class ShortcutManager: ObservableObject {
             print("planar")
             let apps = self.getAllApps()
             if let currentApp = apps.first(where:{$0.isActive}) {
-                let args = Utils.processArguments(pid: currentApp.processIdentifier)
-                NSApplication.shared.activate(ignoringOtherApps: true)
+                // let args = Utils.processArguments(pid: currentApp.processIdentifier)
+                let pid = currentApp.processIdentifier
+                for state in self.states {
+                    if state.pid == pid { continue }
+                    _ = state.updateState(force: true)
+                    if state.state == UNPAUSED {
+                        self.sendF3Esc(pid: state.pid)
+                    }
+                }
             }
         }
 
@@ -66,7 +73,7 @@ final class ShortcutManager: ObservableObject {
             print(instanceIDs)
             print(states)
         }
-        updateStates()
+        // updateStates()
     }
 
     /// kills all minecraft instances
@@ -95,7 +102,7 @@ final class ShortcutManager: ObservableObject {
                 if let args = Utils.processArguments(pid: pid) {
                     if let nativesArg = args.first(where: {$0.starts(with: "-Djava.library.path=")}) {
                         let numTwo = nativesArg.dropLast("/natives".count).suffix(2)
-                        let numChar = numTwo.suffix(1);
+                        let numChar = numTwo.suffix(1)
                         if let num = Int(numTwo) ?? Int(numChar) {
                             instanceNums[pid] = num
                             return num
@@ -144,7 +151,7 @@ final class ShortcutManager: ObservableObject {
                 if stateData.state == TITLE {} // if title
                 else if stateData.state == PREVIEWING { // if previewing
                     stateData.untilF3 = 4
-                } else if stateData.prevState == PREVIEWING && stateData.state == UNPAUSED { // if prev state was world previewing
+                } else if (stateData.prevState == PREVIEWING || stateData.prevState == WAITING) && stateData.state == UNPAUSED { // if prev state was world previewing
                     stateData.untilF3 = 4
                     stateData.checkState = .ENSURING
                     continue
@@ -159,7 +166,7 @@ final class ShortcutManager: ObservableObject {
                     stateData.checkState = .NONE
                     stateData.untilF3 = 0
                 } else if stateData.untilF3 <= 0 {
-                    stateData.untilF3 = 10
+                    stateData.untilF3 = 25
                 }
             }
 
@@ -175,11 +182,15 @@ final class ShortcutManager: ObservableObject {
         // send F6
         sendKey(key: 0x61, pid: pid)
     }
+    
+    func sendF1(pid: pid_t) {
+        sendKey(key: 0x7A, pid: pid)
+    }
 
     func sendF3Esc(pid: pid_t) {
         // send F3 + ESC
         sendKeyCombo(keys: 0x63, 0x35, pid: pid)
-        //print("\(pid) << f3 esc")
+        print("\(pid) << f3 esc")
     }
 
     func sendEscape(pid: pid_t) {

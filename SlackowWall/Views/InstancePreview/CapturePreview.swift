@@ -2,7 +2,7 @@
 //  CapturePreview.swift
 //  SlackowWall
 //
-//  Created by Dominic Thompson on 1/12/23.
+//  Created by Kihron on 1/12/23.
 //
 
 import SwiftUI

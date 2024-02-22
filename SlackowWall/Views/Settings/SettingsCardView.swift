@@ -2,7 +2,7 @@
 //  SettingsCardView.swift
 //  SlackowWall
 //
-//  Created by Dominic Thompson on 1/19/23.
+//  Created by Kihron on 1/19/23.
 //
 
 import SwiftUI

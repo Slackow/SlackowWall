@@ -14,10 +14,14 @@ struct InstancePreviewView: View {
 
     @AppStorage("rows") var rows: Int = AppDefaults.rows
     @AppStorage("alignment") var alignment: Alignment = AppDefaults.alignment
+    
+    @Environment(\.isFocused) var isFocused
 
     var body: some View {
         Group {
-            if !screenRecorder.capturePreviews.isEmpty {
+            if !isFocused {
+                Text("Window out of focus")
+            } else if !screenRecorder.capturePreviews.isEmpty {
                 Group {
                     if alignment == .horizontal {
                         LazyHGrid(rows: Array(repeating: GridItem(.flexible()), count: rows), spacing: 8) {
@@ -64,7 +68,7 @@ struct InstancePreviewView: View {
                         viewModel.handleKeyEvent(idx: idx)
                     }
 
-                if viewModel.lockedInstances.contains(viewModel.getInstanceProcess(idx: idx)) {
+                if viewModel.isLocked(idx: idx) {
                     Image(systemName: "lock.fill")
                         .resizable()
                         .scaledToFit()
@@ -73,6 +77,7 @@ struct InstancePreviewView: View {
                         .padding(.horizontal, 6)
                         .padding(.vertical, 25)
                 }
+               // Text("\(ShortcutManager.shared.states[idx].state)")
             }
         }
     }

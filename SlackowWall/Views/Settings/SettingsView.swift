@@ -9,77 +9,72 @@ import SwiftUI
 import KeyboardShortcuts
 
 struct SettingsView: View {
-    @State private var stopped = false
-
-    @AppStorage("rows") var rows: Int = AppDefaults.rows
-    @AppStorage("alignment") var alignment: Alignment = AppDefaults.alignment
-
+    
+    @State var sideBarVisibility: NavigationSplitViewVisibility = .doubleColumn
+    @State var selectedSettingsBarItem: SettingsBarItem = .instances
+    
+    
     var body: some View {
-        HStack(spacing: 10) {
-            SettingsCardView(title: "Configuration") {
-                Form {
-                    VStack(alignment: .leading) {
-                        VStack {
-                            HStack {
-                                Text("Direction")
-
-                                Picker("", selection: $alignment) {
-                                    ForEach(Alignment.allCases, id: \.self) { type in
-                                        Text(type == .vertical ? "Columns" : "Rows").tag(type)
-                                    }
-                                }.pickerStyle(.segmented)
-                            }
-
-                            Picker("", selection: $rows) {
-                                ForEach(1..<10) {
-                                    Text("\($0)").tag($0)
-                                }
-                            }
-                            .pickerStyle(.segmented)
-                        }
-
-                        HStack {
-                            Text(stopped ? "Bye!" : "Stop Instances: ")
-
-                            Button(action: { [self] in
-                                stopped = true
-                                ShortcutManager.shared.killAll()
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                    exit(0)
-                                }
-                            }) {
-                                Image(systemName: "stop.fill")
-                                    .foregroundColor(.red)
-                            }
-                            .disabled(stopped)
-                        }
+        NavigationSplitView(columnVisibility: $sideBarVisibility) {
+            List(SettingsBarItem.allCases, selection: $selectedSettingsBarItem) { item in
+                HStack(alignment: .center, spacing: 10) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 5)
+                            .fill(item.color.gradient)
+                            .frame(width: 25, height: 25)
+                        
+                        Image(systemName: item.icon)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .frame(width: 20, alignment: .center)
                     }
+                    
+                    Text(item.label)
+                        .tint(.primary)
                 }
-                .padding()
+                .frame(height: 20)
+                .padding(.vertical, 5)
+                .contentShape(Rectangle())
             }
-            .padding(.vertical, 10)
-            .frame(maxHeight: .infinity, alignment: .topLeading)
-
-            SettingsCardView(title: "Keybinds") {
-                Form {
-                    KeyboardShortcuts.Recorder("Reset:", name: .reset)
-                    KeyboardShortcuts.Recorder("Widen Instance:", name: .planar)
-                    Button("Reset To Defaults") {
-                        UserDefaults.standard.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
-                        UserDefaults.standard.synchronize()
-                    }
-                }
-                .padding()
-            }
-            .padding(.vertical, 10)
-            .frame(maxHeight: .infinity, alignment: .topLeading)
+            .frame(width: 205)
+            .removeSidebar()
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    detail: {
+        switch selectedSettingsBarItem {
+            case .keybindings:
+                KeybindingSettings()
+            case .instances:
+                InstancesSettings()
+            }
+        }
     }
 }
 
-struct SettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsView()
+struct RemoveSidebar: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(macOS 14.0, *) {
+            content
+                .toolbar(removing: .sidebarToggle)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Rectangle()
+                            .fill(.clear)
+                            .frame(width: 32, height: 32)
+                    }
+                }
+        } else {
+            content
+        }
     }
+}
+
+extension View {
+    func removeSidebar() -> some View {
+        self.modifier(RemoveSidebar())
+    }
+}
+
+
+#Preview {
+    SettingsView()
 }

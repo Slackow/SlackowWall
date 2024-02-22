@@ -9,17 +9,26 @@ import SwiftUI
 
 @main
 struct SlackowWallApp: App {
-    @StateObject private var shortcutManager = ShortcutManager.shared;
+    @StateObject private var shortcutManager = ShortcutManager.shared
+    @Environment(\.openWindow) private var openWindow
     
     var body: some Scene {
         WindowGroup {
             ContentView()
         }
-
-        Settings {
+        
+        Window("Settings", id: "settings-window") {
             SettingsView()
-                .frame(width: 500, height: 300)
-                .padding(.horizontal)
+                .frame(minWidth: 700, maxWidth: 700, minHeight: 435, alignment: .center)
         }
+        .commands {
+            CommandGroup(replacing: .appSettings) {
+                Button(action: { openWindow(id: "settings-window") }) {
+                    Text("Settings...")
+                }
+                .keyboardShortcut(",", modifiers: .command)
+            }
+        }
+        .windowResizability(.contentSize)
     }
 }
