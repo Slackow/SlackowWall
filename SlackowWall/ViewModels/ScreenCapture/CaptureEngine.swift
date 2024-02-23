@@ -28,7 +28,7 @@ class CaptureEngine: NSObject, @unchecked Sendable {
     private let logger = Logger()
     
     private var streams: [SCStream] = []
-    private let videoSampleBufferQueue = DispatchQueue(label: "com.example.apple-samplecode.VideoSampleBufferQueue")
+    private let videoSampleBufferQueue = DispatchQueue(label: "slackowWall.VideoSampleBufferQueue")
     
     // Store the the startCapture continuation, so that you can cancel it when you call stopCapture().
     private var continuation: AsyncThrowingStream<CapturedFrame, Error>.Continuation?
@@ -64,6 +64,18 @@ class CaptureEngine: NSObject, @unchecked Sendable {
             continuation?.finish()
         } catch {
             continuation?.finish(throwing: error)
+        }
+    }
+    
+    func resumeCapture() async {
+        for stream in streams {
+            do {
+                try await stream.startCapture()
+                continuation?.finish()
+            } catch {
+                streams.removeAll(where: { $0 == stream })
+                continuation?.finish(throwing: error)
+            }
         }
     }
     

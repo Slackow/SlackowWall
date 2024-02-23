@@ -16,28 +16,28 @@ enum SettingsBarItem: CaseIterable, Identifiable, Hashable {
     
     var color: Color {
         switch self {
-        case .instances:
-            return .black
-        case .keybindings:
-            return .yellow
+            case .instances:
+                return .black
+            case .keybindings:
+                return .blue
         }
     }
     
     var label: String {
         switch self {
-        case .instances:
-            return "Instances"
-        case .keybindings:
-            return "Keybindings"
+            case .instances:
+                return "Instances"
+            case .keybindings:
+                return "Keybindings"
         }
     }
     
     var icon: String {
         switch self {
-        case .instances:
-            return "compass.drawing"
-        case .keybindings:
-            return "hammer.fill"
+            case .instances:
+                return "compass.drawing"
+            case .keybindings:
+                return "hammer.fill"
         }
     }
 }

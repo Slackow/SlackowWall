@@ -142,6 +142,15 @@ class ScreenRecorder: ObservableObject {
         await captureEngine.stopCapture()
         isRunning = false
     }
+    
+    func resumeCapture() async {
+        guard !isRunning else {
+            return
+        }
+        
+        await captureEngine.resumeCapture()
+        isRunning = true
+    }
 
     /// - Tag: UpdateCaptureConfig
     private func updateEngine() {
