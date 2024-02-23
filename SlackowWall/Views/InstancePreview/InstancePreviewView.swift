@@ -10,30 +10,23 @@ import ScreenCaptureKit
 
 struct InstancePreviewView: View {
     @StateObject private var screenRecorder = ScreenRecorder()
-    @ObservedObject private var viewModel = PreviewViewModel()
-
-    @AppStorage("rows") var rows: Int = AppDefaults.rows
-    @AppStorage("alignment") var alignment: Alignment = AppDefaults.alignment
-    
-    var isFocused = true
+    @ObservedObject private var instanceManager = InstanceManager.shared
 
     var body: some View {
         Group {
-            if !isFocused {
-                Text("Window out of focus")
-            } else if !screenRecorder.capturePreviews.isEmpty {
+            if !screenRecorder.capturePreviews.isEmpty {
                 Group {
-                    if alignment == .horizontal {
-                        LazyHGrid(rows: Array(repeating: GridItem(.flexible()), count: rows), spacing: 8) {
+                    if instanceManager.alignment == .horizontal {
+                        LazyHGrid(rows: Array(repeating: GridItem(.flexible()), count: instanceManager.rows), spacing: 8) {
                             content
                         }
                     } else {
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: rows), spacing: 8) {
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: instanceManager.rows), spacing: 8) {
                             content
                         }
                     }
                 }
-                .background(PreviewShortcutListener(key: $viewModel.keyPressed))
+                .background(PreviewShortcutListener(key: $instanceManager.keyPressed))
             } else {
                 Text("No Minecraft Instances Detected")
             }
@@ -43,6 +36,15 @@ struct InstancePreviewView: View {
             Task {
                 if await screenRecorder.canRecord {
                     await screenRecorder.start()
+                }
+            }
+        }
+        .onChange(of: NSApplication.shared.isActive) { value in
+            Task {
+                if value {
+                    await screenRecorder.resumeCapture()
+                } else {
+                    await screenRecorder.stop()
                 }
             }
         }
@@ -56,21 +58,21 @@ struct InstancePreviewView: View {
                     .roundedCorners(radius: 10, corners: .allCorners)
                     .overlay(PreviewActionsListener(lockAction: { key in
                             if key.modifierFlags.contains(.shift) {
-                                viewModel.lockInstance(idx: idx)
+                                instanceManager.lockInstance(idx: idx)
                             }
                     }))
                     .onHover { isHovered in
                         if isHovered {
-                            viewModel.hoveredInstance = idx
+                            instanceManager.hoveredInstance = idx
                         }  else {
-                            viewModel.hoveredInstance = nil
+                            instanceManager.hoveredInstance = nil
                         }
                     }
-                    .onChange(of: viewModel.keyPressed) { _ in
-                        viewModel.handleKeyEvent(idx: idx)
+                    .onChange(of: instanceManager.keyPressed) { _ in
+                        instanceManager.handleKeyEvent(idx: idx)
                     }
 
-                if viewModel.isLocked(idx: idx) {
+                if instanceManager.isLocked(idx: idx) {
                     Image(systemName: "lock.fill")
                         .resizable()
                         .scaledToFit()
@@ -79,7 +81,7 @@ struct InstancePreviewView: View {
                         .padding(.horizontal, 6)
                         .padding(.vertical, 25)
                 }
-               // Text("\(ShortcutManager.shared.states[idx].state)")
+               //Text("\(idx)")
             }
         }
     }

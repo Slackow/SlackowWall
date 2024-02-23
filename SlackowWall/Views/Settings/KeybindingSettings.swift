@@ -9,20 +9,24 @@ import SwiftUI
 
 struct KeybindingSettings: View {
     var body: some View {
-        SettingsCardView(title: "Global Keybinds") {
-            Form {
-                HStack {
-                    Text("lol")
-                    KeybindingView(keybinding: KeybindingManager.shared.$resetAllKey)
+        VStack(spacing: 12) {
+            SettingsCardView {
+                Form {
+                    Button(action: {
+                        UserDefaults.standard.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
+                        UserDefaults.standard.synchronize()
+                    }) {
+                        Text("Reset To Defaults")
+                    }
                 }
-                Button("Reset To Defaults") {
-                    UserDefaults.standard.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
-                    UserDefaults.standard.synchronize()
-                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding()
         }
-        .padding(.vertical, 10)
         .frame(maxHeight: .infinity, alignment: .topLeading)
+        .padding()
     }
+}
+
+#Preview {
+    KeybindingSettings()
 }

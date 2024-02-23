@@ -9,8 +9,9 @@ import SwiftUI
 
 @main
 struct SlackowWallApp: App {
-    @StateObject private var shortcutManager = ShortcutManager.shared
     @Environment(\.openWindow) private var openWindow
+    
+    @StateObject private var shortcutManager = ShortcutManager.shared
     
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
