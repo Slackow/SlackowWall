@@ -21,14 +21,13 @@ struct PreviewShortcutListener: NSViewRepresentable {
 
         override var acceptsFirstResponder: Bool { true }
         override func keyDown(with event: NSEvent) {
-            print(":) \(event.charactersIgnoringModifiers ?? "empty thingy")")
-            switch event.charactersIgnoringModifiers {
-                case "r": key = "r"
-                case "e": key = "e"
-                case "f": key = "f"
-                case "t": key = "t"
-                case "p": key = "p"
-                default: return
+            let k = KeybindingManager.shared
+            switch event.keyCode {
+            case k.runKey: key = "r"
+            case k.resetOneKey: key = "e"
+            case k.resetOthersKey: key = "f"
+            case k.resetAllKey: key = "t"
+            default: return
             }
         }
     }

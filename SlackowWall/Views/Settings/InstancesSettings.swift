@@ -13,12 +13,13 @@ struct InstancesSettings: View {
     @AppStorage("rows") var rows: Int = AppDefaults.rows
     @AppStorage("alignment") var alignment: Alignment = AppDefaults.alignment
     @AppStorage("f1OnJoin") var f1OnJoin: Bool = false
-    @AppStorage("fullscreen") var fullscreen: Bool = false
     
     @AppStorage("moveXOffset") var moveXOffset: String = "0"
     @AppStorage("moveYOffset") var moveYOffset: String = "0"
     
     @State private var stopped = false
+    
+    @State private var moving = false
     
     var body: some View {
         HStack(spacing: 10) {
@@ -70,28 +71,19 @@ struct InstancesSettings: View {
                                 .labelsHidden()
                                 .toggleStyle(.switch)
                         }
-                        Divider()
-                        
-                        HStack {
-                            Text("Play in Fullscreen")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            Toggle("", isOn: $fullscreen)
-                                .labelsHidden()
-                                .toggleStyle(.switch)
-                        }
 
                         Divider()
                         
                         HStack {
                             Button ("Move Over") {
                                 move(forward: true)
-                            }
+                            }.disabled(moving)
                             Button ("Move Back") {
                                 move(forward: false)
-                            }
+                            }.disabled(moving)
                             Button ("Set Pos") {
                                 move(forward: true, direct: true)
-                            }
+                            }.disabled(moving)
                             TextField("X offset", text: $moveXOffset).frame(width: 90)
                             TextField("Y offset", text: $moveYOffset).frame(width: 90)
                         }
@@ -104,11 +96,12 @@ struct InstancesSettings: View {
         }
     }
     func move(forward: Bool, direct: Bool = false) {
+        moving = true
         Task {
             let xOff = "\(direct ? "" : "x+")\((Int32(moveXOffset) ?? 0) * (forward ? 1 : -1))"
             let yOff = "\(direct ? "" : "y+")\((Int32(moveYOffset) ?? 0) * (forward ? 1 : -1))"
             let pids = ShortcutManager.shared.instanceIDs.map({"\($0)"}).joined(separator: ",")
-            if (xOff == "x+0" && yOff == "y+0") || pids.isEmpty { return }
+            if (xOff == "x+0" && yOff == "y+0") || pids.isEmpty { moving = false;return }
             let fullScript = """
                 tell application "System Events"
                     repeat with pid in [\(pids)]
@@ -130,6 +123,7 @@ struct InstancesSettings: View {
                     print("AppleScript Execution Error: \(error)")
                 }
             }
+            moving = false
         }
     }
 }
