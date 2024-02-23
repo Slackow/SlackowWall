@@ -6,13 +6,6 @@
 //
 
 import Foundation
-import KeyboardShortcuts
-import CloudKit
-
-extension KeyboardShortcuts.Name {
-    static let reset = Self("Reset (In Instance)", default: .init(.keypad0, modifiers: []))
-    static let planar = Self("Widen Instance", default: .init(.keypad8, modifiers: []))
-}
 
 final class Utils {
     // https://gist.github.com/swillits/df648e87016772c7f7e5dbed2b345066?permalink_comment_id=3399235
@@ -88,10 +81,4 @@ extension Dictionary where Value : Hashable {
         }
         return newDict
     }
-}
-
-func runScript(myAppleScript: String) -> NSAppleEventDescriptor {
-    var error: NSDictionary?
-    let scriptObject = NSAppleScript(source: myAppleScript)
-    return scriptObject!.executeAndReturnError(&error)
 }

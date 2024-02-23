@@ -159,11 +159,9 @@ class ScreenRecorder: ObservableObject {
     private var contentFilters: [SCContentFilter] {
         var filters: [SCContentFilter] = []
         let instances = ShortcutManager.shared.instanceNums
-        print("Getting Content Filters")
         availableWindows.sort { window, window2 in
             (instances[window.owningApplication?.processID ?? 0] ?? 0) < (instances[window2.owningApplication?.processID ?? 0] ?? 0)
         }
-        print("Sorted windows")
         if !OBSManager.shared.acted {
             OBSManager.shared.storeWindowIDs(info: availableWindows.map { (instances[$0.owningApplication?.processID ?? 0] ?? 0, $0.windowID) })
         }
@@ -187,7 +185,7 @@ class ScreenRecorder: ObservableObject {
 
         // Configure the window content width and height.
         streamConfig.width = 860
-        streamConfig.height = 508
+        streamConfig.height = 495
 
         // Set the capture interval at 15 fps.
         streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: 15)

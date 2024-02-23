@@ -10,6 +10,7 @@
 		4915C3A72AC6A24200B60D1D /* KeybindingSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4915C3A62AC6A24200B60D1D /* KeybindingSettings.swift */; };
 		4915C3A92AC6A86F00B60D1D /* SettingsBarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4915C3A82AC6A86F00B60D1D /* SettingsBarItem.swift */; };
 		4915C3AB2AC7636F00B60D1D /* InstancesSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4915C3AA2AC7636F00B60D1D /* InstancesSettings.swift */; };
+		493A122C2B88723D009BE0B3 /* KeybindingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493A122B2B88723D009BE0B3 /* KeybindingManager.swift */; };
 		496442152AC3467B0074245C /* See.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496442142AC3467B0074245C /* See.swift */; };
 		498FB3CC28987F5B00405753 /* SlackowWallApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498FB3CB28987F5B00405753 /* SlackowWallApp.swift */; };
 		498FB3CE28987F5B00405753 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498FB3CD28987F5B00405753 /* ContentView.swift */; };
@@ -31,7 +32,6 @@
 		ABC355CBA8307F06A7D5A4EE /* lock.wav in Resources */ = {isa = PBXBuildFile; fileRef = ABC35D404984DCF48AD8261C /* lock.wav */; };
 		B63168C52979AE95005958E9 /* PreviewActionsListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63168C42979AE95005958E9 /* PreviewActionsListener.swift */; };
 		B63168C72979E8D7005958E9 /* SettingsCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63168C62979E8D7005958E9 /* SettingsCardView.swift */; };
-		B6324C062979EDF20036BCFF /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = B6324C052979EDF20036BCFF /* KeyboardShortcuts */; };
 		B637DB38296B965D00A73F62 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B637DB37296B965D00A73F62 /* SettingsView.swift */; };
 		B640D52D296F2D7B005041CC /* InstancePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B640D52C296F2D7B005041CC /* InstancePreviewView.swift */; };
 		B6E9E36E2970A42D00DF6466 /* ScreenRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E9E36D2970A42D00DF6466 /* ScreenRecorder.swift */; };
@@ -44,6 +44,7 @@
 		4915C3A62AC6A24200B60D1D /* KeybindingSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeybindingSettings.swift; sourceTree = "<group>"; };
 		4915C3A82AC6A86F00B60D1D /* SettingsBarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsBarItem.swift; sourceTree = "<group>"; };
 		4915C3AA2AC7636F00B60D1D /* InstancesSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstancesSettings.swift; sourceTree = "<group>"; };
+		493A122B2B88723D009BE0B3 /* KeybindingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeybindingManager.swift; sourceTree = "<group>"; };
 		496442142AC3467B0074245C /* See.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = See.swift; sourceTree = "<group>"; };
 		498FB3C828987F5B00405753 /* SlackowWall.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SlackowWall.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		498FB3CB28987F5B00405753 /* SlackowWallApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackowWallApp.swift; sourceTree = "<group>"; };
@@ -79,13 +80,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B6324C062979EDF20036BCFF /* KeyboardShortcuts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		493A122D2B887253009BE0B3 /* keybindings */ = {
+			isa = PBXGroup;
+			children = (
+				493A122B2B88723D009BE0B3 /* KeybindingManager.swift */,
+			);
+			path = keybindings;
+			sourceTree = "<group>";
+		};
 		498FB3BF28987F5B00405753 = {
 			isa = PBXGroup;
 			children = (
@@ -106,6 +114,7 @@
 		498FB3CA28987F5B00405753 /* SlackowWall */ = {
 			isa = PBXGroup;
 			children = (
+				493A122D2B887253009BE0B3 /* keybindings */,
 				B637DB33296B944600A73F62 /* ViewModels */,
 				B637DB32296B943F00A73F62 /* Views */,
 				498FB3CB28987F5B00405753 /* SlackowWallApp.swift */,
@@ -245,7 +254,6 @@
 			);
 			name = SlackowWall;
 			packageProductDependencies = (
-				B6324C052979EDF20036BCFF /* KeyboardShortcuts */,
 			);
 			productName = SlackowWall;
 			productReference = 498FB3C828987F5B00405753 /* SlackowWall.app */;
@@ -276,7 +284,6 @@
 			);
 			mainGroup = 498FB3BF28987F5B00405753;
 			packageReferences = (
-				B6324C042979EDF20036BCFF /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
 			);
 			productRefGroup = 498FB3C928987F5B00405753 /* Products */;
 			projectDirPath = "";
@@ -316,6 +323,7 @@
 				498FB3CE28987F5B00405753 /* ContentView.swift in Sources */,
 				496442152AC3467B0074245C /* See.swift in Sources */,
 				498FB3CC28987F5B00405753 /* SlackowWallApp.swift in Sources */,
+				493A122C2B88723D009BE0B3 /* KeybindingManager.swift in Sources */,
 				498FB3DE289A65B000405753 /* Constants.swift in Sources */,
 				B6E9E36E2970A42D00DF6466 /* ScreenRecorder.swift in Sources */,
 				6D8A74485D326CF633CE55DE /* RoundedCorners.swift in Sources */,
@@ -467,13 +475,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = SlackowWall/SlackowWall.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 94CLS492CD;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -502,13 +510,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = SlackowWall/SlackowWall.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 94CLS492CD;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -553,25 +561,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		B6324C042979EDF20036BCFF /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		B6324C052979EDF20036BCFF /* KeyboardShortcuts */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B6324C042979EDF20036BCFF /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
-			productName = KeyboardShortcuts;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 498FB3C028987F5B00405753 /* Project object */;
 }

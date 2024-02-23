@@ -36,8 +36,6 @@ class ActionListener: NSView {
             if let lockAction = lockAction {
                 lockAction()
             }
-        } else {
-            print("left click detected")
         }
     }
 }

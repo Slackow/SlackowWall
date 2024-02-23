@@ -3,10 +3,7 @@
 //
 
 import SwiftUI
-import ScriptingBridge
 
-import CoreGraphics
-import Cocoa
 
 class PreviewViewModel: ObservableObject {
 
@@ -15,46 +12,41 @@ class PreviewViewModel: ObservableObject {
     @Published var keyPressed: Character?
     
     @AppStorage("f1OnJoin") var f1OnJoin: Bool = false
-    @AppStorage("fullscreen") var fullscreen: Bool = false
 
     @MainActor func openInstance(idx: Int) {
         if (NSApplication.shared.isActive) {
-            let pid = getInstanceProcess(idx: idx)
-            let _ = OBSManager.shared.writeWID(idx: idx + 1)
-            print("User opened")
-            DispatchQueue.global(qos: .default).async {
-                print("Switching Window")
-                let systemEvents = SBApplication(bundleIdentifier: "com.apple.systemevents")!
-                if systemEvents.isRunning {
-                    // Your AppleScript code to interact with System Events goes here
-                } else {
-                    // System Events is not running, so activate it and then execute AppleScript commands
-                    systemEvents.activate()
-                    // Your AppleScript code to interact with System Events goes here
-                }
-                let script = "tell application \"System Events\" to set frontmost of the first process whose unix id is \(pid) to true"
-                var error: NSDictionary?
-                if let scriptObject = NSAppleScript(source: script) {
-                    scriptObject.executeAndReturnError(&error)
-                    if error != nil {
-                        for (key, value) in error! {
-                            print("\(key): \(value)")
-                        }
-                    }
-                    ShortcutManager.shared.sendEscape(pid: pid)
-                    if self.f1OnJoin {
-                        ShortcutManager.shared.sendF1(pid: pid)
-                        print("Sent f1!!")
-                    }
-                    ShortcutManager.shared.states[idx].checkState = .NONE
-                } else {
-                    print("Failed to send apple script")
-                }
-                print("Switched")
-            }
-            print("pressed: \(pid) #(\(idx))")
+            switchToInstance(idx: idx)
             lockedInstances &= ~(1 << idx)
         }
+    }
+    
+    func switchToInstance(idx: Int) {
+        let pid = getInstanceProcess(idx: idx)
+        let _ = OBSManager.shared.writeWID(idx: idx + 1)
+        print("User opened")
+        Task {
+            print("Switching Window")
+            let script = "tell application \"System Events\" to set frontmost of the first process whose unix id is \(pid) to true"
+            var error: NSDictionary?
+            if let scriptObject = NSAppleScript(source: script) {
+                scriptObject.executeAndReturnError(&error)
+                if error != nil {
+                    for (key, value) in error! {
+                        print("\(key): \(value)")
+                    }
+                }
+                ShortcutManager.shared.sendEscape(pid: pid)
+                if self.f1OnJoin {
+                    ShortcutManager.shared.sendF1(pid: pid)
+                    print("Sent f1!!")
+                }
+                ShortcutManager.shared.states[idx].checkState = .NONE
+            } else {
+                print("Failed to send apple script")
+            }
+            print("Switched")
+        }
+        print("pressed: \(pid) #(\(idx))")
     }
     
     func lockInstance(idx: Int) {

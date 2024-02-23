@@ -12,6 +12,8 @@ struct SlackowWallApp: App {
     @StateObject private var shortcutManager = ShortcutManager.shared
     @Environment(\.openWindow) private var openWindow
     
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
@@ -30,5 +32,17 @@ struct SlackowWallApp: App {
             }
         }
         .windowResizability(.contentSize)
+    }
+}
+
+
+class AppDelegate: NSObject, NSApplicationDelegate {
+    var eventMonitor: Any?
+    
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        // Monitor for global key presses
+        eventMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.keyUp]) { event in
+            KeybindingManager.shared.handleGlobalKey(event)
+        }
     }
 }

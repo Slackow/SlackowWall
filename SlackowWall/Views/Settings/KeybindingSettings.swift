@@ -6,14 +6,12 @@
 //
 
 import SwiftUI
-import KeyboardShortcuts
 
 struct KeybindingSettings: View {
     var body: some View {
         SettingsCardView(title: "Global Keybinds") {
             Form {
-                KeyboardShortcuts.Recorder("Reset:", name: .reset)
-                // KeyboardShortcuts.Recorder("Widen Instance:", name: .planar)
+                Text("lol")
                 Button("Reset To Defaults") {
                     UserDefaults.standard.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
                     UserDefaults.standard.synchronize()

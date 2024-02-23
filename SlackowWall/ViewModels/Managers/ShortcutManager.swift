@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import KeyboardShortcuts
 import ScreenCaptureKit
 import AVFoundation
 
@@ -14,39 +13,23 @@ final class ShortcutManager: ObservableObject {
     @Published var instanceNums = [pid_t:Int]()
     @Published var instanceIDs = [pid_t]()
     @Published var states = [InstanceInfo]()
-
+    
     static let shared = ShortcutManager()
 
+    
+    func globalReset() {
+        let apps = NSWorkspace.shared.runningApplications.filter{  $0.activationPolicy == .regular }
+        if let activeWindow = apps.first(where:{$0.isActive}) {
+            NSApplication.shared.activate(ignoringOtherApps: true)
+            let currPID = activeWindow.processIdentifier
+            if instanceIDs.contains(currPID) {
+                resetInstance(pid: currPID)
+            }
+        }
+    }
+    
+    
     init() {
-        KeyboardShortcuts.onKeyUp(for: .reset) { [self] in
-            print("reset")
-            let apps = NSWorkspace.shared.runningApplications.filter{  $0.activationPolicy == .regular }
-            if let activeWindow = apps.first(where:{$0.isActive}) {
-                NSApplication.shared.activate(ignoringOtherApps: true)
-                let currPID = activeWindow.processIdentifier
-                if instanceIDs.contains(currPID) {
-                    resetInstance(pid: currPID)
-                } else {
-                    instanceIDs.forEach { resetInstance(pid: $0) }
-                }
-            }
-        }
-
-        KeyboardShortcuts.onKeyDown(for: .planar) {
-            print("planar")
-            let apps = self.getAllApps()
-            if let currentApp = apps.first(where:{$0.isActive}) {
-                // let args = Utils.processArguments(pid: currentApp.processIdentifier)
-                let pid = currentApp.processIdentifier
-                for state in self.states {
-                    if state.pid == pid { continue }
-                    _ = state.updateState(force: true)
-                    if state.state == UNPAUSED {
-                        self.sendF3Esc(pid: state.pid)
-                    }
-                }
-            }
-        }
 
         getAllApps().forEach {
             print("\($0.localizedName ?? "nil") pid:\($0.processIdentifier) num: \(getInstanceNum(app: $0))")
@@ -185,6 +168,10 @@ final class ShortcutManager: ObservableObject {
     
     func sendF1(pid: pid_t) {
         sendKey(key: 0x7A, pid: pid)
+    }
+    
+    func sendF11(pid: pid_t) {
+        sendKey(key: 0x67, pid: pid)
     }
 
     func sendF3Esc(pid: pid_t) {

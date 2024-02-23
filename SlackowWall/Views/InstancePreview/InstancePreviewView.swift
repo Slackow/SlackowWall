@@ -15,7 +15,7 @@ struct InstancePreviewView: View {
     @AppStorage("rows") var rows: Int = AppDefaults.rows
     @AppStorage("alignment") var alignment: Alignment = AppDefaults.alignment
     
-    @Environment(\.isFocused) var isFocused
+    var isFocused = true
 
     var body: some View {
         Group {

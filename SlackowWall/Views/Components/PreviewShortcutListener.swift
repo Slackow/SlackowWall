@@ -43,4 +43,6 @@ struct PreviewShortcutListener: NSViewRepresentable {
 
     func updateNSView(_ nsView: NSView, context: Context) {
     }
+    
+    
 }

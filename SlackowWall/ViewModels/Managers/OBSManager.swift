@@ -8,6 +8,9 @@ import SwiftUI
 class OBSManager {
 
     static let shared = OBSManager()
+    
+    @AppStorage("obsScriptPath")
+    public var obsScriptPath = "/Users/Shared/slackowwall.txt"
 
     public var acted = false
     private var wids: [Int:CGWindowID] = [:]
@@ -22,7 +25,7 @@ class OBSManager {
     }
     
     public func writeWID(idx: Int) -> CGWindowID {
-        let filePath = "/Users/Shared/slackowwall.txt"
+        let filePath = obsScriptPath
         let wid = wids[idx] ?? 0
         let fileContents = "\(UUID()):\(wid)"
         let fileManager = FileManager.default
