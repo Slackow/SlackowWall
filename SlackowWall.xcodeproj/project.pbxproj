@@ -11,6 +11,7 @@
 		4915C3A92AC6A86F00B60D1D /* SettingsBarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4915C3A82AC6A86F00B60D1D /* SettingsBarItem.swift */; };
 		4915C3AB2AC7636F00B60D1D /* InstancesSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4915C3AA2AC7636F00B60D1D /* InstancesSettings.swift */; };
 		493A122C2B88723D009BE0B3 /* KeybindingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493A122B2B88723D009BE0B3 /* KeybindingManager.swift */; };
+		493A122F2B88FAA0009BE0B3 /* KeybindingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493A122E2B88FAA0009BE0B3 /* KeybindingView.swift */; };
 		496442152AC3467B0074245C /* See.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496442142AC3467B0074245C /* See.swift */; };
 		498FB3CC28987F5B00405753 /* SlackowWallApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498FB3CB28987F5B00405753 /* SlackowWallApp.swift */; };
 		498FB3CE28987F5B00405753 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498FB3CD28987F5B00405753 /* ContentView.swift */; };
@@ -45,6 +46,7 @@
 		4915C3A82AC6A86F00B60D1D /* SettingsBarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsBarItem.swift; sourceTree = "<group>"; };
 		4915C3AA2AC7636F00B60D1D /* InstancesSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstancesSettings.swift; sourceTree = "<group>"; };
 		493A122B2B88723D009BE0B3 /* KeybindingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeybindingManager.swift; sourceTree = "<group>"; };
+		493A122E2B88FAA0009BE0B3 /* KeybindingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeybindingView.swift; sourceTree = "<group>"; };
 		496442142AC3467B0074245C /* See.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = See.swift; sourceTree = "<group>"; };
 		498FB3C828987F5B00405753 /* SlackowWall.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SlackowWall.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		498FB3CB28987F5B00405753 /* SlackowWallApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackowWallApp.swift; sourceTree = "<group>"; };
@@ -215,6 +217,7 @@
 				4915C3A62AC6A24200B60D1D /* KeybindingSettings.swift */,
 				4915C3A82AC6A86F00B60D1D /* SettingsBarItem.swift */,
 				4915C3AA2AC7636F00B60D1D /* InstancesSettings.swift */,
+				493A122E2B88FAA0009BE0B3 /* KeybindingView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -318,6 +321,7 @@
 				B6E9E3702970A52E00DF6466 /* CapturePreview.swift in Sources */,
 				B640D52D296F2D7B005041CC /* InstancePreviewView.swift in Sources */,
 				4915C3AB2AC7636F00B60D1D /* InstancesSettings.swift in Sources */,
+				493A122F2B88FAA0009BE0B3 /* KeybindingView.swift in Sources */,
 				B6E9E3722970A55800DF6466 /* CaptureEngine.swift in Sources */,
 				B637DB38296B965D00A73F62 /* SettingsView.swift in Sources */,
 				498FB3CE28987F5B00405753 /* ContentView.swift in Sources */,

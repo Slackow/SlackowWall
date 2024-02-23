@@ -9,7 +9,7 @@ import SwiftUI
 import AVFoundation
 
 struct PreviewActionsListener: NSViewRepresentable {
-    var lockAction: (()->())?
+    var lockAction: ((NSEvent)->())?
 
     func updateNSView(_ nsView: ActionListener, context: NSViewRepresentableContext<PreviewActionsListener>) {
     }
@@ -20,10 +20,10 @@ struct PreviewActionsListener: NSViewRepresentable {
 }
 
 class ActionListener: NSView {
-    var lockAction: (()->())?
+    var lockAction: (NSEvent) -> ()
     
-    init(lockAction: (()->())?) {
-        self.lockAction = lockAction
+    init(lockAction: ((NSEvent)->())?) {
+        self.lockAction = lockAction ?? {_ in}
         super.init(frame: .zero)
     }
 
@@ -32,10 +32,6 @@ class ActionListener: NSView {
     }
     
     override func mouseDown(with theEvent: NSEvent) {
-        if theEvent.modifierFlags.contains(.shift) {
-            if let lockAction = lockAction {
-                lockAction()
-            }
-        }
+        lockAction(theEvent)
     }
 }

@@ -11,7 +11,10 @@ struct KeybindingSettings: View {
     var body: some View {
         SettingsCardView(title: "Global Keybinds") {
             Form {
-                Text("lol")
+                HStack {
+                    Text("lol")
+                    KeybindingView(keybinding: KeybindingManager.shared.$resetAllKey)
+                }
                 Button("Reset To Defaults") {
                     UserDefaults.standard.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
                     UserDefaults.standard.synchronize()

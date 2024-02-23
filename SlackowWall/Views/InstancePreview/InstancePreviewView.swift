@@ -54,8 +54,10 @@ struct InstancePreviewView: View {
                 screenRecorder.capturePreviews[idx]
                     .aspectRatio(screenRecorder.contentSizes[idx], contentMode: .fit)
                     .roundedCorners(radius: 10, corners: .allCorners)
-                    .overlay(PreviewActionsListener(lockAction: {
-                        viewModel.lockInstance(idx: idx)
+                    .overlay(PreviewActionsListener(lockAction: { key in
+                            if key.modifierFlags.contains(.shift) {
+                                viewModel.lockInstance(idx: idx)
+                            }
                     }))
                     .onHover { isHovered in
                         if isHovered {

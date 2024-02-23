@@ -10,11 +10,11 @@ import SwiftUI
 class KeybindingManager {
     static let shared = KeybindingManager()
     
-    @AppStorage("resetGKey")      var resetGKey:      KeyCode = .keypad0
-    @AppStorage("resetAllKey")    var resetAllKey:    KeyCode = .t
-    @AppStorage("resetOthersKey") var resetOthersKey: KeyCode = .f
-    @AppStorage("runKey")         var runKey:         KeyCode = .r
-    @AppStorage("resetOneKey")    var resetOneKey:    KeyCode = .e
+    @AppStorage("resetGKey")      var resetGKey:      KeyCode? = .keypad0
+    @AppStorage("resetAllKey")    var resetAllKey:    KeyCode? = .t
+    @AppStorage("resetOthersKey") var resetOthersKey: KeyCode? = .f
+    @AppStorage("runKey")         var runKey:         KeyCode? = .r
+    @AppStorage("resetOneKey")    var resetOneKey:    KeyCode? = .e
     
     init() {}
     
@@ -270,20 +270,29 @@ extension KeyCode {
         0x5C: "Num9",
     ]
     
-    static func toName(code: KeyCode) -> String {
-        return nameDict[code] ?? "???"
+    static func toName(code: KeyCode?) -> String {
+        return code.flatMap({nameDict[$0] ?? "???"}) ?? "None"
     }
 }
 
-extension KeyCode: RawRepresentable {
-    public typealias RawValue = Int
-    
-    public init?(rawValue: Int) {
-        guard rawValue >= 0 && rawValue <= KeyCode.max else { return nil }
-        self = KeyCode(rawValue)
+
+
+extension Optional: RawRepresentable where Wrapped: Codable {
+    public var rawValue: String {
+        guard let data = try? JSONEncoder().encode(self),
+              let json = String(data: data, encoding: .utf8)
+        else {
+            return "{}"
+        }
+        return json
     }
-    
-    public var rawValue: Int {
-        return Int(self)
+
+    public init?(rawValue: String) {
+        guard let data = rawValue.data(using: .utf8),
+              let value = try? JSONDecoder().decode(Self.self, from: data)
+        else {
+            return nil
+        }
+        self = value
     }
 }
