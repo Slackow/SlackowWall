@@ -11,27 +11,39 @@ import ScreenCaptureKit
 struct InstancePreviewView: View {
     @StateObject private var screenRecorder = ScreenRecorder()
     @ObservedObject private var instanceManager = InstanceManager.shared
+    
+    @State private var isActive: Bool = true
 
     var body: some View {
         Group {
             if !screenRecorder.capturePreviews.isEmpty {
-                Group {
-                    if instanceManager.alignment == .horizontal {
-                        LazyHGrid(rows: Array(repeating: GridItem(.flexible()), count: instanceManager.rows), spacing: 8) {
-                            content
-                        }
-                    } else {
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: instanceManager.rows), spacing: 8) {
-                            content
+                if isActive {
+                    Group {
+                        if instanceManager.alignment == .horizontal {
+                            LazyHGrid(rows: Array(repeating: GridItem(.flexible()), count: instanceManager.rows), spacing: 8) {
+                                content
+                            }
+                        } else {
+                            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: instanceManager.rows), spacing: 8) {
+                                content
+                            }
                         }
                     }
+                    .background(PreviewShortcutListener(key: $instanceManager.keyPressed))
+                } else {
+                    Text("Window out of focus.")
                 }
-                .background(PreviewShortcutListener(key: $instanceManager.keyPressed))
             } else {
                 Text("No Minecraft Instances Detected")
             }
         }
         .padding()
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            isActive = true
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in
+            isActive = false
+        }
         .onAppear {
             Task {
                 if await screenRecorder.canRecord {
@@ -39,7 +51,7 @@ struct InstancePreviewView: View {
                 }
             }
         }
-        .onChange(of: NSApplication.shared.isActive) { value in
+        .onChange(of: isActive) { value in
             Task {
                 if value {
                     await screenRecorder.resumeCapture()
