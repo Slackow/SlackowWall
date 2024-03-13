@@ -9,10 +9,9 @@ class OBSManager {
 
     static let shared = OBSManager()
     
-    @AppStorage("obsScriptPath")
-    public var obsScriptPath = "/Users/Shared/slackowwall.txt"
+    @AppStorage("obsScriptPath") var obsScriptPath = "/Users/Shared/slackowwall.txt"
 
-    public var acted = false
+    var acted = false
     private var wids: [Int:CGWindowID] = [:]
 
     func storeWindowIDs(info: [(Int, CGWindowID)]) {

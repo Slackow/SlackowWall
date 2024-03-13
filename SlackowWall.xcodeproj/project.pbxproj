@@ -37,6 +37,15 @@
 		B63168C72979E8D7005958E9 /* SettingsCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63168C62979E8D7005958E9 /* SettingsCardView.swift */; };
 		B637DB38296B965D00A73F62 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B637DB37296B965D00A73F62 /* SettingsView.swift */; };
 		B640D52D296F2D7B005041CC /* InstancePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B640D52C296F2D7B005041CC /* InstancePreviewView.swift */; };
+		B6B9FE8D2BA1698D0026C268 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = B6B9FE8C2BA1698D0026C268 /* Sparkle */; };
+		B6B9FE912BA16A570026C268 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B6B9FE902BA16A570026C268 /* Info.plist */; };
+		B6B9FE932BA16CC00026C268 /* UpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B9FE922BA16CC00026C268 /* UpdateManager.swift */; };
+		B6B9FE972BA16D730026C268 /* SettingsSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B9FE942BA16D730026C268 /* SettingsSliderView.swift */; };
+		B6B9FE982BA16D730026C268 /* SettingsToggleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B9FE952BA16D730026C268 /* SettingsToggleView.swift */; };
+		B6B9FE992BA16D730026C268 /* SettingsPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B9FE962BA16D730026C268 /* SettingsPickerView.swift */; };
+		B6B9FE9D2BA16DB00026C268 /* SizeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B9FE9C2BA16DB00026C268 /* SizeReader.swift */; };
+		B6B9FEA02BA16DDC0026C268 /* SettingsOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B9FE9F2BA16DDC0026C268 /* SettingsOption.swift */; };
+		B6B9FEA22BA16EB80026C268 /* UpdateSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B9FEA12BA16EB80026C268 /* UpdateSettings.swift */; };
 		B6E9E36E2970A42D00DF6466 /* ScreenRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E9E36D2970A42D00DF6466 /* ScreenRecorder.swift */; };
 		B6E9E3702970A52E00DF6466 /* CapturePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E9E36F2970A52E00DF6466 /* CapturePreview.swift */; };
 		B6E9E3722970A55800DF6466 /* CaptureEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E9E3712970A55800DF6466 /* CaptureEngine.swift */; };
@@ -76,6 +85,14 @@
 		B63168C62979E8D7005958E9 /* SettingsCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCardView.swift; sourceTree = "<group>"; };
 		B637DB37296B965D00A73F62 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		B640D52C296F2D7B005041CC /* InstancePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstancePreviewView.swift; sourceTree = "<group>"; };
+		B6B9FE902BA16A570026C268 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B6B9FE922BA16CC00026C268 /* UpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateManager.swift; sourceTree = "<group>"; };
+		B6B9FE942BA16D730026C268 /* SettingsSliderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsSliderView.swift; sourceTree = "<group>"; };
+		B6B9FE952BA16D730026C268 /* SettingsToggleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsToggleView.swift; sourceTree = "<group>"; };
+		B6B9FE962BA16D730026C268 /* SettingsPickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsPickerView.swift; sourceTree = "<group>"; };
+		B6B9FE9C2BA16DB00026C268 /* SizeReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SizeReader.swift; sourceTree = "<group>"; };
+		B6B9FE9F2BA16DDC0026C268 /* SettingsOption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsOption.swift; sourceTree = "<group>"; };
+		B6B9FEA12BA16EB80026C268 /* UpdateSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateSettings.swift; sourceTree = "<group>"; };
 		B6E9E36D2970A42D00DF6466 /* ScreenRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecorder.swift; sourceTree = "<group>"; };
 		B6E9E36F2970A52E00DF6466 /* CapturePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapturePreview.swift; sourceTree = "<group>"; };
 		B6E9E3712970A55800DF6466 /* CaptureEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureEngine.swift; sourceTree = "<group>"; };
@@ -86,6 +103,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B6B9FE8D2BA1698D0026C268 /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,6 +131,7 @@
 			children = (
 				6D8A7790675806E7F6736FEA /* Enums */,
 				6D8A7F0DB70FB31BFFA7392F /* Models */,
+				B6B9FE9E2BA16DCC0026C268 /* Protocols */,
 				B637DB33296B944600A73F62 /* ViewModels */,
 				B61D9A7B2B891690007A35CE /* ViewModifiers */,
 				B637DB32296B943F00A73F62 /* Views */,
@@ -122,6 +141,7 @@
 				498FB3D128987F5E00405753 /* Preview Content */,
 				498FB3D428987F5E00405753 /* SlackowWall.entitlements */,
 				490131CA2AA4C23700CE32A5 /* .gitignore */,
+				B6B9FE902BA16A570026C268 /* Info.plist */,
 			);
 			path = SlackowWall;
 			sourceTree = "<group>";
@@ -140,6 +160,7 @@
 				6D8A77391AD6F3FC7C4C3F67 /* ShortcutManager.swift */,
 				493A122B2B88723D009BE0B3 /* KeybindingManager.swift */,
 				6D8A733BE10C0A7DC11C7BCF /* InstanceManager.swift */,
+				B6B9FE922BA16CC00026C268 /* UpdateManager.swift */,
 				6D8A790289C5B8E8251D1E31 /* SoundManager.swift */,
 				6D8A7EB6382B6AEC9A3FF7EF /* OBSManager.swift */,
 			);
@@ -187,6 +208,9 @@
 			children = (
 				B637DB37296B965D00A73F62 /* SettingsView.swift */,
 				B63168C62979E8D7005958E9 /* SettingsCardView.swift */,
+				B6B9FE962BA16D730026C268 /* SettingsPickerView.swift */,
+				B6B9FE942BA16D730026C268 /* SettingsSliderView.swift */,
+				B6B9FE952BA16D730026C268 /* SettingsToggleView.swift */,
 				B61D9A752B890EDA007A35CE /* SettingsLabel.swift */,
 			);
 			path = Main;
@@ -223,7 +247,8 @@
 		B61D9A7B2B891690007A35CE /* ViewModifiers */ = {
 			isa = PBXGroup;
 			children = (
-				B61D9A7C2B8916B1007A35CE /* RemoveSidebar.swift */,
+				B6B9FE9B2BA16DA20026C268 /* Style */,
+				B6B9FE9A2BA16D9D0026C268 /* Util */,
 			);
 			path = ViewModifiers;
 			sourceTree = "<group>";
@@ -256,6 +281,7 @@
 				4915C3A62AC6A24200B60D1D /* KeybindingSettings.swift */,
 				4915C3AA2AC7636F00B60D1D /* InstancesSettings.swift */,
 				493A122E2B88FAA0009BE0B3 /* KeybindingView.swift */,
+				B6B9FEA12BA16EB80026C268 /* UpdateSettings.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -267,6 +293,30 @@
 				B6E9E36F2970A52E00DF6466 /* CapturePreview.swift */,
 			);
 			path = InstancePreview;
+			sourceTree = "<group>";
+		};
+		B6B9FE9A2BA16D9D0026C268 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				B6B9FE9C2BA16DB00026C268 /* SizeReader.swift */,
+			);
+			path = Util;
+			sourceTree = "<group>";
+		};
+		B6B9FE9B2BA16DA20026C268 /* Style */ = {
+			isa = PBXGroup;
+			children = (
+				B61D9A7C2B8916B1007A35CE /* RemoveSidebar.swift */,
+			);
+			path = Style;
+			sourceTree = "<group>";
+		};
+		B6B9FE9E2BA16DCC0026C268 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				B6B9FE9F2BA16DDC0026C268 /* SettingsOption.swift */,
+			);
+			path = Protocols;
 			sourceTree = "<group>";
 		};
 		B6E9E36C2970A41E00DF6466 /* ScreenCapture */ = {
@@ -295,6 +345,7 @@
 			);
 			name = SlackowWall;
 			packageProductDependencies = (
+				B6B9FE8C2BA1698D0026C268 /* Sparkle */,
 			);
 			productName = SlackowWall;
 			productReference = 498FB3C828987F5B00405753 /* SlackowWall.app */;
@@ -325,6 +376,7 @@
 			);
 			mainGroup = 498FB3BF28987F5B00405753;
 			packageReferences = (
+				B6B9FE8B2BA1698D0026C268 /* XCRemoteSwiftPackageReference "Sparkle" */,
 			);
 			productRefGroup = 498FB3C928987F5B00405753 /* Products */;
 			projectDirPath = "";
@@ -342,6 +394,7 @@
 			files = (
 				498FB3D328987F5E00405753 /* Preview Assets.xcassets in Resources */,
 				498FB3D028987F5E00405753 /* Assets.xcassets in Resources */,
+				B6B9FE912BA16A570026C268 /* Info.plist in Resources */,
 				6D8A7BB4FE451CD07D66619E /* click.mp3 in Resources */,
 				ABC355CBA8307F06A7D5A4EE /* lock.wav in Resources */,
 				ABC3540DB7308CEE9DC58EE2 /* reset.wav in Resources */,
@@ -356,7 +409,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				4915C3A72AC6A24200B60D1D /* KeybindingSettings.swift in Sources */,
+				B6B9FEA22BA16EB80026C268 /* UpdateSettings.swift in Sources */,
 				B6E9E3702970A52E00DF6466 /* CapturePreview.swift in Sources */,
+				B6B9FE982BA16D730026C268 /* SettingsToggleView.swift in Sources */,
 				B640D52D296F2D7B005041CC /* InstancePreviewView.swift in Sources */,
 				B61D9A762B890EDA007A35CE /* SettingsLabel.swift in Sources */,
 				4915C3AB2AC7636F00B60D1D /* InstancesSettings.swift in Sources */,
@@ -367,9 +422,11 @@
 				498FB3CE28987F5B00405753 /* ContentView.swift in Sources */,
 				496442152AC3467B0074245C /* See.swift in Sources */,
 				498FB3CC28987F5B00405753 /* SlackowWallApp.swift in Sources */,
+				B6B9FE932BA16CC00026C268 /* UpdateManager.swift in Sources */,
 				493A122C2B88723D009BE0B3 /* KeybindingManager.swift in Sources */,
 				498FB3DE289A65B000405753 /* Constants.swift in Sources */,
 				B6E9E36E2970A42D00DF6466 /* ScreenRecorder.swift in Sources */,
+				B6B9FE972BA16D730026C268 /* SettingsSliderView.swift in Sources */,
 				6D8A74485D326CF633CE55DE /* RoundedCorners.swift in Sources */,
 				6D8A79A5A9E467B05B05C742 /* InstanceManager.swift in Sources */,
 				B63168C52979AE95005958E9 /* PreviewActionsListener.swift in Sources */,
@@ -378,9 +435,12 @@
 				B63168C72979E8D7005958E9 /* SettingsCardView.swift in Sources */,
 				6D8A7C560BB403B8F8251B8D /* ShortcutManager.swift in Sources */,
 				6D8A76DD802153F673BCCB60 /* SoundManager.swift in Sources */,
+				B6B9FE9D2BA16DB00026C268 /* SizeReader.swift in Sources */,
 				6D8A7F78665C71106EE9F8CA /* OBSManager.swift in Sources */,
 				6D8A792C702E9F4144B9784E /* AppDefaults.swift in Sources */,
 				6D8A7183DE266313FBD84A7F /* Alignment.swift in Sources */,
+				B6B9FE992BA16D730026C268 /* SettingsPickerView.swift in Sources */,
+				B6B9FEA02BA16DDC0026C268 /* SettingsOption.swift in Sources */,
 				6D8A7407BACFD24632EAEAF6 /* InstanceState.swift in Sources */,
 				6D8A72A43936AFAEFF91FCF9 /* InstanceInfo.swift in Sources */,
 			);
@@ -522,10 +582,10 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 240312f;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
-				DEVELOPMENT_TEAM = 0000000000;
+				DEVELOPMENT_TEAM = D64G2TTYWM;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -538,7 +598,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.slackow.SlackowWall;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -557,10 +617,10 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 240312f;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
-				DEVELOPMENT_TEAM = 0000000000LS492CD;
+				DEVELOPMENT_TEAM = D64G2TTYWM;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -573,7 +633,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.slackow.SlackowWall;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -605,6 +665,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B6B9FE8B2BA1698D0026C268 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 2.5.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B6B9FE8C2BA1698D0026C268 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B6B9FE8B2BA1698D0026C268 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 498FB3C028987F5B00405753 /* Project object */;
 }

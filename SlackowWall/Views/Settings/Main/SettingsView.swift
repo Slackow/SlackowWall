@@ -42,6 +42,8 @@ struct SettingsView: View {
                 KeybindingSettings()
             case .instances:
                 InstancesSettings()
+            case .updates:
+                UpdateSettings()
             }
         }
     }
