@@ -5,8 +5,8 @@
 import SwiftUI
 
 class AppDefaults {
-    static var rows: Int = 3
-    static var alignment: Alignment = .vertical
+    static var rows: Int = 2
+    static var alignment: Alignment = .horizontal
     static var f1OnJoin: Bool = false
     static var fullscreen: Bool = false
     static var moveXOffset: String = "0"

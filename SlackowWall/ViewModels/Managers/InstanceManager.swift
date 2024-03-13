@@ -9,6 +9,7 @@ class InstanceManager: ObservableObject {
     @AppStorage("rows") var rows: Int = AppDefaults.rows
     @AppStorage("alignment") var alignment: Alignment = AppDefaults.alignment
     @AppStorage("f1OnJoin") var f1OnJoin: Bool = false
+    @AppStorage("onlyOnFocus") var onlyOnFocus: Bool = true
     
     @AppStorage("moveXOffset") var moveXOffset: String = "0"
     @AppStorage("moveYOffset") var moveYOffset: String = "0"
@@ -37,8 +38,17 @@ class InstanceManager: ObservableObject {
         let _ = OBSManager.shared.writeWID(idx: idx + 1)
         print("User opened")
         Task {
+            ShortcutManager.shared.prioritize(instNum: idx)
             print("Switching Window")
-            let script = "tell application \"System Events\" to set frontmost of the first process whose unix id is \(pid) to true"
+            let pids = ShortcutManager.shared.instanceIDs.filter {$0 != pid}.map {"\($0)"}.joined(separator: ",")
+            let script = """
+                tell application "System Events"
+                    repeat with pid in [\(pids)]
+                        set visible of (first process whose unix id is pid) to false
+                    end repeat
+                    set frontmost of the first process whose unix id is \(pid) to true
+                end tell
+                """
             var error: NSDictionary?
             if let scriptObject = NSAppleScript(source: script) {
                 scriptObject.executeAndReturnError(&error)
@@ -72,6 +82,36 @@ class InstanceManager: ObservableObject {
             print("Locking \(idx)")
         } else {
             print("Unlocking \(idx)")
+        }
+    }
+    
+    func copyMods() {
+        ShortcutManager.shared.killAll()
+        guard let statePath = ShortcutManager.shared.states.first?.statePath else { return }
+        let src = URL(filePath: statePath).deletingLastPathComponent().appendingPathComponent("mods")
+        let f = FileManager.default
+        ShortcutManager.shared.states.dropFirst().forEach {
+            let dst = URL(filePath: $0.statePath).deletingLastPathComponent().appendingPathComponent("mods")
+            
+            print("copying all from", src.path, "to", dst.path)
+            
+            do {
+                if f.fileExists(atPath: dst.path) {
+                    try f.removeItem(at: dst)
+                }
+                // Create the destination directory
+                try f.createDirectory(at: dst, withIntermediateDirectories: true, attributes: nil)
+                
+                // Get the list of items in the source directory
+                let items = try f.contentsOfDirectory(atPath: src.path)
+                
+                // Copy each item from the source to the destination
+                for item in items {
+                    let srcItem = src.appendingPathComponent(item)
+                    let dstItem = dst.appendingPathComponent(item)
+                    try f.copyItem(at: srcItem, to: dstItem)
+                }
+            } catch { print(error.localizedDescription) }
         }
     }
 

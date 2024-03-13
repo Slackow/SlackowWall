@@ -20,11 +20,11 @@ struct InstancePreviewView: View {
                 if isActive {
                     Group {
                         if instanceManager.alignment == .horizontal {
-                            LazyHGrid(rows: Array(repeating: GridItem(.flexible()), count: instanceManager.rows), spacing: 8) {
+                            LazyHGrid(rows: Array(repeating: GridItem(.flexible()), count: min(instanceManager.rows, ShortcutManager.shared.states.count)), spacing: 8) {
                                 content
                             }
                         } else {
-                            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: instanceManager.rows), spacing: 8) {
+                            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: min(instanceManager.rows, ShortcutManager.shared.states.count)), spacing: 8) {
                                 content
                             }
                         }
@@ -39,12 +39,17 @@ struct InstancePreviewView: View {
         }
         .padding()
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
-            isActive = true
+            if !isActive {
+                isActive = true
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in
-            isActive = false
+            if isActive && InstanceManager.shared.onlyOnFocus {
+                isActive = false
+            }
         }
         .onAppear {
+            print("STARTED IT!")
             Task {
                 if await screenRecorder.canRecord {
                     await screenRecorder.start()
@@ -56,9 +61,11 @@ struct InstancePreviewView: View {
                 if value {
                     await screenRecorder.resumeCapture()
                 } else {
-                    await screenRecorder.stop()
+                    print("What!!")
                 }
+                print("AHHH!!!!!")
             }
+            print("TASK!")
         }
     }
 

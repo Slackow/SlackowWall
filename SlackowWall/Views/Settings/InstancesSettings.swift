@@ -69,6 +69,25 @@ struct InstancesSettings: View {
                     Divider()
                     
                     HStack {
+                        Text("Pause capturing instances when OOF")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Toggle("", isOn: $instanceManager.onlyOnFocus)
+                            .labelsHidden()
+                            .toggleStyle(.switch)
+                    }
+                    
+                    Divider()
+                    
+                    HStack {
+                        Button(action: { instanceManager.copyMods() }) {
+                            Text("Copy Mods from first instance to all")
+                        }
+                        .disabled(shortcutManager.instanceIDs.count < 2)
+                    }
+                    
+                    Divider()
+                    
+                    HStack {
                         Button(action: { instanceManager.move(forward: true) }) {
                             Text("Move Over")
                         }

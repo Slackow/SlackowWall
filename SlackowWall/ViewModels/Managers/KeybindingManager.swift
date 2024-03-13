@@ -15,6 +15,7 @@ class KeybindingManager {
     @AppStorage("resetOthersKey") var resetOthersKey: KeyCode? = .f
     @AppStorage("runKey")         var runKey:         KeyCode? = .r
     @AppStorage("resetOneKey")    var resetOneKey:    KeyCode? = .e
+    @AppStorage("lockKey")        var lockKey:        KeyCode? = .c
     
     init() {}
     
@@ -271,7 +272,7 @@ extension KeyCode {
     ]
     
     static func toName(code: KeyCode?) -> String {
-        return code.flatMap({nameDict[$0] ?? "???"}) ?? "None"
+        return code.flatMap({nameDict[$0] ?? "Unknown"}) ?? "None"
     }
 }
 

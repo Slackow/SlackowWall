@@ -12,9 +12,38 @@ struct KeybindingSettings: View {
         VStack(spacing: 12) {
             SettingsCardView {
                 Form {
+                    HStack {
+                        Text("Reset (global)")
+                        Spacer()
+                        KeybindingView(keybinding: KeybindingManager.shared.$resetGKey)
+                    }
+                    HStack {
+                        Text("Reset all")
+                        Spacer()
+                        KeybindingView(keybinding: KeybindingManager.shared.$resetAllKey)
+                    }
+                    HStack {
+                        Text("Run and reset others")
+                        Spacer()
+                        KeybindingView(keybinding: KeybindingManager.shared.$resetOthersKey)
+                    }
+                    HStack {
+                        Text("Reset hovered")
+                        Spacer()
+                        KeybindingView(keybinding: KeybindingManager.shared.$resetOneKey)
+                    }
+                    HStack {
+                        Text("Run")
+                        Spacer()
+                        KeybindingView(keybinding: KeybindingManager.shared.$runKey)
+                    }
                     Button(action: {
-                        UserDefaults.standard.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
-                        UserDefaults.standard.synchronize()
+                        KeybindingManager.shared.resetGKey = .keypad0
+                        KeybindingManager.shared.resetAllKey = .t
+                        KeybindingManager.shared.resetOneKey = .e
+                        KeybindingManager.shared.resetOthersKey = .f
+                        KeybindingManager.shared.runKey = .r
+                        KeybindingManager.shared.lockKey = .c
                     }) {
                         Text("Reset To Defaults")
                     }

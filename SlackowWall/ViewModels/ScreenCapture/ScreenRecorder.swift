@@ -68,9 +68,12 @@ class ScreenRecorder: ObservableObject {
         get async {
             do {
                 // If the app doesn't have Screen Recording permission, this call generates an exception.
+                print("Checking for permission to screen")
                 try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+                print("verdict achieved! true")
                 return true
             } catch {
+                print("verdict achieved! false")
                 return false
             }
         }
