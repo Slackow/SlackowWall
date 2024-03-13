@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct ContentView: View {
+    @ObservedObject private var shortcutManager = ShortcutManager.shared
+    @ObservedObject private var updateManager = UpdateManager.shared
+    
     var body: some View {
         InstancePreviewView()
     }

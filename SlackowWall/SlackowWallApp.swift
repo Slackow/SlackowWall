@@ -10,9 +10,6 @@ import SwiftUI
 @main
 struct SlackowWallApp: App {
     @Environment(\.openWindow) private var openWindow
-    
-    @StateObject private var shortcutManager = ShortcutManager.shared
-    
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     var body: some Scene {
@@ -31,6 +28,11 @@ struct SlackowWallApp: App {
                 }
                 .keyboardShortcut(",", modifiers: .command)
             }
+            CommandGroup(after: .appInfo, addition: {
+                Button("Check for updates...") {
+                    UpdateManager.shared.checkForUpdates()
+                }
+            })
         }
         .windowResizability(.contentSize)
     }
