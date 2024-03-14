@@ -5,20 +5,15 @@
 //  Created by Kihron on 1/12/23.
 //
 
-import Foundation
 import ScreenCaptureKit
 import Combine
 import OSLog
 import SwiftUI
 
-@MainActor
-class ScreenRecorder: ObservableObject {
-
-    private let logger = Logger()
-    private var shortcutManager = ShortcutManager.shared
-
-    @Published var isRunning = false
-
+@MainActor class ScreenRecorder: ObservableObject {
+    @ObservedObject private var shortcutManager = ShortcutManager.shared
+    @ObservedObject private var obsManager = OBSManager.shared
+    
     @Published var selectedDisplay: SCDisplay? {
         didSet {
             updateEngine()
@@ -30,37 +25,34 @@ class ScreenRecorder: ObservableObject {
             updateEngine()
         }
     }
-
+    
     @Published var isAppExcluded = true {
         didSet {
             updateEngine()
         }
     }
-
+    
+    @Published var isRunning = false
     @Published var contentSizes: [CGSize] = []
-    private var scaleFactor: Int {
-        Int(NSScreen.main?.backingScaleFactor ?? 2)
-    }
 
     /// A view that renders the screen content.
-    var capturePreviews: [CapturePreview] = []
+    @Published var capturePreviews: [CapturePreview] = []
 
-    private var availableApps = [SCRunningApplication]()
     @Published private(set) var availableDisplays = [SCDisplay]()
     @Published private(set) var availableWindows = [SCWindow]()
-
-    @Published var isAppAudioExcluded = false {
-        didSet {
-            updateEngine()
-        }
-    }
-    // A value that specifies how often to retrieve calculated audio levels.
+    
+    private var availableApps = [SCRunningApplication]()
+    private var windowFilters: [CGWindowID: SCContentFilter] = [:]
 
     // The object that manages the SCStream.
     private let captureEngine = CaptureEngine()
 
     private var isSetup = false
 
+    private let logger = Logger()
+    
+    static let shared = ScreenRecorder()
+    
     // Combine subscribers.
     private var subscriptions = Set<AnyCancellable>()
 
@@ -78,26 +70,54 @@ class ScreenRecorder: ObservableObject {
             }
         }
     }
-
-    func monitorAvailableContent() async {
-        guard !isSetup else {
-            return
+    
+    private var contentFilters: [SCContentFilter] {
+        var filters: [SCContentFilter] = []
+        let instances = shortcutManager.instanceNums
+        
+        availableWindows.sort { window, window2 in
+            (instances[window.owningApplication?.processID ?? 0] ?? 0) < (instances[window2.owningApplication?.processID ?? 0] ?? 0)
         }
-
-        // Refresh the lists of capturable content.
-        await refreshAvailableContent()
-
-        Timer.publish(every: 3, on: .main, in: .common).autoconnect().sink { [weak self] _ in
-            guard let self = self else {
-                return
-            }
-            Task {
-                await self.refreshAvailableContent()
+        
+        if !obsManager.acted {
+            obsManager.storeWindowIDs(info: availableWindows.map { (instances[$0.owningApplication?.processID ?? 0] ?? 0, $0.windowID) })
+        }
+        
+        for window in availableWindows {
+            if windowFilters[window.windowID] == nil {
+                let filter = SCContentFilter(desktopIndependentWindow: window)
+                windowFilters[window.windowID] = filter
+                filters.append(filter)
+                print("Appended filter: \(window.displayName) \(window.owningApplication?.processID ?? 0)")
             }
         }
-        .store(in: &subscriptions)
+        
+        return filters
     }
-
+    
+    private var streamConfiguration: SCStreamConfiguration {
+        let streamConfig = SCStreamConfiguration()
+        
+        // Configure audio capture.
+        streamConfig.capturesAudio = false
+        streamConfig.showsCursor = false
+        streamConfig.excludesCurrentProcessAudio = false
+        streamConfig.scalesToFit = true
+        
+        // Configure the window content width and height.
+        streamConfig.width = 860
+        streamConfig.height = 495
+        
+        // Set the capture interval at 15 fps.
+        streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: 15)
+        
+        // Increase the depth of the frame queue to ensure high fps at the expense of increasing
+        // the memory footprint of WindowServer.
+        streamConfig.queueDepth = 6
+        
+        return streamConfig
+    }
+    
     /// Starts capturing screen content.
     func start() async {
         // Exit early if already running.
@@ -107,7 +127,7 @@ class ScreenRecorder: ObservableObject {
 
         if !isSetup {
             // Starting polling for available screen content.
-            await monitorAvailableContent()
+            await refreshAvailableContent()
             isSetup = true
         }
 
@@ -137,12 +157,12 @@ class ScreenRecorder: ObservableObject {
         }
     }
 
-    /// Stops capturing screen content.
-    func stop() async {
+    // Stops capturing screen content.
+    func stop(removeStreams: Bool = false) async {
         guard isRunning else {
             return
         }
-        await captureEngine.stopCapture()
+        await captureEngine.stopCapture(removeStreams: removeStreams)
         isRunning = false
     }
     
@@ -154,8 +174,30 @@ class ScreenRecorder: ObservableObject {
         await captureEngine.resumeCapture()
         isRunning = true
     }
+    
+    func resetAndStartCapture() async {
+        // Stop the current capture if it's running
+        if isRunning {
+            await stop(removeStreams: true)
+        }
+        
+        shortcutManager.fetchInstanceInfo()
+        
+        // Reset the properties to their initial state
+        capturePreviews.removeAll()
+        contentSizes.removeAll()
+        
+        isSetup = false
+        
+        availableWindows.removeAll()
+        availableDisplays.removeAll()
+        windowFilters.removeAll()
+        
+        // Start the capture process again
+        await start()
+    }
 
-    /// - Tag: UpdateCaptureConfig
+    // - Tag: UpdateCaptureConfig
     private func updateEngine() {
         guard isRunning else {
             return
@@ -167,52 +209,12 @@ class ScreenRecorder: ObservableObject {
         }
     }
 
-    /// - Tag: UpdateFilter
-    private var contentFilters: [SCContentFilter] {
-        var filters: [SCContentFilter] = []
-        let instances = ShortcutManager.shared.instanceNums
-        availableWindows.sort { window, window2 in
-            (instances[window.owningApplication?.processID ?? 0] ?? 0) < (instances[window2.owningApplication?.processID ?? 0] ?? 0)
-        }
-        if !OBSManager.shared.acted {
-            OBSManager.shared.storeWindowIDs(info: availableWindows.map { (instances[$0.owningApplication?.processID ?? 0] ?? 0, $0.windowID) })
-        }
-        for window in availableWindows {
-            filters.append(SCContentFilter(desktopIndependentWindow: window))
-            print("Appended filter: \(window.displayName) \(window.owningApplication?.processID ?? 0)")
-        }
-
-        return filters
-    }
-
-    private var streamConfiguration: SCStreamConfiguration {
-
-        let streamConfig = SCStreamConfiguration()
-
-        // Configure audio capture.
-        streamConfig.capturesAudio = false
-        streamConfig.showsCursor = false
-        streamConfig.excludesCurrentProcessAudio = isAppAudioExcluded
-        streamConfig.scalesToFit = true
-
-        // Configure the window content width and height.
-        streamConfig.width = 860
-        streamConfig.height = 495
-
-        // Set the capture interval at 15 fps.
-        streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: 15)
-
-        // Increase the depth of the frame queue to ensure high fps at the expense of increasing
-        // the memory footprint of WindowServer.
-        streamConfig.queueDepth = 6
-
-        return streamConfig
-    }
-
-    /// - Tag: GetAvailableContent
+    // - Tag: GetAvailableContent
     private func refreshAvailableContent() async {
         do {
             // Retrieve the available screen content to capture.
+            //ShortcutManager.shared.fetchInstanceInfo()
+            
             let availableContent = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
             availableDisplays = availableContent.displays
 
@@ -236,28 +238,7 @@ class ScreenRecorder: ObservableObject {
     private func filterWindows(_ windows: [SCWindow]) -> [SCWindow] {
         // Remove all windows that are not Minecraft Instances
         windows
-            .filter({ $0.displayName.contains( "Minecraft") && shortcutManager.instanceIDs.contains($0.owningApplication?.processID ?? 0) })
-    }
-}
-
-extension SCWindow {
-    var displayName: String {
-        switch (owningApplication, title) {
-        case (.some(let application), .some(let title)):
-            return "\(application.applicationName): \(title)"
-        case (.none, .some(let title)):
-            return title
-        case (.some(let application), .none):
-            return "\(application.applicationName): \(windowID)"
-        default:
-            return ""
-        }
-    }
-}
-
-extension SCDisplay {
-    var displayName: String {
-        "Display: \(width) x \(height)"
+            .filter({ $0.displayName.contains("Minecraft") && shortcutManager.instanceIDs.contains($0.owningApplication?.processID ?? 0) })
     }
 }
 

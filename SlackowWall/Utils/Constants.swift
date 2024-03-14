@@ -72,13 +72,3 @@ final class Utils {
         return argv.count == argc ? argv : nil
     }
 }
-extension Dictionary where Value : Hashable {
-
-    func swapKeyValues() -> [Value : Key] {
-        var newDict = [Value : Key]()
-        for (key, value) in self {
-            newDict[value] = key
-        }
-        return newDict
-    }
-}

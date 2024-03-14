@@ -13,8 +13,15 @@ struct SlackowWallApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     var body: some Scene {
-        WindowGroup {
+        Window("SlackowWall", id: "slackowwall-window") {
             ContentView()
+                .toolbar {
+                    ToolbarItem(placement: .automatic) {
+                        Button(action: { Task { await ScreenRecorder.shared.resetAndStartCapture() }}) {
+                            Image(systemName: "arrow.clockwise")
+                        }
+                    }
+                }
         }
         
         Window("Settings", id: "settings-window") {
@@ -42,10 +49,18 @@ struct SlackowWallApp: App {
 class AppDelegate: NSObject, NSApplicationDelegate {
     var eventMonitor: Any?
     
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        true
+    }
+    
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Monitor for global key presses
         eventMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.keyUp]) { event in
             KeybindingManager.shared.handleGlobalKey(event)
         }
+    }
+    
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        NSWindow.allowsAutomaticWindowTabbing = false
     }
 }

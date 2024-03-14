@@ -7,15 +7,15 @@
 
 import SwiftUI
 
-class KeybindingManager {
-    static let shared = KeybindingManager()
-    
+class KeybindingManager: ObservableObject {
     @AppStorage("resetGKey")      var resetGKey:      KeyCode? = .keypad0
     @AppStorage("resetAllKey")    var resetAllKey:    KeyCode? = .t
     @AppStorage("resetOthersKey") var resetOthersKey: KeyCode? = .f
     @AppStorage("runKey")         var runKey:         KeyCode? = .r
     @AppStorage("resetOneKey")    var resetOneKey:    KeyCode? = .e
     @AppStorage("lockKey")        var lockKey:        KeyCode? = .c
+    
+    static let shared = KeybindingManager()
     
     init() {}
     
@@ -24,9 +24,8 @@ class KeybindingManager {
             ShortcutManager.shared.globalReset()
         }
     }
-    
-    
 }
+
 typealias KeyCode = UInt16
 
 extension KeyCode {
@@ -273,27 +272,5 @@ extension KeyCode {
     
     static func toName(code: KeyCode?) -> String {
         return code.flatMap({nameDict[$0] ?? "Unknown"}) ?? "None"
-    }
-}
-
-
-
-extension Optional: RawRepresentable where Wrapped: Codable {
-    public var rawValue: String {
-        guard let data = try? JSONEncoder().encode(self),
-              let json = String(data: data, encoding: .utf8)
-        else {
-            return "{}"
-        }
-        return json
-    }
-
-    public init?(rawValue: String) {
-        guard let data = rawValue.data(using: .utf8),
-              let value = try? JSONDecoder().decode(Self.self, from: data)
-        else {
-            return nil
-        }
-        self = value
     }
 }

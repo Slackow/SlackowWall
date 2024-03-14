@@ -8,11 +8,20 @@
 import SwiftUI
 
 struct ContentView: View {
-    @ObservedObject private var shortcutManager = ShortcutManager.shared
+    @ObservedObject private var instanceManager = InstanceManager.shared
     @ObservedObject private var updateManager = UpdateManager.shared
     
     var body: some View {
-        InstancePreviewView()
+        InstancesGridView()
+            .sheet(isPresented: $updateManager.appWasUpdated) {
+                UpdateMessageView(title: "App Updated")
+            }
+            .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+                instanceManager.isActive = true
+            }
+            .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in
+                instanceManager.isActive = false
+            }
     }
 }
 

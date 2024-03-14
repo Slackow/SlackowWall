@@ -18,6 +18,7 @@ class InstanceManager: ObservableObject {
     @Published var hoveredInstance: Int?
     @Published var keyPressed: Character?
     
+    @Published var isActive: Bool = true
     @Published var moving = false
     
     static let shared = InstanceManager()

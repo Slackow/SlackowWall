@@ -58,23 +58,11 @@ struct InstancesSettings: View {
                     }
                     Divider()
                     
-                    HStack {
-                        Text("Press F1 on Join:")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        Toggle("", isOn: $instanceManager.f1OnJoin)
-                            .labelsHidden()
-                            .toggleStyle(.switch)
-                    }
+                    SettingsToggleView(title: "Press F1 on Join:", option: $instanceManager.f1OnJoin)
                     
                     Divider()
                     
-                    HStack {
-                        Text("Pause capturing instances when OOF")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        Toggle("", isOn: $instanceManager.onlyOnFocus)
-                            .labelsHidden()
-                            .toggleStyle(.switch)
-                    }
+                    SettingsToggleView(title: "Pause on Lost Focus", description: "Pauses the capture of the instances when SlackowWall is not the focused window.", option: $instanceManager.onlyOnFocus)
                     
                     Divider()
                     

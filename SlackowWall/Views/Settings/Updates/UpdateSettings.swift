@@ -49,16 +49,16 @@ struct UpdateSettings: View {
         .onChange(of: updateManager.downloadAutomatically) { value in
             updateManager.automaticallyDownloadUpdates = value
         }
-//        .sheet(isPresented: $showReleaseNotes) {
-//            UpdateMessageView(title: L10n.Updater.ReleaseNotes.title)
-//        }
+        .sheet(isPresented: $showReleaseNotes) {
+            UpdateMessageView(title: "Release Notes")
+        }
         .toolbar {
-//            ToolbarItem {
-//                Button(action: { showReleaseNotes.toggle() }) {
-//                    Image(systemName: "doc.plaintext")
-//                }
-//                .help(L10n.Updater.Button.showReleaseNotes)
-//            }
+            ToolbarItem {
+                Button(action: { showReleaseNotes.toggle() }) {
+                    Image(systemName: "doc.plaintext")
+                }
+                .help("Show release notes")
+            }
             
             ToolbarItem(placement: .primaryAction) {
                 Button(action: { updateManager.checkForUpdates() }) {

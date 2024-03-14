@@ -39,7 +39,7 @@ struct SettingsView: View {
     detail: {
         switch selectedSettingsBarItem {
             case .keybindings:
-                KeybindingSettings()
+                KeybindingsSettings()
             case .instances:
                 InstancesSettings()
             case .updates:

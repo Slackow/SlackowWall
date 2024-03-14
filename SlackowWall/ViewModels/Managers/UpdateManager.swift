@@ -31,7 +31,7 @@ final class UpdateManager: ObservableObject {
     private var currentReleaseNotes: String = ""
     private var majorReleaseNotes: String = ""
     
-    //@Published var releaseNotes: [ReleaseEntry] = []
+    @Published var releaseNotes: [ReleaseEntry] = []
     
     var automaticallyCheckForUpdates: Bool {
         get {
@@ -77,7 +77,7 @@ final class UpdateManager: ObservableObject {
         }
         
         Task {
-            //await fetchLatestReleaseNotes()
+            await fetchLatestReleaseNotes()
             await checkForAppUpdated()
         }
     }
@@ -97,28 +97,28 @@ final class UpdateManager: ObservableObject {
         }
     }
     
-//    @MainActor private func fetchLatestReleaseNotes() async {
-//        guard let url = URL(string: "https://api.github.com/repos/Slackow/SlackowWall/releases?per_page=10") else { return }
-//
-//        do {
-//            let decoder = JSONDecoder()
-//            decoder.dateDecodingStrategy = .iso8601
-//            
-//            let (data, _) = try await URLSession.shared.data(from: url)
-//            let allReleaseNotes = try decoder.decode([ReleaseEntry].self, from: data)
-//            
-//            guard let appVersionComponents = appVersion?.split(separator: ".").map(String.init), appVersionComponents.count >= 2 else { return }
-//            let minorVersion = appVersionComponents[1]
-//            
-//            // Filter releases with the same minor version
-//            let filteredReleaseNotes = allReleaseNotes.filter { releaseEntry in
-//                let versionComponents = releaseEntry.tagName.split(separator: ".").map(String.init)
-//                return versionComponents.count >= 2 && versionComponents[1] == minorVersion
-//            }
-//            
-//            self.releaseNotes = filteredReleaseNotes
-//        } catch {
-//            print(error.localizedDescription)
-//        }
-//    }
+    @MainActor private func fetchLatestReleaseNotes() async {
+        guard let url = URL(string: "https://api.github.com/repos/Slackow/SlackowWall/releases?per_page=10") else { return }
+
+        do {
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let allReleaseNotes = try decoder.decode([ReleaseEntry].self, from: data)
+            
+            guard let appVersionComponents = appVersion?.split(separator: ".").map(String.init), appVersionComponents.count >= 2 else { return }
+            let minorVersion = appVersionComponents[1]
+            
+            // Filter releases with the same minor version
+            let filteredReleaseNotes = allReleaseNotes.filter { releaseEntry in
+                let versionComponents = releaseEntry.tagName.split(separator: ".").map(String.init)
+                return versionComponents.count >= 2 && versionComponents[1] == minorVersion
+            }
+            
+            self.releaseNotes = filteredReleaseNotes
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
 }

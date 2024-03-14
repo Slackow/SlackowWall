@@ -15,7 +15,50 @@ final class ShortcutManager: ObservableObject {
     @Published var states = [InstanceInfo]()
     
     static let shared = ShortcutManager()
+    
+    init() {
+        fetchInstanceInfo()
 
+        // updateStates()
+    }
+    
+    func fetchInstanceInfo() {
+        fetchInstanceNums()
+        fetchInstanceIDs()
+    }
+    
+    private func fetchInstanceNums() {
+        instanceNums.removeAll()
+        
+        getAllApps().forEach {
+            print("\($0.localizedName ?? "nil") pid:\($0.processIdentifier) num: \(getInstanceNum(app: $0))")
+            let num = getInstanceNum(app: $0)
+            if num > 0 {
+                print("name \($0.localizedName ?? "")")
+            }
+        }
+    }
+    
+    private func fetchInstanceIDs() {
+        instanceIDs.removeAll()
+        
+        let byInstanceNum = instanceNums.swapKeyValues()
+        instanceIDs = Array((1..<byInstanceNum.count).map({ byInstanceNum[$0] ?? 0 }))
+        states = instanceIDs.map { pid in
+            let data = InstanceInfo(pid: pid)
+            if let args = Utils.processArguments(pid: pid) {
+                if let nativesArg = args.first(where: {$0.starts(with: "-Djava.library.path=")}) {
+                    let arg = nativesArg.dropLast("/natives".count)
+                        .dropFirst("-Djava.library.path=".count)
+                    data.statePath = "\(arg)/.minecraft/wpstateout.txt"
+                }
+            }
+            return data
+        }
+        
+        print(instanceIDs)
+        print(states)
+    }
     
     func globalReset() {
         let apps = NSWorkspace.shared.runningApplications.filter{  $0.activationPolicy == .regular }
@@ -45,37 +88,6 @@ final class ShortcutManager: ObservableObject {
                 }
             }
         }
-    }
-    
-    
-    init() {
-
-        getAllApps().forEach {
-            print("\($0.localizedName ?? "nil") pid:\($0.processIdentifier) num: \(getInstanceNum(app: $0))")
-            let num = getInstanceNum(app: $0)
-            if num > 0 {
-                print("name \($0.localizedName ?? "")")
-            }
-        }
-
-        if instanceIDs.isEmpty {
-            let byInstanceNum = instanceNums.swapKeyValues()
-            instanceIDs = Array((1..<byInstanceNum.count).map({ byInstanceNum[$0] ?? 0 }))
-            states = instanceIDs.map { pid in
-                let data = InstanceInfo(pid: pid)
-                if let args = Utils.processArguments(pid: pid) {
-                    if let nativesArg = args.first(where: {$0.starts(with: "-Djava.library.path=")}) {
-                        let arg = nativesArg.dropLast("/natives".count)
-                                .dropFirst("-Djava.library.path=".count)
-                        data.statePath = "\(arg)/.minecraft/wpstateout.txt"
-                    }
-                }
-                return data
-            }
-            print(instanceIDs)
-            print(states)
-        }
-        // updateStates()
     }
 
     /// kills all minecraft instances
@@ -159,6 +171,7 @@ final class ShortcutManager: ObservableObject {
                     sentF3 = true
                 }
             }
+            
             if !sentF3 && stateData.updateState() {
                 print(stateData.description)
                 if stateData.state == TITLE {} // if title
@@ -172,6 +185,7 @@ final class ShortcutManager: ObservableObject {
                     stateData.checkState = .NONE
                 }
             }
+            
             if !sentF3 && stateData.checkState == .ENSURING {
                 print(stateData.description)
                 let _ = stateData.updateState()
@@ -182,8 +196,8 @@ final class ShortcutManager: ObservableObject {
                     stateData.untilF3 = 25
                 }
             }
-
         }
+        
         DispatchQueue.main.asyncAfter(deadline: .now().advanced(by: DispatchTimeInterval.milliseconds(30))) {
             //print(self.states.map {"\($0.state) \($0.logRead)"})
             self.updateStates()

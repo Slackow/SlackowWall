@@ -10,54 +10,61 @@ import SwiftUI
 struct KeybindingView: View {
     @Binding var keybinding: UInt16?
     @FocusState var isFocused: Bool
+    @State private var circleColor: Color = .gray
     
-    var textName: String {
+    private var textName: String {
         KeyCode.toName(code: keybinding)
     }
     
-    @State
-    var circleColor: Color = .gray
     
     var body: some View {
-        ZStack {
-            Rectangle()
-                .roundedCorners(radius: 5, corners: .allCorners)
-                .foregroundColor(.init(red: 0.25, green: 0.25, blue: 0.25))
-            
-            HStack {
-                Spacer()
+        ZStack(alignment: .trailing) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 5)
+                    .foregroundColor(.init(red: 0.25, green: 0.25, blue: 0.25))
+                
                 Text(isFocused ? "> \(textName) <" : textName)
                     .foregroundStyle(isFocused ? .gray : .white)
-                Spacer()
+                    .frame(maxWidth: .infinity, alignment: .center)
+            }
+            .focusable(true)
+            .focused($isFocused)
+            
+            Button(action: {
+                keybinding = nil
+                isFocused = false
+            }) {
                 ZStack {
                     Circle()
                         .fill(circleColor)
-                        .frame(width: 15)
+                        .frame(width: 16)
+                    
                     Image(systemName: "xmark")
-                        .font(.system(size: 9, weight: .bold, design: .rounded))
+                        .font(.caption2)
+                        .fontWeight(.bold)
                         .foregroundColor(.black)
-                }.padding(2)
-                    .overlay(PreviewActionsListener(lockAction: {_ in
-                        keybinding = nil
-                    }))
-                    .onHover(perform: { hovering in
-                        circleColor = hovering ? .white : .gray
-                    })
+                }
             }
-        }.frame(width: 100, height: 22)
-            .focusable(true)
-            .focused($isFocused)
-            .onAppear {
+            .buttonStyle(.plain)
+            .padding(.horizontal, 4)
+            .onHover(perform: { hovering in
+                circleColor = hovering ? .white : .gray
+            })
+        }
+        .frame(width: 100, height: 22)
+        .onAppear {
             // Setup local key event monitoring
             _ = NSEvent.addLocalMonitorForEvents(matching: [.keyDown]) { event in
                 if !isFocused { return event }
-                keybinding = event.keyCode
                 print("Set Key to:")
+                keybinding = event.keyCode
+                isFocused = false
                 return nil // Return the event for further processing
             }
         }
     }
 }
+
 #Preview {
     VStack {
         KeybindingView(keybinding: KeybindingManager.shared.$resetGKey)
