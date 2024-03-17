@@ -13,10 +13,6 @@ struct InstancesGridView: View {
     @ObservedObject private var screenRecorder = ScreenRecorder.shared
     @ObservedObject private var instanceManager = InstanceManager.shared
     
-    private var showPreviews: Bool {
-        return instanceManager.onlyOnFocus ? instanceManager.isActive : true
-    }
-    
     private var gridItems: [GridItem] {
         Array(repeating: GridItem(.flexible()), count: min(instanceManager.rows, shortcutManager.states.count))
     }
@@ -28,22 +24,18 @@ struct InstancesGridView: View {
                     Text("No Minecraft Instances Detected")
                 }
             } else {
-                if showPreviews {
-                    Group {
-                        if instanceManager.alignment == .horizontal {
-                            LazyHGrid(rows: gridItems, spacing: 8) {
-                                gridContent
-                            }
-                        } else {
-                            LazyVGrid(columns: gridItems, spacing: 8) {
-                                gridContent
-                            }
+                Group {
+                    if instanceManager.alignment == .horizontal {
+                        LazyHGrid(rows: gridItems, spacing: 8) {
+                            gridContent
+                        }
+                    } else {
+                        LazyVGrid(columns: gridItems, spacing: 8) {
+                            gridContent
                         }
                     }
-                    .background(PreviewShortcutListener(key: $instanceManager.keyPressed))
-                } else {
-                    Text("Window out of focus.")
                 }
+                .background(PreviewShortcutListener(key: $instanceManager.keyPressed))
             }
         }
         .padding()
@@ -54,9 +46,15 @@ struct InstancesGridView: View {
             }
         }
         .onChange(of: instanceManager.isActive) { value in
-            if value && instanceManager.onlyOnFocus {
-                Task {
-                    await screenRecorder.resumeCapture()
+            if instanceManager.onlyOnFocus {
+                if value {
+                    Task {
+                        await screenRecorder.resumeCapture()
+                    }
+                } else {
+                    Task {
+                        await screenRecorder.stop()
+                    }
                 }
             }
         }
@@ -65,7 +63,10 @@ struct InstancesGridView: View {
     private var gridContent: some View {
         ForEach(screenRecorder.capturePreviews.indices, id: \.self) { idx in
             if idx < screenRecorder.capturePreviews.count {
-                CapturePreviewView(preview: screenRecorder.capturePreviews[idx], size: screenRecorder.contentSizes[idx], idx: idx)
+                ZStack {
+                    Text("Instance \(idx + 1)")
+                    CapturePreviewView(preview: screenRecorder.capturePreviews[idx], size: screenRecorder.contentSizes[idx], idx: idx)
+                }
             }
         }
     }

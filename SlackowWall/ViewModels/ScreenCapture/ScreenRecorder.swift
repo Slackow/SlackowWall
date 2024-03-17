@@ -80,7 +80,8 @@ import SwiftUI
         }
         
         if !obsManager.acted {
-            obsManager.storeWindowIDs(info: availableWindows.map { (instances[$0.owningApplication?.processID ?? 0] ?? 0, $0.windowID) })
+            obsManager.storeWindowIDs(info: availableWindows.map { 
+                (instances[$0.owningApplication?.processID ?? 0] ?? 0, $0.windowID) })
         }
         
         for window in availableWindows {
@@ -192,6 +193,7 @@ import SwiftUI
         availableWindows.removeAll()
         availableDisplays.removeAll()
         windowFilters.removeAll()
+        obsManager.acted = false
         
         // Start the capture process again
         await start()
@@ -215,7 +217,7 @@ import SwiftUI
             // Retrieve the available screen content to capture.
             //ShortcutManager.shared.fetchInstanceInfo()
             
-            let availableContent = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+            let availableContent = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: false)
             availableDisplays = availableContent.displays
 
             let windows = filterWindows(availableContent.windows)

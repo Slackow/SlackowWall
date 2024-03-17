@@ -40,7 +40,7 @@ struct InstancesSettings: View {
             SettingsCardView {
                 VStack(alignment: .leading) {
                     HStack {
-                        Text(stopped ? "Goodbye!" : "Stop Instances (\(shortcutManager.instanceIDs.count)): ")
+                        Text(stopped ? "Goodbye!" : "Stop Instances (\(shortcutManager.instanceIDs.count)) ")
                         
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
@@ -58,7 +58,7 @@ struct InstancesSettings: View {
                     }
                     Divider()
                     
-                    SettingsToggleView(title: "Press F1 on Join:", option: $instanceManager.f1OnJoin)
+                    SettingsToggleView(title: "Press F1 on Join", option: $instanceManager.f1OnJoin)
                     
                     Divider()
                     

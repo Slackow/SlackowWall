@@ -18,6 +18,7 @@
 		498FB3D028987F5E00405753 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 498FB3CF28987F5E00405753 /* Assets.xcassets */; };
 		498FB3D328987F5E00405753 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 498FB3D228987F5E00405753 /* Preview Assets.xcassets */; };
 		498FB3DE289A65B000405753 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498FB3DD289A65B000405753 /* Constants.swift */; };
+		49D77A192BA61CF70042AA14 /* instance_selector.lua in Resources */ = {isa = PBXBuildFile; fileRef = 49D77A182BA61CF70042AA14 /* instance_selector.lua */; };
 		49F739A32B9251B4008CB609 /* GameSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F739A22B9251B4008CB609 /* GameSettingsView.swift */; };
 		49F739A52B9279BE008CB609 /* GameSettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F739A42B9279BE008CB609 /* GameSettingsManager.swift */; };
 		6D8A7183DE266313FBD84A7F /* Alignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D8A723DF9C8AD7D30AC21AF /* Alignment.swift */; };
@@ -74,6 +75,7 @@
 		498FB3D228987F5E00405753 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		498FB3D428987F5E00405753 /* SlackowWall.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SlackowWall.entitlements; sourceTree = "<group>"; };
 		498FB3DD289A65B000405753 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		49D77A182BA61CF70042AA14 /* instance_selector.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = instance_selector.lua; sourceTree = "<group>"; };
 		49F739A22B9251B4008CB609 /* GameSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSettingsView.swift; sourceTree = "<group>"; };
 		49F739A42B9279BE008CB609 /* GameSettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSettingsManager.swift; sourceTree = "<group>"; };
 		6D8A71655654992BE658F2A9 /* InstanceInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InstanceInfo.swift; sourceTree = "<group>"; };
@@ -172,6 +174,14 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		49D77A172BA61CD10042AA14 /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				49D77A182BA61CF70042AA14 /* instance_selector.lua */,
+			);
+			path = Scripts;
+			sourceTree = "<group>";
+		};
 		6D8A75D3D62A87820D43CC07 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
@@ -238,6 +248,7 @@
 		B61D9A772B8911D6007A35CE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				49D77A172BA61CD10042AA14 /* Scripts */,
 				6D8A7698C6B048C2DFC88968 /* Audio */,
 				498FB3CF28987F5E00405753 /* Assets.xcassets */,
 			);
@@ -446,6 +457,7 @@
 				498FB3D028987F5E00405753 /* Assets.xcassets in Resources */,
 				6D8A7BB4FE451CD07D66619E /* click.mp3 in Resources */,
 				ABC355CBA8307F06A7D5A4EE /* lock.wav in Resources */,
+				49D77A192BA61CF70042AA14 /* instance_selector.lua in Resources */,
 				ABC3540DB7308CEE9DC58EE2 /* reset.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -643,7 +655,7 @@
 				CURRENT_PROJECT_VERSION = 240313f;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
-				DEVELOPMENT_TEAM = D64G2TTYWM;
+				DEVELOPMENT_TEAM = 0000000000LS492CD;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -679,7 +691,7 @@
 				CURRENT_PROJECT_VERSION = 240313f;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
-				DEVELOPMENT_TEAM = D64G2TTYWM;
+				DEVELOPMENT_TEAM = 0000000000LS492CD;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;

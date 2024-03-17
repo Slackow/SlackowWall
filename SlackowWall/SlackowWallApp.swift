@@ -17,8 +17,13 @@ struct SlackowWallApp: App {
             ContentView()
                 .toolbar {
                     ToolbarItem(placement: .automatic) {
-                        Button(action: { Task { await ScreenRecorder.shared.resetAndStartCapture() }}) {
-                            Image(systemName: "arrow.clockwise")
+                        HStack {
+                            Button(action: { Task { openWindow(id: "settings-window") }}) {
+                                Image(systemName: "gear")
+                            }
+                            Button(action: { Task { await ScreenRecorder.shared.resetAndStartCapture() }}) {
+                                Image(systemName: "arrow.clockwise")
+                            }
                         }
                     }
                 }
@@ -58,6 +63,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         eventMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.keyUp]) { event in
             KeybindingManager.shared.handleGlobalKey(event)
         }
+        OBSManager.shared.writeScript()
     }
     
     func applicationWillFinishLaunching(_ notification: Notification) {

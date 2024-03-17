@@ -33,15 +33,6 @@ struct KeybindingsSettings: View {
                     Divider()
                     
                     HStack {
-                        Text("Run and Reset Others")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        KeybindingView(keybinding: $keybindingManager.resetOthersKey)
-                    }
-                    
-                    Divider()
-                    
-                    HStack {
                         Text("Reset Hovered")
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
@@ -51,10 +42,33 @@ struct KeybindingsSettings: View {
                     Divider()
                     
                     HStack {
+                        Text("Run and Reset Others")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        KeybindingView(keybinding: $keybindingManager.resetOthersKey)
+                    }
+                    
+                    Divider()
+                    
+                    HStack {
                         Text("Run")
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
                         KeybindingView(keybinding: $keybindingManager.runKey)
+                    }
+                    
+                    Divider()
+                    
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text("Lock Hovered")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text("You can also shift click instances to lock/unlock")
+                                .font(.caption)
+                                .foregroundStyle(.gray)
+                                .padding(.trailing, 2)
+                        }
+                        KeybindingView(keybinding: $keybindingManager.lockKey)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)

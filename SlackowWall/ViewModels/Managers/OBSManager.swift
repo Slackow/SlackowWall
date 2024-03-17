@@ -16,6 +16,15 @@ class OBSManager: ObservableObject {
         
     }
     
+    func writeScript() {
+        guard let src = Bundle.main.url(forResource: "instance_selector", withExtension: "lua") else { return }
+        let dst = URL(filePath:"/Users/Shared/instance_selector.lua")
+        try? FileManager.default.removeItem(at: dst)
+        print("does file exist?", FileManager.default.fileExists(atPath: dst.absoluteString))
+        try? FileManager.default.copyItem(at: src, to: dst)
+        print("Wrote script!")
+    }
+    
     func storeWindowIDs(info: [(Int, CGWindowID)]) {
         if acted { return }
         acted = true
