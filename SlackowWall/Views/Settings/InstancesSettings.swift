@@ -68,7 +68,7 @@ struct InstancesSettings: View {
                     
                     HStack {
                         Button(action: { instanceManager.copyMods() }) {
-                            Text("Copy Mods from first instance to all")
+                            Text("Copy mods from first instance to all")
                         }
                         .disabled(shortcutManager.instanceIDs.count < 2)
                     }

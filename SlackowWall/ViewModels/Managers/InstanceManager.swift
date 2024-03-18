@@ -36,7 +36,7 @@ class InstanceManager: ObservableObject {
     
     func switchToInstance(idx: Int) {
         let pid = getInstanceProcess(idx: idx)
-        let _ = OBSManager.shared.writeWID(idx: idx + 1)
+        OBSManager.shared.writeWID(idx: idx + 1)
         print("User opened")
         Task {
             ShortcutManager.shared.prioritize(instNum: idx)
@@ -160,7 +160,7 @@ class InstanceManager: ObservableObject {
     @inline(__always) private func canReset(idx: Int) -> Bool {
         if isLocked(idx: idx) { return false }
         let state = ShortcutManager.shared.states[idx]
-        let _ = state.updateState(force: true)
+        state.updateState(force: true)
         return state.state != WAITING && state.state != GENERATING
     }
 

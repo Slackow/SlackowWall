@@ -128,7 +128,8 @@ final class ShortcutManager: ObservableObject {
                     if let nativesArg = args.first(where: {$0.starts(with: "-Djava.library.path=")}) {
                         let numTwo = nativesArg.dropLast("/natives".count).suffix(2)
                         let numChar = numTwo.suffix(1)
-                        if let num = Int(numTwo) ?? Int(numChar) {
+                        if let num = UInt(numTwo) ?? UInt(numChar) {
+                            let num = Int(num)
                             instanceNums[pid] = num
                             return num
                         }
@@ -137,12 +138,6 @@ final class ShortcutManager: ObservableObject {
             }
             instanceNums[pid] = 0
             return 0
-        }
-    }
-
-    func planar(app: NSRunningApplication) {
-        if getInstanceNum(app: app) > 0 {
-
         }
     }
 
@@ -188,7 +183,7 @@ final class ShortcutManager: ObservableObject {
             
             if !sentF3 && stateData.checkState == .ENSURING {
                 print(stateData.description)
-                let _ = stateData.updateState()
+                stateData.updateState()
                 if stateData.state != UNPAUSED { // if not paused
                     stateData.checkState = .NONE
                     stateData.untilF3 = 0

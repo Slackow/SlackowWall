@@ -30,7 +30,7 @@ class InstanceInfo: CustomStringConvertible {
         self.pid = pid
     }
     // for any world preview state output, this will map it to a unique byte and store it into state.
-    func updateState(force: Bool = false) -> Bool {
+    @discardableResult func updateState(force: Bool = false) -> Bool {
         prevState = state
         print("Attempting to update state")
         if !force && checkState == .NONE {

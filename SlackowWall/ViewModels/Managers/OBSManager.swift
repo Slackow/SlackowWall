@@ -34,7 +34,7 @@ class OBSManager: ObservableObject {
         print("Hey I stored the window ID's: \(wids)")
     }
     
-    func writeWID(idx: Int) -> CGWindowID {
+    @discardableResult func writeWID(idx: Int) -> CGWindowID {
         let filePath = obsScriptPath
         let wid = wids[idx] ?? 0
         let fileContents = "\(UUID()):\(wid)"
