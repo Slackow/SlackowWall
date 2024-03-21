@@ -189,7 +189,10 @@ class InstanceManager: ObservableObject {
             let xOff = "\(direct ? "" : "x+")\((Int32(moveXOffset) ?? 0) * (forward ? 1 : -1))"
             let yOff = "\(direct ? "" : "y+")\((Int32(moveYOffset) ?? 0) * (forward ? 1 : -1))"
             let pids = ShortcutManager.shared.instanceIDs.map({"\($0)"}).joined(separator: ",")
-            if (xOff == "x+0" && yOff == "y+0") || pids.isEmpty { moving = false;return }
+            if (xOff == "x+0" && yOff == "y+0") || pids.isEmpty {
+                DispatchQueue.main.async { self.moving = false }
+                return
+            }
             let fullScript = """
                 tell application "System Events"
                     repeat with pid in [\(pids)]
@@ -200,7 +203,7 @@ class InstanceManager: ObservableObject {
                         end repeat
                     end repeat
                 end tell
-                """
+            """
             
             print("\(fullScript)")
             // Execute the AppleScript
@@ -211,7 +214,7 @@ class InstanceManager: ObservableObject {
                     print("AppleScript Execution Error: \(error)")
                 }
             }
-            moving = false
+            DispatchQueue.main.async { self.moving = false }
         }
     }
 }

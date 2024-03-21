@@ -141,7 +141,7 @@ import SwiftUI
             let capturePreview = CapturePreview()
             capturePreviews.append(capturePreview)
 
-            let contentSize = CGSize(width: 854, height: 508)
+            let contentSize = CGSize(width: 854, height: 492)
             contentSizes.append(contentSize)
 
             Task {

@@ -74,22 +74,22 @@ struct InstancesSettings: View {
                     }
                     
                     Divider()
-                    
+                    Text("Adjust Instance Positions")
                     HStack {
                         Button(action: { instanceManager.move(forward: true) }) {
                             Text("Move Over")
                         }
-                        .disabled(instanceManager.moving)
+                        .disabled(instanceManager.moving || shortcutManager.instanceIDs.isEmpty)
                         
                         Button(action: { instanceManager.move(forward: false) }) {
                             Text("Move Back")
                         }
-                        .disabled(instanceManager.moving)
+                        .disabled(instanceManager.moving || shortcutManager.instanceIDs.isEmpty)
                         
                         Button(action: { instanceManager.move(forward: true, direct: true) }) {
                             Text("Set Position")
                         }
-                        .disabled(instanceManager.moving)
+                        .disabled(instanceManager.moving || shortcutManager.instanceIDs.isEmpty)
                         
                         Spacer()
                         

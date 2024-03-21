@@ -19,7 +19,6 @@ struct CapturePreviewView: View {
         ZStack(alignment: .topTrailing) {
             preview
                 .aspectRatio(size, contentMode: .fill)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
                 .overlay(PreviewActionsListener(lockAction: { key in
                     if key.modifierFlags.contains(.shift) {
                         instanceManager.lockInstance(idx: idx)

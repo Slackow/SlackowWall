@@ -18,7 +18,7 @@ struct KeybindingsSettings: View {
                         Text("Reset (Global)")
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        KeybindingView(keybinding: $keybindingManager.resetGKey)
+                        KeybindingView(keybinding: $keybindingManager.resetGKey, defaultValue: .keypad0)
                     }
                     
                     Divider()
@@ -27,7 +27,7 @@ struct KeybindingsSettings: View {
                         Text("Reset All")
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        KeybindingView(keybinding: $keybindingManager.resetAllKey)
+                        KeybindingView(keybinding: $keybindingManager.resetAllKey, defaultValue: .t)
                     }
                     
                     Divider()
@@ -36,25 +36,25 @@ struct KeybindingsSettings: View {
                         Text("Reset Hovered")
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        KeybindingView(keybinding: $keybindingManager.resetOneKey)
+                        KeybindingView(keybinding: $keybindingManager.resetOneKey, defaultValue: .e)
                     }
                     
                     Divider()
                     
                     HStack {
-                        Text("Run and Reset Others")
+                        Text("Run Hovered and Reset Others")
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        KeybindingView(keybinding: $keybindingManager.resetOthersKey)
+                        KeybindingView(keybinding: $keybindingManager.resetOthersKey, defaultValue: .f)
                     }
                     
                     Divider()
                     
                     HStack {
-                        Text("Run")
+                        Text("Run Hovered")
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        KeybindingView(keybinding: $keybindingManager.runKey)
+                        KeybindingView(keybinding: $keybindingManager.runKey, defaultValue: .r)
                     }
                     
                     Divider()
@@ -68,7 +68,7 @@ struct KeybindingsSettings: View {
                                 .foregroundStyle(.gray)
                                 .padding(.trailing, 2)
                         }
-                        KeybindingView(keybinding: $keybindingManager.lockKey)
+                        KeybindingView(keybinding: $keybindingManager.lockKey, defaultValue: .c)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)

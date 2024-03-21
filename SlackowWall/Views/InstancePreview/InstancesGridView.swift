@@ -26,11 +26,11 @@ struct InstancesGridView: View {
             } else {
                 Group {
                     if instanceManager.alignment == .horizontal {
-                        LazyHGrid(rows: gridItems, spacing: 8) {
+                        LazyHGrid(rows: gridItems, spacing: 0) {
                             gridContent
                         }
                     } else {
-                        LazyVGrid(columns: gridItems, spacing: 8) {
+                        LazyVGrid(columns: gridItems, spacing: 0) {
                             gridContent
                         }
                     }
@@ -38,7 +38,7 @@ struct InstancesGridView: View {
                 .background(PreviewShortcutListener(key: $instanceManager.keyPressed))
             }
         }
-        .padding()
+        .padding(5)
         .task {
             print("Screen Recorder Started!")
             if await screenRecorder.canRecord {

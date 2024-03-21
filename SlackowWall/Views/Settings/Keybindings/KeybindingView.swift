@@ -11,6 +11,7 @@ struct KeybindingView: View {
     @Binding var keybinding: UInt16?
     @FocusState var isFocused: Bool
     @State private var circleColor: Color = .gray
+    var defaultValue: UInt16?
     
     private var textName: String {
         KeyCode.toName(code: keybinding)
@@ -31,12 +32,11 @@ struct KeybindingView: View {
             .focused($isFocused)
             
             Button(action: {
-                keybinding = nil
-                isFocused = false
+                keybinding = defaultValue
             }) {
                 ZStack {
                     Circle()
-                        .fill(circleColor)
+                        .fill(defaultValue == keybinding ? .gray.opacity(0.5) : circleColor)
                         .frame(width: 16)
                     
                     Image(systemName: "xmark")
@@ -56,10 +56,9 @@ struct KeybindingView: View {
             // Setup local key event monitoring
             _ = NSEvent.addLocalMonitorForEvents(matching: [.keyDown]) { event in
                 if !isFocused { return event }
-                print("Set Key to:")
-                keybinding = event.keyCode
+                keybinding = event.keyCode == .escape ? nil : event.keyCode
                 isFocused = false
-                return nil // Return the event for further processing
+                return nil
             }
         }
     }
@@ -67,9 +66,9 @@ struct KeybindingView: View {
 
 #Preview {
     VStack {
-        KeybindingView(keybinding: KeybindingManager.shared.$resetGKey)
+        KeybindingView(keybinding: KeybindingManager.shared.$resetGKey, defaultValue: .keypad0)
             .padding()
-        KeybindingView(keybinding: KeybindingManager.shared.$resetAllKey)
+        KeybindingView(keybinding: KeybindingManager.shared.$resetAllKey, defaultValue: .t)
             .padding()
     }
 }
