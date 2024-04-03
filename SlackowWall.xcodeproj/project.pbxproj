@@ -61,7 +61,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		490131CA2AA4C23700CE32A5 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		4915C3A62AC6A24200B60D1D /* KeybindingsSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeybindingsSettings.swift; sourceTree = "<group>"; };
 		4915C3A82AC6A86F00B60D1D /* SettingsBarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsBarItem.swift; sourceTree = "<group>"; };
 		4915C3AA2AC7636F00B60D1D /* InstancesSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstancesSettings.swift; sourceTree = "<group>"; };
@@ -161,7 +160,6 @@
 				498FB3D128987F5E00405753 /* Preview Content */,
 				B6D29FEE2BA218F1004F20A2 /* Info.plist */,
 				498FB3D428987F5E00405753 /* SlackowWall.entitlements */,
-				490131CA2AA4C23700CE32A5 /* .gitignore */,
 			);
 			path = SlackowWall;
 			sourceTree = "<group>";
