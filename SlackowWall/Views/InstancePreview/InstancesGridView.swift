@@ -14,7 +14,7 @@ struct InstancesGridView: View {
     @ObservedObject private var instanceManager = InstanceManager.shared
     
     private var gridItems: [GridItem] {
-        Array(repeating: GridItem(.flexible()), count: min(instanceManager.rows, shortcutManager.states.count))
+        Array(repeating: GridItem(.flexible(), spacing: 0), count: min(instanceManager.rows, shortcutManager.states.count))
     }
 
     var body: some View {

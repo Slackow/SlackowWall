@@ -36,14 +36,16 @@ struct SettingsView: View {
             .frame(width: 205)
             .removeSidebar()
         }
-    detail: {
-        switch selectedSettingsBarItem {
-            case .keybindings:
-                KeybindingsSettings()
-            case .instances:
-                InstancesSettings()
-            case .updates:
-                UpdateSettings()
+        detail: {
+            switch selectedSettingsBarItem {
+                case .keybindings:
+                    KeybindingsSettings()
+                case .instances:
+                    InstancesSettings()
+                case .updates:
+                    UpdateSettings()
+                case .standardSettings:
+                    GameSettings()
             }
         }
     }

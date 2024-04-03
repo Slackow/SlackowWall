@@ -12,12 +12,24 @@ struct SlackowWallApp: App {
     @Environment(\.openWindow) private var openWindow
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
+    @ObservedObject private var shortcutManager = ShortcutManager.shared
+    
     var body: some Scene {
         Window("SlackowWall", id: "slackowwall-window") {
             ContentView()
                 .toolbar {
                     ToolbarItem(placement: .automatic) {
                         HStack {
+                            Button(action: { Task {
+                                ShortcutManager.shared.killAll()
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                    exit(0)
+                                }}}) {
+                                    Image(systemName: "stop.fill")
+                                        .foregroundColor(.red)
+                                }
+                                .opacity(shortcutManager.instanceIDs.isEmpty ? 0 : 1)
+                            
                             Button(action: { Task { openWindow(id: "settings-window") }}) {
                                 Image(systemName: "gear")
                             }
@@ -25,6 +37,7 @@ struct SlackowWallApp: App {
                                 Image(systemName: "arrow.clockwise")
                             }
                         }
+                        .animation(.linear, value: shortcutManager.instanceIDs)
                     }
                 }
         }
