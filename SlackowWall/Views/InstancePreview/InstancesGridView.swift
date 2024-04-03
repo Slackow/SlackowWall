@@ -18,7 +18,7 @@ struct InstancesGridView: View {
     }
 
     var body: some View {
-        Group {
+        VStack {
             if screenRecorder.capturePreviews.isEmpty {
                 if shortcutManager.instanceIDs.isEmpty {
                     Text("No Minecraft Instances Detected")

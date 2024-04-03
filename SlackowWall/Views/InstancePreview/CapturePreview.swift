@@ -13,7 +13,7 @@ struct CapturePreview: NSViewRepresentable {
     private let contentLayer = CALayer()
     
     init() {
-        contentLayer.contentsGravity = .resizeAspect
+        contentLayer.contentsGravity = .resizeAspectFill
     }
     
     func makeNSView(context: Context) -> CaptureVideoPreview {
@@ -32,6 +32,7 @@ struct CapturePreview: NSViewRepresentable {
         // Create the preview with the video layer as the backing layer.
         init(layer: CALayer) {
             super.init(frame: .zero)
+            
             // Make this a layer-hosting view. First set the layer, then set wantsLayer to true.
             self.layer = layer
             wantsLayer = true

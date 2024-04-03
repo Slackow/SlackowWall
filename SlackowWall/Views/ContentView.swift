@@ -12,16 +12,20 @@ struct ContentView: View {
     @ObservedObject private var updateManager = UpdateManager.shared
     
     var body: some View {
-        InstancesGridView()
-            .sheet(isPresented: $updateManager.appWasUpdated) {
-                UpdateMessageView(title: "App Updated")
-            }
-            .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
-                instanceManager.isActive = true
-            }
-            .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in
-                instanceManager.isActive = false
-            }
+        GeometryReader { geo in
+            InstancesGridView()
+                .frame(width: geo.size.width, height: geo.size.height)
+                .background(.black)
+                .sheet(isPresented: $updateManager.appWasUpdated) {
+                    UpdateMessageView(title: "App Updated")
+                }
+                .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+                    instanceManager.isActive = true
+                }
+                .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in
+                    instanceManager.isActive = false
+                }
+        }
     }
 }
 

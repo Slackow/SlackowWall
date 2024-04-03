@@ -88,6 +88,7 @@ import SwiftUI
             if windowFilters[window.windowID] == nil {
                 let filter = SCContentFilter(desktopIndependentWindow: window)
                 windowFilters[window.windowID] = filter
+                contentSizes.append(CGSize(width: filter.contentRect.width, height: filter.contentRect.height))
                 filters.append(filter)
                 print("Appended filter: \(window.displayName) \(window.owningApplication?.processID ?? 0)")
             }
@@ -96,7 +97,7 @@ import SwiftUI
         return filters
     }
     
-    private var streamConfiguration: SCStreamConfiguration {
+    private func createStreamConfiguration(width: CGFloat, height: CGFloat) -> SCStreamConfiguration {
         let streamConfig = SCStreamConfiguration()
         
         // Configure audio capture.
@@ -106,8 +107,8 @@ import SwiftUI
         streamConfig.scalesToFit = true
         
         // Configure the window content width and height.
-        streamConfig.width = 860
-        streamConfig.height = 495
+        streamConfig.width = Int(width)
+        streamConfig.height = Int(height)
         
         // Set the capture interval at 15 fps.
         streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: 15)
@@ -132,21 +133,18 @@ import SwiftUI
             isSetup = true
         }
 
-        let config = streamConfiguration
-
         // Update the running state.
         isRunning = true
         let filters = contentFilters
         for idx in filters.indices {
             let capturePreview = CapturePreview()
             capturePreviews.append(capturePreview)
-
-            let contentSize = CGSize(width: 854, height: 492)
-            contentSizes.append(contentSize)
+            
+            let streamConfiguration = createStreamConfiguration(width: contentSizes[idx].width, height: contentSizes[idx].height)
 
             Task {
                 do {
-                    for try await frame in captureEngine.startCapture(configuration: config, filter: filters[idx]) {
+                    for try await frame in captureEngine.startCapture(configuration: streamConfiguration, filter: filters[idx]) {
                         capturePreview.updateFrame(frame)
                     }
                 } catch let error {
@@ -206,6 +204,7 @@ import SwiftUI
         }
         Task {
             for idx in contentFilters.indices {
+                let streamConfiguration = createStreamConfiguration(width: contentSizes[idx].width, height: contentSizes[idx].height)
                 await captureEngine.update(configuration: streamConfiguration, filter: contentFilters[idx])
             }
         }
