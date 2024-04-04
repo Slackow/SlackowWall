@@ -14,7 +14,7 @@ struct ContentView: View {
     var body: some View {
         GeometryReader { geo in
             InstancesGridView()
-                .frame(width: geo.size.width, height: geo.size.height)
+                .frame(minWidth: 300, maxWidth: max(300, geo.size.width), minHeight: 200, maxHeight: max(200, geo.size.height), alignment: .center)
                 .background(.black)
                 .sheet(isPresented: $updateManager.appWasUpdated) {
                     UpdateMessageView(title: "App Updated")

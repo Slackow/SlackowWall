@@ -17,6 +17,7 @@ struct SlackowWallApp: App {
     var body: some Scene {
         Window("SlackowWall", id: "slackowwall-window") {
             ContentView()
+                .frame(minWidth: 300, minHeight: 200)
                 .toolbar {
                     ToolbarItem(placement: .automatic) {
                         HStack {
@@ -41,6 +42,7 @@ struct SlackowWallApp: App {
                     }
                 }
         }
+        .windowResizability(.contentSize)
         
         Window("Settings", id: "settings-window") {
             SettingsView()
