@@ -9,6 +9,7 @@ class InstanceManager: ObservableObject {
     @AppStorage("rows") var rows: Int = AppDefaults.rows
     @AppStorage("alignment") var alignment: Alignment = AppDefaults.alignment
     @AppStorage("f1OnJoin") var f1OnJoin: Bool = false
+    @AppStorage("fullscreen") var fullscreen: Bool = false
     @AppStorage("onlyOnFocus") var onlyOnFocus: Bool = true
     
     @AppStorage("moveXOffset") var moveXOffset: String = "0"
@@ -34,39 +35,50 @@ class InstanceManager: ObservableObject {
         }
     }
     
+    func hideWindows(_ targetPIDs: [pid_t]) {
+        let pids = targetPIDs.map { "\($0)" }.joined(separator: ",")
+        let script = """
+            tell application "System Events"
+                repeat with pid in [\(pids)]
+                    set visible of (first process whose unix id is pid) to false
+                end repeat
+            end tell
+            """
+        var error: NSDictionary?
+        if let scriptObject = NSAppleScript(source: script) {
+            scriptObject.executeAndReturnError(&error)
+            if error != nil {
+                for (key, value) in error! {
+                    print("\(key): \(value)")
+                }
+            }
+        } else {
+            print("Failed to send apple script")
+        }
+    }
+    
+    func focusWindow(_ targetPID: pid_t) {
+        NSRunningApplication(processIdentifier: targetPID)?.activate(options: [.activateAllWindows, .activateIgnoringOtherApps])
+    }
+
+    
     func switchToInstance(idx: Int) {
         let pid = getInstanceProcess(idx: idx)
         OBSManager.shared.writeWID(idx: idx + 1)
         print("User opened")
         Task {
-            ShortcutManager.shared.prioritize(instNum: idx)
             print("Switching Window")
-            let pids = ShortcutManager.shared.instanceIDs.filter {$0 != pid}.map {"\($0)"}.joined(separator: ",")
-            let script = """
-                tell application "System Events"
-                    repeat with pid in [\(pids)]
-                        set visible of (first process whose unix id is pid) to false
-                    end repeat
-                    set frontmost of the first process whose unix id is \(pid) to true
-                end tell
-                """
-            var error: NSDictionary?
-            if let scriptObject = NSAppleScript(source: script) {
-                scriptObject.executeAndReturnError(&error)
-                if error != nil {
-                    for (key, value) in error! {
-                        print("\(key): \(value)")
-                    }
-                }
-                ShortcutManager.shared.sendEscape(pid: pid)
-                if self.f1OnJoin {
-                    ShortcutManager.shared.sendF1(pid: pid)
-                    print("Sent f1!!")
-                }
-                ShortcutManager.shared.states[idx].checkState = .NONE
-            } else {
-                print("Failed to send apple script")
+            let pids = ShortcutManager.shared.instanceIDs.filter {$0 != pid}
+            hideWindows(pids)
+            focusWindow(pid)
+            
+            ShortcutManager.shared.sendEscape(pid: pid)
+            if self.f1OnJoin {
+                ShortcutManager.shared.sendF1(pid: pid)
+                print("Sent f1!!")
             }
+            ShortcutManager.shared.states[idx].checkState = .NONE
+            
             print("Switched")
         }
         print("pressed: \(pid) #(\(idx))")
