@@ -40,9 +40,6 @@ struct InstancesSettings: View {
             SettingsCardView {
                 VStack(alignment: .leading) {
                     HStack {
-                        Text(stopped ? "Goodbye!" : "Stop Instances (\(shortcutManager.instanceIDs.count)) ")
-                        
-                            .frame(maxWidth: .infinity, alignment: .leading)
                         
                         Button(action: { [self] in
                             stopped = true
@@ -51,10 +48,18 @@ struct InstancesSettings: View {
                                 exit(0)
                             }
                         }) {
-                            Image(systemName: "stop.fill")
-                                .foregroundColor(.red)
+                            if !stopped {
+                                Image(systemName: "stop.fill")
+                                    .foregroundColor(.red)
+                            }
+                            Text(stopped ? "Goodbye!" : "Stop Instances")
                         }
                         .disabled(stopped)
+                        Text("(\(shortcutManager.instanceIDs.count))")
+                        Text("Close all instances and SlackowWall")
+                            .font(.caption)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundStyle(.gray)
                     }
                     
                     Divider()
@@ -73,8 +78,6 @@ struct InstancesSettings: View {
                     
                     Divider()
                     HStack {
-                        SettingsLabel(title:"Adjust Instance Positions", description: "Width and Height are optional")
-                        Spacer()
                         Button(action: { instanceManager.move(forward: true) }) {
                             Text("Move Over")
                         }
@@ -89,6 +92,12 @@ struct InstancesSettings: View {
                             Text("Set Position")
                         }
                         .disabled(instanceManager.moving || shortcutManager.instanceIDs.isEmpty)
+                        Spacer()
+                        Text("Adjust Instance Positions,\nwidth and height are optional")
+                            .font(.caption)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundStyle(.gray)
+
                     }
                     Form {
                         HStack {
