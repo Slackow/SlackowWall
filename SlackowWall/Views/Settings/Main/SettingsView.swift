@@ -40,12 +40,12 @@ struct SettingsView: View {
             switch selectedSettingsBarItem {
                 case .keybindings:
                     KeybindingsSettings()
+                case .behavior:
+                    BehaviorSettings()
                 case .instances:
                     InstancesSettings()
                 case .updates:
                     UpdateSettings()
-                case .standardSettings:
-                    GameSettings()
             }
         }
     }

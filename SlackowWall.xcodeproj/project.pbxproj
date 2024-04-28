@@ -12,6 +12,7 @@
 		4915C3AB2AC7636F00B60D1D /* InstancesSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4915C3AA2AC7636F00B60D1D /* InstancesSettings.swift */; };
 		493A122C2B88723D009BE0B3 /* KeybindingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493A122B2B88723D009BE0B3 /* KeybindingManager.swift */; };
 		493A122F2B88FAA0009BE0B3 /* KeybindingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493A122E2B88FAA0009BE0B3 /* KeybindingView.swift */; };
+		49569BF62BDE1DA50035F67D /* BehaviorSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49569BF52BDE1DA50035F67D /* BehaviorSettings.swift */; };
 		496442152AC3467B0074245C /* See.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496442142AC3467B0074245C /* See.swift */; };
 		498FB3CC28987F5B00405753 /* SlackowWallApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498FB3CB28987F5B00405753 /* SlackowWallApp.swift */; };
 		498FB3CE28987F5B00405753 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498FB3CD28987F5B00405753 /* ContentView.swift */; };
@@ -20,7 +21,6 @@
 		498FB3DE289A65B000405753 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498FB3DD289A65B000405753 /* Constants.swift */; };
 		49CCFA8E2BAD188600842FCD /* StandardConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CCFA8D2BAD188600842FCD /* StandardConfig.swift */; };
 		49D77A192BA61CF70042AA14 /* instance_selector.lua in Resources */ = {isa = PBXBuildFile; fileRef = 49D77A182BA61CF70042AA14 /* instance_selector.lua */; };
-		49F739A32B9251B4008CB609 /* GameSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F739A22B9251B4008CB609 /* GameSettings.swift */; };
 		49F739A52B9279BE008CB609 /* GameSettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F739A42B9279BE008CB609 /* GameSettingsManager.swift */; };
 		6D8A7183DE266313FBD84A7F /* Alignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D8A723DF9C8AD7D30AC21AF /* Alignment.swift */; };
 		6D8A72A43936AFAEFF91FCF9 /* InstanceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D8A71655654992BE658F2A9 /* InstanceInfo.swift */; };
@@ -67,6 +67,7 @@
 		4915C3AA2AC7636F00B60D1D /* InstancesSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstancesSettings.swift; sourceTree = "<group>"; };
 		493A122B2B88723D009BE0B3 /* KeybindingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeybindingManager.swift; sourceTree = "<group>"; };
 		493A122E2B88FAA0009BE0B3 /* KeybindingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeybindingView.swift; sourceTree = "<group>"; };
+		49569BF52BDE1DA50035F67D /* BehaviorSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BehaviorSettings.swift; sourceTree = "<group>"; };
 		496442142AC3467B0074245C /* See.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = See.swift; sourceTree = "<group>"; };
 		498FB3C828987F5B00405753 /* SlackowWall.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SlackowWall.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		498FB3CB28987F5B00405753 /* SlackowWallApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackowWallApp.swift; sourceTree = "<group>"; };
@@ -77,7 +78,6 @@
 		498FB3DD289A65B000405753 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		49CCFA8D2BAD188600842FCD /* StandardConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandardConfig.swift; sourceTree = "<group>"; };
 		49D77A182BA61CF70042AA14 /* instance_selector.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = instance_selector.lua; sourceTree = "<group>"; };
-		49F739A22B9251B4008CB609 /* GameSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSettings.swift; sourceTree = "<group>"; };
 		49F739A42B9279BE008CB609 /* GameSettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSettingsManager.swift; sourceTree = "<group>"; };
 		6D8A71655654992BE658F2A9 /* InstanceInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InstanceInfo.swift; sourceTree = "<group>"; };
 		6D8A718314BED92CCAE7DD5C /* PreviewShortcutListener.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewShortcutListener.swift; sourceTree = "<group>"; };
@@ -320,7 +320,9 @@
 				B6A55D9A2BA2B3A200D06086 /* Keybindings */,
 				B6D29FE72BA212CF004F20A2 /* Updates */,
 				4915C3AA2AC7636F00B60D1D /* InstancesSettings.swift */,
-				49F739A22B9251B4008CB609 /* GameSettings.swift */,
+				4915C3A62AC6A24200B60D1D /* KeybindingsSettings.swift */,
+				B6D29FEC2BA21825004F20A2 /* UpdateSettings.swift */,
+				49569BF52BDE1DA50035F67D /* BehaviorSettings.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -348,7 +350,6 @@
 		B6A55D9A2BA2B3A200D06086 /* Keybindings */ = {
 			isa = PBXGroup;
 			children = (
-				4915C3A62AC6A24200B60D1D /* KeybindingsSettings.swift */,
 				493A122E2B88FAA0009BE0B3 /* KeybindingView.swift */,
 			);
 			path = Keybindings;
@@ -384,7 +385,6 @@
 			children = (
 				B6D29FE92BA212DA004F20A2 /* UpdateMessageView.swift */,
 				B6D29FE82BA212DA004F20A2 /* UpdateReleaseEntryView.swift */,
-				B6D29FEC2BA21825004F20A2 /* UpdateSettings.swift */,
 			);
 			path = Updates;
 			sourceTree = "<group>";
@@ -482,8 +482,8 @@
 				4915C3A72AC6A24200B60D1D /* KeybindingsSettings.swift in Sources */,
 				B6E9E3702970A52E00DF6466 /* CapturePreview.swift in Sources */,
 				B6B9FE982BA16D730026C268 /* SettingsToggleView.swift in Sources */,
+				49569BF62BDE1DA50035F67D /* BehaviorSettings.swift in Sources */,
 				B640D52D296F2D7B005041CC /* InstancesGridView.swift in Sources */,
-				49F739A32B9251B4008CB609 /* GameSettings.swift in Sources */,
 				B61D9A762B890EDA007A35CE /* SettingsLabel.swift in Sources */,
 				4915C3AB2AC7636F00B60D1D /* InstancesSettings.swift in Sources */,
 				493A122F2B88FAA0009BE0B3 /* KeybindingView.swift in Sources */,
@@ -665,7 +665,7 @@
 				CURRENT_PROJECT_VERSION = 240313f;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
-				DEVELOPMENT_TEAM = D64G2TTYWM;
+				DEVELOPMENT_TEAM = 94CLS492CD;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -701,7 +701,7 @@
 				CURRENT_PROJECT_VERSION = 240313f;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
-				DEVELOPMENT_TEAM = D64G2TTYWM;
+				DEVELOPMENT_TEAM = 94CLS492CD;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;

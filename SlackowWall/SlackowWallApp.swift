@@ -53,7 +53,7 @@ struct SlackowWallApp: App {
         
         Window("Settings", id: "settings-window") {
             SettingsView()
-                .frame(minWidth: 700, maxWidth: 700, minHeight: 435, alignment: .center)
+                .frame(minWidth: 700, maxWidth: 700, minHeight: 455, alignment: .center)
         }
         .commands {
             CommandGroup(replacing: .appSettings) {

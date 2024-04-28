@@ -56,26 +56,25 @@ struct InstancesSettings: View {
                         }
                         .disabled(stopped)
                     }
-                    Divider()
-                    
-                    SettingsToggleView(title: "Press F1 on Join", option: $instanceManager.f1OnJoin)
-                    
-                    Divider()
-                    
-                    SettingsToggleView(title: "Pause on Lost Focus", description: "Pauses the capture of the instances when SlackowWall is not the focused window.", option: $instanceManager.onlyOnFocus)
                     
                     Divider()
                     
                     HStack {
-                        Button(action: { instanceManager.copyMods() }) {
-                            Text("Copy mods from first instance to all")
+                        Button(action: { instanceManager.copyMods()
+                        }) {
+                            Text("Sync Mods")
                         }
                         .disabled(shortcutManager.instanceIDs.count < 2)
+                        Text("Copy mods from first instance to all open instances (closes them)")
+                            .font(.caption)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundStyle(.gray)
                     }
                     
                     Divider()
-                    Text("Adjust Instance Positions")
                     HStack {
+                        SettingsLabel(title:"Adjust Instance Positions", description: "Width and Height are optional")
+                        Spacer()
                         Button(action: { instanceManager.move(forward: true) }) {
                             Text("Move Over")
                         }
@@ -90,19 +89,24 @@ struct InstancesSettings: View {
                             Text("Set Position")
                         }
                         .disabled(instanceManager.moving || shortcutManager.instanceIDs.isEmpty)
-                        
-                        Spacer()
-                        
-                        Form {
-                            HStack {
-                                TextField("X", text: $instanceManager.moveXOffset)
-                                    .textFieldStyle(.roundedBorder)
-                                
-                                TextField("Y", text: $instanceManager.moveYOffset)
-                                    .textFieldStyle(.roundedBorder)
-                            }
-                        }
-                        .padding(.leading, 25)
+                    }
+                    Form {
+                        HStack {
+                            TextField("X", text: $instanceManager.moveXOffset)
+                                .textFieldStyle(.roundedBorder)
+                            
+                            TextField("Y", text: $instanceManager.moveYOffset)
+                                .textFieldStyle(.roundedBorder)
+                            TextField("W", text:
+                                $instanceManager
+                                .setWidth)
+                            .textFieldStyle(.roundedBorder)
+                            TextField("H", text:
+                                $instanceManager
+                                .setHeight)
+                            .textFieldStyle(.roundedBorder)
+                        }.padding(.leading, 50)
+                    
                     }
                 }
             }

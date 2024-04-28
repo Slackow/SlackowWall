@@ -60,7 +60,12 @@ final class ShortcutManager: ObservableObject {
         print(states)
     }
     
+    private func closeSettingsWindow() {
+        NSApplication.shared.windows.filter({ $0.title == "Settings"}).first?.close()
+    }
+    
     func globalReset() {
+        closeSettingsWindow()
         let apps = NSWorkspace.shared.runningApplications.filter{  $0.activationPolicy == .regular }
         if let activeWindow = apps.first(where:{$0.isActive}) {
             NSApplication.shared.activate(ignoringOtherApps: true)

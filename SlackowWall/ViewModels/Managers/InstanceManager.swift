@@ -14,6 +14,9 @@ class InstanceManager: ObservableObject {
     
     @AppStorage("moveXOffset") var moveXOffset: String = "0"
     @AppStorage("moveYOffset") var moveYOffset: String = "0"
+    
+    @AppStorage("setWidth") var setWidth: String = ""
+    @AppStorage("setHeight") var setHeight: String = ""
 
     @Published var lockedInstances: Int64 = 0
     @Published var hoveredInstance: Int?
@@ -201,16 +204,21 @@ class InstanceManager: ObservableObject {
             let xOff = "\(direct ? "" : "x+")\((Int32(moveXOffset) ?? 0) * (forward ? 1 : -1))"
             let yOff = "\(direct ? "" : "y+")\((Int32(moveYOffset) ?? 0) * (forward ? 1 : -1))"
             let pids = ShortcutManager.shared.instanceIDs.map({"\($0)"}).joined(separator: ",")
-            if (xOff == "x+0" && yOff == "y+0") || pids.isEmpty {
+            let width = Int32(setWidth) ?? 0
+            let height = Int32(setHeight) ?? 0
+            let setSize = width > 0 && height > 0
+            if (xOff == "x+0" && yOff == "y+0" && !setSize) || pids.isEmpty {
                 DispatchQueue.main.async { self.moving = false }
                 return
             }
+            
             let fullScript = """
                 tell application "System Events"
                     repeat with pid in [\(pids)]
                         repeat with aWindow in (every window of (first process whose unix id is pid))
                             if name of aWindow is not "Window" then \(direct ? "" : "\nset {x, y} to position of aWindow")
                                 set position of aWindow to {\(xOff), \(yOff)}
+                                \(setSize ? "set size of aWindow to {\(width), \(height)}" : "")
                             end if
                         end repeat
                     end repeat
