@@ -65,7 +65,15 @@ struct InstancesGridView: View {
             if idx < screenRecorder.capturePreviews.count {
                 ZStack {
                     Text("Instance \(idx + 1)")
-                    CapturePreviewView(preview: screenRecorder.capturePreviews[idx], size: screenRecorder.contentSizes[idx], idx: idx)
+                    ZStack (alignment: .topTrailing) {
+                        CapturePreviewView(preview: screenRecorder.capturePreviews[idx], size: screenRecorder.contentSizes[idx], idx: idx)
+                        if instanceManager.showInstanceNumbers {
+                            Text("\(idx + 1)")
+                                .padding(.top, 4)
+                                .padding(.trailing, 4)
+                                .foregroundColor(.white)
+                        }
+                    }
                 }
             }
         }

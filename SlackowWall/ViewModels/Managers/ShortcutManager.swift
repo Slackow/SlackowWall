@@ -72,26 +72,32 @@ final class ShortcutManager: ObservableObject {
             let pid = activeWindow.processIdentifier
             if instanceIDs.contains(pid) {
                 resetInstance(pid: pid)
-                let pids = ShortcutManager.shared.instanceIDs.map{ "\($0)" }.joined(separator: ",")
-                let script = """
-                    tell application "System Events"
-                        repeat with pid in [\(pids)]
-                            set visible of (first process whose unix id is pid) to true
-                        end repeat
-                    end tell
-                    """
-                var error: NSDictionary?
-                if let scriptObject = NSAppleScript(source: script) {
-                    scriptObject.executeAndReturnError(&error)
-                    if error != nil {
-                        for (key, value) in error! {
-                            print("\(key): \(value)")
-                        }
-                    }
-                } else {
-                    print("Failed to send apple script")
+                if InstanceManager.shared.shouldHideWindows {
+                    unhideInstances()
                 }
             }
+        }
+    }
+    
+    func unhideInstances() {
+        let pids = ShortcutManager.shared.instanceIDs.map{ "\($0)" }.joined(separator: ",")
+        let script = """
+            tell application "System Events"
+                repeat with pid in [\(pids)]
+                    set visible of (first process whose unix id is pid) to true
+                end repeat
+            end tell
+            """
+        var error: NSDictionary?
+        if let scriptObject = NSAppleScript(source: script) {
+            scriptObject.executeAndReturnError(&error)
+            if error != nil {
+                for (key, value) in error! {
+                    print("\(key): \(value)")
+                }
+            }
+        } else {
+            print("Failed to send apple script")
         }
     }
 

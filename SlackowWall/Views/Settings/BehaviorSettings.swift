@@ -19,6 +19,10 @@ struct BehaviorSettings: View {
                     Divider()
                     
                     SettingsToggleView(title: "Pause on Lost Focus", description: "Pauses the capture of the instances when SlackowWall is not the focused window.", option: $instanceManager.onlyOnFocus)
+                    
+                    Divider()
+                    
+                    SettingsToggleView(title: "Hide Windows", description: "Hide all other instances when you enter an instance for performance, highly recommended.", option: $instanceManager.shouldHideWindows)
                 }
             }
         }

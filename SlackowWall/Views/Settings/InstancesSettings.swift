@@ -30,6 +30,40 @@ struct InstancesSettings: View {
                             Text("\($0)").tag($0)
                         }
                     }.pickerStyle(.segmented)
+                    Divider()
+                    HStack {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("Switch Columns and Rows")
+                            Text("Switch columns and rows and adjust based on number of instances, fixes instances being off screen")
+                                .font(.caption)
+                                .foregroundStyle(.gray)
+                                .padding(.trailing, 2)
+                        
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        Button(action:{
+                            let instanceCount = shortcutManager.instanceIDs.count
+                            let rows = instanceManager.rows
+                            var newRows = (instanceCount + rows - 1) / rows
+                            if newRows < 1 { newRows = 1 }
+                            if newRows > 9 { newRows = 9 }
+                            instanceManager.rows = newRows
+                            instanceManager.alignment = instanceManager.alignment == .vertical ? .horizontal : .vertical
+                            
+                            
+                            
+                        }) {
+                            Text("Flip")
+                        }
+                            .labelsHidden()
+                            .toggleStyle(.switch)
+                            .padding(.leading)
+                            .disabled( shortcutManager.instanceIDs.isEmpty)
+                    }
+                    Divider()
+                    SettingsToggleView(title: "Show Instance Numbers", option: $instanceManager.showInstanceNumbers)
+                    
                 }
                 .labelsHidden()
             }

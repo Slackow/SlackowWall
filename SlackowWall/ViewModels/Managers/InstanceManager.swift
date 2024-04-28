@@ -11,6 +11,8 @@ class InstanceManager: ObservableObject {
     @AppStorage("f1OnJoin") var f1OnJoin: Bool = false
     @AppStorage("fullscreen") var fullscreen: Bool = false
     @AppStorage("onlyOnFocus") var onlyOnFocus: Bool = true
+    @AppStorage("shouldHideWindows") var shouldHideWindows = true
+    @AppStorage("showInstanceNumbers") var showInstanceNumbers = true
     
     @AppStorage("moveXOffset") var moveXOffset: String = "0"
     @AppStorage("moveYOffset") var moveYOffset: String = "0"
@@ -71,8 +73,10 @@ class InstanceManager: ObservableObject {
         print("User opened")
         Task {
             print("Switching Window")
-            let pids = ShortcutManager.shared.instanceIDs.filter {$0 != pid}
-            hideWindows(pids)
+            if InstanceManager.shared.shouldHideWindows {
+                let pids = ShortcutManager.shared.instanceIDs.filter {$0 != pid}
+                hideWindows(pids)
+            }
             focusWindow(pid)
             
             ShortcutManager.shared.sendEscape(pid: pid)
