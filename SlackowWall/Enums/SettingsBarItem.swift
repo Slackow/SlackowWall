@@ -8,7 +8,7 @@
 import SwiftUI
 
 enum SettingsBarItem: CaseIterable, Identifiable, Hashable {
-    case instances, behavior, keybindings, updates
+    case instances, behavior, keybindings, updates, credits
     
     var id: Self {
         return self
@@ -18,12 +18,14 @@ enum SettingsBarItem: CaseIterable, Identifiable, Hashable {
         switch self {
             case .instances:
                 .init(red: 0.1, green: 0.1, blue: 0.1)
+            case .behavior:
+                .indigo
             case .keybindings:
                 .blue
-            case .behavior:
-                .brown
             case .updates:
                 .gray
+            case .credits:
+                .brown
         }
     }
     
@@ -37,6 +39,8 @@ enum SettingsBarItem: CaseIterable, Identifiable, Hashable {
                 "Keybindings"
             case .updates:
                 "Updates"
+            case .credits:
+                "Credits"
         }
     }
     
@@ -50,6 +54,8 @@ enum SettingsBarItem: CaseIterable, Identifiable, Hashable {
                 "arrowkeys.fill"
             case .updates:
                 "gear.badge"
+            case .credits:
+                "hands.and.sparkles.fill"
         }
     }
 }

@@ -24,6 +24,7 @@ struct SettingsView: View {
                             .fontWeight(.bold)
                             .foregroundColor(.white)
                             .frame(width: 20, alignment: .center)
+                            .font(item == .keybindings ? .caption : .body)
                     }
                     
                     Text(item.label)
@@ -46,6 +47,8 @@ struct SettingsView: View {
                     InstancesSettings()
                 case .updates:
                     UpdateSettings()
+                case .credits:
+                    CreditsView()
             }
         }
     }
