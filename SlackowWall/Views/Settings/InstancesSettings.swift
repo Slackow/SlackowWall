@@ -11,12 +11,10 @@ struct InstancesSettings: View {
     @ObservedObject private var instanceManager = InstanceManager.shared
     @ObservedObject private var shortcutManager = ShortcutManager.shared
     
-    @State private var stopped = false
-    
     var body: some View {
         ScrollView {
             VStack(spacing: 12) {
-                SettingsLabel(title: "Direction", description: "Control the grid layout of the instance previews in the main window.")
+                SettingsLabel(title: "Grid Layout", description: "Control the grid layout of the instance previews in the main window.")
                 
                 SettingsCardView {
                     VStack {
@@ -40,11 +38,19 @@ struct InstancesSettings: View {
                 
                 SettingsCardView {
                     VStack {
-                        SettingsButtonView(title: "Switch Columns and Rows", description: "Switch columns and rows and adjust based on number of instances, fixes instances being off screen.", buttonText: "Flip", action: invertGridLayout)
-                            .disabled( shortcutManager.instanceIDs.isEmpty)
+                        SettingsToggleView(title: "Smart Grid", description: "Automatically manages the grid layout of the instances to ensure that they all fit properly within view.", option: $instanceManager.smartGrid)
                         
-                        Divider()
-                        
+                        if !instanceManager.smartGrid {
+                            Divider()
+                            
+                            SettingsButtonView(title: "Switch Columns and Rows", description: "Switch rows and columns and adjust based on the number of instances to fix layouts that stretch offscreen.", buttonText: "Flip", action: instanceManager.invertGridLayout)
+                                .disabled(instanceManager.smartGrid)
+                        }
+                    }
+                }
+                
+                SettingsCardView {
+                    VStack {
                         SettingsToggleView(title: "Show Instance Numbers", option: $instanceManager.showInstanceNumbers)
                     }
                 }
@@ -54,11 +60,11 @@ struct InstancesSettings: View {
                 
                 SettingsCardView {
                     VStack {
-                        SettingsButtonView(title: "Stop All (\(shortcutManager.instanceIDs.count))", description: "Closes all currently tracked instances, Prism, and **SlackowWall** itself.", action: stopAll) {
+                        SettingsButtonView(title: "Stop All (\(shortcutManager.instanceIDs.count))", description: "Closes all currently tracked instances, Prism, and **SlackowWall** itself.", action: instanceManager.stopAll) {
                             Image(systemName: "stop.fill")
                                 .foregroundColor(.red)
                         }
-                        .disabled(stopped)
+                        .disabled(instanceManager.isStopping)
                         .contentTransition(.numericText())
                         .animation(.linear, value: shortcutManager.instanceIDs.count)
                         
@@ -122,24 +128,8 @@ struct InstancesSettings: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .padding()
         }
-    }
-    
-    private func stopAll() {
-        stopped = true
-        shortcutManager.killAll()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            exit(0)
-        }
-    }
-    
-    private func invertGridLayout() {
-        let instanceCount = shortcutManager.instanceIDs.count
-        let rows = instanceManager.rows
-        var newRows = (instanceCount + rows - 1) / rows
-        if newRows < 1 { newRows = 1 }
-        if newRows > 9 { newRows = 9 }
-        instanceManager.rows = newRows
-        instanceManager.alignment = instanceManager.alignment == .vertical ? .horizontal : .vertical
+        .animation(.bouncy, value: instanceManager.smartGrid)
+        .removeFocusOnTap()
     }
 }
 

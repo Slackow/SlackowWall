@@ -13,6 +13,7 @@ class InstanceManager: ObservableObject {
     @AppStorage("onlyOnFocus") var onlyOnFocus: Bool = true
     @AppStorage("shouldHideWindows") var shouldHideWindows = true
     @AppStorage("showInstanceNumbers") var showInstanceNumbers = true
+    @AppStorage("smartGrid") var smartGrid = true
     
     @AppStorage("moveXOffset") var moveXOffset: String = "0"
     @AppStorage("moveYOffset") var moveYOffset: String = "0"
@@ -25,6 +26,7 @@ class InstanceManager: ObservableObject {
     @Published var keyPressed: Character?
     
     @Published var isActive: Bool = true
+    @Published var isStopping = false
     @Published var moving = false
     
     static let shared = InstanceManager()
@@ -196,6 +198,26 @@ class InstanceManager: ObservableObject {
             idx += 1
         }
         print("Reset All possible")
+    }
+    
+    func invertGridLayout() {
+        let instanceCount = ShortcutManager.shared.instanceIDs.count
+        let maximumRows = 9
+        let minimumRows = 1
+        
+        var newRows = (instanceCount + rows - 1) / rows
+        newRows = max(minimumRows, min(newRows, maximumRows))
+        
+        rows = newRows
+        alignment = alignment == .vertical ? .horizontal : .vertical
+    }
+    
+    func stopAll() {
+        isStopping = true
+        ShortcutManager.shared.killAll()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            exit(0)
+        }
     }
 
     func getInstanceProcess(idx: Int) -> pid_t {

@@ -13,6 +13,8 @@ struct InstancesGridView: View {
     @ObservedObject private var screenRecorder = ScreenRecorder.shared
     @ObservedObject private var instanceManager = InstanceManager.shared
     
+    @State private var isOutside: Bool = false
+    
     private var gridItems: [GridItem] {
         Array(repeating: GridItem(.flexible(), spacing: 0), count: min(instanceManager.rows, shortcutManager.states.count))
     }
@@ -36,6 +38,17 @@ struct InstancesGridView: View {
                     }
                 }
                 .background(PreviewShortcutListener(key: $instanceManager.keyPressed))
+                .boundsCheck(isOutside: $isOutside)
+                .onChange(of: isOutside) { value in
+                    if instanceManager.smartGrid && value {
+                        instanceManager.invertGridLayout()
+                    }
+                }
+                .onChange(of: instanceManager.smartGrid) { value in
+                    if value && isOutside {
+                        instanceManager.invertGridLayout()
+                    }
+                }
             }
         }
         .padding(5)
@@ -65,15 +78,18 @@ struct InstancesGridView: View {
             if idx < screenRecorder.capturePreviews.count {
                 ZStack {
                     Text("Instance \(idx + 1)")
-                    ZStack (alignment: .topTrailing) {
-                        CapturePreviewView(preview: screenRecorder.capturePreviews[idx], size: screenRecorder.contentSizes[idx], idx: idx)
+                    
+                    CapturePreviewView(preview: screenRecorder.capturePreviews[idx], size: screenRecorder.contentSizes[idx], idx: idx)
+                    
+                    VStack {
                         if instanceManager.showInstanceNumbers {
                             Text("\(idx + 1)")
-                                .padding(.top, 4)
-                                .padding(.trailing, 4)
                                 .foregroundColor(.white)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                                .padding(.trailing, 4)
                         }
                     }
+                    .animation(.easeInOut, value: instanceManager.showInstanceNumbers)
                 }
             }
         }

@@ -58,7 +58,6 @@ class CaptureEngine: NSObject, @unchecked Sendable {
     
     func stopCapture(removeStreams: Bool = false) async {
         do {
-            print(streams.count)
             for stream in streams {
                 try await stream.stopCapture()
             }

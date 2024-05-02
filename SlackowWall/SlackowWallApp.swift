@@ -12,9 +12,8 @@ struct SlackowWallApp: App {
     @Environment(\.openWindow) private var openWindow
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
+    @ObservedObject private var instanceManager = InstanceManager.shared
     @ObservedObject private var shortcutManager = ShortcutManager.shared
-    
-    @State private var isStopping = false
     
     var body: some Scene {
         Window("SlackowWall", id: "slackowwall-window") {
@@ -23,20 +22,12 @@ struct SlackowWallApp: App {
             .toolbar {
                 ToolbarItem(placement: .automatic) {
                     HStack {
-                        Button(action: {
-                            isStopping = true
-                            Task {
-                                ShortcutManager.shared.killAll()
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                    exit(0)
-                                }
-                            }
-                        }) {
+                        Button(action: { instanceManager.stopAll() }) {
                             Image(systemName: "stop.fill")
                                 .foregroundColor(.red)
                         }
                         .opacity(shortcutManager.instanceIDs.isEmpty ? 0 : 1)
-                        .disabled(isStopping)
+                        .disabled(instanceManager.isStopping)
                         
                         Button(action: { Task { openWindow(id: "settings-window") }}) {
                             Image(systemName: "gear")
