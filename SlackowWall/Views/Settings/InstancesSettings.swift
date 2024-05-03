@@ -38,14 +38,12 @@ struct InstancesSettings: View {
                 
                 SettingsCardView {
                     VStack {
-                        SettingsToggleView(title: "Smart Grid", description: "Automatically manages the grid layout of the instances to ensure that they all fit properly within view.", option: $instanceManager.smartGrid)
+                        SettingsToggleView(title: "Smart Grid", description: "Automatically manages the grid layout of the instances to ensure that they all fit properly within an equivalent view.", option: $instanceManager.smartGrid)
                         
-                        if !instanceManager.smartGrid {
-                            Divider()
+                        Divider()
                             
-                            SettingsButtonView(title: "Switch Columns and Rows", description: "Switch rows and columns and adjust based on the number of instances to fix layouts that stretch offscreen.", buttonText: "Flip", action: instanceManager.invertGridLayout)
-                                .disabled(instanceManager.smartGrid)
-                        }
+                        SettingsButtonView(title: "Switch Columns and Rows", description: "Switch rows and columns and adjust based on the number of instances to fix layouts that stretch offscreen.", buttonText: "Flip", action: instanceManager.invertGridLayout)
+                            .disabled(instanceManager.smartGrid)
                     }
                 }
                 
@@ -128,7 +126,6 @@ struct InstancesSettings: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .padding()
         }
-        .animation(.bouncy, value: instanceManager.smartGrid)
         .removeFocusOnTap()
     }
 }
