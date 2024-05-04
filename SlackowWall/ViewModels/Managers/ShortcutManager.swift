@@ -148,6 +148,7 @@ final class ShortcutManager: ObservableObject {
             info.checkState = .GENNING
             sendReset(pid: pid)
             playResetSound()
+            InstanceManager.shared.unlockInstance(idx: instNum - 1)
         }
     }
 

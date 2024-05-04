@@ -44,16 +44,6 @@ struct CapturePreviewView: View {
                 .onChange(of: instanceManager.keyPressed) { _ in
                     instanceManager.handleKeyEvent(idx: idx)
                 }
-            
-            if instanceManager.isLocked(idx: idx) {
-                Image(systemName: "lock.fill")
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundColor(.red)
-                    .frame(width: 25, height: 30)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 25)
-            }
         }
         .scaleEffect(CGSize(width: instanceManager.forceAspectRatio ? scaleFactor : 1.0, height: 1.0))
     }

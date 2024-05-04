@@ -84,6 +84,15 @@ struct InstancesGridView: View {
                     
                     CapturePreviewView(preview: screenRecorder.capturePreviews[idx], size: screenRecorder.contentSizes[idx], idx: idx)
                     
+                    if instanceManager.isLocked(idx: idx) {
+                        Image(systemName: "lock.fill")
+                            .scaleEffect(CGSize(width: 2, height: 2))
+                            .foregroundColor(.red)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                            .padding(.horizontal, 4)
+                            .padding(.vertical, 27)
+                    }
+                    
                     VStack {
                         if instanceManager.showInstanceNumbers {
                             Text("\(idx + 1)")

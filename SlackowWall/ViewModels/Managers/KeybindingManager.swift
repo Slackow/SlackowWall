@@ -14,11 +14,11 @@ class KeybindingManager: ObservableObject {
     @AppStorage("runKey")         var runKey:         KeyCode? = .r
     @AppStorage("resetOneKey")    var resetOneKey:    KeyCode? = .e
     @AppStorage("lockKey")        var lockKey:        KeyCode? = .c
-    
+
     static let shared = KeybindingManager()
-    
+
     init() {}
-    
+
     func handleGlobalKey(_ key: NSEvent) {
         if resetGKey == key.keyCode {
             ShortcutManager.shared.globalReset()
@@ -29,7 +29,7 @@ class KeybindingManager: ObservableObject {
 typealias KeyCode = UInt16
 
 extension KeyCode {
-    
+
     // Layout-independent Keys
     // eg.These key codes are always the same key on all layouts.
     static let returnKey                 : KeyCode = 0x24
@@ -81,7 +81,7 @@ extension KeyCode {
     static let f18                       : KeyCode = 0x4F
     static let f19                       : KeyCode = 0x50
     static let f20                       : KeyCode = 0x5A
-    
+
     // US-ANSI Keyboard Positions
     // eg. These key codes are for the physical key (in any keyboard layout)
     // at the location of the named key in the US-ANSI layout.
@@ -111,7 +111,7 @@ extension KeyCode {
     static let x                         : KeyCode = 0x07
     static let y                         : KeyCode = 0x10
     static let z                         : KeyCode = 0x06
-    
+
     static let zero                      : KeyCode = 0x1D
     static let one                       : KeyCode = 0x12
     static let two                       : KeyCode = 0x13
@@ -122,7 +122,7 @@ extension KeyCode {
     static let seven                     : KeyCode = 0x1A
     static let eight                     : KeyCode = 0x1C
     static let nine                      : KeyCode = 0x19
-    
+
     static let equals                    : KeyCode = 0x18
     static let minus                     : KeyCode = 0x1B
     static let semicolon                 : KeyCode = 0x29
@@ -134,7 +134,7 @@ extension KeyCode {
     static let grave                     : KeyCode = 0x32
     static let leftBracket               : KeyCode = 0x21
     static let rightBracket              : KeyCode = 0x1E
-    
+
     static let keypadDecimal             : KeyCode = 0x41
     static let keypadMultiply            : KeyCode = 0x43
     static let keypadPlus                : KeyCode = 0x45
@@ -153,7 +153,7 @@ extension KeyCode {
     static let keypad7                   : KeyCode = 0x59
     static let keypad8                   : KeyCode = 0x5B
     static let keypad9                   : KeyCode = 0x5C
-    
+
     private static let nameDict: [KeyCode:String] = [
         0x24: "Return",
         0x30: "Tab",
@@ -269,7 +269,7 @@ extension KeyCode {
         0x5B: "Num8",
         0x5C: "Num9",
     ]
-    
+
     static func toName(code: KeyCode?) -> String {
         return code.flatMap({nameDict[$0] ?? "Unknown"}) ?? "None"
     }

@@ -44,7 +44,7 @@ class InstanceManager: ObservableObject {
     @MainActor func openInstance(idx: Int) {
         if (NSApplication.shared.isActive) {
             switchToInstance(idx: idx)
-            lockedInstances &= ~(1 << idx)
+            unlockInstance(idx: idx)
         }
     }
 
@@ -150,6 +150,7 @@ class InstanceManager: ObservableObject {
             case "e": ShortcutManager.shared.resetInstance(pid: pid)
             case "f": enterAndResetUnlocked(idx: idx)
             case "p": ShortcutManager.shared.sendF3Esc(pid: pid)
+            case "c": lockInstance(idx: idx)
             default: return
             }
             keyPressed = nil
@@ -179,6 +180,9 @@ class InstanceManager: ObservableObject {
         let state = ShortcutManager.shared.states[idx]
         state.updateState(force: true)
         return state.state != WAITING && state.state != GENERATING
+    }
+    @inline(__always) public func unlockInstance(idx: Int) {
+        lockedInstances &= ~(1 << idx)
     }
 
     private func resetAllUnlocked() {
