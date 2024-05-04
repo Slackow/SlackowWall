@@ -9,6 +9,8 @@ import SwiftUI
 
 class KeybindingManager: ObservableObject {
     @AppStorage("resetGKey")      var resetGKey:      KeyCode? = .keypad0
+    @AppStorage("planarGKey")     var planarGKey:     KeyCode? = nil
+    @AppStorage("planar2GKey")    var planar2GKey:    KeyCode? = nil
     @AppStorage("resetAllKey")    var resetAllKey:    KeyCode? = .t
     @AppStorage("resetOthersKey") var resetOthersKey: KeyCode? = .f
     @AppStorage("runKey")         var runKey:         KeyCode? = .r

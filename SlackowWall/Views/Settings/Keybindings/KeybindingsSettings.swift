@@ -24,6 +24,35 @@ struct KeybindingsSettings: View {
                     Divider()
                     
                     HStack {
+                        VStack(alignment: .leading) {
+                            Text("Toggle Planar (Global)")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text("Toggle between two resolutions quickly")
+                                .font(.caption)
+                                .foregroundStyle(.gray)
+                                .padding(.trailing, 2)
+                        }
+                        
+                        KeybindingView(keybinding: $keybindingManager.planarGKey, defaultValue: nil)
+                    }
+                    Divider()
+                    
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text("Toggle Eye Zoom (Global)")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text("Toggle between another set of resolutions")
+                                .font(.caption)
+                                .foregroundStyle(.gray)
+                                .padding(.trailing, 2)
+                        }
+                        
+                        KeybindingView(keybinding: $keybindingManager.planar2GKey, defaultValue: nil)
+                    }
+                    
+                    Divider()
+                    
+                    HStack {
                         Text("Reset All")
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
