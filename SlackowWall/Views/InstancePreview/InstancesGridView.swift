@@ -49,6 +49,9 @@ struct InstancesGridView: View {
                         instanceManager.invertGridLayout()
                     }
                 }
+                .onChange(of: instanceManager.forceAspectRatio) { _ in
+                    Task { await screenRecorder.resetAndStartCapture() }
+                }
             }
         }
         .padding(5)

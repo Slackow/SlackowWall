@@ -13,6 +13,7 @@ class InstanceManager: ObservableObject {
     @AppStorage("onlyOnFocus") var onlyOnFocus: Bool = true
     @AppStorage("shouldHideWindows") var shouldHideWindows = true
     @AppStorage("showInstanceNumbers") var showInstanceNumbers = true
+    @AppStorage("forceAspectRatio") var forceAspectRatio = false
     @AppStorage("smartGrid") var smartGrid = true
     
     @AppStorage("moveXOffset") var moveXOffset: String = "0"
@@ -260,7 +261,14 @@ class InstanceManager: ObservableObject {
                     print("AppleScript Execution Error: \(error)")
                 }
             }
-            DispatchQueue.main.async { self.moving = false }
+            
+            if width > 0 || height > 0 {
+                await ScreenRecorder.shared.resetAndStartCapture()
+            }
+            
+            DispatchQueue.main.async {
+                self.moving = false
+            }
         }
     }
 }

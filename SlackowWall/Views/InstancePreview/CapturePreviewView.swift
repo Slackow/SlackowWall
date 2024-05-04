@@ -15,10 +15,20 @@ struct CapturePreviewView: View {
     var size: CGSize
     var idx: Int
     
+    private var scaleFactor: CGFloat {
+        let aspectRatioWidth = size.height * 16.0 / 9
+        return min(1.0, aspectRatioWidth / size.width)
+    }
+    
+    private var scaledDimensions: CGSize {
+        let aspectRatioWidth = size.height * 16.0 / 9
+        return CGSize(width: min(aspectRatioWidth, size.width), height: size.height)
+    }
+    
     var body: some View {
         ZStack(alignment: .topTrailing) {
             preview
-                .aspectRatio(size, contentMode: .fill)
+                .aspectRatio(instanceManager.forceAspectRatio ? scaledDimensions : size, contentMode: .fill)
                 .overlay(PreviewActionsListener(lockAction: { key in
                     if key.modifierFlags.contains(.shift) {
                         instanceManager.lockInstance(idx: idx)
@@ -45,5 +55,6 @@ struct CapturePreviewView: View {
                     .padding(.vertical, 25)
             }
         }
+        .scaleEffect(CGSize(width: instanceManager.forceAspectRatio ? scaleFactor : 1.0, height: 1.0))
     }
 }

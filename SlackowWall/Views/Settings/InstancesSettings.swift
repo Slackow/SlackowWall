@@ -49,6 +49,10 @@ struct InstancesSettings: View {
                 
                 SettingsCardView {
                     VStack {
+                        SettingsToggleView(title: "Force Aspect Ratio (16:9)", description: "Forces the instances to use this aspect ratio which is useful when using stretched instances.", option: $instanceManager.forceAspectRatio)
+                        
+                        Divider()
+                        
                         SettingsToggleView(title: "Show Instance Numbers", option: $instanceManager.showInstanceNumbers)
                     }
                 }

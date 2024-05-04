@@ -63,7 +63,7 @@ struct KeybindingsSettings: View {
                         VStack(alignment: .leading) {
                             Text("Lock Hovered")
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            Text("You can also shift click instances to lock/unlock")
+                            Text("You can also shift click instances to lock/unlock them.")
                                 .font(.caption)
                                 .foregroundStyle(.gray)
                                 .padding(.trailing, 2)
