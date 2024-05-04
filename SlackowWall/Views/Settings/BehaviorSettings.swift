@@ -23,6 +23,10 @@ struct BehaviorSettings: View {
                     Divider()
                     
                     SettingsToggleView(title: "Hide Windows", description: "Hide all other instances when you enter an instance for performance, highly recommended.", option: $instanceManager.shouldHideWindows)
+                    
+                    Divider()
+                    
+                    SettingsToggleView(title: "Use State Output", description: "Turn this on if you have the state output mod, it prevents an instance from reseting if it is still generating the world", option: $instanceManager.checkStateOutput)
                 }
             }
         }

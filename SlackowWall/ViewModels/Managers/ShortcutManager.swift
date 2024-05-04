@@ -8,6 +8,7 @@
 import SwiftUI
 import ScreenCaptureKit
 import AVFoundation
+import ApplicationServices
 
 final class ShortcutManager: ObservableObject {
     @Published var instanceNums = [pid_t:Int]()
@@ -68,37 +69,37 @@ final class ShortcutManager: ObservableObject {
         closeSettingsWindow()
         let apps = NSWorkspace.shared.runningApplications.filter{  $0.activationPolicy == .regular }
         if let activeWindow = apps.first(where:{$0.isActive}) {
-            NSApplication.shared.activate(ignoringOtherApps: true)
+            print("Focusing!")
             let pid = activeWindow.processIdentifier
             if instanceIDs.contains(pid) {
                 resetInstance(pid: pid)
-                if InstanceManager.shared.shouldHideWindows {
-                    unhideInstances()
-                }
+            }
+            if InstanceManager.shared.shouldHideWindows {
+                unhideInstances()
+            }
+            NSApp.activate(ignoringOtherApps: true)
+        }
+    }
+
+    func unhideInstances() {
+        let pids = ShortcutManager.shared.instanceIDs
+        for pid in pids {
+            let app = AXUIElementCreateApplication(pid)
+            var error: AXError = AXError.success
+            error = AXUIElementSetAttributeValue(app, kAXHiddenAttribute as CFString, kCFBooleanFalse)
+            if error != .success {
+                print("Error setting visibility attribute for PID \(pid): \(error)")
             }
         }
     }
     
-    func unhideInstances() {
-        let pids = ShortcutManager.shared.instanceIDs.map{ "\($0)" }.joined(separator: ",")
-        let script = """
-            tell application "System Events"
-                repeat with pid in [\(pids)]
-                    set visible of (first process whose unix id is pid) to true
-                end repeat
-            end tell
-            """
-        var error: NSDictionary?
-        if let scriptObject = NSAppleScript(source: script) {
-            scriptObject.executeAndReturnError(&error)
-            if error != nil {
-                for (key, value) in error! {
-                    print("\(key): \(value)")
-                }
-            }
-        } else {
-            print("Failed to send apple script")
-        }
+    func killReplayD(){
+        let task = Process()
+        let killProcess = "killall -9 replayd"
+        task.launchPath = "/bin/sh"
+        task.arguments = ["-c", killProcess]
+        task.launch()
+        task.waitUntilExit()
     }
 
     /// kills all minecraft instances
@@ -106,17 +107,6 @@ final class ShortcutManager: ObservableObject {
         let task = Process()
         let killProcess = "killall prismlauncher;" + instanceIDs
                 .map { "kill -9 \($0)" }
-                .joined(separator: ";")
-        task.launchPath = "/bin/sh"
-        task.arguments = ["-c", killProcess]
-        task.launch()
-        task.waitUntilExit()
-    }
-    
-    func prioritize(instNum: Int) {
-        let task = Process()
-        let killProcess = instanceIDs.indices
-            .map { "renice -n \($0 == instNum ? -20 : 20) -p \(instanceIDs[$0])" }
                 .joined(separator: ";")
         task.launchPath = "/bin/sh"
         task.arguments = ["-c", killProcess]

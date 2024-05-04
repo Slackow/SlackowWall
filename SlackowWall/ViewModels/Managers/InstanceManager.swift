@@ -3,14 +3,12 @@
 //
 
 import SwiftUI
+import ApplicationServices
 
 
 class InstanceManager: ObservableObject {
     @AppStorage("rows") var rows: Int = AppDefaults.rows
     @AppStorage("alignment") var alignment: Alignment = AppDefaults.alignment
-    @AppStorage("f1OnJoin") var f1OnJoin: Bool = false
-    @AppStorage("fullscreen") var fullscreen: Bool = false
-    @AppStorage("onlyOnFocus") var onlyOnFocus: Bool = true
     @AppStorage("shouldHideWindows") var shouldHideWindows = true
     @AppStorage("showInstanceNumbers") var showInstanceNumbers = true
     @AppStorage("forceAspectRatio") var forceAspectRatio = false
@@ -21,6 +19,13 @@ class InstanceManager: ObservableObject {
     
     @AppStorage("setWidth") var setWidth: String = ""
     @AppStorage("setHeight") var setHeight: String = ""
+    
+    
+    // Behavior
+    @AppStorage("f1OnJoin") var f1OnJoin: Bool = false
+    @AppStorage("fullscreen") var fullscreen: Bool = false
+    @AppStorage("onlyOnFocus") var onlyOnFocus: Bool = true
+    @AppStorage("checkStateOutput") var checkStateOutput: Bool = false
 
     @Published var lockedInstances: Int64 = 0
     @Published var hoveredInstance: Int?
@@ -42,26 +47,15 @@ class InstanceManager: ObservableObject {
             lockedInstances &= ~(1 << idx)
         }
     }
-    
+
     func hideWindows(_ targetPIDs: [pid_t]) {
-        let pids = targetPIDs.map { "\($0)" }.joined(separator: ",")
-        let script = """
-            tell application "System Events"
-                repeat with pid in [\(pids)]
-                    set visible of (first process whose unix id is pid) to false
-                end repeat
-            end tell
-            """
-        var error: NSDictionary?
-        if let scriptObject = NSAppleScript(source: script) {
-            scriptObject.executeAndReturnError(&error)
-            if error != nil {
-                for (key, value) in error! {
-                    print("\(key): \(value)")
-                }
+        for pid in targetPIDs {
+            let app = AXUIElementCreateApplication(pid)
+            var error: AXError = AXError.success
+            error = AXUIElementSetAttributeValue(app, kAXHiddenAttribute as CFString, kCFBooleanTrue)
+            if error != .success {
+                print("Error setting visibility attribute for PID \(pid): \(error)")
             }
-        } else {
-            print("Failed to send apple script")
         }
     }
     
@@ -181,6 +175,7 @@ class InstanceManager: ObservableObject {
     
     @inline(__always) private func canReset(idx: Int) -> Bool {
         if isLocked(idx: idx) { return false }
+        if !checkStateOutput { return true }
         let state = ShortcutManager.shared.states[idx]
         state.updateState(force: true)
         return state.state != WAITING && state.state != GENERATING
@@ -224,45 +219,45 @@ class InstanceManager: ObservableObject {
     func getInstanceProcess(idx: Int) -> pid_t {
         return ShortcutManager.shared.states[idx].pid
     }
-    
+
     func move(forward: Bool, direct: Bool = false) {
         moving = true
         Task {
-            let xOff = "\(direct ? "" : "x+")\((Int32(moveXOffset) ?? 0) * (forward ? 1 : -1))"
-            let yOff = "\(direct ? "" : "y+")\((Int32(moveYOffset) ?? 0) * (forward ? 1 : -1))"
-            let pids = ShortcutManager.shared.instanceIDs.map({"\($0)"}).joined(separator: ",")
+            let xOff = (Int32(moveXOffset) ?? 0) * (forward ? 1 : -1)
+            let yOff = (Int32(moveYOffset) ?? 0) * (forward ? 1 : -1)
+            let pids = ShortcutManager.shared.instanceIDs
             let width = Int32(setWidth) ?? 0
             let height = Int32(setHeight) ?? 0
             let setSize = width > 0 && height > 0
-            if (xOff == "x+0" && yOff == "y+0" && !setSize) || pids.isEmpty {
+
+            if (xOff == 0 && yOff == 0 && !setSize) || pids.isEmpty {
                 DispatchQueue.main.async { self.moving = false }
                 return
             }
-            
-            let fullScript = """
-                tell application "System Events"
-                    repeat with pid in [\(pids)]
-                        repeat with aWindow in (every window of (first process whose unix id is pid))
-                            if name of aWindow is not "Window" then \(direct ? "" : "\nset {x, y} to position of aWindow")
-                                set position of aWindow to {\(xOff), \(yOff)}
-                                \(setSize ? "set size of aWindow to {\(width), \(height)}" : "")
-                            end if
-                        end repeat
-                    end repeat
-                end tell
-            """
-            
-            print("\(fullScript)")
-            // Execute the AppleScript
-            if let appleScript = NSAppleScript(source: fullScript) {
-                var errorDict: NSDictionary? = nil
-                appleScript.executeAndReturnError(&errorDict)
-                if let error = errorDict {
-                    print("AppleScript Execution Error: \(error)")
+
+            for pid in pids {
+                let appRef = AXUIElementCreateApplication(pid)
+                var value: AnyObject?
+                if AXUIElementCopyAttributeValue(appRef, kAXWindowsAttribute as CFString, &value) == .success, let windows = value as? [AXUIElement] {
+                    for window in windows {
+                        var titleValue: AnyObject?
+                        AXUIElementCopyAttributeValue(window, kAXTitleAttribute as CFString, &titleValue)
+                        if let title = titleValue as? String, title != "Window" {
+                            var newPosition = direct ? CGPoint(x: CGFloat(xOff), y: CGFloat(yOff)) : CGPoint(x: CGFloat(xOff), y: CGFloat(yOff))
+                            var newSize = CGSize(width: CGFloat(width), height: CGFloat(height))
+
+                            if let positionRef = AXValueCreate(AXValueType.cgPoint, &newPosition), let sizeRef = AXValueCreate(AXValueType.cgSize, &newSize) {
+                                AXUIElementSetAttributeValue(window, kAXPositionAttribute as CFString, positionRef)
+                                if setSize {
+                                    AXUIElementSetAttributeValue(window, kAXSizeAttribute as CFString, sizeRef)
+                                }
+                            }
+                        }
+                    }
                 }
             }
             
-            if width > 0 || height > 0 {
+            if setSize {
                 await ScreenRecorder.shared.resetAndStartCapture()
             }
             
