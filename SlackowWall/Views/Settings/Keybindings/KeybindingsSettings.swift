@@ -25,7 +25,7 @@ struct KeybindingsSettings: View {
                     
                     HStack {
                         VStack(alignment: .leading) {
-                            Text("Toggle Planar (Global)")
+                            Text("Toggle Wide Instance (Global)")
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             Text("Toggle between two resolutions quickly")
                                 .font(.caption)
@@ -39,7 +39,7 @@ struct KeybindingsSettings: View {
                     
                     HStack {
                         VStack(alignment: .leading) {
-                            Text("Toggle Eye Zoom (Global)")
+                            Text("Toggle Tall Instance (Global)")
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             Text("Toggle between another set of resolutions")
                                 .font(.caption)
