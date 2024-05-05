@@ -67,18 +67,89 @@ final class ShortcutManager: ObservableObject {
     
     func globalReset() {
         closeSettingsWindow()
-        let apps = NSWorkspace.shared.runningApplications.filter{  $0.activationPolicy == .regular }
-        if let activeWindow = apps.first(where:{$0.isActive}) {
-            print("Focusing!")
-            let pid = activeWindow.processIdentifier
-            if instanceIDs.contains(pid) {
-                resetInstance(pid: pid)
-            }
-            if InstanceManager.shared.shouldHideWindows {
-                unhideInstances()
-            }
-            NSApp.activate(ignoringOtherApps: true)
+        let apps = NSWorkspace.shared.runningApplications.filter{ $0.activationPolicy == .regular }
+        guard let activeWindow = apps.first(where:{$0.isActive}) else { return }
+        print("Focusing!")
+        let pid = activeWindow.processIdentifier
+        if instanceIDs.contains(pid) {
+            resizeReset()
+            resetInstance(pid: pid)
         }
+        if InstanceManager.shared.shouldHideWindows {
+            unhideInstances()
+        }
+        NSApp.activate(ignoringOtherApps: true)
+    
+    }
+    
+    func resizePlanar() {
+        let w = CGFloat(Int32(InstanceManager.shared.wideWidth) ?? 0)
+        let h = CGFloat(Int32(InstanceManager.shared.wideHeight) ?? 0)
+        resize(width: w, height: h)
+    }
+    
+    func resizeBase() {
+        let w = CGFloat(Int32(InstanceManager.shared.baseWidth) ?? 0)
+        let h = CGFloat(Int32(InstanceManager.shared.baseHeight) ?? 0)
+        resize(width: w, height: h)
+    }
+    
+    func resizeReset() {
+        let w = CGFloat(Int32(InstanceManager.shared.resetWidth) ?? 0)
+        let h = CGFloat(Int32(InstanceManager.shared.resetHeight) ?? 0)
+        resize(width: w, height: h)
+    }
+    
+    func resizeTall() {
+        
+    }
+    
+    func resize(width: CGFloat, height: CGFloat) {
+        let pids = ShortcutManager.shared.instanceIDs
+        if !(width > 0 && height > 0) || pids.isEmpty {
+            return
+        }
+        
+        let apps = NSWorkspace.shared.runningApplications.filter{ $0.activationPolicy == .regular }
+        guard let activeWindow = apps.first(where:{$0.isActive}), instanceIDs.contains(activeWindow.processIdentifier) else { return }
+        print("Resizing!")
+        
+        let appRef = AXUIElementCreateApplication(activeWindow.processIdentifier)
+        var value: AnyObject?
+        guard AXUIElementCopyAttributeValue(appRef, kAXWindowsAttribute as CFString, &value) == .success, let windows = value as? [AXUIElement] else { return }
+        for window in windows {
+            var titleValue: AnyObject?
+            AXUIElementCopyAttributeValue(window, kAXTitleAttribute as CFString, &titleValue)
+            guard let title = titleValue as? String, title != "Window" else { continue }
+            
+            
+            var posValue: AnyObject?
+            var sizeValue: AnyObject?
+            AXUIElementCopyAttributeValue(window, kAXPositionAttribute as CFString, &posValue)
+            AXUIElementCopyAttributeValue(window, kAXSizeAttribute as CFString, &sizeValue)
+            guard let posValue = posValue, let sizeValue = sizeValue else { return }
+            
+            var pos = CGPoint.zero
+            var size = CGSize.zero
+            AXValueGetValue(posValue as! AXValue, AXValueType.cgPoint, &pos)
+            AXValueGetValue(sizeValue as! AXValue, AXValueType.cgSize, &size)
+            
+            var newSize = CGSize(width: width, height: height)
+            if size.width == width && size.height == height {
+                newSize = CGSize(width: 2560, height: 1468)
+            }
+            var newPosition = CGPoint(x: pos.x - (newSize.width - size.width) * 0.5,
+                                      y: pos.y - (newSize.height - size.height) * 0.5)
+            
+
+            guard let positionRef = AXValueCreate(AXValueType.cgPoint, &newPosition), 
+                  let sizeRef = AXValueCreate(AXValueType.cgSize, &newSize) else { continue }
+            
+            AXUIElementSetAttributeValue(window, kAXPositionAttribute as CFString, positionRef)
+            AXUIElementSetAttributeValue(window, kAXSizeAttribute as CFString, sizeRef)
+            print("Done Resizing!")
+        }
+        
     }
 
     func unhideInstances() {
@@ -204,15 +275,15 @@ final class ShortcutManager: ObservableObject {
 
     func sendReset(pid: pid_t) {
         // send F6
-        sendKey(key: 0x61, pid: pid)
+        sendKey(key: .f6, pid: pid)
     }
     
     func sendF1(pid: pid_t) {
-        sendKey(key: 0x7A, pid: pid)
+        sendKey(key: .f1, pid: pid)
     }
     
     func sendF11(pid: pid_t) {
-        sendKey(key: 0x67, pid: pid)
+        sendKey(key: .f11, pid: pid)
     }
 
     func sendF3Esc(pid: pid_t) {
@@ -222,7 +293,7 @@ final class ShortcutManager: ObservableObject {
     }
 
     func sendEscape(pid: pid_t) {
-        sendKey(key: 0x35, pid: pid)
+        sendKey(key: .escape, pid: pid)
     }
 
     func sendKey(key: CGKeyCode, pid: pid_t) {

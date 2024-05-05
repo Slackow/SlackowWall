@@ -21,11 +21,18 @@ class InstanceManager: ObservableObject {
     @AppStorage("setHeight") var setHeight: String = ""
     
     
+    
     // Behavior
     @AppStorage("f1OnJoin") var f1OnJoin: Bool = false
     @AppStorage("fullscreen") var fullscreen: Bool = false
     @AppStorage("onlyOnFocus") var onlyOnFocus: Bool = true
     @AppStorage("checkStateOutput") var checkStateOutput: Bool = false
+    @AppStorage("resetWidth") var resetWidth: String = ""
+    @AppStorage("resetHeight") var resetHeight: String = ""
+    @AppStorage("baseWidth") var baseWidth: String = ""
+    @AppStorage("baseHeight") var baseHeight: String = ""
+    @AppStorage("wideWidth") var wideWidth: String = ""
+    @AppStorage("wideHeight") var wideHeight: String = ""
 
     @Published var lockedInstances: Int64 = 0
     @Published var hoveredInstance: Int?
@@ -75,6 +82,7 @@ class InstanceManager: ObservableObject {
                 hideWindows(pids)
             }
             focusWindow(pid)
+            ShortcutManager.shared.resizeBase()
             
             ShortcutManager.shared.sendEscape(pid: pid)
             if self.f1OnJoin {
@@ -151,6 +159,7 @@ class InstanceManager: ObservableObject {
             case "f": enterAndResetUnlocked(idx: idx)
             case "p": ShortcutManager.shared.sendF3Esc(pid: pid)
             case "c": lockInstance(idx: idx)
+            case "0": ShortcutManager.shared.globalReset()
             default: return
             }
             keyPressed = nil

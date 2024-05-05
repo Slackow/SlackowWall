@@ -29,6 +29,54 @@ struct BehaviorSettings: View {
                     SettingsToggleView(title: "Use State Output", description: "Turn this on if you have the state output mod, it prevents an instance from reseting if it is still generating the world", option: $instanceManager.checkStateOutput)
                 }
             }
+            SettingsCardView {
+                VStack {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("Dimension Settings")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        Text(.init("Dimensions of game windows in different cases"))
+                            .font(.caption)
+                            .foregroundStyle(.gray)
+                            .padding(.trailing, 2)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    Form {
+                        HStack {
+                            VStack {
+                                Text("Reset Size")
+                                    .padding(4)
+                                Text("Gameplay Size")
+                                    .padding(4)
+                                Text("Wide Size")
+                                    .padding(4)
+                            }
+                            VStack {
+                                TextField("W", text: $instanceManager.resetWidth)
+                                    .textFieldStyle(.roundedBorder)
+                                
+                                TextField("W", text: $instanceManager.baseWidth)
+                                    .textFieldStyle(.roundedBorder)
+                                
+                                TextField("W", text: $instanceManager.wideWidth)
+                                    .textFieldStyle(.roundedBorder)
+                            }
+                            VStack {
+                                TextField("H", text: $instanceManager.resetHeight)
+                                    .textFieldStyle(.roundedBorder)
+                                
+                                TextField("H", text: $instanceManager.baseHeight)
+                                    .textFieldStyle(.roundedBorder)
+                                
+                                TextField("H", text: $instanceManager.wideHeight)
+                                    .textFieldStyle(.roundedBorder)
+                            }
+                        }
+                    }
+                    .padding(4)
+                }
+            }
         }
         .frame(maxHeight: .infinity, alignment: .topLeading)
         .padding()

@@ -72,7 +72,7 @@ struct InstancesSettings: View {
                         
                         Divider()
                         
-                        SettingsButtonView(title: "Copy Mods to All", description: "Copies all mods from the first instance to all other open instances. This operation will close all modified instances.", buttonText: "Sync", action: instanceManager.copyMods)
+                        SettingsButtonView(title: "Copy Mods to All", description: "Copies all mods from the first instance to all other open instances. This operation will close all instances.", buttonText: "Sync", action: instanceManager.copyMods)
                             .disabled(shortcutManager.instanceIDs.count < 2)
                     }
                 }
@@ -103,27 +103,27 @@ struct InstancesSettings: View {
                                 
                                 TextField("H", text: $instanceManager.setHeight)
                                     .textFieldStyle(.roundedBorder)
+                                Button(action: { instanceManager.move(forward: true, direct: true) }) {
+                                    Text("Adjust")
+                                }
+                                .disabled(instanceManager.moving || shortcutManager.instanceIDs.isEmpty)
                             }
                         }
-                        .padding()
+                        .padding(4)
                         
-                        HStack {
-                            Button(action: { instanceManager.move(forward: true) }) {
-                                Text("Move Over")
-                            }
-                            .disabled(instanceManager.moving || shortcutManager.instanceIDs.isEmpty)
+//                        HStack {
+//                            Button(action: { instanceManager.move(forward: true) }) {
+//                                Text("Move Over")
+//                            }
+//                            .disabled(instanceManager.moving || shortcutManager.instanceIDs.isEmpty)
+//                            
+//                            Button(action: { instanceManager.move(forward: false) }) {
+//                                Text("Move Back")
+//                            }
+//                            .disabled(instanceManager.moving || shortcutManager.instanceIDs.isEmpty)
                             
-                            Button(action: { instanceManager.move(forward: false) }) {
-                                Text("Move Back")
-                            }
-                            .disabled(instanceManager.moving || shortcutManager.instanceIDs.isEmpty)
-                            
-                            Button(action: { instanceManager.move(forward: true, direct: true) }) {
-                                Text("Set Position")
-                            }
-                            .disabled(instanceManager.moving || shortcutManager.instanceIDs.isEmpty)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .trailing)
+//                        }
+//                        .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                 }
             }

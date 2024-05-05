@@ -22,8 +22,11 @@ class KeybindingManager: ObservableObject {
     init() {}
 
     func handleGlobalKey(_ key: NSEvent) {
-        if resetGKey == key.keyCode {
-            ShortcutManager.shared.globalReset()
+        switch key.keyCode {
+            case resetGKey: ShortcutManager.shared.globalReset()
+            case planarGKey: ShortcutManager.shared.resizePlanar()
+            case planar2GKey: ShortcutManager.shared.resizeTall()
+            case _: return
         }
     }
 }

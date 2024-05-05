@@ -28,6 +28,7 @@ struct PreviewShortcutListener: NSViewRepresentable {
             case k.resetOthersKey: key = "f"
             case k.resetAllKey: key = "t"
             case k.lockKey: key = "c"
+            case k.resetGKey: key = "0"
             default: return
             }
         }
