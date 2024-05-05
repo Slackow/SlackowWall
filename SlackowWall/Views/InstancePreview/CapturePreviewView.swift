@@ -26,25 +26,28 @@ struct CapturePreviewView: View {
     }
     
     var body: some View {
-        ZStack(alignment: .topTrailing) {
-            preview
-                .aspectRatio(instanceManager.forceAspectRatio ? scaledDimensions : size, contentMode: .fill)
-                .overlay(PreviewActionsListener(lockAction: { key in
-                    if key.modifierFlags.contains(.shift) {
-                        instanceManager.lockInstance(idx: idx)
-                    }
-                }))
-                .onHover { isHovered in
-                    if isHovered {
-                        instanceManager.hoveredInstance = idx
-                    } else {
-                        instanceManager.hoveredInstance = nil
-                    }
+        preview
+            .aspectRatio(instanceManager.forceAspectRatio ? scaledDimensions : size, contentMode: .fill)
+            .scaleEffect(CGSize(width: instanceManager.forceAspectRatio ? scaleFactor : 1.0, height: 1.0))
+            .mask {
+                RoundedRectangle(cornerRadius: 10)
+                    .padding(.top, 28)
+            }
+            .padding(.top, -28)
+            .overlay(PreviewActionsListener(lockAction: { key in
+                if key.modifierFlags.contains(.shift) {
+                    instanceManager.lockInstance(idx: idx)
                 }
-                .onChange(of: instanceManager.keyPressed) { _ in
-                    instanceManager.handleKeyEvent(idx: idx)
+            }))
+            .onHover { isHovered in
+                if isHovered {
+                    instanceManager.hoveredInstance = idx
+                } else {
+                    instanceManager.hoveredInstance = nil
                 }
-        }
-        .scaleEffect(CGSize(width: instanceManager.forceAspectRatio ? scaleFactor : 1.0, height: 1.0))
+            }
+            .onChange(of: instanceManager.keyPressed) { _ in
+                instanceManager.handleKeyEvent(idx: idx)
+            }
     }
 }

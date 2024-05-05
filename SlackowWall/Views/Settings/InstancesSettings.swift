@@ -41,6 +41,7 @@ struct InstancesSettings: View {
                         SettingsToggleView(title: "Smart Grid", description: "Automatically manages the grid layout of the instances to ensure that they all fit properly within an equivalent view.", option: $instanceManager.smartGrid)
                         
                         Divider()
+                            .padding(.bottom, 4)
                             
                         SettingsButtonView(title: "Switch Columns and Rows", description: "Switch rows and columns and adjust based on the number of instances to fix layouts that stretch offscreen.", buttonText: "Flip", action: instanceManager.invertGridLayout)
                             .disabled(instanceManager.smartGrid)
@@ -52,6 +53,7 @@ struct InstancesSettings: View {
                         SettingsToggleView(title: "Force Aspect Ratio (16:9)", description: "Forces the instances to use this aspect ratio which is useful when using stretched instances.", option: $instanceManager.forceAspectRatio)
                         
                         Divider()
+                            .padding(.bottom, 4)
                         
                         SettingsToggleView(title: "Show Instance Numbers", option: $instanceManager.showInstanceNumbers)
                     }
@@ -71,6 +73,7 @@ struct InstancesSettings: View {
                         .animation(.linear, value: shortcutManager.instanceIDs.count)
                         
                         Divider()
+                            .padding(.bottom, 4)
                         
                         SettingsButtonView(title: "Copy Mods to All", description: "Copies all mods from the first instance to all other open instances. This operation will close all instances.", buttonText: "Sync", action: instanceManager.copyMods)
                             .disabled(shortcutManager.instanceIDs.count < 2)
@@ -92,38 +95,28 @@ struct InstancesSettings: View {
                         
                         Form {
                             HStack {
-                                TextField("X", text: $instanceManager.moveXOffset)
-                                    .textFieldStyle(.roundedBorder)
+                                Group {
+                                    TextField("X", text: $instanceManager.moveXOffset)
+                                        .textFieldStyle(.roundedBorder)
+                                    
+                                    TextField("Y", text: $instanceManager.moveYOffset)
+                                        .textFieldStyle(.roundedBorder)
+                                    
+                                    TextField("W", text: $instanceManager.setWidth)
+                                        .textFieldStyle(.roundedBorder)
+                                    
+                                    TextField("H", text: $instanceManager.setHeight)
+                                        .textFieldStyle(.roundedBorder)
+                                }
+                                .frame(width: 80)
                                 
-                                TextField("Y", text: $instanceManager.moveYOffset)
-                                    .textFieldStyle(.roundedBorder)
-                                
-                                TextField("W", text: $instanceManager.setWidth)
-                                    .textFieldStyle(.roundedBorder)
-                                
-                                TextField("H", text: $instanceManager.setHeight)
-                                    .textFieldStyle(.roundedBorder)
                                 Button(action: { instanceManager.move(forward: true, direct: true) }) {
                                     Text("Adjust")
                                 }
                                 .disabled(instanceManager.moving || shortcutManager.instanceIDs.isEmpty)
+                                .frame(maxWidth: .infinity, alignment: .trailing)
                             }
                         }
-                        .padding(4)
-                        
-//                        HStack {
-//                            Button(action: { instanceManager.move(forward: true) }) {
-//                                Text("Move Over")
-//                            }
-//                            .disabled(instanceManager.moving || shortcutManager.instanceIDs.isEmpty)
-//                            
-//                            Button(action: { instanceManager.move(forward: false) }) {
-//                                Text("Move Back")
-//                            }
-//                            .disabled(instanceManager.moving || shortcutManager.instanceIDs.isEmpty)
-                            
-//                        }
-//                        .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                 }
             }

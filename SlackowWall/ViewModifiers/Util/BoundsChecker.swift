@@ -16,9 +16,11 @@ struct BoundsChecker: ViewModifier {
             .background(
                 GeometryReader { geometry in
                     Color.clear
-                        .onChange(of: geometry.size) { newSize in
-                            updateWindowSize()
-                            
+                        .onChange(of: geometry.size) { _ in
+                            let newFrame = geometry.frame(in: .global)
+                            checkBounds(viewFrame: newFrame)
+                        }
+                        .onChange(of: windowSize) { _ in
                             let newFrame = geometry.frame(in: .global)
                             checkBounds(viewFrame: newFrame)
                         }
@@ -42,11 +44,12 @@ struct BoundsChecker: ViewModifier {
     }
     
     private func checkBounds(viewFrame: CGRect) {
-        if viewFrame.maxX > windowSize.width || viewFrame.maxY > windowSize.height ||
-            viewFrame.minX < 0 || viewFrame.minY < 0 {
-            isOutside = true
-        } else {
+        DispatchQueue.main.async {
             isOutside = false
+            if viewFrame.maxX > windowSize.width || viewFrame.maxY > windowSize.height ||
+                viewFrame.minX < 0 || viewFrame.minY < 0 {
+                isOutside = true
+            }
         }
     }
 }

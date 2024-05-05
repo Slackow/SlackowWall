@@ -20,8 +20,6 @@ class InstanceManager: ObservableObject {
     @AppStorage("setWidth") var setWidth: String = ""
     @AppStorage("setHeight") var setHeight: String = ""
     
-    
-    
     // Behavior
     @AppStorage("f1OnJoin") var f1OnJoin: Bool = false
     @AppStorage("fullscreen") var fullscreen: Bool = false

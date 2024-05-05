@@ -27,7 +27,7 @@ struct KeybindingsSettings: View {
                         VStack(alignment: .leading) {
                             Text("Toggle Wide Instance (Global)")
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            Text("Toggle between two resolutions quickly")
+                            Text("Toggle between two resolutions quickly.")
                                 .font(.caption)
                                 .foregroundStyle(.gray)
                                 .padding(.trailing, 2)
@@ -41,7 +41,7 @@ struct KeybindingsSettings: View {
                         VStack(alignment: .leading) {
                             Text("Toggle Tall Instance (Global)")
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            Text("Toggle between another set of resolutions")
+                            Text("Toggle between another set of resolutions.")
                                 .font(.caption)
                                 .foregroundStyle(.gray)
                                 .padding(.trailing, 2)
