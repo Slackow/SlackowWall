@@ -10,6 +10,9 @@ import SwiftUI
 struct BoundsChecker: ViewModifier {
     @Binding var isOutside: Bool
     @State private var windowSize: CGSize = .zero
+    var action: ((Bool) -> ())?
+    
+    @State private var lastFrameChecked: CGRect = .zero
     
     func body(content: Content) -> some View {
         content
@@ -35,7 +38,7 @@ struct BoundsChecker: ViewModifier {
     }
     
     private func updateWindowSize() {
-        if let window = NSApplication.shared.windows.first {
+        if let window = NSApplication.shared.windows.first(where: { $0.title == "SlackowWall" }) {
             windowSize = window.frame.size
             NotificationCenter.default.addObserver(forName: NSWindow.didResizeNotification, object: window, queue: .main) { _ in
                 windowSize = window.frame.size
@@ -44,12 +47,18 @@ struct BoundsChecker: ViewModifier {
     }
     
     private func checkBounds(viewFrame: CGRect) {
-        DispatchQueue.main.async {
-            isOutside = false
-            if viewFrame.maxX > windowSize.width || viewFrame.maxY > windowSize.height ||
-                viewFrame.minX < 0 || viewFrame.minY < 0 {
-                isOutside = true
-            }
+        guard lastFrameChecked != viewFrame else {
+            return
         }
+        
+        if viewFrame.maxX > windowSize.width || viewFrame.maxY > windowSize.height ||
+            viewFrame.minX < 0 || viewFrame.minY < 0 {
+            isOutside = true
+        } else {
+            isOutside = false
+        }
+
+        lastFrameChecked = viewFrame
+        action?(isOutside)
     }
 }

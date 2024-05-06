@@ -18,7 +18,7 @@ struct InstancesGridView: View {
     private var gridItems: [GridItem] {
         Array(repeating: GridItem(.flexible(), spacing: 0), count: min(instanceManager.rows, shortcutManager.states.count))
     }
-
+    
     var body: some View {
         VStack {
             if screenRecorder.capturePreviews.isEmpty {
@@ -38,23 +38,22 @@ struct InstancesGridView: View {
                     }
                 }
                 .background(PreviewShortcutListener(key: $instanceManager.keyPressed))
-                .boundsCheck(isOutside: $isOutside)
-                .onChange(of: isOutside) { value in
+                .boundsCheck(isOutside: $isOutside) { value in
                     if instanceManager.smartGrid && value {
                         instanceManager.invertGridLayout()
                     }
                 }
-                .onChange(of: instanceManager.smartGrid) { value in
-                    if value && isOutside {
-                        instanceManager.invertGridLayout()
-                    }
-                }
-                .onChange(of: instanceManager.forceAspectRatio) { _ in
-                    Task { await screenRecorder.resetAndStartCapture() }
-                }
             }
         }
         .padding(5)
+        .onChange(of: instanceManager.smartGrid) { value in
+            if value && isOutside {
+                instanceManager.invertGridLayout()
+            }
+        }
+        .onChange(of: instanceManager.forceAspectRatio) { _ in
+            Task { await screenRecorder.resetAndStartCapture() }
+        }
         .task {
             print("Screen Recorder Started!")
             if await screenRecorder.canRecord {

@@ -8,7 +8,7 @@
 import SwiftUI
 
 extension View {
-    func boundsCheck(isOutside: Binding<Bool>) -> some View {
-        modifier(BoundsChecker(isOutside: isOutside))
+    func boundsCheck(isOutside: Binding<Bool>, action: ((Bool) -> ())? = nil) -> some View {
+        modifier(BoundsChecker(isOutside: isOutside, action: action))
     }
 }
