@@ -79,8 +79,8 @@ class InstanceManager: ObservableObject {
                 let pids = ShortcutManager.shared.instanceIDs.filter {$0 != pid}
                 hideWindows(pids)
             }
+            ShortcutManager.shared.resizeBase(pid: pid)
             focusWindow(pid)
-            ShortcutManager.shared.resizeBase()
             
             ShortcutManager.shared.sendEscape(pid: pid)
             if self.f1OnJoin {

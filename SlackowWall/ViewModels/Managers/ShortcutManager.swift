@@ -72,49 +72,52 @@ final class ShortcutManager: ObservableObject {
         print("Focusing!")
         let pid = activeWindow.processIdentifier
         if instanceIDs.contains(pid) {
-            resizeReset()
             resetInstance(pid: pid)
         }
         if InstanceManager.shared.shouldHideWindows {
             unhideInstances()
         }
         NSApp.activate(ignoringOtherApps: true)
+        resizeReset(pid: pid)
     
     }
     
     func resizePlanar() {
+        let apps = NSWorkspace.shared.runningApplications.filter{ $0.activationPolicy == .regular }
+        guard let activeWindow = apps.first(where:{$0.isActive}), instanceIDs.contains(activeWindow.processIdentifier) else { return }
         let w = CGFloat(Int32(InstanceManager.shared.wideWidth) ?? 0)
         let h = CGFloat(Int32(InstanceManager.shared.wideHeight) ?? 0)
-        resize(width: w, height: h)
+        resize(pid: activeWindow.processIdentifier, width: w, height: h)
     }
     
-    func resizeBase() {
-        let w = CGFloat(Int32(InstanceManager.shared.baseWidth) ?? 0)
-        let h = CGFloat(Int32(InstanceManager.shared.baseHeight) ?? 0)
-        resize(width: w, height: h)
+    func resizeBase(pid: pid_t) {
+        let w = n(InstanceManager.shared.baseWidth)
+        let h = n(InstanceManager.shared.baseHeight)
+        resize(pid: pid, width: w, height: h, force: true)
     }
     
-    func resizeReset() {
-        let w = CGFloat(Int32(InstanceManager.shared.resetWidth) ?? 0)
-        let h = CGFloat(Int32(InstanceManager.shared.resetHeight) ?? 0)
-        resize(width: w, height: h)
+    func resizeReset(pid: pid_t) {
+        let w = n(InstanceManager.shared.resetWidth)
+        let h = n(InstanceManager.shared.resetHeight)
+        resize(pid: pid, width: w, height: h, force: true)
     }
     
     func resizeTall() {
         
     }
     
-    func resize(width: CGFloat, height: CGFloat) {
+    func n(_ string: String) -> CGFloat {
+        return CGFloat(UInt32(string) ?? 0)
+    }
+    
+    func resize(pid: pid_t, width: CGFloat, height: CGFloat, force: Bool = false) {
         let pids = ShortcutManager.shared.instanceIDs
         if !(width > 0 && height > 0) || pids.isEmpty {
             return
         }
-        
-        let apps = NSWorkspace.shared.runningApplications.filter{ $0.activationPolicy == .regular }
-        guard let activeWindow = apps.first(where:{$0.isActive}), instanceIDs.contains(activeWindow.processIdentifier) else { return }
         print("Resizing!")
         
-        let appRef = AXUIElementCreateApplication(activeWindow.processIdentifier)
+        let appRef = AXUIElementCreateApplication(pid)
         var value: AnyObject?
         guard AXUIElementCopyAttributeValue(appRef, kAXWindowsAttribute as CFString, &value) == .success, let windows = value as? [AXUIElement] else { return }
         for window in windows {
@@ -134,10 +137,12 @@ final class ShortcutManager: ObservableObject {
             AXValueGetValue(posValue as! AXValue, AXValueType.cgPoint, &pos)
             AXValueGetValue(sizeValue as! AXValue, AXValueType.cgSize, &size)
             
-            var newSize = CGSize(width: width, height: height)
-            if size.width == width && size.height == height {
-                newSize = CGSize(width: 2560, height: 1468)
-            }
+            var newSize =
+                if !force && size.width == width && size.height == height {
+                    CGSize(width: n(InstanceManager.shared.baseWidth), height: n(InstanceManager.shared.baseHeight))
+                } else {
+                    CGSize(width: width, height: height)
+                }
             var newPosition = CGPoint(x: pos.x - (newSize.width - size.width) * 0.5,
                                       y: pos.y - (newSize.height - size.height) * 0.5)
             
