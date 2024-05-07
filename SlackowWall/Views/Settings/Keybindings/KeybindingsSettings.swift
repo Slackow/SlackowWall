@@ -18,7 +18,7 @@ struct KeybindingsSettings: View {
                         Text("Reset (Global)")
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        KeybindingView(keybinding: $keybindingManager.resetGKey, defaultValue: .keypad0)
+                        KeybindingView(keybinding: $keybindingManager.resetGKey, defaultValue: .u)
                     }
                     
                     Divider()
@@ -109,7 +109,7 @@ struct KeybindingsSettings: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
                     Button(role: .destructive, action: {
-                        keybindingManager.resetGKey = .keypad0
+                        keybindingManager.resetGKey = .u
                         keybindingManager.resetAllKey = .t
                         keybindingManager.resetOneKey = .e
                         keybindingManager.resetOthersKey = .f

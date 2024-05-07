@@ -66,7 +66,7 @@ struct KeybindingView: View {
 
 #Preview {
     VStack {
-        KeybindingView(keybinding: KeybindingManager.shared.$resetGKey, defaultValue: .keypad0)
+        KeybindingView(keybinding: KeybindingManager.shared.$resetGKey, defaultValue: .u)
             .padding()
         KeybindingView(keybinding: KeybindingManager.shared.$resetAllKey, defaultValue: .t)
             .padding()
