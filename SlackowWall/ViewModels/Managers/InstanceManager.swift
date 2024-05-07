@@ -5,7 +5,6 @@
 import SwiftUI
 import ApplicationServices
 
-
 class InstanceManager: ObservableObject {
     @AppStorage("rows") var rows: Int = AppDefaults.rows
     @AppStorage("alignment") var alignment: Alignment = AppDefaults.alignment
@@ -14,23 +13,24 @@ class InstanceManager: ObservableObject {
     @AppStorage("forceAspectRatio") var forceAspectRatio = false
     @AppStorage("smartGrid") var smartGrid = true
     
-    @AppStorage("moveXOffset") var moveXOffset: String = "0"
-    @AppStorage("moveYOffset") var moveYOffset: String = "0"
+    @AppStorage("moveXOffset") var moveXOffset: Int = 0
+    @AppStorage("moveYOffset") var moveYOffset: Int = 0
     
-    @AppStorage("setWidth") var setWidth: String = ""
-    @AppStorage("setHeight") var setHeight: String = ""
+    @AppStorage("setWidth") var setWidth: Int? = nil
+    @AppStorage("setHeight") var setHeight: Int? = nil
     
     // Behavior
     @AppStorage("f1OnJoin") var f1OnJoin: Bool = false
     @AppStorage("fullscreen") var fullscreen: Bool = false
     @AppStorage("onlyOnFocus") var onlyOnFocus: Bool = true
     @AppStorage("checkStateOutput") var checkStateOutput: Bool = false
-    @AppStorage("resetWidth") var resetWidth: String = ""
-    @AppStorage("resetHeight") var resetHeight: String = ""
-    @AppStorage("baseWidth") var baseWidth: String = ""
-    @AppStorage("baseHeight") var baseHeight: String = ""
-    @AppStorage("wideWidth") var wideWidth: String = ""
-    @AppStorage("wideHeight") var wideHeight: String = ""
+    
+    @AppStorage("resetWidth") var resetWidth: Int? = nil
+    @AppStorage("resetHeight") var resetHeight: Int? = nil
+    @AppStorage("baseWidth") var baseWidth: Int? = nil
+    @AppStorage("baseHeight") var baseHeight: Int? = nil
+    @AppStorage("wideWidth") var wideWidth: Int? = nil
+    @AppStorage("wideHeight") var wideHeight: Int? = nil
 
     @Published var lockedInstances: Int64 = 0
     @Published var hoveredInstance: Int?
@@ -186,7 +186,7 @@ class InstanceManager: ObservableObject {
         if !checkStateOutput { return true }
         let state = ShortcutManager.shared.states[idx]
         state.updateState(force: true)
-        return state.state != WAITING && state.state != GENERATING
+        return state.state != InstanceStates.waiting && state.state != InstanceStates.generating
     }
     @inline(__always) public func unlockInstance(idx: Int) {
         lockedInstances &= ~(1 << idx)
@@ -234,11 +234,11 @@ class InstanceManager: ObservableObject {
     func move(forward: Bool, direct: Bool = false) {
         moving = true
         Task {
-            let xOff = (Int32(moveXOffset) ?? 0) * (forward ? 1 : -1)
-            let yOff = (Int32(moveYOffset) ?? 0) * (forward ? 1 : -1)
+            let xOff = moveXOffset * (forward ? 1 : -1)
+            let yOff = moveYOffset * (forward ? 1 : -1)
             let pids = ShortcutManager.shared.instanceIDs
-            let width = Int32(setWidth) ?? 0
-            let height = Int32(setHeight) ?? 0
+            let width = setWidth ?? 0
+            let height = setHeight ?? 0
             let setSize = width > 0 && height > 0
 
             if (xOff == 0 && yOff == 0 && !setSize) || pids.isEmpty {

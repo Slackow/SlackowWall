@@ -19,7 +19,7 @@ final class ShortcutManager: ObservableObject {
     
     init() {
         fetchInstanceInfo()
-
+        
         // updateStates()
     }
     
@@ -79,26 +79,26 @@ final class ShortcutManager: ObservableObject {
         }
         NSApp.activate(ignoringOtherApps: true)
         resizeReset(pid: pid)
-    
+        
     }
     
     func resizePlanar() {
         let apps = NSWorkspace.shared.runningApplications.filter{ $0.activationPolicy == .regular }
         guard let activeWindow = apps.first(where:{$0.isActive}), instanceIDs.contains(activeWindow.processIdentifier) else { return }
-        let w = CGFloat(Int32(InstanceManager.shared.wideWidth) ?? 0)
-        let h = CGFloat(Int32(InstanceManager.shared.wideHeight) ?? 0)
+        let w = convertToFloat(InstanceManager.shared.wideWidth)
+        let h = convertToFloat(InstanceManager.shared.wideHeight)
         resize(pid: activeWindow.processIdentifier, width: w, height: h)
     }
     
     func resizeBase(pid: pid_t) {
-        let w = n(InstanceManager.shared.baseWidth)
-        let h = n(InstanceManager.shared.baseHeight)
+        let w = convertToFloat(InstanceManager.shared.baseWidth)
+        let h = convertToFloat(InstanceManager.shared.baseHeight)
         resize(pid: pid, width: w, height: h, force: true)
     }
     
     func resizeReset(pid: pid_t) {
-        let w = n(InstanceManager.shared.resetWidth)
-        let h = n(InstanceManager.shared.resetHeight)
+        let w = convertToFloat(InstanceManager.shared.resetWidth)
+        let h = convertToFloat(InstanceManager.shared.resetHeight)
         resize(pid: pid, width: w, height: h, force: true)
     }
     
@@ -106,8 +106,8 @@ final class ShortcutManager: ObservableObject {
         
     }
     
-    func n(_ string: String) -> CGFloat {
-        return CGFloat(UInt32(string) ?? 0)
+    func convertToFloat(_ int: Int?) -> CGFloat {
+        return CGFloat(int ?? 0)
     }
     
     func resize(pid: pid_t, width: CGFloat, height: CGFloat, force: Bool = false) {
@@ -139,16 +139,16 @@ final class ShortcutManager: ObservableObject {
             
             var newSize =
                 if !force && size.width == width && size.height == height {
-                    CGSize(width: n(InstanceManager.shared.baseWidth), height: n(InstanceManager.shared.baseHeight))
+                    CGSize(width: convertToFloat(InstanceManager.shared.baseWidth), height: convertToFloat(InstanceManager.shared.baseHeight))
                 } else {
                     CGSize(width: width, height: height)
                 }
+            
             var newPosition = CGPoint(x: pos.x - (newSize.width - size.width) * 0.5,
                                       y: pos.y - (newSize.height - size.height) * 0.5)
             
-
-            guard let positionRef = AXValueCreate(AXValueType.cgPoint, &newPosition), 
-                  let sizeRef = AXValueCreate(AXValueType.cgSize, &newSize) else { continue }
+            guard let positionRef = AXValueCreate(AXValueType.cgPoint, &newPosition),
+                    let sizeRef = AXValueCreate(AXValueType.cgSize, &newSize) else { continue }
             
             AXUIElementSetAttributeValue(window, kAXPositionAttribute as CFString, positionRef)
             AXUIElementSetAttributeValue(window, kAXSizeAttribute as CFString, sizeRef)
@@ -156,7 +156,7 @@ final class ShortcutManager: ObservableObject {
         }
         
     }
-
+    
     func unhideInstances() {
         let pids = ShortcutManager.shared.instanceIDs
         for pid in pids {
@@ -177,23 +177,23 @@ final class ShortcutManager: ObservableObject {
         task.launch()
         task.waitUntilExit()
     }
-
+    
     /// kills all minecraft instances
     func killAll() {
         let task = Process()
         let killProcess = "killall prismlauncher;" + instanceIDs
-                .map { "kill -9 \($0)" }
-                .joined(separator: ";")
+            .map { "kill -9 \($0)" }
+            .joined(separator: ";")
         task.launchPath = "/bin/sh"
         task.arguments = ["-c", killProcess]
         task.launch()
         task.waitUntilExit()
     }
-
+    
     func getAllApps() -> [NSRunningApplication] {
         return NSWorkspace.shared.runningApplications.filter{  $0.activationPolicy == .regular }
     }
-
+    
     func getInstanceNum(app: NSRunningApplication) -> Int {
         let pid = app.processIdentifier
         if let num = instanceNums[pid] {
@@ -217,7 +217,7 @@ final class ShortcutManager: ObservableObject {
             return 0
         }
     }
-
+    
     func resetInstance(pid: pid_t) {
         if let instNum = instanceNums[pid] {
             let info = states[instNum - 1]
@@ -227,11 +227,11 @@ final class ShortcutManager: ObservableObject {
             InstanceManager.shared.unlockInstance(idx: instNum - 1)
         }
     }
-
+    
     func playResetSound() {
         SoundManager.shared.playSound(sound: "reset")
     }
-
+    
     func updateStates() {
         let instCount = instanceIDs.count
         for i in 0..<instCount {
@@ -247,14 +247,14 @@ final class ShortcutManager: ObservableObject {
             
             if !sentF3 && stateData.updateState() {
                 print(stateData.description)
-                if stateData.state == TITLE {} // if title
-                else if stateData.state == PREVIEWING { // if previewing
+                if stateData.state == InstanceStates.title {} // if title
+                else if stateData.state == InstanceStates.previewing { // if previewing
                     stateData.untilF3 = 4
-                } else if (stateData.prevState == PREVIEWING || stateData.prevState == WAITING) && stateData.state == UNPAUSED { // if prev state was world previewing
+                } else if (stateData.prevState == InstanceStates.previewing || stateData.prevState == InstanceStates.waiting) && stateData.state == InstanceStates.unpaused { // if prev state was world previewing
                     stateData.untilF3 = 4
                     stateData.checkState = .ENSURING
                     continue
-                } else if stateData.state == UNPAUSED { // disable checking if slipped
+                } else if stateData.state == InstanceStates.unpaused { // disable checking if slipped
                     stateData.checkState = .NONE
                 }
             }
@@ -262,7 +262,7 @@ final class ShortcutManager: ObservableObject {
             if !sentF3 && stateData.checkState == .ENSURING {
                 print(stateData.description)
                 stateData.updateState()
-                if stateData.state != UNPAUSED { // if not paused
+                if stateData.state != InstanceStates.unpaused { // if not paused
                     stateData.checkState = .NONE
                     stateData.untilF3 = 0
                 } else if stateData.untilF3 <= 0 {
@@ -276,8 +276,8 @@ final class ShortcutManager: ObservableObject {
             self.updateStates()
         }
     }
-
-
+    
+    
     func sendReset(pid: pid_t) {
         // send F6
         sendKey(key: .f6, pid: pid)
@@ -290,27 +290,27 @@ final class ShortcutManager: ObservableObject {
     func sendF11(pid: pid_t) {
         sendKey(key: .f11, pid: pid)
     }
-
+    
     func sendF3Esc(pid: pid_t) {
         // send F3 + ESC
         sendKeyCombo(keys: 0x63, 0x35, pid: pid)
         print("\(pid) << f3 esc")
     }
-
+    
     func sendEscape(pid: pid_t) {
         sendKey(key: .escape, pid: pid)
     }
-
+    
     func sendKey(key: CGKeyCode, pid: pid_t) {
         print("Sending key \(key) to \(pid)")
         let src = CGEventSource(stateID: .hidSystemState)
         let kspd = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: true)
         let kspu = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: false)
-
+        
         kspd?.postToPid( pid )
         kspu?.postToPid( pid )
     }
-
+    
     func sendKeyCombo(keys: CGKeyCode..., pid: pid_t) {
         let src = CGEventSource(stateID: .hidSystemState)
         for key in keys {

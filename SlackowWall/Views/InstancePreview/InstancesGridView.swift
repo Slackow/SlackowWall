@@ -23,7 +23,10 @@ struct InstancesGridView: View {
         VStack {
             if screenRecorder.capturePreviews.isEmpty {
                 if shortcutManager.instanceIDs.isEmpty {
-                    Text("No Minecraft Instances Detected")
+                    Text("No Minecraft\nInstances Detected")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .multilineTextAlignment(.center)
                 }
             } else {
                 Group {

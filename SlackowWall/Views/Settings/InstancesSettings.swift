@@ -96,16 +96,16 @@ struct InstancesSettings: View {
                         Form {
                             HStack {
                                 Group {
-                                    TextField("X", text: $instanceManager.moveXOffset)
+                                    TextField("X", value: $instanceManager.moveXOffset, format: .number.grouping(.never))
                                         .textFieldStyle(.roundedBorder)
                                     
-                                    TextField("Y", text: $instanceManager.moveYOffset)
+                                    TextField("Y", value: $instanceManager.moveYOffset, format: .number.grouping(.never))
                                         .textFieldStyle(.roundedBorder)
                                     
-                                    TextField("W", text: $instanceManager.setWidth)
+                                    TextField("W", value: $instanceManager.setWidth, format: .number.grouping(.never))
                                         .textFieldStyle(.roundedBorder)
                                     
-                                    TextField("H", text: $instanceManager.setHeight)
+                                    TextField("H", value: $instanceManager.setHeight, format: .number.grouping(.never))
                                         .textFieldStyle(.roundedBorder)
                                 }
                                 .frame(width: 80)

@@ -10,6 +10,7 @@ import SwiftUI
 struct BehaviorSettings: View {
     @ObservedObject private var instanceManager = InstanceManager.shared
     @ObservedObject private var shortcutManager = ShortcutManager.shared
+    
     var body: some View {
         VStack(spacing: 12) {
             SettingsCardView {
@@ -40,11 +41,11 @@ struct BehaviorSettings: View {
                             Text("Reset Size")
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
-                            TextField("W", text: $instanceManager.resetWidth)
+                            TextField("W", value: $instanceManager.resetWidth, format: .number.grouping(.never))
                                 .textFieldStyle(.roundedBorder)
                                 .frame(width: 100)
                             
-                            TextField("H", text: $instanceManager.resetHeight)
+                            TextField("H", value: $instanceManager.resetHeight, format: .number.grouping(.never))
                                 .textFieldStyle(.roundedBorder)
                                 .frame(width: 100)
                         }
@@ -53,11 +54,11 @@ struct BehaviorSettings: View {
                             Text("Gameplay Size")
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
-                            TextField("W", text: $instanceManager.baseWidth)
+                            TextField("W", value: $instanceManager.baseWidth, format: .number.grouping(.never))
                                 .textFieldStyle(.roundedBorder)
                                 .frame(width: 100)
                             
-                            TextField("H", text: $instanceManager.baseHeight)
+                            TextField("H", value: $instanceManager.baseHeight, format: .number.grouping(.never))
                                 .textFieldStyle(.roundedBorder)
                                 .frame(width: 100)
                         }
@@ -66,11 +67,11 @@ struct BehaviorSettings: View {
                             Text("Wide Size")
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
-                            TextField("W", text: $instanceManager.wideWidth)
+                            TextField("W", value: $instanceManager.wideWidth, format: .number.grouping(.never))
                                 .textFieldStyle(.roundedBorder)
                                 .frame(width: 100)
                             
-                            TextField("H", text: $instanceManager.wideHeight)
+                            TextField("H", value: $instanceManager.wideHeight, format: .number.grouping(.never))
                                 .textFieldStyle(.roundedBorder)
                                 .frame(width: 100)
                         }
