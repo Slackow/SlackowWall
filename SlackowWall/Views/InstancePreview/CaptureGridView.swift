@@ -13,13 +13,11 @@ struct CaptureGridView: View {
     @ObservedObject private var screenRecorder = ScreenRecorder.shared
     @ObservedObject private var instanceManager = InstanceManager.shared
     
-    @State private var isOutside: Bool = false
-    @State private var windowSize: CGSize = .zero
-    
+    @State private var sectionSize: CGSize = .zero
     @Namespace private var gridSpace
     
     var body: some View {
-        GeometryReader { geometry in
+        GeometryReader { proxy in
             VStack {
                 if screenRecorder.capturePreviews.isEmpty {
                     if shortcutManager.instanceIDs.isEmpty {
@@ -36,12 +34,17 @@ struct CaptureGridView: View {
                                 ForEach(0..<instanceManager.sections, id: \.self) { section in
                                     HStack(spacing: 0) {
                                         ForEach(indicesForSection(section), id: \.self) { idx in
-                                            captureContentView(index: idx)
+                                            if section == 0 && idx == 0 {
+                                                captureContentView(index: idx)
+                                                    .modifier(SizeReader(size: $sectionSize))
+                                            } else {
+                                                captureContentView(index: idx)
+                                            }
                                         }
                                         
                                         if indicesForSection(section).count < maximumItemsPerSection() {
                                             Spacer()
-                                                .frame(width: calculateSpacerSize(geometry: geometry, sectionCount: indicesForSection(section).count))
+                                                .frame(width: sectionSize.width)
                                         }
                                     }
                                 }
@@ -51,12 +54,17 @@ struct CaptureGridView: View {
                                 ForEach(0..<instanceManager.sections, id: \.self) { section in
                                     VStack(spacing: 0) {
                                         ForEach(indicesForSection(section), id: \.self) { idx in
-                                            captureContentView(index: idx)
+                                            if section == 0 && idx == 0 {
+                                                captureContentView(index: idx)
+                                                    .modifier(SizeReader(size: $sectionSize))
+                                            } else {
+                                                captureContentView(index: idx)
+                                            }
                                         }
                                         
                                         if indicesForSection(section).count < maximumItemsPerSection() {
                                             Spacer()
-                                                .frame(height: calculateSpacerSize(geometry: geometry, sectionCount: indicesForSection(section).count))
+                                                .frame(height: sectionSize.height)
                                         }
                                     }
                                 }
@@ -70,9 +78,6 @@ struct CaptureGridView: View {
                 }
             }
             .padding(5)
-            .onChange(of: instanceManager.forceAspectRatio) { _ in
-                Task { await screenRecorder.resetAndStartCapture() }
-            }
             .task {
                 print("Screen Recorder Started!")
                 if await screenRecorder.canRecord {
@@ -95,12 +100,31 @@ struct CaptureGridView: View {
         }
     }
     
-    private func calculateSpacerSize(geometry: GeometryProxy, sectionCount: Int) -> CGFloat {
-        let totalPreviews = screenRecorder.capturePreviews.count
-        let containerSize = instanceManager.alignment == .horizontal ? geometry.size.width : geometry.size.height
-        let sizePerPreview = containerSize / CGFloat(totalPreviews)
-        let missingPreviews = maximumItemsPerSection() - sectionCount
-        return sizePerPreview * CGFloat(missingPreviews)
+    private func captureContentView(index: Int) -> some View {
+        ZStack(alignment: .topTrailing) {
+            Text("Instance \(index + 1)")
+                .padding(.trailing, 4)
+            
+            CapturePreviewView(preview: screenRecorder.capturePreviews[index], size: screenRecorder.contentSizes[index], idx: index)
+            
+            if instanceManager.isLocked(idx: index) {
+                Image(systemName: "lock.fill")
+                    .scaleEffect(CGSize(width: 2, height: 2))
+                    .foregroundColor(.red)
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 27)
+            }
+            
+            VStack {
+                if instanceManager.showInstanceNumbers {
+                    Text("\(index + 1)")
+                        .foregroundColor(.white)
+                        .padding(4)
+                }
+            }
+            .animation(.easeInOut, value: instanceManager.showInstanceNumbers)
+        }
+        .matchedGeometryEffect(id: "Instance-\(index)", in: gridSpace)
     }
     
     private func indicesForSection(_ section: Int) -> Range<Int> {
@@ -121,34 +145,6 @@ struct CaptureGridView: View {
         let totalPreviews = screenRecorder.capturePreviews.count
         let sections = instanceManager.sections
         return Int(ceil(Double(totalPreviews) / Double(sections)))
-    }
-    
-    private func captureContentView(index: Int) -> some View {
-        ZStack {
-            Text("Instance \(index + 1)")
-            
-            CapturePreviewView(preview: screenRecorder.capturePreviews[index], size: screenRecorder.contentSizes[index], idx: index)
-            
-            if instanceManager.isLocked(idx: index) {
-                Image(systemName: "lock.fill")
-                    .scaleEffect(CGSize(width: 2, height: 2))
-                    .foregroundColor(.red)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 27)
-            }
-            
-            VStack {
-                if instanceManager.showInstanceNumbers {
-                    Text("\(index + 1)")
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                        .padding(.trailing, 4)
-                }
-            }
-            .animation(.easeInOut, value: instanceManager.showInstanceNumbers)
-        }
-        .matchedGeometryEffect(id: "Instance-\(index)", in: gridSpace)
     }
 }
 
