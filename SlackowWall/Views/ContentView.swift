@@ -13,7 +13,6 @@ struct ContentView: View {
     
     var body: some View {
         GeometryReader { geo in
-//            InstancesGridView()
             CaptureGridView()
                 .sheet(isPresented: $updateManager.appWasUpdated) {
                     UpdateMessageView(title: "App Updated")
