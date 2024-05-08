@@ -6,8 +6,19 @@ import SwiftUI
 import ApplicationServices
 
 class InstanceManager: ObservableObject {
-    @AppStorage("rows") var rows: Int = AppDefaults.rows
-    @AppStorage("alignment") var alignment: Alignment = AppDefaults.alignment
+    @AppStorage("rows") var rowsSetting: Int = AppDefaults.rows {
+        didSet {
+            rows = rowsSetting
+        }
+    }
+    @AppStorage("alignment") var alignmentSetting: Alignment = AppDefaults.alignment {
+        didSet {
+            alignment = alignmentSetting
+        }
+    }
+    
+    var rows: Int = 8
+    var alignment: Alignment = .horizontal
     @AppStorage("shouldHideWindows") var shouldHideWindows = true
     @AppStorage("showInstanceNumbers") var showInstanceNumbers = true
     @AppStorage("forceAspectRatio") var forceAspectRatio = false
@@ -40,10 +51,15 @@ class InstanceManager: ObservableObject {
     @Published var isStopping = false
     @Published var moving = false
     
-    static let shared = InstanceManager()
+    static let shared = InstanceManager().onStart()
+    
+    private func onStart() -> Self {
+        rows = rowsSetting
+        alignment = alignmentSetting
+        return self
+    }
     
     init() {
-        
     }
 
     @MainActor func openInstance(idx: Int) {

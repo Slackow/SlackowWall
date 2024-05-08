@@ -19,13 +19,13 @@ struct InstancesSettings: View {
                 SettingsCardView {
                     VStack {
                         Group {
-                            Picker("", selection: $instanceManager.alignment) {
+                            Picker("", selection: $instanceManager.alignmentSetting) {
                                 ForEach(Alignment.allCases, id: \.self) { type in
                                     Text(type == .vertical ? "Columns" : "Rows").tag(type)
                                 }
                             }
                             
-                            Picker("", selection: $instanceManager.rows) {
+                            Picker("", selection: $instanceManager.rowsSetting) {
                                 ForEach(1..<10) {
                                     Text("\($0)").tag($0)
                                 }
