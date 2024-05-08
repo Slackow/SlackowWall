@@ -19,13 +19,13 @@ struct InstancesSettings: View {
                 SettingsCardView {
                     VStack {
                         Group {
-                            Picker("", selection: $instanceManager.alignmentSetting) {
+                            Picker("", selection: $instanceManager.alignment) {
                                 ForEach(Alignment.allCases, id: \.self) { type in
                                     Text(type == .vertical ? "Columns" : "Rows").tag(type)
                                 }
                             }
                             
-                            Picker("", selection: $instanceManager.rowsSetting) {
+                            Picker("", selection: $instanceManager.sections) {
                                 ForEach(1..<10) {
                                     Text("\($0)").tag($0)
                                 }
@@ -33,18 +33,6 @@ struct InstancesSettings: View {
                         }
                         .pickerStyle(.segmented)
                         .labelsHidden()
-                    }
-                }
-                
-                SettingsCardView {
-                    VStack {
-                        SettingsToggleView(title: "Smart Grid", description: "Automatically manages the grid layout of the instances to ensure that they all fit properly within an equivalent view.", option: $instanceManager.smartGrid)
-                        
-                        Divider()
-                            .padding(.bottom, 4)
-                            
-                        SettingsButtonView(title: "Switch Columns and Rows", description: "Switch rows and columns and adjust based on the number of instances to fix layouts that stretch offscreen.", buttonText: "Flip", action: instanceManager.invertGridLayout)
-                            .disabled(instanceManager.smartGrid)
                     }
                 }
                 

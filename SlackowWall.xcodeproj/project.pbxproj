@@ -37,11 +37,11 @@
 		B63168C52979AE95005958E9 /* PreviewActionsListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63168C42979AE95005958E9 /* PreviewActionsListener.swift */; };
 		B63168C72979E8D7005958E9 /* SettingsCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63168C62979E8D7005958E9 /* SettingsCardView.swift */; };
 		B637DB38296B965D00A73F62 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B637DB37296B965D00A73F62 /* SettingsView.swift */; };
-		B640D52D296F2D7B005041CC /* InstancesGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B640D52C296F2D7B005041CC /* InstancesGridView.swift */; };
 		B66321472BE3FEDE0042AE1A /* BoundsChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66321462BE3FEDE0042AE1A /* BoundsChecker.swift */; };
 		B6786AA82BE4065900137E6E /* View+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6786AA72BE4065900137E6E /* View+Ext.swift */; };
 		B68D8C292BEA95BA00072AC5 /* InstanceStates.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68D8C282BEA95BA00072AC5 /* InstanceStates.swift */; };
 		B68D8C2B2BEA96E200072AC5 /* CheckingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68D8C2A2BEA96E200072AC5 /* CheckingMode.swift */; };
+		B68D8C2D2BEBC0FC00072AC5 /* CaptureGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68D8C2C2BEBC0FC00072AC5 /* CaptureGridView.swift */; };
 		B6A1FDE32BDF456800EF2180 /* SettingsButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A1FDE22BDF456800EF2180 /* SettingsButtonView.swift */; };
 		B6A1FDE72BDF5BBF00EF2180 /* CreditsEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A1FDE52BDF5BBF00EF2180 /* CreditsEntryView.swift */; };
 		B6A1FDE82BDF5BBF00EF2180 /* CreditsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A1FDE62BDF5BBF00EF2180 /* CreditsView.swift */; };
@@ -100,11 +100,11 @@
 		B63168C42979AE95005958E9 /* PreviewActionsListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewActionsListener.swift; sourceTree = "<group>"; };
 		B63168C62979E8D7005958E9 /* SettingsCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCardView.swift; sourceTree = "<group>"; };
 		B637DB37296B965D00A73F62 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		B640D52C296F2D7B005041CC /* InstancesGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstancesGridView.swift; sourceTree = "<group>"; };
 		B66321462BE3FEDE0042AE1A /* BoundsChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundsChecker.swift; sourceTree = "<group>"; };
 		B6786AA72BE4065900137E6E /* View+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Ext.swift"; sourceTree = "<group>"; };
 		B68D8C282BEA95BA00072AC5 /* InstanceStates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceStates.swift; sourceTree = "<group>"; };
 		B68D8C2A2BEA96E200072AC5 /* CheckingMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckingMode.swift; sourceTree = "<group>"; };
+		B68D8C2C2BEBC0FC00072AC5 /* CaptureGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureGridView.swift; sourceTree = "<group>"; };
 		B6A1FDE22BDF456800EF2180 /* SettingsButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsButtonView.swift; sourceTree = "<group>"; };
 		B6A1FDE52BDF5BBF00EF2180 /* CreditsEntryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreditsEntryView.swift; sourceTree = "<group>"; };
 		B6A1FDE62BDF5BBF00EF2180 /* CreditsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreditsView.swift; sourceTree = "<group>"; };
@@ -334,8 +334,8 @@
 		B640D52B296F2D65005041CC /* InstancePreview */ = {
 			isa = PBXGroup;
 			children = (
-				B640D52C296F2D7B005041CC /* InstancesGridView.swift */,
 				B6A55D942BA2A7FE00D06086 /* CapturePreviewView.swift */,
+				B68D8C2C2BEBC0FC00072AC5 /* CaptureGridView.swift */,
 				B6E9E36F2970A52E00DF6466 /* CapturePreview.swift */,
 			);
 			path = InstancePreview;
@@ -503,7 +503,6 @@
 				B6B9FE982BA16D730026C268 /* SettingsToggleView.swift in Sources */,
 				B6A1FDE72BDF5BBF00EF2180 /* CreditsEntryView.swift in Sources */,
 				49569BF62BDE1DA50035F67D /* BehaviorSettings.swift in Sources */,
-				B640D52D296F2D7B005041CC /* InstancesGridView.swift in Sources */,
 				B61D9A762B890EDA007A35CE /* SettingsLabel.swift in Sources */,
 				4915C3AB2AC7636F00B60D1D /* InstancesSettings.swift in Sources */,
 				493A122F2B88FAA0009BE0B3 /* KeybindingView.swift in Sources */,
@@ -539,6 +538,7 @@
 				6D8A792C702E9F4144B9784E /* AppDefaults.swift in Sources */,
 				6D8A7183DE266313FBD84A7F /* Alignment.swift in Sources */,
 				B6A55D992BA2AFC500D06086 /* SCWindow+Ext.swift in Sources */,
+				B68D8C2D2BEBC0FC00072AC5 /* CaptureGridView.swift in Sources */,
 				B6A55D8E2BA2829400D06086 /* RemoveFocusOnTap.swift in Sources */,
 				B6B9FE992BA16D730026C268 /* SettingsPickerView.swift in Sources */,
 				B6A55D952BA2A7FE00D06086 /* CapturePreviewView.swift in Sources */,
@@ -689,7 +689,7 @@
 				CURRENT_PROJECT_VERSION = 240507b;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
-				DEVELOPMENT_TEAM = 94CLS492CD;
+				DEVELOPMENT_TEAM = D64G2TTYWM;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -725,7 +725,7 @@
 				CURRENT_PROJECT_VERSION = 240507b;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
-				DEVELOPMENT_TEAM = 94CLS492CD;
+				DEVELOPMENT_TEAM = D64G2TTYWM;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;

@@ -37,7 +37,7 @@ struct CapturePreviewView: View {
     
     var body: some View {
         preview
-            .aspectRatio(instanceManager.forceAspectRatio ? scaledDimensions : size, contentMode: .fill)
+            .aspectRatio(instanceManager.forceAspectRatio ? scaledDimensions : size, contentMode: .fit)
             .scaleEffect(CGSize(width: instanceManager.forceAspectRatio ? scaleFactor : 1.0, height: 1.0))
             .modifier(SizeReader(size: $actualSize))
             .mask {

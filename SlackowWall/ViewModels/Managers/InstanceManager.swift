@@ -6,23 +6,12 @@ import SwiftUI
 import ApplicationServices
 
 class InstanceManager: ObservableObject {
-    @AppStorage("rows") var rowsSetting: Int = AppDefaults.rows {
-        didSet {
-            rows = rowsSetting
-        }
-    }
-    @AppStorage("alignment") var alignmentSetting: Alignment = AppDefaults.alignment {
-        didSet {
-            alignment = alignmentSetting
-        }
-    }
+    @AppStorage("sections") var sections: Int = 6
+    @AppStorage("alignment") var alignment: Alignment = .horizontal
     
-    var rows: Int = 8
-    var alignment: Alignment = .horizontal
     @AppStorage("shouldHideWindows") var shouldHideWindows = true
     @AppStorage("showInstanceNumbers") var showInstanceNumbers = true
     @AppStorage("forceAspectRatio") var forceAspectRatio = false
-    @AppStorage("smartGrid") var smartGrid = true
     
     @AppStorage("moveXOffset") var moveXOffset: Int = 0
     @AppStorage("moveYOffset") var moveYOffset: Int = 0
@@ -51,13 +40,7 @@ class InstanceManager: ObservableObject {
     @Published var isStopping = false
     @Published var moving = false
     
-    static let shared = InstanceManager().onStart()
-    
-    private func onStart() -> Self {
-        rows = rowsSetting
-        alignment = alignmentSetting
-        return self
-    }
+    static let shared = InstanceManager()
     
     init() {
     }
@@ -221,18 +204,6 @@ class InstanceManager: ObservableObject {
             idx += 1
         }
         print("Reset All possible")
-    }
-    
-    func invertGridLayout() {
-        let instanceCount = ShortcutManager.shared.instanceIDs.count
-        let maximumRows = 9
-        let minimumRows = 1
-        
-        var newRows = (instanceCount + rows - 1) / rows
-        newRows = max(minimumRows, min(newRows, maximumRows))
-        
-        rows = newRows
-        alignment = alignment == .vertical ? .horizontal : .vertical
     }
     
     func stopAll() {
