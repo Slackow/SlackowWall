@@ -12,6 +12,7 @@ struct CapturePreviewView: View {
     @ObservedObject private var instanceManager = InstanceManager.shared
     
     @State private var actualSize: CGSize = .zero
+    @State private var animateAppearance = false
     
     var preview: CapturePreview
     var size: CGSize
@@ -45,6 +46,7 @@ struct CapturePreviewView: View {
                     .padding(.top, adjustedTitlebarHeight)
             }
             .padding(.top, -adjustedTitlebarHeight)
+            .opacity(animateAppearance ? 1 : 0)
             .overlay(PreviewActionsListener(lockAction: { key in
                 if key.modifierFlags.contains(.shift) {
                     instanceManager.lockInstance(idx: idx)
@@ -59,6 +61,18 @@ struct CapturePreviewView: View {
             }
             .onChange(of: instanceManager.keyPressed) { _ in
                 instanceManager.handleKeyEvent(idx: idx)
+            }
+            .onAppear {
+                if instanceManager.animateGrid {
+                    let delay = Double(idx) * 0.1
+                    DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                        withAnimation(.smooth) {
+                            animateAppearance = true
+                        }
+                    }
+                } else {
+                    animateAppearance = true
+                }
             }
     }
 }

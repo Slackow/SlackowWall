@@ -32,7 +32,10 @@ struct SlackowWallApp: App {
                         Button(action: { Task { openWindow(id: "settings-window") }}) {
                             Image(systemName: "gear")
                         }
-                        Button(action: { Task { await ScreenRecorder.shared.resetAndStartCapture() }}) {
+                        Button(action: { Task {
+                            instanceManager.showInfo = false
+                            await ScreenRecorder.shared.resetAndStartCapture()
+                        }}) {
                             Image(systemName: "arrow.clockwise")
                         }
                     }

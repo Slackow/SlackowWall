@@ -40,9 +40,13 @@ class InstanceManager: ObservableObject {
     @Published var isStopping = false
     @Published var moving = false
     
+    @Published var animateGrid: Bool = false
+    @Published var showInfo: Bool = false
+    
     static let shared = InstanceManager()
     
     init() {
+        
     }
 
     @MainActor func openInstance(idx: Int) {
@@ -206,11 +210,36 @@ class InstanceManager: ObservableObject {
         print("Reset All possible")
     }
     
+    func showInstanceInfo() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            withAnimation(.smooth) {
+                self.showInfo = true
+            }
+        }
+    }
+    
+    func handleGridAnimation(value: Int) {
+        if value > 0 {
+            animateGrid = true
+            
+            let delay = (Double(value) * 0.1) + 0.1
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                self.animateGrid = false
+            }
+        } else {
+            animateGrid = false
+        }
+    }
+    
     func stopAll() {
         isStopping = true
-        ShortcutManager.shared.killAll()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            exit(0)
+        
+        Task {
+            await ScreenRecorder.shared.stop()
+            ShortcutManager.shared.killAll()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                exit(0)
+            }
         }
     }
 
@@ -231,6 +260,11 @@ class InstanceManager: ObservableObject {
             if (xOff == 0 && yOff == 0 && !setSize) || pids.isEmpty {
                 DispatchQueue.main.async { self.moving = false }
                 return
+            }
+            
+            if setSize {
+                showInfo = false
+                await ScreenRecorder.shared.stop(removeStreams: true)
             }
 
             for pid in pids {

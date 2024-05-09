@@ -150,6 +150,7 @@ import SwiftUI
                 } catch let error {
                     logger.error("\(error.localizedDescription)")
                     // Unable to start the stream. Set the running state to false.
+                    InstanceManager.shared.showInfo = true
                     isRunning = false
                 }
             }

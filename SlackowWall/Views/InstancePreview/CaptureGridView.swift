@@ -97,15 +97,28 @@ struct CaptureGridView: View {
                     }
                 }
             }
+            .onChange(of: instanceManager.showInfo) { value in
+                if !value {
+                    instanceManager.showInstanceInfo()
+                }
+            }
+            .onChange(of: screenRecorder.capturePreviews.count) { value in
+                instanceManager.handleGridAnimation(value: value)
+            }
+            .onAppear {
+                instanceManager.showInstanceInfo()
+            }
         }
     }
     
     private func captureContentView(index: Int) -> some View {
         ZStack(alignment: .topTrailing) {
-            Text("Instance \(index + 1)")
-                .padding(.trailing, 4)
-            
             CapturePreviewView(preview: screenRecorder.capturePreviews[index], size: screenRecorder.contentSizes[index], idx: index)
+                .background {
+                    Text("Instance \(index + 1)")
+                        .padding(.trailing, 4)
+                        .opacity(instanceManager.showInfo ? 1 : 0)
+                }
             
             if instanceManager.isLocked(idx: index) {
                 Image(systemName: "lock.fill")
@@ -113,6 +126,8 @@ struct CaptureGridView: View {
                     .foregroundColor(.red)
                     .padding(.horizontal, 4)
                     .padding(.vertical, 27)
+                    .opacity(instanceManager.showInfo ? 1 : 0)
+                    .animation(.easeInOut, value: instanceManager.showInfo)
             }
             
             VStack {
@@ -122,6 +137,8 @@ struct CaptureGridView: View {
                         .padding(4)
                 }
             }
+            .opacity(instanceManager.showInfo ? 1 : 0)
+            .animation(.easeInOut, value: instanceManager.showInfo)
             .animation(.easeInOut, value: instanceManager.showInstanceNumbers)
         }
         .matchedGeometryEffect(id: "Instance-\(index)", in: gridSpace)
@@ -150,5 +167,5 @@ struct CaptureGridView: View {
 
 #Preview {
     CaptureGridView()
-        .frame(width: 200, height: 200)
+        .frame(width: 500, height: 500)
 }
