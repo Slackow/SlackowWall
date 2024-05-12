@@ -25,6 +25,8 @@ class InstanceManager: ObservableObject {
     @AppStorage("onlyOnFocus") var onlyOnFocus: Bool = true
     @AppStorage("checkStateOutput") var checkStateOutput: Bool = false
     
+    @AppStorage("resetX") var resetX: Int? = nil
+    @AppStorage("resetY") var resetY: Int? = nil
     @AppStorage("resetWidth") var resetWidth: Int? = nil
     @AppStorage("resetHeight") var resetHeight: Int? = nil
     @AppStorage("baseWidth") var baseWidth: Int? = nil
@@ -33,8 +35,8 @@ class InstanceManager: ObservableObject {
     @AppStorage("wideHeight") var wideHeight: Int? = nil
 
     @Published var lockedInstances: Int64 = 0
-    @Published var hoveredInstance: Int?
-    @Published var keyPressed: Character?
+    @Published var hoveredInstance: Int? = nil
+    @Published var keyPressed: Character? = nil
     
     @Published var isActive: Bool = true
     @Published var isStopping = false
@@ -147,6 +149,7 @@ class InstanceManager: ObservableObject {
         if keyPressed == "t" {
             resetAllUnlocked()
             keyPressed = nil
+            hoveredInstance = nil
         }
 
         if hoveredInstance == nil {
@@ -160,7 +163,7 @@ class InstanceManager: ObservableObject {
             case "f": enterAndResetUnlocked(idx: idx)
             case "p": ShortcutManager.shared.sendF3Esc(pid: pid)
             case "c": lockInstance(idx: idx)
-            case "0": ShortcutManager.shared.globalReset()
+            case "u": ShortcutManager.shared.globalReset()
             default: return
             }
             keyPressed = nil

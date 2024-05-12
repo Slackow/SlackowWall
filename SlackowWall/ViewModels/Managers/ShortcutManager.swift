@@ -152,7 +152,7 @@ final class ShortcutManager: ObservableObject {
             
             AXUIElementSetAttributeValue(window, kAXPositionAttribute as CFString, positionRef)
             AXUIElementSetAttributeValue(window, kAXSizeAttribute as CFString, sizeRef)
-            print("Done Resizing!")
+            print("Done Resizing!", newSize)
         }
         
     }
