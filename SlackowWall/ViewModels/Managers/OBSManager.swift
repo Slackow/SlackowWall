@@ -5,7 +5,7 @@
 import SwiftUI
 
 class OBSManager: ObservableObject {
-    @AppStorage("obsScriptPath") var obsScriptPath = "/Users/Shared/slackowwall.txt"
+    @AppStorage("obsScriptPath") var obsScriptPath = "/tmp/slackowwall.txt"
     
     static let shared = OBSManager()
     
@@ -18,10 +18,22 @@ class OBSManager: ObservableObject {
     
     func writeScript() {
         guard let src = Bundle.main.url(forResource: "instance_selector", withExtension: "lua") else { return }
-        let dst = URL(filePath:"/Users/Shared/instance_selector.lua")
-        try? FileManager.default.removeItem(at: dst)
-        print("does file exist?", FileManager.default.fileExists(atPath: dst.absoluteString))
-        try? FileManager.default.copyItem(at: src, to: dst)
+        
+        // Fetch the Application Support directory for the application
+        let fileManager = FileManager.default
+        guard let appSupportURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?.appendingPathComponent("SlackowWall") else { return }
+        
+        // Create the directory if it doesn't exist
+        try? fileManager.createDirectory(at: appSupportURL, withIntermediateDirectories: true)
+        
+        let dst = appSupportURL.appendingPathComponent("instance_selector.lua")
+        
+        // Remove the existing file if it exists
+        try? fileManager.removeItem(at: dst)
+        print("does file exist?", fileManager.fileExists(atPath: dst.path))
+        
+        // Copy the file from the bundle to the Application Support directory
+        try? fileManager.copyItem(at: src, to: dst)
         print("Wrote script!")
     }
     

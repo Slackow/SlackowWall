@@ -1,6 +1,6 @@
 
--- config
-path = "/Users/Shared/slackowwall.txt"
+-- Don't touch this, configure in scripts window
+path = "/tmp/slackowwall.txt"
 sourceName = "minecraft"
 obs = obslua
 
@@ -47,6 +47,7 @@ function on_run_hotkey(pressed)
     end
     last = readFile()
     print("attempt " .. attempts .. " File contents: " .. last)
+    print("Source " .. sourceName)
     modifySource(readNumber(last))
     switch_to_scene_with_source()
 end
@@ -70,34 +71,34 @@ end
 function source_in_scene(scene_object, target_source_name)
   local scene_enum = obs.obs_scene_enum_items(scene_object)
   local found = false
-  
+
   for _, scene_item in ipairs(scene_enum) do
     local source = obs.obs_sceneitem_get_source(scene_item)
     local name = obs.obs_source_get_name(source)
-    
+
     if name == target_source_name then
       found = true
       break
     end
   end
-  
+
   return found
 end
 
 function switch_to_scene_with_source()
   -- Get the list of all scenes
   local scene_list = obs.obs_frontend_get_scenes()
-  
+
   -- Loop through all scenes
   for i, scene in ipairs(scene_list) do
     local scene_object = obs.obs_scene_from_source(scene)
-    
+
     if source_in_scene(scene_object, sourceName) then
       -- Switch to this scene
       obs.obs_frontend_set_current_scene(scene)
       break
     end
-    
+
     obs.obs_source_release(scene)
   end
 end
@@ -106,21 +107,21 @@ end
 
 function readNumber(str)
     local lastColon = 0
-    
+
     for i = #str, 1, -1 do
       if str:sub(i, i) == ":" then
         lastColon = i
         break
       end
     end
-  
+
     local lastPart = str:sub(lastColon + 1)
     local num = tonumber(lastPart)
-    
+
     if not num then
       num = 0
     end
-    
+
     return num
 end
 
@@ -141,4 +142,19 @@ function script_save(settings)
     local hotkey_save_array = obs.obs_hotkey_save(hotkey_id)
     obs.obs_data_set_array(settings, "run_hotkey", hotkey_save_array)
     obs.obs_data_array_release(hotkey_save_array)
+end
+
+function script_properties(settings)
+    local props = obs.obs_properties_create()
+    obs.obs_properties_add_text(props, "sourceName", "The source for your current Minecraft Instance,\nReload your scripts after editing this.\nDefaults to \"minecraft\"", obs.OBS_TEXT_DEFAULT)
+    return props
+end
+
+function script_update(settings)
+  local name = obs.obs_data_get_string(settings, "sourceName")
+  if #name < 1 then
+    name = "minecraft"
+    obs.obs_data_set_string(settings, "sourceName", name)
+  end
+  sourceName = name
 end
