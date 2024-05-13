@@ -183,6 +183,7 @@ import SwiftUI
         
         shortcutManager.fetchInstanceInfo()
         shortcutManager.instanceIDs.forEach(shortcutManager.resizeReset)
+            
         // 40ms delay so macOS can catch up, a hack yes, but lol?
         try? await Task.sleep(nanoseconds: 40_000_000)
         
@@ -199,9 +200,10 @@ import SwiftUI
         
         // Start the capture process again
         await start()
-        print("Content Sizes:", contentSizes)
         
-        shortcutManager.unhideInstances()
+        if InstanceManager.shared.shouldHideWindows {
+            shortcutManager.unhideInstances()
+        }
     }
 
     // - Tag: UpdateCaptureConfig

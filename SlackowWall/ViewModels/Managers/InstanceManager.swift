@@ -266,7 +266,10 @@ class InstanceManager: ObservableObject {
             }
             
             if setSize {
-                showInfo = false
+                DispatchQueue.main.async {
+                    self.showInfo = false
+                }
+                
                 await ScreenRecorder.shared.stop(removeStreams: true)
             }
 
