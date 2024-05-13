@@ -46,6 +46,7 @@ struct CapturePreviewView: View {
                     .padding(.top, adjustedTitlebarHeight)
             }
             .padding(.top, -adjustedTitlebarHeight)
+            .contentShape(Rectangle())
             .opacity(animateAppearance ? 1 : 0)
             .overlay(PreviewActionsListener(lockAction: { key in
                 if key.modifierFlags.contains(.shift) {

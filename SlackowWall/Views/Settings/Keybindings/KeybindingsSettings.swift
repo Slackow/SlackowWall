@@ -11,118 +11,120 @@ struct KeybindingsSettings: View {
     @ObservedObject private var keybindingManager = KeybindingManager.shared
     
     var body: some View {
-        VStack(spacing: 12) {
-            SettingsCardView {
-                Form {
-                    HStack {
-                        Text("Reset (Global)")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        KeybindingView(keybinding: $keybindingManager.resetGKey, defaultValue: .u)
-                    }
-                    
-                    Divider()
-                    
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text("Toggle Wide Instance (Global)")
+        ScrollView {
+            VStack(spacing: 12) {
+                SettingsLabel(title: "Global Bindings", description: "These keybinds work system-wide and can be triggered within any application.")
+                
+                SettingsCardView {
+                    VStack {
+                        HStack {
+                            Text("Reset")
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            Text("Toggle between two resolutions quickly.")
-                                .font(.caption)
-                                .foregroundStyle(.gray)
-                                .padding(.trailing, 2)
+                            
+                            KeybindingView(keybinding: $keybindingManager.resetGKey, defaultValue: .u)
                         }
                         
-                        KeybindingView(keybinding: $keybindingManager.planarGKey, defaultValue: nil)
-                    }
-                    Divider()
-                    
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text("Toggle Tall Instance (Global)")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            Text("Toggle between another set of resolutions.")
-                                .font(.caption)
-                                .foregroundStyle(.gray)
-                                .padding(.trailing, 2)
+                        Divider()
+                        
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text("Toggle Wide Instance")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                Text("Toggle between two resolutions quickly.")
+                                    .font(.caption)
+                                    .foregroundStyle(.gray)
+                                    .padding(.trailing, 2)
+                            }
+                            
+                            KeybindingView(keybinding: $keybindingManager.planarGKey, defaultValue: nil)
                         }
+                        Divider()
                         
-                        KeybindingView(keybinding: $keybindingManager.planar2GKey, defaultValue: nil)
-                    }
-                    
-                    Divider()
-                    
-                    HStack {
-                        Text("Reset All")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        KeybindingView(keybinding: $keybindingManager.resetAllKey, defaultValue: .t)
-                    }
-                    
-                    Divider()
-                    
-                    HStack {
-                        Text("Reset Hovered")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        KeybindingView(keybinding: $keybindingManager.resetOneKey, defaultValue: .e)
-                    }
-                    
-                    Divider()
-                    
-                    HStack {
-                        Text("Run Hovered and Reset Others")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        KeybindingView(keybinding: $keybindingManager.resetOthersKey, defaultValue: .f)
-                    }
-                    
-                    Divider()
-                    
-                    HStack {
-                        Text("Run Hovered")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        KeybindingView(keybinding: $keybindingManager.runKey, defaultValue: .r)
-                    }
-                    
-                    Divider()
-                    
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text("Lock Hovered")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            Text("You can also shift click instances to lock/unlock them.")
-                                .font(.caption)
-                                .foregroundStyle(.gray)
-                                .padding(.trailing, 2)
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text("Toggle Tall Instance")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                Text("Toggle between another set of resolutions.")
+                                    .font(.caption)
+                                    .foregroundStyle(.gray)
+                                    .padding(.trailing, 2)
+                            }
+                            
+                            KeybindingView(keybinding: $keybindingManager.planar2GKey, defaultValue: nil)
                         }
-                        KeybindingView(keybinding: $keybindingManager.lockKey, defaultValue: .c)
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            
-            SettingsCardView {
-                HStack {
-                    Text("Restore Defaults")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    Button(role: .destructive, action: {
+                
+                SettingsLabel(title: "In-App Bindings", description: "These keybinds work only within SlackowWall itself.")
+                    .padding(.top, 5)
+                
+                SettingsCardView {
+                    VStack {
+                        HStack {
+                            Text("Reset All")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            KeybindingView(keybinding: $keybindingManager.resetAllKey, defaultValue: .t)
+                        }
+                        
+                        Divider()
+                        
+                        HStack {
+                            Text("Reset Hovered")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            KeybindingView(keybinding: $keybindingManager.resetOneKey, defaultValue: .e)
+                        }
+                        
+                        Divider()
+                        
+                        HStack {
+                            Text("Run Hovered and Reset Others")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            KeybindingView(keybinding: $keybindingManager.resetOthersKey, defaultValue: .f)
+                        }
+                        
+                        Divider()
+                        
+                        HStack {
+                            Text("Run Hovered")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            KeybindingView(keybinding: $keybindingManager.runKey, defaultValue: .r)
+                        }
+                        
+                        Divider()
+                        
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text("Lock Hovered")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                Text("You can also shift click instances to lock/unlock them.")
+                                    .font(.caption)
+                                    .foregroundStyle(.gray)
+                                    .padding(.trailing, 2)
+                            }
+                            KeybindingView(keybinding: $keybindingManager.lockKey, defaultValue: .c)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                
+                SettingsCardView {
+                    SettingsButtonView(title: "Restore Defaults", buttonText: "Reset", action: {
                         keybindingManager.resetGKey = .u
                         keybindingManager.resetAllKey = .t
                         keybindingManager.resetOneKey = .e
                         keybindingManager.resetOthersKey = .f
                         keybindingManager.runKey = .r
                         keybindingManager.lockKey = .c
-                    }) {
-                        Text("Reset")
-                    }
+                    })
                 }
             }
+            .frame(maxHeight: .infinity, alignment: .topLeading)
+            .padding()
         }
-        .frame(maxHeight: .infinity, alignment: .topLeading)
-        .padding()
     }
 }
 

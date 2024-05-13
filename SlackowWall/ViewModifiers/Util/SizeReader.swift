@@ -20,7 +20,6 @@ struct SizeReader: ViewModifier {
                     .onChange(of: geometryProxy.size) { newSize in
                         size = newSize
                     }
-                
             }
         )
     }

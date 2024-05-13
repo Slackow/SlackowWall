@@ -79,7 +79,6 @@ final class ShortcutManager: ObservableObject {
         }
         NSApp.activate(ignoringOtherApps: true)
         resizeReset(pid: pid)
-        
     }
     
     func resizePlanar() {

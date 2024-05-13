@@ -52,7 +52,7 @@ struct InstancesSettings: View {
                 
                 SettingsCardView {
                     VStack {
-                        SettingsButtonView(title: "Stop All (\(shortcutManager.instanceIDs.count))", description: "Closes all currently tracked instances, Prism, and **SlackowWall** itself.", action: instanceManager.stopAll) {
+                        SettingsButtonView(title: "Stop All (\(shortcutManager.instanceIDs.count))", description: "Closes all currently tracked instances, Prism, and SlackowWall itself.", action: instanceManager.stopAll) {
                             Image(systemName: "stop.fill")
                                 .foregroundColor(.red)
                         }
