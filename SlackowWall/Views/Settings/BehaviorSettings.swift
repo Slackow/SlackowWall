@@ -38,6 +38,19 @@ struct BehaviorSettings: View {
                 Form {
                     VStack {
                         HStack {
+                            Text("Reset Position")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            TextField("X", value: $instanceManager.resetX, format: .number.grouping(.never))
+                                .textFieldStyle(.roundedBorder)
+                                .frame(width: 100)
+                            
+                            TextField("Y", value: $instanceManager.resetY, format: .number.grouping(.never))
+                                .textFieldStyle(.roundedBorder)
+                                .frame(width: 100)
+                        }
+                        
+                        HStack {
                             Text("Reset Size")
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
