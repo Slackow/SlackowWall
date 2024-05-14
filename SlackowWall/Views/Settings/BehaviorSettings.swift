@@ -35,106 +35,52 @@ struct BehaviorSettings: View {
                 SettingsLabel(title: "Window Dimensions", description: "Dimensions of game windows in different cases.")
                     .padding(.top, 5)
                 
-                SettingsCardView {
-                    Form {
-                        VStack {
-                            HStack {
-                                Text("Reset Size")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                
-                                TextField("W", value: $instanceManager.resetWidth, format: .number.grouping(.never))
-                                    .textFieldStyle(.roundedBorder)
-                                    .frame(width: 100)
-                                
-                                TextField("H", value: $instanceManager.resetHeight, format: .number.grouping(.never))
-                                    .textFieldStyle(.roundedBorder)
-                                    .frame(width: 100)
-                            }
-                            
-                            HStack {
-                                Text("Reset Position")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                
-                                TextField("X", value: $instanceManager.resetX, format: .number.grouping(.never))
-                                    .textFieldStyle(.roundedBorder)
-                                    .frame(width: 100)
-                                
-                                TextField("Y", value: $instanceManager.resetY, format: .number.grouping(.never))
-                                    .textFieldStyle(.roundedBorder)
-                                    .frame(width: 100)
-                            }
-                        }
-                    }
-                }
+                DimensionCard(name: "Reset", x: $instanceManager.resetX, y: $instanceManager.resetY, width: $instanceManager.resetWidth, height: $instanceManager.resetHeight)
                 
-                SettingsCardView {
-                    Form {
-                        VStack {
-                            HStack {
-                                Text("Gameplay Size")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                
-                                TextField("W", value: $instanceManager.baseWidth, format: .number.grouping(.never))
-                                    .textFieldStyle(.roundedBorder)
-                                    .frame(width: 100)
-                                
-                                TextField("H", value: $instanceManager.baseHeight, format: .number.grouping(.never))
-                                    .textFieldStyle(.roundedBorder)
-                                    .frame(width: 100)
-                            }
-                            
-                            HStack {
-                                Text("Gameplay Position")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                
-                                TextField("X", value: $instanceManager.baseX, format: .number.grouping(.never))
-                                    .textFieldStyle(.roundedBorder)
-                                    .frame(width: 100)
-                                
-                                TextField("Y", value: $instanceManager.baseY, format: .number.grouping(.never))
-                                    .textFieldStyle(.roundedBorder)
-                                    .frame(width: 100)
-                            }
-                        }
-                    }
-                }
+                DimensionCard(name: "Gameplay", x: $instanceManager.baseX, y: $instanceManager.baseY, width: $instanceManager.baseWidth, height: $instanceManager.baseHeight)
                 
-                SettingsCardView {
-                    Form {
-                        VStack {
-                            HStack {
-                                Text("Wide Size")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                
-                                TextField("W", value: $instanceManager.wideWidth, format: .number.grouping(.never))
-                                    .textFieldStyle(.roundedBorder)
-                                    .frame(width: 100)
-                                
-                                TextField("H", value: $instanceManager.wideHeight, format: .number.grouping(.never))
-                                    .textFieldStyle(.roundedBorder)
-                                    .frame(width: 100)
-                            }
-                            
-                            HStack {
-                                Text("Wide Position")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                
-                                TextField("X", value: $instanceManager.wideX, format: .number.grouping(.never))
-                                    .textFieldStyle(.roundedBorder)
-                                    .frame(width: 100)
-                                
-                                TextField("Y", value: $instanceManager.wideY, format: .number.grouping(.never))
-                                    .textFieldStyle(.roundedBorder)
-                                    .frame(width: 100)
-                            }
-                        }
-                    }
-                }
+                DimensionCard(name: "Wide", x: $instanceManager.wideX, y: $instanceManager.wideY, width: $instanceManager.wideWidth, height: $instanceManager.wideHeight)
+                
             }
             .frame(maxHeight: .infinity, alignment: .topLeading)
             .padding()
         }
         .removeFocusOnTap()
+    }
+    
+    func dimensionCard(name: String, dims: [Binding<Int?>]) -> any View {
+        precondition(dims.count == 4, "Dims must contain 4 items")
+        return SettingsCardView {
+            Form {
+                VStack {
+                    HStack {
+                        Text("Wide Size")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        TextField("W", value: $instanceManager.wideWidth, format: .number.grouping(.never))
+                            .textFieldStyle(.roundedBorder)
+                            .frame(width: 100)
+                        
+                        TextField("H", value: $instanceManager.wideHeight, format: .number.grouping(.never))
+                            .textFieldStyle(.roundedBorder)
+                            .frame(width: 100)
+                    }
+                    
+                    HStack {
+                        Text("Wide Position")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        TextField("X", value: $instanceManager.wideX, format: .number.grouping(.never))
+                            .textFieldStyle(.roundedBorder)
+                            .frame(width: 100)
+                        
+                        TextField("Y", value: $instanceManager.wideY, format: .number.grouping(.never))
+                            .textFieldStyle(.roundedBorder)
+                            .frame(width: 100)
+                    }
+                }
+            }
+        }
     }
 }
 

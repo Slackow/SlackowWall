@@ -27,15 +27,16 @@ class InstanceManager: ObservableObject {
         
     @AppStorage("resetWidth") var resetWidth: Int? = nil
     @AppStorage("resetHeight") var resetHeight: Int? = nil
-    @AppStorage("baseWidth") var baseWidth: Int? = nil
-    @AppStorage("baseHeight") var baseHeight: Int? = nil
-    @AppStorage("wideWidth") var wideWidth: Int? = nil
-    @AppStorage("wideHeight") var wideHeight: Int? = nil
-    
     @AppStorage("resetX") var resetX: Int? = nil
     @AppStorage("resetY") var resetY: Int? = nil
+
+    @AppStorage("baseWidth") var baseWidth: Int? = nil
+    @AppStorage("baseHeight") var baseHeight: Int? = nil
     @AppStorage("baseX") var baseX: Int? = nil
     @AppStorage("baseY") var baseY: Int? = nil
+
+    @AppStorage("wideWidth") var wideWidth: Int? = nil
+    @AppStorage("wideHeight") var wideHeight: Int? = nil
     @AppStorage("wideX") var wideX: Int? = nil
     @AppStorage("wideY") var wideY: Int? = nil
 
