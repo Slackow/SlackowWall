@@ -35,52 +35,17 @@ struct BehaviorSettings: View {
                 SettingsLabel(title: "Window Dimensions", description: "Dimensions of game windows in different cases, shouldn't exceed monitor size: \(NSScreen.main?.visibleFrame.size.debugDescription ?? "Unknown")")
                     .padding(.top, 5)
                 
-                DimensionCard(name: "Reset", x: $instanceManager.resetX, y: $instanceManager.resetY, width: $instanceManager.resetWidth, height: $instanceManager.resetHeight)
+                DimensionCard(name: "Reset", description: "The size the game will be while you are in SlackowWall", x: $instanceManager.resetX, y: $instanceManager.resetY, width: $instanceManager.resetWidth, height: $instanceManager.resetHeight)
                 
-                DimensionCard(name: "Gameplay", x: $instanceManager.baseX, y: $instanceManager.baseY, width: $instanceManager.baseWidth, height: $instanceManager.baseHeight)
+                DimensionCard(name: "Gameplay", description: "The size the game will be while you are in an instance", x: $instanceManager.baseX, y: $instanceManager.baseY, width: $instanceManager.baseWidth, height: $instanceManager.baseHeight)
                 
-                DimensionCard(name: "Wide", x: $instanceManager.wideX, y: $instanceManager.wideY, width: $instanceManager.wideWidth, height: $instanceManager.wideHeight)
+                DimensionCard(name: "Wide", description: "The size the game will be when you switch to wide instance mode", x: $instanceManager.wideX, y: $instanceManager.wideY, width: $instanceManager.wideWidth, height: $instanceManager.wideHeight)
                 
             }
             .frame(maxHeight: .infinity, alignment: .topLeading)
             .padding()
         }
         .removeFocusOnTap()
-    }
-    
-    func dimensionCard(name: String, dims: [Binding<Int?>]) -> any View {
-        precondition(dims.count == 4, "Dims must contain 4 items")
-        return SettingsCardView {
-            Form {
-                VStack {
-                    HStack {
-                        Text("Wide Size")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        TextField("W", value: $instanceManager.wideWidth, format: .number.grouping(.never))
-                            .textFieldStyle(.roundedBorder)
-                            .frame(width: 100)
-                        
-                        TextField("H", value: $instanceManager.wideHeight, format: .number.grouping(.never))
-                            .textFieldStyle(.roundedBorder)
-                            .frame(width: 100)
-                    }
-                    
-                    HStack {
-                        Text("Wide Position")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        TextField("X", value: $instanceManager.wideX, format: .number.grouping(.never))
-                            .textFieldStyle(.roundedBorder)
-                            .frame(width: 100)
-                        
-                        TextField("Y", value: $instanceManager.wideY, format: .number.grouping(.never))
-                            .textFieldStyle(.roundedBorder)
-                            .frame(width: 100)
-                    }
-                }
-            }
-        }
     }
 }
 
