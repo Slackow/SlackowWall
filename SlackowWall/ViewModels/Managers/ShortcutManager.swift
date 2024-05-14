@@ -69,11 +69,11 @@ final class ShortcutManager: ObservableObject {
         closeSettingsWindow()
         let apps = NSWorkspace.shared.runningApplications.filter{ $0.activationPolicy == .regular }
         guard let activeWindow = apps.first(where:{$0.isActive}) else { return }
-        print("Focusing!")
+        
         let pid = activeWindow.processIdentifier
-        if instanceIDs.contains(pid) {
-            resetInstance(pid: pid)
-        }
+        guard instanceIDs.contains(pid) else { return }
+        print("Focusing!")
+        resetInstance(pid: pid)
         if InstanceManager.shared.shouldHideWindows {
             unhideInstances()
         }
