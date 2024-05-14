@@ -32,7 +32,7 @@ struct BehaviorSettings: View {
                     SettingsToggleView(title: "Use State Output", description: "Turn this on if you have the state output mod, it prevents an instance from reseting if it is still generating the world.", option: $instanceManager.checkStateOutput)
                 }
                 
-                SettingsLabel(title: "Window Dimensions", description: "Dimensions of game windows in different cases.")
+                SettingsLabel(title: "Window Dimensions", description: "Dimensions of game windows in different cases, shouldn't exceed monitor size: \(NSScreen.main?.visibleFrame.size.debugDescription ?? "Unknown")")
                     .padding(.top, 5)
                 
                 DimensionCard(name: "Reset", x: $instanceManager.resetX, y: $instanceManager.resetY, width: $instanceManager.resetWidth, height: $instanceManager.resetHeight)

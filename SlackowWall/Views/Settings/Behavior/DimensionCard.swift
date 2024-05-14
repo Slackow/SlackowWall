@@ -40,13 +40,16 @@ struct DimensionCard: View {
                     
                     HStack {
                         Spacer()
-                        Button("Center") {
+                        Button(action: {
                             if let s = NSScreen.main?.visibleFrame.size,
                                let width = width, let height = height {
                                 x = (Int(s.width) - width)/2
                                 y = (Int(s.height) - height)/2
                             }
-                        }.disabled(width == nil || height == nil)
+                        }) {
+                            Text("Center").frame(width: 200)
+                        }
+                        .disabled(width == nil || height == nil)
                     }
                 }
             }
