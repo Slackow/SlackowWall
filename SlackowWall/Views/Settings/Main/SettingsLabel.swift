@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct SettingsLabel: View {
-    @State var title: String
-    @State var description: String?
+    var title: String
+    var description: String?
     
     var body: some View {
         VStack(spacing: 2) {
@@ -18,7 +18,7 @@ struct SettingsLabel: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             
             if let description = description {
-                Text(description)
+                Text(.init(description))
                     .font(.caption)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundStyle(.gray)

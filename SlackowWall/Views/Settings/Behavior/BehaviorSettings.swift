@@ -11,6 +11,10 @@ struct BehaviorSettings: View {
     @ObservedObject private var instanceManager = InstanceManager.shared
     @ObservedObject private var shortcutManager = ShortcutManager.shared
     
+    private var screenSize: String {
+        return instanceManager.screenSize?.debugDescription ?? "Unknown"
+    }
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 12) {
@@ -32,15 +36,15 @@ struct BehaviorSettings: View {
                     SettingsToggleView(title: "Use State Output", description: "Turn this on if you have the state output mod, it prevents an instance from reseting if it is still generating the world.", option: $instanceManager.checkStateOutput)
                 }
                 
-                SettingsLabel(title: "Window Dimensions", description: "Dimensions of game windows in different cases, shouldn't exceed monitor size: \(NSScreen.main?.visibleFrame.size.debugDescription ?? "Unknown")")
+                SettingsLabel(title: "Window Dimensions", description: "The dimensions of the game windows in different cases. These values should not exceed the current monitor size: **\(screenSize)**.")
+                    .contentTransition(.numericText())
                     .padding(.top, 5)
                 
-                DimensionCard(name: "Reset", description: "The size the game will be while you are in SlackowWall", x: $instanceManager.resetX, y: $instanceManager.resetY, width: $instanceManager.resetWidth, height: $instanceManager.resetHeight)
+                DimensionCardView(name: "Reset", description: "The size the game will be while you are in SlackowWall.", x: $instanceManager.resetX, y: $instanceManager.resetY, width: $instanceManager.resetWidth, height: $instanceManager.resetHeight)
                 
-                DimensionCard(name: "Gameplay", description: "The size the game will be while you are in an instance", x: $instanceManager.baseX, y: $instanceManager.baseY, width: $instanceManager.baseWidth, height: $instanceManager.baseHeight)
+                DimensionCardView(name: "Gameplay", description: "The size the game will be while you are in an instance.", x: $instanceManager.baseX, y: $instanceManager.baseY, width: $instanceManager.baseWidth, height: $instanceManager.baseHeight)
                 
-                DimensionCard(name: "Wide", description: "The size the game will be when you switch to wide instance mode", x: $instanceManager.wideX, y: $instanceManager.wideY, width: $instanceManager.wideWidth, height: $instanceManager.wideHeight)
-                
+                DimensionCardView(name: "Wide", description: "The size the game will be when you switch to wide instance mode.", x: $instanceManager.wideX, y: $instanceManager.wideY, width: $instanceManager.wideWidth, height: $instanceManager.wideHeight)
             }
             .frame(maxHeight: .infinity, alignment: .topLeading)
             .padding()

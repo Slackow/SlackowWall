@@ -21,7 +21,7 @@
 		49CCFA8E2BAD188600842FCD /* StandardConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CCFA8D2BAD188600842FCD /* StandardConfig.swift */; };
 		49D77A192BA61CF70042AA14 /* instance_selector.lua in Resources */ = {isa = PBXBuildFile; fileRef = 49D77A182BA61CF70042AA14 /* instance_selector.lua */; };
 		49F739A52B9279BE008CB609 /* GameSettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F739A42B9279BE008CB609 /* GameSettingsManager.swift */; };
-		49FA20352BF3B5B300BA8CD0 /* DimensionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FA20342BF3B5B300BA8CD0 /* DimensionCard.swift */; };
+		49FA20352BF3B5B300BA8CD0 /* DimensionCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FA20342BF3B5B300BA8CD0 /* DimensionCardView.swift */; };
 		6D8A7183DE266313FBD84A7F /* Alignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D8A723DF9C8AD7D30AC21AF /* Alignment.swift */; };
 		6D8A72A43936AFAEFF91FCF9 /* InstanceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D8A71655654992BE658F2A9 /* InstanceInfo.swift */; };
 		6D8A76DD802153F673BCCB60 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D8A790289C5B8E8251D1E31 /* SoundManager.swift */; };
@@ -83,7 +83,7 @@
 		49CCFA8D2BAD188600842FCD /* StandardConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandardConfig.swift; sourceTree = "<group>"; };
 		49D77A182BA61CF70042AA14 /* instance_selector.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = instance_selector.lua; sourceTree = "<group>"; };
 		49F739A42B9279BE008CB609 /* GameSettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSettingsManager.swift; sourceTree = "<group>"; };
-		49FA20342BF3B5B300BA8CD0 /* DimensionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DimensionCard.swift; sourceTree = "<group>"; };
+		49FA20342BF3B5B300BA8CD0 /* DimensionCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DimensionCardView.swift; sourceTree = "<group>"; };
 		6D8A71655654992BE658F2A9 /* InstanceInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InstanceInfo.swift; sourceTree = "<group>"; };
 		6D8A718314BED92CCAE7DD5C /* PreviewShortcutListener.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewShortcutListener.swift; sourceTree = "<group>"; };
 		6D8A723DF9C8AD7D30AC21AF /* Alignment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Alignment.swift; sourceTree = "<group>"; };
@@ -195,7 +195,8 @@
 		49FA20332BF3B59B00BA8CD0 /* Behavior */ = {
 			isa = PBXGroup;
 			children = (
-				49FA20342BF3B5B300BA8CD0 /* DimensionCard.swift */,
+				49569BF52BDE1DA50035F67D /* BehaviorSettings.swift */,
+				49FA20342BF3B5B300BA8CD0 /* DimensionCardView.swift */,
 			);
 			path = Behavior;
 			sourceTree = "<group>";
@@ -334,7 +335,6 @@
 				B6D29FE72BA212CF004F20A2 /* Updates */,
 				B6A1FDE42BDF5BAF00EF2180 /* Credits */,
 				4915C3AA2AC7636F00B60D1D /* InstancesSettings.swift */,
-				49569BF52BDE1DA50035F67D /* BehaviorSettings.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -544,7 +544,7 @@
 				49CCFA8E2BAD188600842FCD /* StandardConfig.swift in Sources */,
 				6D8A7C560BB403B8F8251B8D /* ShortcutManager.swift in Sources */,
 				6D8A76DD802153F673BCCB60 /* SoundManager.swift in Sources */,
-				49FA20352BF3B5B300BA8CD0 /* DimensionCard.swift in Sources */,
+				49FA20352BF3B5B300BA8CD0 /* DimensionCardView.swift in Sources */,
 				B6B9FE9D2BA16DB00026C268 /* SizeReader.swift in Sources */,
 				6D8A7F78665C71106EE9F8CA /* OBSManager.swift in Sources */,
 				6D8A792C702E9F4144B9784E /* AppDefaults.swift in Sources */,
@@ -701,7 +701,7 @@
 				CURRENT_PROJECT_VERSION = 240512b;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
-				DEVELOPMENT_TEAM = 94CLS492CD;
+				DEVELOPMENT_TEAM = D64G2TTYWM;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -737,7 +737,7 @@
 				CURRENT_PROJECT_VERSION = 240512b;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
-				DEVELOPMENT_TEAM = 94CLS492CD;
+				DEVELOPMENT_TEAM = D64G2TTYWM;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;

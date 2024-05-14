@@ -3,7 +3,7 @@
 //
 
 import SwiftUI
-import ApplicationServices
+import Combine
 
 class InstanceManager: ObservableObject {
     @AppStorage("sections") var sections: Int = 6
@@ -40,6 +40,8 @@ class InstanceManager: ObservableObject {
     @AppStorage("wideX") var wideX: Int? = nil
     @AppStorage("wideY") var wideY: Int? = nil
 
+    @Published var screenSize: CGSize?
+    
     @Published var lockedInstances: Int64 = 0
     @Published var hoveredInstance: Int? = nil
     @Published var keyPressed: Character? = nil
@@ -53,8 +55,19 @@ class InstanceManager: ObservableObject {
     
     static let shared = InstanceManager()
     
+    private var cancellable: AnyCancellable?
+    
     init() {
-        
+        self.screenSize = NSScreen.main?.visibleFrame.size
+        setupScreenChangeNotification()
+    }
+    
+    private func setupScreenChangeNotification() {
+        cancellable = NotificationCenter.default
+            .publisher(for: NSApplication.didChangeScreenParametersNotification)
+            .sink { [weak self] _ in
+                self?.screenSize = NSScreen.main?.visibleFrame.size
+            }
     }
 
     @MainActor func openInstance(idx: Int) {
