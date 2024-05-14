@@ -39,19 +39,6 @@ struct BehaviorSettings: View {
                     Form {
                         VStack {
                             HStack {
-                                Text("Reset Position")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                
-                                TextField("X", value: $instanceManager.resetX, format: .number.grouping(.never))
-                                    .textFieldStyle(.roundedBorder)
-                                    .frame(width: 100)
-                                
-                                TextField("Y", value: $instanceManager.resetY, format: .number.grouping(.never))
-                                    .textFieldStyle(.roundedBorder)
-                                    .frame(width: 100)
-                            }
-                            
-                            HStack {
                                 Text("Reset Size")
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 
@@ -64,6 +51,25 @@ struct BehaviorSettings: View {
                                     .frame(width: 100)
                             }
                             
+                            HStack {
+                                Text("Reset Position")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                TextField("X", value: $instanceManager.resetX, format: .number.grouping(.never))
+                                    .textFieldStyle(.roundedBorder)
+                                    .frame(width: 100)
+                                
+                                TextField("Y", value: $instanceManager.resetY, format: .number.grouping(.never))
+                                    .textFieldStyle(.roundedBorder)
+                                    .frame(width: 100)
+                            }
+                        }
+                    }
+                }
+                
+                SettingsCardView {
+                    Form {
+                        VStack {
                             HStack {
                                 Text("Gameplay Size")
                                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -78,6 +84,25 @@ struct BehaviorSettings: View {
                             }
                             
                             HStack {
+                                Text("Gameplay Position")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                TextField("X", value: $instanceManager.baseX, format: .number.grouping(.never))
+                                    .textFieldStyle(.roundedBorder)
+                                    .frame(width: 100)
+                                
+                                TextField("Y", value: $instanceManager.baseY, format: .number.grouping(.never))
+                                    .textFieldStyle(.roundedBorder)
+                                    .frame(width: 100)
+                            }
+                        }
+                    }
+                }
+                
+                SettingsCardView {
+                    Form {
+                        VStack {
+                            HStack {
                                 Text("Wide Size")
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 
@@ -86,6 +111,19 @@ struct BehaviorSettings: View {
                                     .frame(width: 100)
                                 
                                 TextField("H", value: $instanceManager.wideHeight, format: .number.grouping(.never))
+                                    .textFieldStyle(.roundedBorder)
+                                    .frame(width: 100)
+                            }
+                            
+                            HStack {
+                                Text("Wide Position")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                TextField("X", value: $instanceManager.wideX, format: .number.grouping(.never))
+                                    .textFieldStyle(.roundedBorder)
+                                    .frame(width: 100)
+                                
+                                TextField("Y", value: $instanceManager.wideY, format: .number.grouping(.never))
                                     .textFieldStyle(.roundedBorder)
                                     .frame(width: 100)
                             }
