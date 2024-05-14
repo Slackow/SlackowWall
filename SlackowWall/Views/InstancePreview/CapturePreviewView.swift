@@ -65,7 +65,7 @@ struct CapturePreviewView: View {
             }
             .onAppear {
                 if instanceManager.animateGrid {
-                    let delay = Double(idx) * 0.1
+                    let delay = Double(idx) * 0.07
                     DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                         withAnimation(.smooth) {
                             animateAppearance = true

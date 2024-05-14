@@ -17,66 +17,74 @@ struct BehaviorSettings: View {
                 SettingsCardView {
                     VStack {
                         SettingsToggleView(title: "Press F1 on Join", option: $instanceManager.f1OnJoin)
-
+                        
                         Divider()
-
+                        
                         SettingsToggleView(title: "Pause on Lost Focus", description: "Pauses the capture of the instances when SlackowWall is not the focused window.", option: $instanceManager.onlyOnFocus)
-
+                        
                         Divider()
-
+                        
                         SettingsToggleView(title: "Hide Windows", description: "Hide all other instances when you enter an instance for performance, highly recommended.", option: $instanceManager.shouldHideWindows)
                     }
                 }
-
+                
                 SettingsCardView {
                     SettingsToggleView(title: "Use State Output", description: "Turn this on if you have the state output mod, it prevents an instance from reseting if it is still generating the world.", option: $instanceManager.checkStateOutput)
                 }
-            }
-
-            SettingsLabel(title: "Dimension Settings", description: "Dimensions of game windows in different cases.")
-                .padding(.top, 5)
-
-            SettingsCardView {
-                Form {
-                    VStack {
-                        HStack {
-                            Text("Reset Position")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-
-                            TextField("X", value: $instanceManager.resetX, format: .number.grouping(.never))
-                                .textFieldStyle(.roundedBorder)
-                                .frame(width: 100)
-
-                            TextField("Y", value: $instanceManager.resetY, format: .number.grouping(.never))
-                                .textFieldStyle(.roundedBorder)
-                                .frame(width: 100)
-                        }
-
-                        HStack {
-                            Text("Reset Size")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-
+                
+                SettingsLabel(title: "Window Dimensions", description: "Dimensions of game windows in different cases.")
+                    .padding(.top, 5)
+                
+                SettingsCardView {
+                    Form {
+                        VStack {
+                            HStack {
+                                Text("Reset Position")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                TextField("X", value: $instanceManager.resetX, format: .number.grouping(.never))
+                                    .textFieldStyle(.roundedBorder)
+                                    .frame(width: 100)
+                                
+                                TextField("Y", value: $instanceManager.resetY, format: .number.grouping(.never))
+                                    .textFieldStyle(.roundedBorder)
+                                    .frame(width: 100)
+                            }
+                            
+                            HStack {
+                                Text("Reset Size")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                TextField("W", value: $instanceManager.resetWidth, format: .number.grouping(.never))
+                                    .textFieldStyle(.roundedBorder)
+                                    .frame(width: 100)
+                                
+                                TextField("H", value: $instanceManager.resetHeight, format: .number.grouping(.never))
+                                    .textFieldStyle(.roundedBorder)
+                                    .frame(width: 100)
+                            }
+                            
                             HStack {
                                 Text("Gameplay Size")
                                     .frame(maxWidth: .infinity, alignment: .leading)
-
+                                
                                 TextField("W", value: $instanceManager.baseWidth, format: .number.grouping(.never))
                                     .textFieldStyle(.roundedBorder)
                                     .frame(width: 100)
-
+                                
                                 TextField("H", value: $instanceManager.baseHeight, format: .number.grouping(.never))
                                     .textFieldStyle(.roundedBorder)
                                     .frame(width: 100)
                             }
-
+                            
                             HStack {
                                 Text("Wide Size")
                                     .frame(maxWidth: .infinity, alignment: .leading)
-
+                                
                                 TextField("W", value: $instanceManager.wideWidth, format: .number.grouping(.never))
                                     .textFieldStyle(.roundedBorder)
                                     .frame(width: 100)
-
+                                
                                 TextField("H", value: $instanceManager.wideHeight, format: .number.grouping(.never))
                                     .textFieldStyle(.roundedBorder)
                                     .frame(width: 100)

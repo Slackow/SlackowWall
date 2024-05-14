@@ -225,7 +225,7 @@ class InstanceManager: ObservableObject {
         if value > 0 {
             animateGrid = true
             
-            let delay = (Double(value) * 0.1) + 0.1
+            let delay = (Double(value) * 0.07) + 0.07
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 self.animateGrid = false
             }
