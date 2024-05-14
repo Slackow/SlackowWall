@@ -65,7 +65,7 @@ import SwiftUI
                 print("verdict achieved! true")
                 return true
             } catch {
-                print("verdict achieved! false")
+                print("verdict achieved! false", error.localizedDescription)
                 return false
             }
         }

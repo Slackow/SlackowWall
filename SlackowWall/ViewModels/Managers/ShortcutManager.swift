@@ -86,19 +86,25 @@ final class ShortcutManager: ObservableObject {
         guard let activeWindow = apps.first(where:{$0.isActive}), instanceIDs.contains(activeWindow.processIdentifier) else { return }
         let w = convertToFloat(InstanceManager.shared.wideWidth)
         let h = convertToFloat(InstanceManager.shared.wideHeight)
-        resize(pid: activeWindow.processIdentifier, width: w, height: h)
+        let x = InstanceManager.shared.wideX.map(CGFloat.init)
+        let y = InstanceManager.shared.wideY.map(CGFloat.init)
+        resize(pid: activeWindow.processIdentifier, x: x, y: y, width: w, height: h)
     }
     
     func resizeBase(pid: pid_t) {
         let w = convertToFloat(InstanceManager.shared.baseWidth)
         let h = convertToFloat(InstanceManager.shared.baseHeight)
-        resize(pid: pid, width: w, height: h, force: true)
+        let x = InstanceManager.shared.baseX.map(CGFloat.init)
+        let y = InstanceManager.shared.baseY.map(CGFloat.init)
+        resize(pid: pid, x: x, y: y, width: w, height: h, force: true)
     }
     
     func resizeReset(pid: pid_t) {
         let w = convertToFloat(InstanceManager.shared.resetWidth)
         let h = convertToFloat(InstanceManager.shared.resetHeight)
-        resize(pid: pid, width: w, height: h, force: true)
+        let x = InstanceManager.shared.resetX.map(CGFloat.init)
+        let y = InstanceManager.shared.resetY.map(CGFloat.init)
+        resize(pid: pid, x: x, y: y, width: w, height: h, force: true)
     }
     
     func resizeTall() {
@@ -109,7 +115,7 @@ final class ShortcutManager: ObservableObject {
         return CGFloat(int ?? 0)
     }
     
-    func resize(pid: pid_t, width: CGFloat, height: CGFloat, force: Bool = false) {
+    func resize(pid: pid_t, x: CGFloat? = nil, y: CGFloat? = nil, width: CGFloat, height: CGFloat, force: Bool = false) {
         let pids = ShortcutManager.shared.instanceIDs
         if !(width > 0 && height > 0) || pids.isEmpty {
             return
@@ -136,15 +142,16 @@ final class ShortcutManager: ObservableObject {
             AXValueGetValue(posValue as! AXValue, AXValueType.cgPoint, &pos)
             AXValueGetValue(sizeValue as! AXValue, AXValueType.cgSize, &size)
             
-            var newSize =
-                if !force && size.width == width && size.height == height {
-                    CGSize(width: convertToFloat(InstanceManager.shared.baseWidth), height: convertToFloat(InstanceManager.shared.baseHeight))
-                } else {
-                    CGSize(width: width, height: height)
-                }
+            if !force && size.width == width && size.height == height {
+                resizeBase(pid: pid)
+                return
+            }
             
-            var newPosition = CGPoint(x: pos.x - (newSize.width - size.width) * 0.5,
-                                      y: pos.y - (newSize.height - size.height) * 0.5)
+            var newSize = CGSize(width: width, height: height)
+               
+            
+            var newPosition = CGPoint(x: x ?? (pos.x - (newSize.width - size.width) * 0.5),
+                                      y: y ?? (pos.y - (newSize.height - size.height) * 0.5))
             
             guard let positionRef = AXValueCreate(AXValueType.cgPoint, &newPosition),
                     let sizeRef = AXValueCreate(AXValueType.cgSize, &newSize) else { continue }
