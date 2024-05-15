@@ -6,7 +6,7 @@ import SwiftUI
 import Combine
 
 class InstanceManager: ObservableObject {
-    @AppStorage("sections") var sections: Int = 6
+    @AppStorage("sections") var sections: Int = 2
     @AppStorage("alignment") var alignment: Alignment = .horizontal
     
     @AppStorage("shouldHideWindows") var shouldHideWindows = true
@@ -39,6 +39,9 @@ class InstanceManager: ObservableObject {
     @AppStorage("wideHeight") var wideHeight: Int? = nil
     @AppStorage("wideX") var wideX: Int? = nil
     @AppStorage("wideY") var wideY: Int? = nil
+    
+    @AppStorage("profiles") var profiles: [Profile] = [Profile()]
+    @AppStorage("currentProfile") var currentProfile: Int = 0
 
     @Published var screenSize: CGSize?
     
@@ -60,6 +63,28 @@ class InstanceManager: ObservableObject {
     init() {
         self.screenSize = NSScreen.main?.visibleFrame.size
         setupScreenChangeNotification()
+    }
+    
+    var p: Profile {
+        get {
+            if let p = profiles.dropFirst(abs(currentProfile)).first {
+                return p
+            }
+            if profiles.isEmpty {
+                profiles.append(Profile())
+            }
+            currentProfile = 0
+            print("Warning, reset Profile!")
+            return profiles[abs(currentProfile)]
+        }
+        set(newProfile) {
+            if profiles.indices.contains(currentProfile) {
+                profiles[currentProfile] = newProfile
+            } else {
+                profiles.append(newProfile)
+                currentProfile = profiles.count - 1
+            }
+        }
     }
     
     private func setupScreenChangeNotification() {
@@ -107,7 +132,7 @@ class InstanceManager: ObservableObject {
             focusWindow(pid)
             
             ShortcutManager.shared.sendEscape(pid: pid)
-            if self.f1OnJoin {
+            if self.p.f1OnJoin {
                 ShortcutManager.shared.sendF1(pid: pid)
                 print("Sent f1!!")
             }

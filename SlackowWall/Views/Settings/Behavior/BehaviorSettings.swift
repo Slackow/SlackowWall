@@ -20,7 +20,7 @@ struct BehaviorSettings: View {
             VStack(spacing: 12) {
                 SettingsCardView {
                     VStack {
-                        SettingsToggleView(title: "Press F1 on Join", option: $instanceManager.f1OnJoin)
+                        SettingsToggleView(title: "Press F1 on Join", option: $instanceManager.p.f1OnJoin)
                         
                         Divider()
                         

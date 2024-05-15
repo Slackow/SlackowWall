@@ -12,6 +12,7 @@
 		4915C3AB2AC7636F00B60D1D /* InstancesSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4915C3AA2AC7636F00B60D1D /* InstancesSettings.swift */; };
 		493A122C2B88723D009BE0B3 /* KeybindingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493A122B2B88723D009BE0B3 /* KeybindingManager.swift */; };
 		493A122F2B88FAA0009BE0B3 /* KeybindingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493A122E2B88FAA0009BE0B3 /* KeybindingView.swift */; };
+		494A46312BF3FBA700DC852A /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494A46302BF3FBA700DC852A /* Profile.swift */; };
 		49569BF62BDE1DA50035F67D /* BehaviorSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49569BF52BDE1DA50035F67D /* BehaviorSettings.swift */; };
 		498FB3CC28987F5B00405753 /* SlackowWallApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498FB3CB28987F5B00405753 /* SlackowWallApp.swift */; };
 		498FB3CE28987F5B00405753 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498FB3CD28987F5B00405753 /* ContentView.swift */; };
@@ -72,6 +73,7 @@
 		4915C3AA2AC7636F00B60D1D /* InstancesSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstancesSettings.swift; sourceTree = "<group>"; };
 		493A122B2B88723D009BE0B3 /* KeybindingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeybindingManager.swift; sourceTree = "<group>"; };
 		493A122E2B88FAA0009BE0B3 /* KeybindingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeybindingView.swift; sourceTree = "<group>"; };
+		494A46302BF3FBA700DC852A /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		49569BF52BDE1DA50035F67D /* BehaviorSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BehaviorSettings.swift; sourceTree = "<group>"; };
 		498FB3C828987F5B00405753 /* SlackowWall.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SlackowWall.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		498FB3CB28987F5B00405753 /* SlackowWallApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackowWallApp.swift; sourceTree = "<group>"; };
@@ -248,6 +250,7 @@
 				6D8A71655654992BE658F2A9 /* InstanceInfo.swift */,
 				B6D29FE52BA2123E004F20A2 /* ReleaseEntry.swift */,
 				49CCFA8D2BAD188600842FCD /* StandardConfig.swift */,
+				494A46302BF3FBA700DC852A /* Profile.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -551,6 +554,7 @@
 				6D8A7183DE266313FBD84A7F /* Alignment.swift in Sources */,
 				B6A55D992BA2AFC500D06086 /* SCWindow+Ext.swift in Sources */,
 				B68D8C2D2BEBC0FC00072AC5 /* CaptureGridView.swift in Sources */,
+				494A46312BF3FBA700DC852A /* Profile.swift in Sources */,
 				B6A55D8E2BA2829400D06086 /* RemoveFocusOnTap.swift in Sources */,
 				B6B9FE992BA16D730026C268 /* SettingsPickerView.swift in Sources */,
 				B6A55D952BA2A7FE00D06086 /* CapturePreviewView.swift in Sources */,
@@ -701,7 +705,7 @@
 				CURRENT_PROJECT_VERSION = 240512b;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
-				DEVELOPMENT_TEAM = D64G2TTYWM;
+				DEVELOPMENT_TEAM = 94CLS492CD;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -737,7 +741,7 @@
 				CURRENT_PROJECT_VERSION = 240512b;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
-				DEVELOPMENT_TEAM = D64G2TTYWM;
+				DEVELOPMENT_TEAM = 94CLS492CD;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
