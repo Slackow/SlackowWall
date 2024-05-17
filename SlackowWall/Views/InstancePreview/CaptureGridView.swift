@@ -9,6 +9,7 @@ import SwiftUI
 import ScreenCaptureKit
 
 struct CaptureGridView: View {
+    @ObservedObject private var profileManager = ProfileManager.shared
     @ObservedObject private var shortcutManager = ShortcutManager.shared
     @ObservedObject private var screenRecorder = ScreenRecorder.shared
     @ObservedObject private var instanceManager = InstanceManager.shared
@@ -29,9 +30,9 @@ struct CaptureGridView: View {
                     }
                 } else {
                     Group {
-                        if instanceManager.alignment == .horizontal {
+                        if profileManager.profile.alignment == .horizontal {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(0..<instanceManager.sections, id: \.self) { section in
+                                ForEach(0..<profileManager.profile.sections, id: \.self) { section in
                                     HStack(spacing: 0) {
                                         ForEach(indicesForSection(section), id: \.self) { idx in
                                             if section == 0 && idx == 0 {
@@ -51,7 +52,7 @@ struct CaptureGridView: View {
                             }
                         } else {
                             HStack(alignment: .top, spacing: 0) {
-                                ForEach(0..<instanceManager.sections, id: \.self) { section in
+                                ForEach(0..<profileManager.profile.sections, id: \.self) { section in
                                     VStack(spacing: 0) {
                                         ForEach(indicesForSection(section), id: \.self) { idx in
                                             if section == 0 && idx == 0 {
@@ -72,8 +73,8 @@ struct CaptureGridView: View {
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .animation(.easeInOut, value: instanceManager.alignment)
-                    .animation(.easeInOut, value: instanceManager.sections)
+                    .animation(.easeInOut, value: profileManager.profile.alignment)
+                    .animation(.easeInOut, value: profileManager.profile.sections)
                     .background(PreviewShortcutListener(key: $instanceManager.keyPressed))
                 }
             }
@@ -85,7 +86,7 @@ struct CaptureGridView: View {
                 }
             }
             .onChange(of: instanceManager.isActive) { value in
-                if instanceManager.onlyOnFocus {
+                if profileManager.profile.onlyOnFocus {
                     if value {
                         Task {
                             await screenRecorder.resumeCapture()
@@ -131,7 +132,7 @@ struct CaptureGridView: View {
             }
             
             VStack {
-                if instanceManager.showInstanceNumbers {
+                if profileManager.profile.showInstanceNumbers {
                     Text("\(index + 1)")
                         .foregroundColor(.white)
                         .padding(4)
@@ -139,15 +140,15 @@ struct CaptureGridView: View {
             }
             .opacity(instanceManager.showInfo ? 1 : 0)
             .animation(.easeInOut, value: instanceManager.showInfo)
-            .animation(.easeInOut, value: instanceManager.showInstanceNumbers)
+            .animation(.easeInOut, value: profileManager.profile.showInstanceNumbers)
         }
         .matchedGeometryEffect(id: "Instance-\(index)", in: gridSpace)
     }
     
     private func indicesForSection(_ section: Int) -> Range<Int> {
         let totalPreviews = screenRecorder.capturePreviews.count
-        let baseItemsPerSection = totalPreviews / instanceManager.sections
-        let extraItems = totalPreviews % instanceManager.sections
+        let baseItemsPerSection = totalPreviews / profileManager.profile.sections
+        let extraItems = totalPreviews % profileManager.profile.sections
         
         let startIndex = section * baseItemsPerSection + min(section, extraItems)
         var endIndex = startIndex + baseItemsPerSection
@@ -160,7 +161,7 @@ struct CaptureGridView: View {
     
     private func maximumItemsPerSection() -> Int {
         let totalPreviews = screenRecorder.capturePreviews.count
-        let sections = instanceManager.sections
+        let sections = profileManager.profile.sections
         return Int(ceil(Double(totalPreviews) / Double(sections)))
     }
 }

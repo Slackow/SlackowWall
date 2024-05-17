@@ -39,12 +39,14 @@ struct SettingsView: View {
         }
         detail: {
             switch selectedSettingsBarItem {
-                case .keybindings:
-                    KeybindingsSettings()
-                case .behavior:
-                    BehaviorSettings()
                 case .instances:
                     InstancesSettings()
+                case .behavior:
+                    BehaviorSettings()
+                case .keybindings:
+                    KeybindingsSettings()
+                case .profiles:
+                    Text("Profiles")
                 case .updates:
                     UpdateSettings()
                 case .credits:

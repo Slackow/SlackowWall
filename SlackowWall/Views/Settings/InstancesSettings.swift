@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct InstancesSettings: View {
+    @ObservedObject private var profileManager = ProfileManager.shared
     @ObservedObject private var instanceManager = InstanceManager.shared
     @ObservedObject private var shortcutManager = ShortcutManager.shared
     
@@ -19,13 +20,13 @@ struct InstancesSettings: View {
                 SettingsCardView {
                     VStack {
                         Group {
-                            Picker("", selection: $instanceManager.alignment) {
+                            Picker("", selection: $profileManager.profile.alignment) {
                                 ForEach(Alignment.allCases, id: \.self) { type in
                                     Text(type == .vertical ? "Columns" : "Rows").tag(type)
                                 }
                             }
                             
-                            Picker("", selection: $instanceManager.sections) {
+                            Picker("", selection: $profileManager.profile.sections) {
                                 ForEach(1..<10) {
                                     Text("\($0)").tag($0)
                                 }
@@ -38,12 +39,12 @@ struct InstancesSettings: View {
                 
                 SettingsCardView {
                     VStack {
-                        SettingsToggleView(title: "Force Aspect Ratio (16:9)", description: "Forces the instances to use this aspect ratio which is useful when using stretched instances.", option: $instanceManager.forceAspectRatio)
+                        SettingsToggleView(title: "Force Aspect Ratio (16:9)", description: "Forces the instances to use this aspect ratio which is useful when using stretched instances.", option: $profileManager.profile.forceAspectRatio)
                         
                         Divider()
                             .padding(.bottom, 4)
                         
-                        SettingsToggleView(title: "Show Instance Numbers", option: $instanceManager.showInstanceNumbers)
+                        SettingsToggleView(title: "Show Instance Numbers", option: $profileManager.profile.showInstanceNumbers)
                     }
                 }
                 
@@ -84,16 +85,16 @@ struct InstancesSettings: View {
                         Form {
                             HStack {
                                 Group {
-                                    TextField("X", value: $instanceManager.moveXOffset, format: .number.grouping(.never))
+                                    TextField("X", value: $profileManager.profile.moveXOffset, format: .number.grouping(.never))
                                         .textFieldStyle(.roundedBorder)
                                     
-                                    TextField("Y", value: $instanceManager.moveYOffset, format: .number.grouping(.never))
+                                    TextField("Y", value: $profileManager.profile.moveYOffset, format: .number.grouping(.never))
                                         .textFieldStyle(.roundedBorder)
                                     
-                                    TextField("W", value: $instanceManager.setWidth, format: .number.grouping(.never))
+                                    TextField("W", value: $profileManager.profile.setWidth, format: .number.grouping(.never))
                                         .textFieldStyle(.roundedBorder)
                                     
-                                    TextField("H", value: $instanceManager.setHeight, format: .number.grouping(.never))
+                                    TextField("H", value: $profileManager.profile.setHeight, format: .number.grouping(.never))
                                         .textFieldStyle(.roundedBorder)
                                 }
                                 .frame(width: 80)

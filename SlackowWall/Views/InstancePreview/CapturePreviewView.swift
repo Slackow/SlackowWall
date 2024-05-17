@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CapturePreviewView: View {
     @ObservedObject private var screenRecorder = ScreenRecorder.shared
+    @ObservedObject private var profileManager = ProfileManager.shared
     @ObservedObject private var instanceManager = InstanceManager.shared
     
     @State private var actualSize: CGSize = .zero
@@ -38,8 +39,8 @@ struct CapturePreviewView: View {
     
     var body: some View {
         preview
-            .aspectRatio(instanceManager.forceAspectRatio ? scaledDimensions : size, contentMode: .fit)
-            .scaleEffect(CGSize(width: instanceManager.forceAspectRatio ? scaleFactor : 1.0, height: 1.0))
+            .aspectRatio(profileManager.profile.forceAspectRatio ? scaledDimensions : size, contentMode: .fit)
+            .scaleEffect(CGSize(width: profileManager.profile.forceAspectRatio ? scaleFactor : 1.0, height: 1.0))
             .modifier(SizeReader(size: $actualSize))
             .mask {
                 RoundedRectangle(cornerRadius: 10)

@@ -65,6 +65,15 @@ final class ShortcutManager: ObservableObject {
         NSApplication.shared.windows.filter({ $0.title == "Settings"}).first?.close()
     }
     
+    func handleGlobalKey(_ key: NSEvent) {
+        switch key.keyCode {
+            case ProfileManager.shared.profile.resetGKey: globalReset()
+            case ProfileManager.shared.profile.planarGKey: resizePlanar()
+            case ProfileManager.shared.profile.planar2GKey: resizeTall()
+            case _: return
+        }
+    }
+    
     func globalReset() {
         closeSettingsWindow()
         let apps = NSWorkspace.shared.runningApplications.filter{ $0.activationPolicy == .regular }
@@ -74,7 +83,7 @@ final class ShortcutManager: ObservableObject {
         guard instanceIDs.contains(pid) else { return }
         print("Focusing!")
         resetInstance(pid: pid)
-        if InstanceManager.shared.shouldHideWindows {
+        if ProfileManager.shared.profile.shouldHideWindows {
             unhideInstances()
         }
         NSApp.activate(ignoringOtherApps: true)
@@ -84,26 +93,26 @@ final class ShortcutManager: ObservableObject {
     func resizePlanar() {
         let apps = NSWorkspace.shared.runningApplications.filter{ $0.activationPolicy == .regular }
         guard let activeWindow = apps.first(where:{$0.isActive}), instanceIDs.contains(activeWindow.processIdentifier) else { return }
-        let w = convertToFloat(InstanceManager.shared.wideWidth)
-        let h = convertToFloat(InstanceManager.shared.wideHeight)
-        let x = InstanceManager.shared.wideX.map(CGFloat.init)
-        let y = InstanceManager.shared.wideY.map(CGFloat.init)
+        let w = convertToFloat(ProfileManager.shared.profile.wideWidth)
+        let h = convertToFloat(ProfileManager.shared.profile.wideHeight)
+        let x = ProfileManager.shared.profile.wideX.map(CGFloat.init)
+        let y = ProfileManager.shared.profile.wideY.map(CGFloat.init)
         resize(pid: activeWindow.processIdentifier, x: x, y: y, width: w, height: h)
     }
     
     func resizeBase(pid: pid_t) {
-        let w = convertToFloat(InstanceManager.shared.baseWidth)
-        let h = convertToFloat(InstanceManager.shared.baseHeight)
-        let x = InstanceManager.shared.baseX.map(CGFloat.init)
-        let y = InstanceManager.shared.baseY.map(CGFloat.init)
+        let w = convertToFloat(ProfileManager.shared.profile.baseWidth)
+        let h = convertToFloat(ProfileManager.shared.profile.baseHeight)
+        let x = ProfileManager.shared.profile.baseX.map(CGFloat.init)
+        let y = ProfileManager.shared.profile.baseY.map(CGFloat.init)
         resize(pid: pid, x: x, y: y, width: w, height: h, force: true)
     }
     
     func resizeReset(pid: pid_t) {
-        let w = convertToFloat(InstanceManager.shared.resetWidth)
-        let h = convertToFloat(InstanceManager.shared.resetHeight)
-        let x = InstanceManager.shared.resetX.map(CGFloat.init)
-        let y = InstanceManager.shared.resetY.map(CGFloat.init)
+        let w = convertToFloat(ProfileManager.shared.profile.resetWidth)
+        let h = convertToFloat(ProfileManager.shared.profile.resetHeight)
+        let x = ProfileManager.shared.profile.resetX.map(CGFloat.init)
+        let y = ProfileManager.shared.profile.resetY.map(CGFloat.init)
         resize(pid: pid, x: x, y: y, width: w, height: h, force: true)
     }
     

@@ -77,7 +77,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Monitor for global key presses
         eventMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.keyUp]) { event in
-            KeybindingManager.shared.handleGlobalKey(event)
+            ShortcutManager.shared.handleGlobalKey(event)
         }
         OBSManager.shared.writeScript()
     }

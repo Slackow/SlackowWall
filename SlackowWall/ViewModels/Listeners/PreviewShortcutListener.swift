@@ -21,14 +21,14 @@ struct PreviewShortcutListener: NSViewRepresentable {
 
         override var acceptsFirstResponder: Bool { true }
         override func keyDown(with event: NSEvent) {
-            let k = KeybindingManager.shared
+            let p = ProfileManager.shared.profile
             switch event.keyCode {
-            case k.runKey: key = "r"
-            case k.resetOneKey: key = "e"
-            case k.resetOthersKey: key = "f"
-            case k.resetAllKey: key = "t"
-            case k.lockKey: key = "c"
-            case k.resetGKey: key = "u"
+            case p.runKey: key = "r"
+            case p.resetOneKey: key = "e"
+            case p.resetOthersKey: key = "f"
+            case p.resetAllKey: key = "t"
+            case p.lockKey: key = "c"
+            case p.resetGKey: key = "u"
             default: return
             }
         }

@@ -201,7 +201,7 @@ import SwiftUI
         // Start the capture process again
         await start()
         
-        if InstanceManager.shared.shouldHideWindows {
+        if ProfileManager.shared.profile.shouldHideWindows {
             shortcutManager.unhideInstances()
         }
     }

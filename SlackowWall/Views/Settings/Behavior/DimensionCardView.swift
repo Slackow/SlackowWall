@@ -90,6 +90,7 @@ struct DimensionCardView: View {
     }
     
     private func centerWindows() {
+        ProfileManager.shared.changeProfile()
         if let s = NSScreen.main?.visibleFrame.size,
            let width = width, let height = height {
             x = (Int(s.width) - width)/2
@@ -100,8 +101,8 @@ struct DimensionCardView: View {
 
 #Preview {
     VStack {
-        let instM = InstanceManager.shared
-        DimensionCardView(name: "Wide", x: instM.$wideX, y: instM.$wideY, width: instM.$wideWidth, height: instM.$wideHeight)
+        let profileManager = ProfileManager.shared
+        DimensionCardView(name: "Wide", x: profileManager.profile.$wideX, y: profileManager.profile.$wideY, width: profileManager.profile.$wideWidth, height: profileManager.profile.$wideHeight)
     }
     .padding(20)
 }

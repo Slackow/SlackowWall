@@ -6,43 +6,6 @@ import SwiftUI
 import Combine
 
 class InstanceManager: ObservableObject {
-    @AppStorage("sections") var sections: Int = 2
-    @AppStorage("alignment") var alignment: Alignment = .horizontal
-    
-    @AppStorage("shouldHideWindows") var shouldHideWindows = true
-    @AppStorage("showInstanceNumbers") var showInstanceNumbers = true
-    @AppStorage("forceAspectRatio") var forceAspectRatio = false
-    
-    @AppStorage("moveXOffset") var moveXOffset: Int = 0
-    @AppStorage("moveYOffset") var moveYOffset: Int = 0
-    
-    @AppStorage("setWidth") var setWidth: Int? = nil
-    @AppStorage("setHeight") var setHeight: Int? = nil
-    
-    // Behavior
-    @AppStorage("f1OnJoin") var f1OnJoin: Bool = false
-    @AppStorage("fullscreen") var fullscreen: Bool = false
-    @AppStorage("onlyOnFocus") var onlyOnFocus: Bool = true
-    @AppStorage("checkStateOutput") var checkStateOutput: Bool = false
-        
-    @AppStorage("resetWidth") var resetWidth: Int? = nil
-    @AppStorage("resetHeight") var resetHeight: Int? = nil
-    @AppStorage("resetX") var resetX: Int? = nil
-    @AppStorage("resetY") var resetY: Int? = nil
-
-    @AppStorage("baseWidth") var baseWidth: Int? = nil
-    @AppStorage("baseHeight") var baseHeight: Int? = nil
-    @AppStorage("baseX") var baseX: Int? = nil
-    @AppStorage("baseY") var baseY: Int? = nil
-
-    @AppStorage("wideWidth") var wideWidth: Int? = nil
-    @AppStorage("wideHeight") var wideHeight: Int? = nil
-    @AppStorage("wideX") var wideX: Int? = nil
-    @AppStorage("wideY") var wideY: Int? = nil
-    
-    @AppStorage("profiles") var profiles: [Profile] = [Profile()]
-    @AppStorage("currentProfile") var currentProfile: Int = 0
-
     @Published var screenSize: CGSize?
     
     @Published var lockedInstances: Int64 = 0
@@ -63,28 +26,6 @@ class InstanceManager: ObservableObject {
     init() {
         self.screenSize = NSScreen.main?.visibleFrame.size
         setupScreenChangeNotification()
-    }
-    
-    var p: Profile {
-        get {
-            if let p = profiles.dropFirst(abs(currentProfile)).first {
-                return p
-            }
-            if profiles.isEmpty {
-                profiles.append(Profile())
-            }
-            currentProfile = 0
-            print("Warning, reset Profile!")
-            return profiles[abs(currentProfile)]
-        }
-        set(newProfile) {
-            if profiles.indices.contains(currentProfile) {
-                profiles[currentProfile] = newProfile
-            } else {
-                profiles.append(newProfile)
-                currentProfile = profiles.count - 1
-            }
-        }
     }
     
     private func setupScreenChangeNotification() {
@@ -124,7 +65,7 @@ class InstanceManager: ObservableObject {
         print("User opened")
         Task {
             print("Switching Window")
-            if InstanceManager.shared.shouldHideWindows {
+            if ProfileManager.shared.profile.shouldHideWindows {
                 let pids = ShortcutManager.shared.instanceIDs.filter {$0 != pid}
                 hideWindows(pids)
             }
@@ -132,7 +73,7 @@ class InstanceManager: ObservableObject {
             focusWindow(pid)
             
             ShortcutManager.shared.sendEscape(pid: pid)
-            if self.p.f1OnJoin {
+            if ProfileManager.shared.profile.f1OnJoin {
                 ShortcutManager.shared.sendF1(pid: pid)
                 print("Sent f1!!")
             }
@@ -233,7 +174,7 @@ class InstanceManager: ObservableObject {
     
     @inline(__always) private func canReset(idx: Int) -> Bool {
         if isLocked(idx: idx) { return false }
-        if !checkStateOutput { return true }
+        if !ProfileManager.shared.profile.checkStateOutput { return true }
         let state = ShortcutManager.shared.states[idx]
         state.updateState(force: true)
         return state.state != InstanceStates.waiting && state.state != InstanceStates.generating
@@ -297,11 +238,11 @@ class InstanceManager: ObservableObject {
     func move(forward: Bool, direct: Bool = false) {
         moving = true
         Task {
-            let xOff = moveXOffset * (forward ? 1 : -1)
-            let yOff = moveYOffset * (forward ? 1 : -1)
+            let xOff = ProfileManager.shared.profile.moveXOffset * (forward ? 1 : -1)
+            let yOff = ProfileManager.shared.profile.moveYOffset * (forward ? 1 : -1)
             let pids = ShortcutManager.shared.instanceIDs
-            let width = setWidth ?? 0
-            let height = setHeight ?? 0
+            let width = ProfileManager.shared.profile.setWidth ?? 0
+            let height = ProfileManager.shared.profile.setHeight ?? 0
             let setSize = width > 0 && height > 0
 
             if (xOff == 0 && yOff == 0 && !setSize) || pids.isEmpty {

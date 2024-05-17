@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct KeybindingsSettings: View {
-    @ObservedObject private var keybindingManager = KeybindingManager.shared
+    @ObservedObject private var profileManager = ProfileManager.shared
     
     var body: some View {
         ScrollView {
@@ -21,7 +21,7 @@ struct KeybindingsSettings: View {
                             Text("Reset")
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
-                            KeybindingView(keybinding: $keybindingManager.resetGKey, defaultValue: .u)
+                            KeybindingView(keybinding: $profileManager.profile.resetGKey, defaultValue: .u)
                         }
                         
                         Divider()
@@ -36,7 +36,7 @@ struct KeybindingsSettings: View {
                                     .padding(.trailing, 2)
                             }
                             
-                            KeybindingView(keybinding: $keybindingManager.planarGKey, defaultValue: nil)
+                            KeybindingView(keybinding: $profileManager.profile.planarGKey, defaultValue: nil)
                         }
                         Divider()
                         
@@ -50,7 +50,7 @@ struct KeybindingsSettings: View {
                                     .padding(.trailing, 2)
                             }
                             
-                            KeybindingView(keybinding: $keybindingManager.planar2GKey, defaultValue: nil)
+                            KeybindingView(keybinding: $profileManager.profile.planar2GKey, defaultValue: nil)
                         }
                     }
                 }
@@ -64,7 +64,7 @@ struct KeybindingsSettings: View {
                             Text("Reset All")
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
-                            KeybindingView(keybinding: $keybindingManager.resetAllKey, defaultValue: .t)
+                            KeybindingView(keybinding: $profileManager.profile.resetAllKey, defaultValue: .t)
                         }
                         
                         Divider()
@@ -73,7 +73,7 @@ struct KeybindingsSettings: View {
                             Text("Reset Hovered")
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
-                            KeybindingView(keybinding: $keybindingManager.resetOneKey, defaultValue: .e)
+                            KeybindingView(keybinding: $profileManager.profile.resetOneKey, defaultValue: .e)
                         }
                         
                         Divider()
@@ -82,7 +82,7 @@ struct KeybindingsSettings: View {
                             Text("Run Hovered and Reset Others")
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
-                            KeybindingView(keybinding: $keybindingManager.resetOthersKey, defaultValue: .f)
+                            KeybindingView(keybinding: $profileManager.profile.resetOthersKey, defaultValue: .f)
                         }
                         
                         Divider()
@@ -91,7 +91,7 @@ struct KeybindingsSettings: View {
                             Text("Run Hovered")
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
-                            KeybindingView(keybinding: $keybindingManager.runKey, defaultValue: .r)
+                            KeybindingView(keybinding: $profileManager.profile.runKey, defaultValue: .r)
                         }
                         
                         Divider()
@@ -105,7 +105,7 @@ struct KeybindingsSettings: View {
                                     .foregroundStyle(.gray)
                                     .padding(.trailing, 2)
                             }
-                            KeybindingView(keybinding: $keybindingManager.lockKey, defaultValue: .c)
+                            KeybindingView(keybinding: $profileManager.profile.lockKey, defaultValue: .c)
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -113,12 +113,12 @@ struct KeybindingsSettings: View {
                 
                 SettingsCardView {
                     SettingsButtonView(title: "Restore Defaults", buttonText: "Reset", action: {
-                        keybindingManager.resetGKey = .u
-                        keybindingManager.resetAllKey = .t
-                        keybindingManager.resetOneKey = .e
-                        keybindingManager.resetOthersKey = .f
-                        keybindingManager.runKey = .r
-                        keybindingManager.lockKey = .c
+                        profileManager.profile.resetGKey = .u
+                        profileManager.profile.resetAllKey = .t
+                        profileManager.profile.resetOneKey = .e
+                        profileManager.profile.resetOthersKey = .f
+                        profileManager.profile.runKey = .r
+                        profileManager.profile.lockKey = .c
                     })
                 }
             }
