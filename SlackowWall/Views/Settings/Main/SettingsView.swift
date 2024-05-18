@@ -46,7 +46,7 @@ struct SettingsView: View {
                 case .keybindings:
                     KeybindingsSettings()
                 case .profiles:
-                    Text("Profiles")
+                    ProfileSettings()
                 case .updates:
                     UpdateSettings()
                 case .credits:

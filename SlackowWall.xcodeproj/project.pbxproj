@@ -56,6 +56,7 @@
 		B6B9FE992BA16D730026C268 /* SettingsPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B9FE962BA16D730026C268 /* SettingsPickerView.swift */; };
 		B6B9FE9D2BA16DB00026C268 /* SizeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B9FE9C2BA16DB00026C268 /* SizeReader.swift */; };
 		B6B9FEA02BA16DDC0026C268 /* SettingsOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B9FE9F2BA16DDC0026C268 /* SettingsOption.swift */; };
+		B6C17C082BF7A9CE00F30C1F /* ProfileSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C17C072BF7A9CE00F30C1F /* ProfileSettings.swift */; };
 		B6D29FE62BA2123E004F20A2 /* ReleaseEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D29FE52BA2123E004F20A2 /* ReleaseEntry.swift */; };
 		B6D29FEA2BA212DA004F20A2 /* UpdateReleaseEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D29FE82BA212DA004F20A2 /* UpdateReleaseEntryView.swift */; };
 		B6D29FEB2BA212DA004F20A2 /* UpdateMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D29FE92BA212DA004F20A2 /* UpdateMessageView.swift */; };
@@ -118,6 +119,7 @@
 		B6B9FE962BA16D730026C268 /* SettingsPickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsPickerView.swift; sourceTree = "<group>"; };
 		B6B9FE9C2BA16DB00026C268 /* SizeReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SizeReader.swift; sourceTree = "<group>"; };
 		B6B9FE9F2BA16DDC0026C268 /* SettingsOption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsOption.swift; sourceTree = "<group>"; };
+		B6C17C072BF7A9CE00F30C1F /* ProfileSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettings.swift; sourceTree = "<group>"; };
 		B6D29FE52BA2123E004F20A2 /* ReleaseEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReleaseEntry.swift; sourceTree = "<group>"; };
 		B6D29FE82BA212DA004F20A2 /* UpdateReleaseEntryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateReleaseEntryView.swift; sourceTree = "<group>"; };
 		B6D29FE92BA212DA004F20A2 /* UpdateMessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateMessageView.swift; sourceTree = "<group>"; };
@@ -334,12 +336,13 @@
 		B637DB36296B964F00A73F62 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				49FA20332BF3B59B00BA8CD0 /* Behavior */,
 				B61D9A742B890BAB007A35CE /* Main */,
+				49FA20332BF3B59B00BA8CD0 /* Behavior */,
 				B6A55D9A2BA2B3A200D06086 /* Keybindings */,
 				B6D29FE72BA212CF004F20A2 /* Updates */,
 				B6A1FDE42BDF5BAF00EF2180 /* Credits */,
 				4915C3AA2AC7636F00B60D1D /* InstancesSettings.swift */,
+				B6C17C072BF7A9CE00F30C1F /* ProfileSettings.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -525,6 +528,7 @@
 				B6E30C132BF5AB42008E7004 /* KeyCode+Ext.swift in Sources */,
 				B61D9A762B890EDA007A35CE /* SettingsLabel.swift in Sources */,
 				4915C3AB2AC7636F00B60D1D /* InstancesSettings.swift in Sources */,
+				B6C17C082BF7A9CE00F30C1F /* ProfileSettings.swift in Sources */,
 				493A122F2B88FAA0009BE0B3 /* KeybindingView.swift in Sources */,
 				B6E9E3722970A55800DF6466 /* CaptureEngine.swift in Sources */,
 				B637DB38296B965D00A73F62 /* SettingsView.swift in Sources */,
@@ -706,7 +710,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 240516b;
+				CURRENT_PROJECT_VERSION = 240517b;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
 				DEVELOPMENT_TEAM = D64G2TTYWM;
@@ -742,7 +746,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 240516b;
+				CURRENT_PROJECT_VERSION = 240517b;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
 				DEVELOPMENT_TEAM = D64G2TTYWM;

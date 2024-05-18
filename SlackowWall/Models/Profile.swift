@@ -8,8 +8,12 @@
 import SwiftUI
 
 struct Profile {
-    // Main
+    //Profile
     @AppStorage("\(activeProfileStore).profileName") var profileName: String = "Main"
+    @AppStorage("\(activeProfileStore).expectedMWidth") var expectedMWidth: Int? = nil
+    @AppStorage("\(activeProfileStore).expectedMHeight") var expectedMHeight: Int? = nil
+    
+    // Main
     @AppStorage("\(activeProfileStore).sections") var sections: Int = 2
     @AppStorage("\(activeProfileStore).alignment") var alignment: Alignment = .horizontal
     
