@@ -112,14 +112,7 @@ struct KeybindingsSettings: View {
                 }
                 
                 SettingsCardView {
-                    SettingsButtonView(title: "Restore Defaults", buttonText: "Reset", action: {
-                        profileManager.profile.resetGKey = .u
-                        profileManager.profile.resetAllKey = .t
-                        profileManager.profile.resetOneKey = .e
-                        profileManager.profile.resetOthersKey = .f
-                        profileManager.profile.runKey = .r
-                        profileManager.profile.lockKey = .c
-                    })
+                    SettingsButtonView(title: "Restore Defaults", buttonText: "Reset", action: ShortcutManager.shared.resetKeybinds)
                 }
             }
             .frame(maxHeight: .infinity, alignment: .topLeading)

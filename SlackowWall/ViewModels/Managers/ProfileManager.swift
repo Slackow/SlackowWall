@@ -23,15 +23,20 @@ class ProfileManager: ObservableObject {
     
     static let shared = ProfileManager()
     
-    init() {
+    init() {        
         observeUserDefaults()
         
         if profiles.isEmpty {
             activeProfile = UUID().uuidString
             profiles.append(activeProfile)
+            profile = Profile()
+            
+            DispatchQueue.main.async {
+                ShortcutManager.shared.resetKeybinds()
+            }
+        } else {
+            profile = Profile()
         }
-        
-        profile = Profile()
         
         print("Active Profile:", activeProfile)
     }
@@ -47,34 +52,46 @@ class ProfileManager: ObservableObject {
     }
     
     func createNewProfile() {
+        guard profiles.count < 10 else { return }
+        
         activeProfile = UUID().uuidString
         profiles.append(activeProfile)
         
         profile = Profile()
-        profile.profileName = "New Profile"
+        ShortcutManager.shared.resetKeybinds()
+        
+        let nameSet = Set(profileNames.map { $0.name })
+        var newName = "New Profile"
+        var x = 1
+        
+        while nameSet.contains(newName) {
+            newName = "New Profile \(x)"
+            x += 1
+        }
+        
+        profile.profileName = newName
     }
     
     func deleteCurrentProfile() {
         if let idx = profiles.firstIndex(where: { $0 == activeProfile }), profiles.count > 1 {
             profiles.remove(at: idx)
+            let oldProfilePrefix = "\(activeProfile)."
             
-            let userDefaults = UserDefaults.standard
-            let prefix = "\(activeProfile)."
-            
-            for key in userDefaults.dictionaryRepresentation().keys {
-                if key.hasPrefix(prefix) {
-                    userDefaults.removeObject(forKey: key)
+            Task {
+                let userDefaults = UserDefaults.standard
+                let prefix = oldProfilePrefix
+                
+                for key in userDefaults.dictionaryRepresentation().keys {
+                    if key.hasPrefix(prefix) {
+                        userDefaults.removeObject(forKey: key)
+                    }
                 }
+                
+                userDefaults.synchronize()
             }
-            
-            userDefaults.synchronize()
             
             activeProfile = profiles[max(0, idx - 1)]
             profile = Profile()
         }
-    }
-    
-    func updateProfileName(_ newName: String) {
-        UserDefaults.standard.set(newName, forKey: "\(activeProfile).profileName")
     }
 }

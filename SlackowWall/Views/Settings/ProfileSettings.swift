@@ -31,10 +31,7 @@ struct ProfileSettings: View {
                                     .tag(profile.id)
                             }
                         }
-                        .onAppear {
-                            print(profileManager.profileNames)
-                        }
-                        .frame(maxWidth: 100)
+                        .frame(maxWidth: 120)
                         .labelsHidden()
                     }
                 }
@@ -47,9 +44,15 @@ struct ProfileSettings: View {
                         Text("Name")
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        TextField("", text: $profileManager.profile.profileName)
+                        TextField("", text: $profileManager.profile.profileName, onCommit: {
+                            if profileManager.profile.profileName.isEmpty {
+                                DispatchQueue.main.async {
+                                    profileManager.profile.profileName = "Default"
+                                }
+                            }
+                        })
                         .textFieldStyle(.roundedBorder)
-                        .frame(width: 100)
+                        .frame(width: 120)
                     }
                 }
                 
@@ -101,6 +104,7 @@ struct ProfileSettings: View {
                     }
                     .frame(width: 28)
                     .help("Create new profile")
+                    .disabled(profileManager.profiles.count >= 10)
                     
                     if profileManager.profiles.count > 1 {
                         Button(action: { profileManager.deleteCurrentProfile() }) {

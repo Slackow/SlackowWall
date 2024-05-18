@@ -75,7 +75,6 @@ final class ShortcutManager: ObservableObject {
     }
     
     func globalReset() {
-        closeSettingsWindow()
         let apps = NSWorkspace.shared.runningApplications.filter{ $0.activationPolicy == .regular }
         guard let activeWindow = apps.first(where:{$0.isActive}) else { return }
         
@@ -86,6 +85,7 @@ final class ShortcutManager: ObservableObject {
         if ProfileManager.shared.profile.shouldHideWindows {
             unhideInstances()
         }
+        closeSettingsWindow()
         NSApp.activate(ignoringOtherApps: true)
         resizeReset(pid: pid)
     }
@@ -334,5 +334,14 @@ final class ShortcutManager: ObservableObject {
         for key in keys.reversed() {
             CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: false)?.postToPid(pid)
         }
+    }
+    
+    func resetKeybinds() {
+        ProfileManager.shared.profile.resetGKey = .u
+        ProfileManager.shared.profile.resetAllKey = .t
+        ProfileManager.shared.profile.resetOneKey = .e
+        ProfileManager.shared.profile.resetOthersKey = .f
+        ProfileManager.shared.profile.runKey = .r
+        ProfileManager.shared.profile.lockKey = .c
     }
 }
