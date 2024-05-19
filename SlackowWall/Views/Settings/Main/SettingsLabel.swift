@@ -10,12 +10,17 @@ import SwiftUI
 struct SettingsLabel: View {
     var title: String
     var description: String?
+    var isTitle: Bool = true
     
     var body: some View {
         VStack(spacing: 2) {
-            Text(title)
-                .font(.headline)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            if isTitle {
+                Text(title)
+                    .font(.headline)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                Text(title)
+            }
             
             if let description = description {
                 Text(.init(description))

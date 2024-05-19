@@ -23,22 +23,28 @@ class OBSManager: ObservableObject {
         let fileManager = FileManager.default
         guard let appSupportURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?.appendingPathComponent("SlackowWall") else { return }
         
+        // Create the directory if it doesn't exist
+        try? fileManager.createDirectory(at: appSupportURL, withIntermediateDirectories: true)
+        
+        let dst = appSupportURL.appendingPathComponent("instance_selector.lua")
+        
+        // Remove the existing file if it exists
+        try? fileManager.removeItem(at: dst)
+        print("does file exist?", fileManager.fileExists(atPath: dst.path))
         do {
-            // Create the directory if it doesn't exist
-            try fileManager.createDirectory(at: appSupportURL, withIntermediateDirectories: true)
-            
-            let dst = appSupportURL.appendingPathComponent("instance_selector.lua")
-            
-            // Remove the existing file if it exists
-            try fileManager.removeItem(at: dst)
-            print("does file exist?", fileManager.fileExists(atPath: dst.path))
-            
             // Copy the file from the bundle to the Application Support directory
             try fileManager.copyItem(at: src, to: dst)
             print("Wrote script!")
         } catch {
             print("Error writing script:", error.localizedDescription)
         }
+    }
+    
+    func getScriptPath() -> URL? {
+        let fileManager = FileManager.default
+        guard let appSupportURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?
+            .appendingPathComponent("SlackowWall") else { return nil }
+        return appSupportURL.appendingPathComponent("instance_selector.lua")
     }
     
     func storeWindowIDs(info: [(Int, CGWindowID)]) {

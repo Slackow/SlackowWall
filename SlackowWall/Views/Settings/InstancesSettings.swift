@@ -66,6 +66,17 @@ struct InstancesSettings: View {
                         
                         SettingsButtonView(title: "Copy Mods to All", description: "Copies all mods from the first instance to all other open instances. This operation will close all instances.", buttonText: "Sync", action: instanceManager.copyMods)
                             .disabled(shortcutManager.instanceIDs.count < 2)
+                        
+                        Divider()
+                        HStack {
+                            SettingsLabel(title: "Morty", isTitle: false)
+                            
+                            Button(action: {
+                                NSPasteboard.general.setString(OBSManager.shared.getScriptPath()?.absoluteString ?? "~/Library/Application Support/SlackowWall", forType: .URL)
+                            }) {
+                                Text("Copy")
+                            }
+                        }
                     }
                 }
                 
