@@ -181,6 +181,7 @@ import SwiftUI
             await stop(removeStreams: true)
         }
         
+        ProfileManager.shared.autoSwitch()
         shortcutManager.fetchInstanceInfo()
         shortcutManager.instanceIDs.forEach(shortcutManager.resizeReset)
             

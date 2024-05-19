@@ -82,7 +82,7 @@ struct ProfileSettings: View {
                                 }
                                 
                                 Button(action: fillMonitorSize) {
-                                    Text("Copy Monitor")
+                                    Text("Use Monitor")
                                 }
                                 .frame(maxWidth: .infinity, alignment: .trailing)
                             }

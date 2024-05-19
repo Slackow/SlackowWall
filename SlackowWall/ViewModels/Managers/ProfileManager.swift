@@ -94,4 +94,25 @@ class ProfileManager: ObservableObject {
             profile = Profile()
         }
     }
+    
+    func autoSwitch() {
+        for profile in profiles {
+            let defaults = UserDefaults.standard
+            let widthKey = "\(profile).expectedMWidth"
+            let heightKey = "\(profile).expectedMHeight"
+            
+            let monitorWidth = defaults.integer(forKey: widthKey)
+            let monitorHeight = defaults.integer(forKey: heightKey)
+            
+            if monitorWidth > 0 && monitorHeight > 0 {
+                if let frame = NSScreen.main?.frame, Int(frame.width) == monitorWidth, Int(frame.height) == monitorHeight {
+                    if activeProfile != profile {
+                        activeProfile = profile
+                        self.profile = Profile()
+                        return
+                    }
+                }
+            }
+        }
+    }
 }
