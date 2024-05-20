@@ -21,8 +21,8 @@ struct Profile {
     @AppStorage("\(activeProfileStore).showInstanceNumbers") var showInstanceNumbers = true
     @AppStorage("\(activeProfileStore).forceAspectRatio") var forceAspectRatio = false
     
-    @AppStorage("\(activeProfileStore).moveXOffset") var moveXOffset: Int = 0
-    @AppStorage("\(activeProfileStore).moveYOffset") var moveYOffset: Int = 0
+    @AppStorage("\(activeProfileStore).moveXOffset") var moveXOffset: Int? = nil
+    @AppStorage("\(activeProfileStore).moveYOffset") var moveYOffset: Int? = nil
     
     @AppStorage("\(activeProfileStore).setWidth") var setWidth: Int? = nil
     @AppStorage("\(activeProfileStore).setHeight") var setHeight: Int? = nil

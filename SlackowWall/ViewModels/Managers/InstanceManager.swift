@@ -238,8 +238,8 @@ class InstanceManager: ObservableObject {
     func move(forward: Bool, direct: Bool = false) {
         moving = true
         Task {
-            let xOff = ProfileManager.shared.profile.moveXOffset * (forward ? 1 : -1)
-            let yOff = ProfileManager.shared.profile.moveYOffset * (forward ? 1 : -1)
+            let xOff = (ProfileManager.shared.profile.moveXOffset ?? 0) * (forward ? 1 : -1)
+            let yOff = (ProfileManager.shared.profile.moveYOffset ?? 0) * (forward ? 1 : -1)
             let pids = ShortcutManager.shared.instanceIDs
             let width = ProfileManager.shared.profile.setWidth ?? 0
             let height = ProfileManager.shared.profile.setHeight ?? 0
