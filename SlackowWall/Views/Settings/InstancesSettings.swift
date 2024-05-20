@@ -69,12 +69,22 @@ struct InstancesSettings: View {
                         
                         Divider()
                         HStack {
-                            SettingsLabel(title: "Morty", isTitle: false)
-                            
-                            Button(action: {
-                                NSPasteboard.general.setString(OBSManager.shared.getScriptPath()?.absoluteString ?? "~/Library/Application Support/SlackowWall", forType: .URL)
-                            }) {
-                                Text("Copy")
+                            SettingsLabel(title: "OBS Script", description: "This is the associated OBS script that helps you record using SlackowWall and switch scenes automatically. it's generally located at ~/Library/Application Support/SlackowWall", isTitle: false)
+                            VStack (alignment: .trailing) {
+                                Button(action: {
+                                    let board = NSPasteboard.general
+                                    board.clearContents()
+                                    board.setString("~/Library/Application Support/SlackowWall", forType: .string)
+                                }) {
+                                    Text("Copy Folder Path")
+                                }
+                                
+                                Button(action: {
+                                    guard let path = try? FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true) else { return }
+                                    NSWorkspace.shared.open(path.appendingPathComponent("SlackowWall"))
+                                }) {
+                                    Text("Open Folder")
+                                }
                             }
                         }
                     }

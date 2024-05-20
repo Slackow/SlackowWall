@@ -20,6 +20,7 @@ struct SettingsLabel: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             } else {
                 Text(title)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
             
             if let description = description {

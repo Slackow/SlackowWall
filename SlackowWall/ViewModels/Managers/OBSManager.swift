@@ -40,13 +40,6 @@ class OBSManager: ObservableObject {
         }
     }
     
-    func getScriptPath() -> URL? {
-        let fileManager = FileManager.default
-        guard let appSupportURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?
-            .appendingPathComponent("SlackowWall") else { return nil }
-        return appSupportURL.appendingPathComponent("instance_selector.lua")
-    }
-    
     func storeWindowIDs(info: [(Int, CGWindowID)]) {
         if acted { return }
         acted = true
