@@ -66,42 +66,26 @@ struct InstancesSettings: View {
                         
                         SettingsButtonView(title: "Copy Mods to All", description: "Copies all mods from the first instance to all other open instances. This operation will close all instances.", buttonText: "Sync", action: instanceManager.copyMods)
                             .disabled(shortcutManager.instanceIDs.count < 2)
+                    }
+                }
+                
+                SettingsCardView {
+                    HStack(alignment: .top) {
+                        SettingsLabel(title: "OBS Script Location", description: "This is the associated OBS script that helps you record using SlackowWall and switch scenes automatically.", font: .body)
+                    
+                        Button(action: OBSManager.shared.copyScriptToClipboard) {
+                            Text("Copy Path")
+                        }
                         
-                        Divider()
-                        HStack {
-                            SettingsLabel(title: "OBS Script", description: "This is the associated OBS script that helps you record using SlackowWall and switch scenes automatically. it's generally located at ~/Library/Application Support/SlackowWall", isTitle: false)
-                            VStack (alignment: .trailing) {
-                                Button(action: {
-                                    let board = NSPasteboard.general
-                                    board.clearContents()
-                                    board.setString("~/Library/Application Support/SlackowWall", forType: .string)
-                                }) {
-                                    Text("Copy Folder Path")
-                                }
-                                
-                                Button(action: {
-                                    guard let path = try? FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true) else { return }
-                                    NSWorkspace.shared.open(path.appendingPathComponent("SlackowWall"))
-                                }) {
-                                    Text("Open Folder")
-                                }
-                            }
+                        Button(action: OBSManager.shared.openScriptLocation) {
+                            Text("...")
                         }
                     }
                 }
                 
                 SettingsCardView {
                     VStack {
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text("Adjust Instances")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            
-                            Text(.init("Modify the position, and optionally the width and height, of currently tracked instances."))
-                                .font(.caption)
-                                .foregroundStyle(.gray)
-                                .padding(.trailing, 2)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                        SettingsLabel(title: "Adjust Instances", description: "Modify the position, and optionally the width and height, of currently tracked instances.", font: .body)
                         
                         Form {
                             HStack {

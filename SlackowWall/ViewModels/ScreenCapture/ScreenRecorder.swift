@@ -181,7 +181,6 @@ import SwiftUI
             await stop(removeStreams: true)
         }
         
-        ProfileManager.shared.autoSwitch()
         shortcutManager.fetchInstanceInfo()
         shortcutManager.instanceIDs.forEach(shortcutManager.resizeReset)
             
@@ -198,6 +197,7 @@ import SwiftUI
         availableDisplays.removeAll()
         windowFilters.removeAll()
         obsManager.acted = false
+        ProfileManager.shared.autoSwitch()
         
         // Start the capture process again
         await start()

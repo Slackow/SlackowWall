@@ -31,13 +31,43 @@ class OBSManager: ObservableObject {
         // Remove the existing file if it exists
         try? fileManager.removeItem(at: dst)
         print("does file exist?", fileManager.fileExists(atPath: dst.path))
+        
+        // Copy the file from the bundle to the Application Support directory
         do {
-            // Copy the file from the bundle to the Application Support directory
             try fileManager.copyItem(at: src, to: dst)
             print("Wrote script!")
         } catch {
             print("Error writing script:", error.localizedDescription)
         }
+    }
+    
+    func openScriptLocation() {
+        do {
+            let path = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+            let appPath = path.appendingPathComponent("SlackowWall")
+            NSWorkspace.shared.open(appPath)
+        } catch {
+            print("Failed to open script path: \(error.localizedDescription)")
+        }
+    }
+    
+    func copyScriptToClipboard() {
+        let pasteboard = NSPasteboard.general
+        let fallback = "~/Library/Application Support/SlackowWall"
+        pasteboard.clearContents()
+        
+        if let url = getScriptPath() {
+            pasteboard.setString(url.absoluteString, forType: .fileURL)
+        } else {
+            pasteboard.setString(fallback, forType: .fileURL)
+        }
+    }
+    
+    private func getScriptPath() -> URL? {
+        let fileManager = FileManager.default
+        guard let appSupportURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?
+            .appendingPathComponent("SlackowWall") else { return nil }
+        return appSupportURL.appendingPathComponent("instance_selector.lua")
     }
     
     func storeWindowIDs(info: [(Int, CGWindowID)]) {
