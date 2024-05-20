@@ -61,6 +61,12 @@ final class ShortcutManager: ObservableObject {
         print(states)
     }
     
+    func openFirstConfig() {
+        guard let firstStatePath = states.first?.statePath else { return }
+        let path = URL(filePath: firstStatePath).deletingLastPathComponent().appendingPathComponent("config")
+        NSWorkspace.shared.open(path)
+    }
+    
     private func closeSettingsWindow() {
         NSApplication.shared.windows.filter({ $0.title == "Settings"}).first?.close()
     }

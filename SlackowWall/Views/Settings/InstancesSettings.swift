@@ -66,6 +66,11 @@ struct InstancesSettings: View {
                         
                         SettingsButtonView(title: "Copy Mods to All", description: "Copies all mods from the first instance to all other open instances. This operation will close all instances.", buttonText: "Sync", action: instanceManager.copyMods)
                             .disabled(shortcutManager.instanceIDs.count < 2)
+                        
+                        Divider()
+                        
+                        SettingsButtonView(title: "First Instance Config", description: "Opens the config folder of the first instance", buttonText: "...", action: shortcutManager.openFirstConfig)
+                            .disabled(shortcutManager.instanceIDs.isEmpty)
                     }
                 }
                 

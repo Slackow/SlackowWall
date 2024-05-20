@@ -106,15 +106,16 @@ struct ProfileSettings: View {
                     .help("Create new profile")
                     .disabled(profileManager.profiles.count >= 10)
                     
-                    if profileManager.profiles.count > 1 {
-                        Button(action: { profileManager.deleteCurrentProfile() }) {
-                            Image(systemName: "trash")
-                        }
-                        .frame(width: 28)
+                    
+                    Button(action: { profileManager.deleteCurrentProfile() }) {
+                        Image(systemName: "trash")
                     }
+                    .frame(width: 28)
+                    .help("Remove current profile")
+                    .disabled(profileManager.profiles.count <= 1)
+                
                 }
                 .frame(width: 56, height: 32, alignment: .trailing)
-                .animation(.bouncy(duration: 0.2), value: profileManager.profiles)
             }
         }
         .onChange(of: profileManager.activeProfile) { value in
