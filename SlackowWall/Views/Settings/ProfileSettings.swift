@@ -99,7 +99,7 @@ struct ProfileSettings: View {
         .toolbar {
             ToolbarItemGroup {
                 HStack {
-                    Button(action: { profileManager.createNewProfile() }) {
+                    Button(action: profileManager.createNewProfile) {
                         Image(systemName: "plus")
                     }
                     .frame(width: 28)
@@ -107,7 +107,7 @@ struct ProfileSettings: View {
                     .disabled(profileManager.profiles.count >= 10)
                     
                     
-                    Button(action: { profileManager.deleteCurrentProfile() }) {
+                    Button(action: profileManager.deleteCurrentProfile) {
                         Image(systemName: "trash")
                     }
                     .frame(width: 28)

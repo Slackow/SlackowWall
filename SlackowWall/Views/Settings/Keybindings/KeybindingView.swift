@@ -33,6 +33,7 @@ struct KeybindingView: View {
             
             Button(action: {
                 keybinding = defaultValue
+                isFocused = false
             }) {
                 ZStack {
                     Circle()
