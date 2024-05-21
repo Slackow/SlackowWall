@@ -15,6 +15,12 @@ struct InstancesSettings: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 12) {
+                
+                Text(.init("Need help? see the [setup video](https://www.youtube.com/watch?v=dQw4w9WgXcQ)."))
+                    .font(.caption)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .foregroundStyle(.gray)
+                
                 SettingsLabel(title: "Grid Layout", description: "Control the grid layout of the instance previews in the main window.")
                 
                 SettingsCardView {
@@ -76,7 +82,7 @@ struct InstancesSettings: View {
                 
                 SettingsCardView {
                     HStack(alignment: .top) {
-                        SettingsLabel(title: "OBS Script Location", description: "This is the associated OBS script that helps you record using SlackowWall and switch scenes automatically.", font: .body)
+                        SettingsLabel(title: "OBS Script", description: "This is the associated OBS script that helps you record using SlackowWall and switch scenes automatically.", font: .body)
                     
                         Button(action: OBSManager.shared.copyScriptToClipboard) {
                             Text("Copy Path")
