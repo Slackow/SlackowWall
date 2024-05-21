@@ -18,8 +18,7 @@ struct KeybindingsSettings: View {
                 SettingsCardView {
                     VStack {
                         HStack {
-                            Text("Reset")
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            SettingsLabel(title: "Reset", description: "You may need to change this in OBS too.", font: .body)
                             
                             KeybindingView(keybinding: $profileManager.profile.resetGKey, defaultValue: .u)
                         }
@@ -27,29 +26,14 @@ struct KeybindingsSettings: View {
                         Divider()
                         
                         HStack {
-                            VStack(alignment: .leading) {
-                                Text("Toggle Wide Instance")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                Text("Toggle between two resolutions quickly.")
-                                    .font(.caption)
-                                    .foregroundStyle(.gray)
-                                    .padding(.trailing, 2)
-                            }
-                            
+                            SettingsLabel(title: "Toggle Wide Instance", description: "Toggle between two resolutions quickly.", font: .body)
                             KeybindingView(keybinding: $profileManager.profile.planarGKey, defaultValue: nil)
                         }
+                        
                         Divider()
                         
                         HStack {
-                            VStack(alignment: .leading) {
-                                Text("Toggle Tall Instance")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                Text("Toggle between another set of resolutions.")
-                                    .font(.caption)
-                                    .foregroundStyle(.gray)
-                                    .padding(.trailing, 2)
-                            }
-                            
+                            SettingsLabel(title: "Toggle Tall Instance", description: "Toggle between another set of resolutions.", font: .body)
                             KeybindingView(keybinding: $profileManager.profile.planar2GKey, defaultValue: nil)
                         }
                     }
@@ -61,8 +45,7 @@ struct KeybindingsSettings: View {
                 SettingsCardView {
                     VStack {
                         HStack {
-                            Text("Reset All")
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            SettingsLabel(title: "Reset All", font: .body)
                             
                             KeybindingView(keybinding: $profileManager.profile.resetAllKey, defaultValue: .t)
                         }
@@ -70,8 +53,7 @@ struct KeybindingsSettings: View {
                         Divider()
                         
                         HStack {
-                            Text("Reset Hovered")
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            SettingsLabel(title: "Reset Hovered", font: .body)
                             
                             KeybindingView(keybinding: $profileManager.profile.resetOneKey, defaultValue: .e)
                         }
@@ -79,8 +61,7 @@ struct KeybindingsSettings: View {
                         Divider()
                         
                         HStack {
-                            Text("Run Hovered and Reset Others")
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            SettingsLabel(title: "Run Hovered and Reset Others", description: "You may need to change this in OBS too.", font: .body)
                             
                             KeybindingView(keybinding: $profileManager.profile.resetOthersKey, defaultValue: .f)
                         }
@@ -88,8 +69,7 @@ struct KeybindingsSettings: View {
                         Divider()
                         
                         HStack {
-                            Text("Run Hovered")
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            SettingsLabel(title: "Run Hovered", description: "You may need to change this in OBS too.", font: .body)
                             
                             KeybindingView(keybinding: $profileManager.profile.runKey, defaultValue: .r)
                         }
@@ -97,14 +77,8 @@ struct KeybindingsSettings: View {
                         Divider()
                         
                         HStack {
-                            VStack(alignment: .leading) {
-                                Text("Lock Hovered")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                Text("You can also shift click instances to lock/unlock them.")
-                                    .font(.caption)
-                                    .foregroundStyle(.gray)
-                                    .padding(.trailing, 2)
-                            }
+                            SettingsLabel(title: "Lock Hovered", description: "You can also shift click instances to lock/unlock them.", font: .body)
+                            
                             KeybindingView(keybinding: $profileManager.profile.lockKey, defaultValue: .c)
                         }
                     }
