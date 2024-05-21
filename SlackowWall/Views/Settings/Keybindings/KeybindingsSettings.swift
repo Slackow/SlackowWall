@@ -27,6 +27,7 @@ struct KeybindingsSettings: View {
                         
                         HStack {
                             SettingsLabel(title: "Toggle Wide Instance", description: "Toggle between two resolutions quickly.", font: .body)
+                            
                             KeybindingView(keybinding: $profileManager.profile.planarGKey, defaultValue: nil)
                         }
                         
@@ -34,6 +35,7 @@ struct KeybindingsSettings: View {
                         
                         HStack {
                             SettingsLabel(title: "Toggle Tall Instance", description: "Toggle between another set of resolutions.", font: .body)
+                            
                             KeybindingView(keybinding: $profileManager.profile.planar2GKey, defaultValue: nil)
                         }
                     }

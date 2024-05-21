@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @ObservedObject private var alertManager = AlertManager.shared
+    
     @State var sideBarVisibility: NavigationSplitViewVisibility = .doubleColumn
     @State var selectedSettingsBarItem: SettingsBarItem = .instances
     
@@ -51,6 +53,13 @@ struct SettingsView: View {
                     UpdateSettings()
                 case .credits:
                     CreditsView()
+            }
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigation) {
+                if alertManager.alert != nil {
+                    ToolbarAlertView()
+                }
             }
         }
     }

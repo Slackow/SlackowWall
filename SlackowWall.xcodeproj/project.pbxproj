@@ -57,6 +57,9 @@
 		B6B9FE9D2BA16DB00026C268 /* SizeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B9FE9C2BA16DB00026C268 /* SizeReader.swift */; };
 		B6B9FEA02BA16DDC0026C268 /* SettingsOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B9FE9F2BA16DDC0026C268 /* SettingsOption.swift */; };
 		B6C17C082BF7A9CE00F30C1F /* ProfileSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C17C072BF7A9CE00F30C1F /* ProfileSettings.swift */; };
+		B6C17C0B2BFC48E300F30C1F /* ToolbarAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C17C0A2BFC48E300F30C1F /* ToolbarAlertView.swift */; };
+		B6C17C0D2BFC491700F30C1F /* WallAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C17C0C2BFC491700F30C1F /* WallAlert.swift */; };
+		B6C17C0F2BFCEA3C00F30C1F /* AlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C17C0E2BFCEA3C00F30C1F /* AlertManager.swift */; };
 		B6D29FE62BA2123E004F20A2 /* ReleaseEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D29FE52BA2123E004F20A2 /* ReleaseEntry.swift */; };
 		B6D29FEA2BA212DA004F20A2 /* UpdateReleaseEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D29FE82BA212DA004F20A2 /* UpdateReleaseEntryView.swift */; };
 		B6D29FEB2BA212DA004F20A2 /* UpdateMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D29FE92BA212DA004F20A2 /* UpdateMessageView.swift */; };
@@ -120,6 +123,9 @@
 		B6B9FE9C2BA16DB00026C268 /* SizeReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SizeReader.swift; sourceTree = "<group>"; };
 		B6B9FE9F2BA16DDC0026C268 /* SettingsOption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsOption.swift; sourceTree = "<group>"; };
 		B6C17C072BF7A9CE00F30C1F /* ProfileSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettings.swift; sourceTree = "<group>"; };
+		B6C17C0A2BFC48E300F30C1F /* ToolbarAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarAlertView.swift; sourceTree = "<group>"; };
+		B6C17C0C2BFC491700F30C1F /* WallAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WallAlert.swift; sourceTree = "<group>"; };
+		B6C17C0E2BFCEA3C00F30C1F /* AlertManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertManager.swift; sourceTree = "<group>"; };
 		B6D29FE52BA2123E004F20A2 /* ReleaseEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReleaseEntry.swift; sourceTree = "<group>"; };
 		B6D29FE82BA212DA004F20A2 /* UpdateReleaseEntryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateReleaseEntryView.swift; sourceTree = "<group>"; };
 		B6D29FE92BA212DA004F20A2 /* UpdateMessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateMessageView.swift; sourceTree = "<group>"; };
@@ -217,6 +223,7 @@
 				49F739A42B9279BE008CB609 /* GameSettingsManager.swift */,
 				B6E30C142BF5AB8C008E7004 /* ProfileManager.swift */,
 				6D8A7EB6382B6AEC9A3FF7EF /* OBSManager.swift */,
+				B6C17C0E2BFCEA3C00F30C1F /* AlertManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -237,15 +244,9 @@
 				6D8A723DF9C8AD7D30AC21AF /* Alignment.swift */,
 				4915C3A82AC6A86F00B60D1D /* SettingsBarItem.swift */,
 				B68D8C2A2BEA96E200072AC5 /* CheckingMode.swift */,
+				B6C17C0C2BFC491700F30C1F /* WallAlert.swift */,
 			);
 			path = Enums;
-			sourceTree = "<group>";
-		};
-		6D8A7CD95EC5A35CD5A8E399 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Components;
 			sourceTree = "<group>";
 		};
 		6D8A7F0DB70FB31BFFA7392F /* Models */ = {
@@ -316,8 +317,8 @@
 			children = (
 				B640D52B296F2D65005041CC /* InstancePreview */,
 				B637DB36296B964F00A73F62 /* Settings */,
+				B6C17C092BFC48BB00F30C1F /* Toolbar */,
 				498FB3CD28987F5B00405753 /* ContentView.swift */,
-				6D8A7CD95EC5A35CD5A8E399 /* Components */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -416,6 +417,14 @@
 				B6B9FE9F2BA16DDC0026C268 /* SettingsOption.swift */,
 			);
 			path = Protocols;
+			sourceTree = "<group>";
+		};
+		B6C17C092BFC48BB00F30C1F /* Toolbar */ = {
+			isa = PBXGroup;
+			children = (
+				B6C17C0A2BFC48E300F30C1F /* ToolbarAlertView.swift */,
+			);
+			path = Toolbar;
 			sourceTree = "<group>";
 		};
 		B6D29FE72BA212CF004F20A2 /* Updates */ = {
@@ -531,6 +540,7 @@
 				B6C17C082BF7A9CE00F30C1F /* ProfileSettings.swift in Sources */,
 				493A122F2B88FAA0009BE0B3 /* KeybindingView.swift in Sources */,
 				B6E9E3722970A55800DF6466 /* CaptureEngine.swift in Sources */,
+				B6C17C0F2BFCEA3C00F30C1F /* AlertManager.swift in Sources */,
 				B637DB38296B965D00A73F62 /* SettingsView.swift in Sources */,
 				B6A55D932BA291A800D06086 /* Optional+Ext.swift in Sources */,
 				B6D29FED2BA21825004F20A2 /* UpdateSettings.swift in Sources */,
@@ -541,11 +551,13 @@
 				B6B9FE932BA16CC00026C268 /* UpdateManager.swift in Sources */,
 				B6A1FDE32BDF456800EF2180 /* SettingsButtonView.swift in Sources */,
 				B6A1FDE82BDF5BBF00EF2180 /* CreditsView.swift in Sources */,
+				B6C17C0D2BFC491700F30C1F /* WallAlert.swift in Sources */,
 				498FB3DE289A65B000405753 /* Constants.swift in Sources */,
 				B6E30C152BF5AB8C008E7004 /* ProfileManager.swift in Sources */,
 				B6E9E36E2970A42D00DF6466 /* ScreenRecorder.swift in Sources */,
 				B6B9FE972BA16D730026C268 /* SettingsSliderView.swift in Sources */,
 				6D8A79A5A9E467B05B05C742 /* InstanceManager.swift in Sources */,
+				B6C17C0B2BFC48E300F30C1F /* ToolbarAlertView.swift in Sources */,
 				B63168C52979AE95005958E9 /* PreviewActionsListener.swift in Sources */,
 				4915C3A92AC6A86F00B60D1D /* SettingsBarItem.swift in Sources */,
 				6D8A799228DD26E62A8CBE16 /* PreviewShortcutListener.swift in Sources */,
@@ -713,7 +725,7 @@
 				CURRENT_PROJECT_VERSION = 240518b;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
-				DEVELOPMENT_TEAM = 94CLS492CD;
+				DEVELOPMENT_TEAM = D64G2TTYWM;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -749,7 +761,7 @@
 				CURRENT_PROJECT_VERSION = 240518b;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
-				DEVELOPMENT_TEAM = 94CLS492CD;
+				DEVELOPMENT_TEAM = D64G2TTYWM;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;

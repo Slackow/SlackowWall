@@ -66,6 +66,7 @@ import SwiftUI
                 return true
             } catch {
                 print("verdict achieved! false", error.localizedDescription)
+                AlertManager.shared.alert = .noScreenPermission
                 return false
             }
         }

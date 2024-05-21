@@ -69,7 +69,7 @@ struct InstancesSettings: View {
                         
                         Divider()
                         
-                        SettingsButtonView(title: "First Instance Config", description: "Opens the config folder of the first instance", buttonText: "...", action: shortcutManager.openFirstConfig)
+                        SettingsButtonView(title: "First Instance Config", description: "Opens the config folder of the first instance.", buttonText: "...", action: shortcutManager.openFirstConfig)
                             .disabled(shortcutManager.instanceIDs.isEmpty)
                     }
                 }

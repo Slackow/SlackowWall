@@ -14,6 +14,7 @@ struct SlackowWallApp: App {
     
     @ObservedObject private var instanceManager = InstanceManager.shared
     @ObservedObject private var shortcutManager = ShortcutManager.shared
+    @ObservedObject private var alertManager = AlertManager.shared
     
     var body: some Scene {
         Window("SlackowWall", id: "slackowwall-window") {
@@ -21,25 +22,37 @@ struct SlackowWallApp: App {
             .frame(minWidth: 300, minHeight: 200)
             .toolbar {
                 ToolbarItem(placement: .automatic) {
-                    HStack {
-                        Button(action: { instanceManager.stopAll() }) {
-                            Image(systemName: "stop.fill")
-                                .foregroundColor(.red)
+                    HStack(spacing: 8) {
+                        HStack(spacing: 8) {
+                            if !shortcutManager.instanceIDs.isEmpty {
+                                Button(action: { instanceManager.stopAll() }) {
+                                    Image(systemName: "stop.fill")
+                                        .foregroundColor(.red)
+                                        .frame(width: 20, height: 20)
+                                }
+                                .disabled(instanceManager.isStopping)
+                            }
+                            
+                            if alertManager.alert != nil {
+                                ToolbarAlertView()
+                            }
                         }
-                        .opacity(shortcutManager.instanceIDs.isEmpty ? 0 : 1)
-                        .disabled(instanceManager.isStopping)
+                        .frame(width: 48, height: 40, alignment: .trailing)
+                        .animation(.easeInOut(duration: 0.3), value: shortcutManager.instanceIDs)
+                        .animation(.easeInOut(duration: 0.3), value: alertManager.alert)
                         
                         Button(action: { Task { openWindow(id: "settings-window") }}) {
                             Image(systemName: "gear")
                         }
+                        
                         Button(action: { Task {
+                            alertManager.checkPermissions()
                             instanceManager.showInfo = false
                             await ScreenRecorder.shared.resetAndStartCapture()
                         }}) {
                             Image(systemName: "arrow.clockwise")
                         }
                     }
-                    .animation(.linear, value: shortcutManager.instanceIDs)
                 }
             }
         }

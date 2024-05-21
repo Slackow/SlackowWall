@@ -25,7 +25,7 @@ struct DimensionCardView: View {
         SettingsCardView {
             Form {
                 VStack {
-                    VStack(spacing: 2) {
+                    VStack(spacing: 3) {
                         Text("\(name) Mode")
                             .fontWeight(.semibold)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -35,6 +35,7 @@ struct DimensionCardView: View {
                                 .font(.caption)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .foregroundStyle(.gray)
+                                .padding(.trailing, 2)
                         }
                     }
                     
