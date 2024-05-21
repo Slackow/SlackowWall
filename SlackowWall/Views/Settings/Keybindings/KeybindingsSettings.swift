@@ -18,7 +18,7 @@ struct KeybindingsSettings: View {
                 SettingsCardView {
                     VStack {
                         HStack {
-                            SettingsLabel(title: "Reset", description: "You may need to change this in OBS too.", font: .body)
+                            SettingsLabel(title: "Reset", description: "You may need to change this in [OBS](https://obsproject.com) too.", font: .body)
                             
                             KeybindingView(keybinding: $profileManager.profile.resetGKey, defaultValue: .u)
                         }
@@ -63,7 +63,7 @@ struct KeybindingsSettings: View {
                         Divider()
                         
                         HStack {
-                            SettingsLabel(title: "Run Hovered and Reset Others", description: "You may need to change this in OBS too.", font: .body)
+                            SettingsLabel(title: "Run Hovered and Reset Others", description: "You may need to change this in [OBS](https://obsproject.com) too.", font: .body)
                             
                             KeybindingView(keybinding: $profileManager.profile.resetOthersKey, defaultValue: .f)
                         }
@@ -71,7 +71,7 @@ struct KeybindingsSettings: View {
                         Divider()
                         
                         HStack {
-                            SettingsLabel(title: "Run Hovered", description: "You may need to change this in OBS too.", font: .body)
+                            SettingsLabel(title: "Run Hovered", description: "You may need to change this in [OBS](https://obsproject.com) too.", font: .body)
                             
                             KeybindingView(keybinding: $profileManager.profile.runKey, defaultValue: .r)
                         }

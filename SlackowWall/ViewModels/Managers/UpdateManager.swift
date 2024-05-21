@@ -91,7 +91,13 @@ final class UpdateManager: ObservableObject {
     }
     
     @MainActor private func checkForAppUpdated() {
-        if let currentVersion = appVersion, lastAppVersion != currentVersion {
+        guard let currentVersion = appVersion else {
+            return
+        }
+        
+        if lastAppVersion.isEmpty {
+            lastAppVersion = currentVersion
+        } else if lastAppVersion != currentVersion {
             appWasUpdated = true
             lastAppVersion = currentVersion
         }
