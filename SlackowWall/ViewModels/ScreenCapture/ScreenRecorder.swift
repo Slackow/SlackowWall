@@ -176,7 +176,7 @@ import SwiftUI
         isRunning = true
     }
     
-    func resetAndStartCapture() async {
+    func resetAndStartCapture(shouldAutoSwitch: Bool = true) async {
         // Stop the current capture if it's running
         if isRunning {
             await stop(removeStreams: true)
@@ -198,7 +198,10 @@ import SwiftUI
         availableDisplays.removeAll()
         windowFilters.removeAll()
         obsManager.acted = false
-        ProfileManager.shared.autoSwitch()
+        
+        if shouldAutoSwitch {
+            ProfileManager.shared.autoSwitch()
+        }
         
         // Start the capture process again
         await start()

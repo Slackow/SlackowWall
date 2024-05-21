@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ProfileSettings: View {
     @ObservedObject private var profileManager = ProfileManager.shared
+    @State private var selectedProfile = ProfileManager.shared.activeProfile
     
     var body: some View {
         ScrollView {
@@ -25,7 +26,7 @@ struct ProfileSettings: View {
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        Picker("", selection: $profileManager.activeProfile) {
+                        Picker("", selection: $selectedProfile) {
                             ForEach(profileManager.profileNames, id: \.id) { profile in
                                 Text(profile.name)
                                     .tag(profile.id)
@@ -116,6 +117,13 @@ struct ProfileSettings: View {
                 
                 }
                 .frame(width: 56, height: 32, alignment: .trailing)
+            }
+        }
+        .onChange(of: selectedProfile) { value in
+            Task {
+                ScreenRecorder.shared.capturePreviews.removeAll()
+                profileManager.activeProfile = value
+                await ScreenRecorder.shared.resetAndStartCapture(shouldAutoSwitch: false)
             }
         }
         .onChange(of: profileManager.activeProfile) { value in

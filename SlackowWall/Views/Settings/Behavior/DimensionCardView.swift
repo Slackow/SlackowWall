@@ -1,3 +1,10 @@
+//
+//  BehaviorSettings.swift
+//  SlackowWall
+//
+//  Created by Andrew on 4/28/24.
+//
+
 import SwiftUI
 
 struct DimensionCardView: View {
@@ -43,10 +50,12 @@ struct DimensionCardView: View {
                         HStack {
                             TextField("W", value: $width, format: .number.grouping(.never))
                                 .textFieldStyle(.roundedBorder)
+                                .foregroundStyle(!outsideWindowFrame ? .red : .primary)
                                 .frame(width: 80)
                             
                             TextField("H", value: $height, format: .number.grouping(.never))
                                 .textFieldStyle(.roundedBorder)
+                                .foregroundStyle(!outsideWindowFrame ? .red : .primary)
                                 .frame(width: 80)
                         }
                         

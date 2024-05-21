@@ -315,7 +315,7 @@
 		B637DB32296B943F00A73F62 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				B640D52B296F2D65005041CC /* InstancePreview */,
+				B640D52B296F2D65005041CC /* CapturePreview */,
 				B637DB36296B964F00A73F62 /* Settings */,
 				B6C17C092BFC48BB00F30C1F /* Toolbar */,
 				498FB3CD28987F5B00405753 /* ContentView.swift */,
@@ -348,14 +348,14 @@
 			path = Settings;
 			sourceTree = "<group>";
 		};
-		B640D52B296F2D65005041CC /* InstancePreview */ = {
+		B640D52B296F2D65005041CC /* CapturePreview */ = {
 			isa = PBXGroup;
 			children = (
 				B6A55D942BA2A7FE00D06086 /* CapturePreviewView.swift */,
 				B68D8C2C2BEBC0FC00072AC5 /* CaptureGridView.swift */,
 				B6E9E36F2970A52E00DF6466 /* CapturePreview.swift */,
 			);
-			path = InstancePreview;
+			path = CapturePreview;
 			sourceTree = "<group>";
 		};
 		B672AFDB2BEBF48800FECF51 /* Views */ = {
@@ -722,7 +722,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 240518b;
+				CURRENT_PROJECT_VERSION = 240521a;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
 				DEVELOPMENT_TEAM = D64G2TTYWM;
@@ -758,7 +758,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 240518b;
+				CURRENT_PROJECT_VERSION = 240521a;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
 				DEVELOPMENT_TEAM = D64G2TTYWM;

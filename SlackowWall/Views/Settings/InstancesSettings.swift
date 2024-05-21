@@ -15,12 +15,6 @@ struct InstancesSettings: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 12) {
-                
-                Text(.init("Need help? see the [setup video](https://www.youtube.com/watch?v=dQw4w9WgXcQ)."))
-                    .font(.caption)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .foregroundStyle(.gray)
-                
                 SettingsLabel(title: "Grid Layout", description: "Control the grid layout of the instance previews in the main window.")
                 
                 SettingsCardView {
@@ -54,7 +48,7 @@ struct InstancesSettings: View {
                     }
                 }
                 
-                SettingsLabel(title: "Control Panel")
+                SettingsLabel(title: "Control Panel", description: "If you need help setting up SlackowWall, you can watch the [setup tutorial](https://www.youtube.com/watch?v=dQw4w9WgXcQ) as a guide.")
                     .padding(.top, 5)
                 
                 SettingsCardView {
