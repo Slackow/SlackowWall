@@ -41,9 +41,16 @@ struct BehaviorSettings: View {
                     .contentTransition(.numericText())
                     .padding(.top, 5)
                 
-                DimensionCardView(name: "Reset", description: "The size the game will be while you are in SlackowWall.", x: $profileManager.profile.resetX, y: $profileManager.profile.resetY, width: $profileManager.profile.resetWidth, height: $profileManager.profile.resetHeight)
+                DimensionCardView(
+                    name: "Gameplay",
+                    description: "The size the game will be while you are in an instance. This mode is required for the others to work.",
+                    x: $profileManager.profile.baseX,
+                    y: $profileManager.profile.baseY,
+                    width: $profileManager.profile.baseWidth,
+                    height: $profileManager.profile.baseHeight
+                )
                 
-                DimensionCardView(name: "Gameplay", description: "The size the game will be while you are in an instance.", x: $profileManager.profile.baseX, y: $profileManager.profile.baseY, width: $profileManager.profile.baseWidth, height: $profileManager.profile.baseHeight)
+                DimensionCardView(name: "Reset", description: "The size the game will be while you are in SlackowWall.", x: $profileManager.profile.resetX, y: $profileManager.profile.resetY, width: $profileManager.profile.resetWidth, height: $profileManager.profile.resetHeight)
                 
                 DimensionCardView(name: "Wide", description: "The size the game will be when you switch to wide instance mode.", x: $profileManager.profile.wideX, y: $profileManager.profile.wideY, width: $profileManager.profile.wideWidth, height: $profileManager.profile.wideHeight)
             }
