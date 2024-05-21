@@ -120,14 +120,20 @@ struct ProfileSettings: View {
             }
         }
         .onChange(of: selectedProfile) { value in
-            Task {
-                ScreenRecorder.shared.capturePreviews.removeAll()
-                profileManager.activeProfile = value
-                await ScreenRecorder.shared.resetAndStartCapture(shouldAutoSwitch: false)
+            if profileManager.activeProfile != selectedProfile {
+                Task {
+                    ScreenRecorder.shared.capturePreviews.removeAll()
+                    profileManager.activeProfile = value
+                    await ScreenRecorder.shared.resetAndStartCapture(shouldAutoSwitch: false)
+                }
             }
         }
         .onChange(of: profileManager.activeProfile) { value in
             profileManager.profile = Profile()
+            
+            if selectedProfile != value {
+                selectedProfile = value
+            }
         }
     }
     
