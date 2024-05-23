@@ -10,6 +10,7 @@ import SwiftUI
 struct SettingsPickerView<T: SettingsOption>: View {
     let title: String
     var description: String?
+    var descInteractable: Bool = true
     let width: CGFloat
     
     @Binding var selection: T
@@ -34,6 +35,7 @@ struct SettingsPickerView<T: SettingsOption>: View {
                         .font(.caption)
                         .foregroundStyle(.gray)
                         .padding(.trailing, 2)
+                        .allowsTightening(descInteractable)
                         .modifier(SizeReader(size: $textHeight))
                 }
             }

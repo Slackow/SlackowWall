@@ -10,6 +10,7 @@ import SwiftUI
 struct SettingsToggleView: View {
     let title: String
     var description: String?
+    var descInteractable: Bool = true
     
     @Binding var option: Bool
     @State private var textHeight: CGSize = .zero
@@ -24,6 +25,7 @@ struct SettingsToggleView: View {
                         .font(.caption)
                         .foregroundStyle(.gray)
                         .padding(.trailing, 2)
+                        .allowsHitTesting(descInteractable)
                         .modifier(SizeReader(size: $textHeight))
                 }
             }
@@ -33,6 +35,7 @@ struct SettingsToggleView: View {
                 .labelsHidden()
                 .toggleStyle(.switch)
                 .padding(.leading)
+                .tint(.accentColor)
         }
         .animation(nil, value: textHeight)
     }

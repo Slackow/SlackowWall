@@ -10,6 +10,7 @@ import SwiftUI
 struct SettingsButtonView<Content: View>: View {
     let title: String
     var description: String?
+    var descInteractable: Bool = true
     var buttonText: String?
     var action: ()->()
     
@@ -42,6 +43,7 @@ struct SettingsButtonView<Content: View>: View {
                         .font(.caption)
                         .foregroundStyle(.gray)
                         .padding(.trailing, 2)
+                        .allowsHitTesting(descInteractable)
                         .modifier(SizeReader(size: $textHeight))
                 }
             }

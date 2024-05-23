@@ -21,16 +21,9 @@ struct BehaviorSettings: View {
             VStack(spacing: 12) {
                 SettingsCardView {
                     VStack {
-//                        SettingsToggleView(title: "Press F1 on Join", description: "[May be Illegal!](0)", option: $profileManager.profile.f1OnJoin)
-                        HStack (alignment: .top) {
-                            SettingsLabel(title: "Press F1 on Join", description: "[This may be illegal!](0)", font: .body)
-                                .tint(profileManager.profile.f1OnJoin ? .red : .gray)
-                                .allowsHitTesting(false)
-                            Toggle("", isOn: $profileManager.profile.f1OnJoin)
-                                .labelsHidden()
-                                .toggleStyle(.switch)
-                                .padding(.leading)
-                        }
+                        SettingsToggleView(title: "Press F1 on Join", description: "[This option may be illegal and could invalidate runs.](0)", descInteractable: false, option: $profileManager.profile.f1OnJoin)
+                            .tint(profileManager.profile.f1OnJoin ? .red : .gray)
+                            .animation(.easeInOut, value: profileManager.profile.f1OnJoin)
                         
                         Divider()
                         
