@@ -182,6 +182,14 @@ import SwiftUI
             await stop(removeStreams: true)
         }
         
+        if shouldAutoSwitch {
+            if let s = NSScreen.main?.frame,
+               ProfileManager.shared.profile.expectedMWidth != Int(s.width) ||
+                ProfileManager.shared.profile.expectedMHeight != Int(s.height) {
+                ProfileManager.shared.autoSwitch()
+            }
+        }
+        
         shortcutManager.fetchInstanceInfo()
         shortcutManager.instanceIDs.forEach(shortcutManager.resizeReset)
             
@@ -198,10 +206,6 @@ import SwiftUI
         availableDisplays.removeAll()
         windowFilters.removeAll()
         obsManager.acted = false
-        
-        if shouldAutoSwitch {
-            ProfileManager.shared.autoSwitch()
-        }
         
         // Start the capture process again
         await start()

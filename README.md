@@ -1,7 +1,7 @@
 # Download → [SlackowWall for macOS](https://github.com/Slackow/SlackowWall/releases/latest/)
-# Tutorial → [SlackowWall Setup Guide](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+# Tutorial → [SlackowWall Setup Guide](Info/guide.md)
 
-![](Info/main.png)
+![Main screen of SlackowWall](Info/images/main.png)
 
 # What is SlackowWall?
 SlackowWall is a multi-instance manager for macOS designed specifically for speedrunners, enabling control over multiple instances simultaneously.

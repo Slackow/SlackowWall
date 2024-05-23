@@ -82,7 +82,7 @@ struct CaptureGridView: View {
             .task {
                 print("Screen Recorder Started!")
                 if await screenRecorder.canRecord {
-                    await screenRecorder.start()
+                    await screenRecorder.resetAndStartCapture()
                 }
             }
             .onChange(of: instanceManager.isActive) { value in
