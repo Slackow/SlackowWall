@@ -43,6 +43,7 @@ struct BehaviorSettings: View {
                     .tint(.orange)
                     .allowsHitTesting(false)
                     .contentTransition(.numericText())
+                    .animation(.smooth, value: screenSize)
                     .padding(.top, 5)
                 
                 DimensionCardView(
