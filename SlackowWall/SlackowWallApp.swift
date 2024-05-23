@@ -63,6 +63,24 @@ struct SlackowWallApp: App {
                 .frame(minWidth: 700, maxWidth: 700, minHeight: 455, alignment: .center)
         }
         .commands {
+            CommandGroup(replacing: .appInfo) {
+                Button("About SlackowWall") {
+                    NSApplication.shared.orderFrontStandardAboutPanel(
+                        options: [
+                            NSApplication.AboutPanelOptionKey.credits: NSAttributedString(
+                                string: "Multi-Instance Manager for macOS",
+                                attributes: [
+                                    NSAttributedString.Key.font: NSFont.boldSystemFont(
+                                        ofSize: NSFont.smallSystemFontSize)
+                                ]
+                            ),
+                            NSApplication.AboutPanelOptionKey(
+                                rawValue: "Copyright"
+                            ): "Copyright © 2024 Slackow, Kihron."
+                        ]
+                    )
+                }
+            }
             CommandGroup(replacing: .appSettings) {
                 Button(action: { openWindow(id: "settings-window") }) {
                     Text("Settings...")
