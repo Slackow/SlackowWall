@@ -26,7 +26,7 @@ struct KeybindingsSettings: View {
                         Divider()
                         
                         HStack {
-                            SettingsLabel(title: "Toggle Wide Instance", description: "Toggle between two resolutions quickly.", font: .body)
+                            SettingsLabel(title: "Toggle Wide Mode", description: "Toggle between two resolutions quickly.", font: .body)
                             
                             KeybindingView(keybinding: $profileManager.profile.planarGKey, defaultValue: nil)
                         }
@@ -34,9 +34,9 @@ struct KeybindingsSettings: View {
                         Divider()
                         
                         HStack {
-                            SettingsLabel(title: "Toggle Tall Instance", description: "Toggle between another set of resolutions.", font: .body)
+                            SettingsLabel(title: "Toggle Alt Dimension Mode", description: "Toggle between another set of resolutions.", font: .body)
                             
-                            KeybindingView(keybinding: $profileManager.profile.planar2GKey, defaultValue: nil)
+                            KeybindingView(keybinding: $profileManager.profile.altGKey, defaultValue: nil)
                         }
                     }
                 }

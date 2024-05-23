@@ -48,10 +48,15 @@ struct Profile {
     @AppStorage("\(activeProfileStore).wideX") var wideX: Int? = nil
     @AppStorage("\(activeProfileStore).wideY") var wideY: Int? = nil
     
+    @AppStorage("\(activeProfileStore).altWidth") var altWidth: Int? = nil
+    @AppStorage("\(activeProfileStore).altHeight") var altHeight: Int? = nil
+    @AppStorage("\(activeProfileStore).altX") var altX: Int? = nil
+    @AppStorage("\(activeProfileStore).altY") var altY: Int? = nil
+    
     // Keybinds
     @AppStorage("\(activeProfileStore).resetGKey") var resetGKey: KeyCode? = .u
     @AppStorage("\(activeProfileStore).planarGKey") var planarGKey: KeyCode? = nil
-    @AppStorage("\(activeProfileStore).planar2GKey") var planar2GKey: KeyCode? = nil
+    @AppStorage("\(activeProfileStore).altGKey") var altGKey: KeyCode? = nil
     @AppStorage("\(activeProfileStore).resetAllKey") var resetAllKey: KeyCode? = .t
     @AppStorage("\(activeProfileStore).resetOthersKey") var resetOthersKey: KeyCode? = .f
     @AppStorage("\(activeProfileStore).runKey") var runKey: KeyCode? = .r

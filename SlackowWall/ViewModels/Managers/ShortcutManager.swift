@@ -75,7 +75,7 @@ final class ShortcutManager: ObservableObject {
         switch key.keyCode {
             case ProfileManager.shared.profile.resetGKey: globalReset()
             case ProfileManager.shared.profile.planarGKey: resizePlanar()
-            case ProfileManager.shared.profile.planar2GKey: resizeTall()
+            case ProfileManager.shared.profile.altGKey: resizeAlt()
             case _: return
         }
     }
@@ -122,8 +122,14 @@ final class ShortcutManager: ObservableObject {
         resize(pid: pid, x: x, y: y, width: w, height: h, force: true)
     }
     
-    func resizeTall() {
-        
+    func resizeAlt() {
+        let apps = NSWorkspace.shared.runningApplications.filter{ $0.activationPolicy == .regular }
+        guard let activeWindow = apps.first(where:{$0.isActive}), instanceIDs.contains(activeWindow.processIdentifier) else { return }
+        let w = convertToFloat(ProfileManager.shared.profile.altWidth)
+        let h = convertToFloat(ProfileManager.shared.profile.altHeight)
+        let x = ProfileManager.shared.profile.altX.map(CGFloat.init)
+        let y = ProfileManager.shared.profile.altY.map(CGFloat.init)
+        resize(pid: activeWindow.processIdentifier, x: x, y: y, width: w, height: h)
     }
     
     func convertToFloat(_ int: Int?) -> CGFloat {
