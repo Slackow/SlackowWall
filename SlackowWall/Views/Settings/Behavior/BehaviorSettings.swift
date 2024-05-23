@@ -13,7 +13,7 @@ struct BehaviorSettings: View {
     @ObservedObject private var shortcutManager = ShortcutManager.shared
     
     private var screenSize: String {
-        return instanceManager.screenSize?.debugDescription ?? "Unknown"
+        return instanceManager.screenSize?.debugDescription.replacingOccurrences(of: ".0", with: "") ?? "Unknown"
     }
     
     var body: some View {
@@ -39,7 +39,7 @@ struct BehaviorSettings: View {
                     SettingsToggleView(title: "Use State Output", description: "Turn this on if you have the state output mod, it prevents an instance from reseting if it is still generating the world.", option: $profileManager.profile.checkStateOutput)
                 }
                 
-                SettingsLabel(title: "Window Dimensions", description: "The dimensions of the game windows in different cases. These values should not exceed the current monitor size: [\(screenSize)](0).".replacingOccurrences(of: ".0", with: ""))
+                SettingsLabel(title: "Window Dimensions", description: "The dimensions of the game windows in different cases. These values should not exceed the current monitor size: [\(screenSize)](0).")
                     .tint(.orange)
                     .allowsHitTesting(false)
                     .contentTransition(.numericText())
