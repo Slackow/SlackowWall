@@ -122,7 +122,7 @@ import SwiftUI
     }
     
     /// Starts capturing screen content.
-    func start() async {
+    private func start() async {
         // Exit early if already running.
         guard !isRunning else {
             return
@@ -182,20 +182,6 @@ import SwiftUI
             await stop(removeStreams: true)
         }
         
-        if shouldAutoSwitch {
-            if let s = NSScreen.main?.frame,
-               ProfileManager.shared.profile.expectedMWidth != Int(s.width) ||
-                ProfileManager.shared.profile.expectedMHeight != Int(s.height) {
-                ProfileManager.shared.autoSwitch()
-            }
-        }
-        
-        shortcutManager.fetchInstanceInfo()
-        shortcutManager.instanceIDs.forEach(shortcutManager.resizeReset)
-            
-        // 40ms delay so macOS can catch up, a hack yes, but lol?
-        try? await Task.sleep(nanoseconds: 40_000_000)
-        
         // Reset the properties to their initial state
         capturePreviews.removeAll()
         contentSizes.removeAll()
@@ -207,12 +193,26 @@ import SwiftUI
         windowFilters.removeAll()
         obsManager.acted = false
         
-        // Start the capture process again
-        await start()
+        if shouldAutoSwitch {
+            if let s = NSScreen.main?.frame,
+               ProfileManager.shared.profile.expectedMWidth != Int(s.width) ||
+                ProfileManager.shared.profile.expectedMHeight != Int(s.height) {
+                ProfileManager.shared.autoSwitch()
+            }
+        }
+        
+        shortcutManager.fetchInstanceInfo()
+        shortcutManager.instanceIDs.forEach(shortcutManager.resizeReset)
         
         if ProfileManager.shared.profile.shouldHideWindows {
             shortcutManager.unhideInstances()
         }
+            
+        // 40ms delay so macOS can catch up, a hack yes, but lol?
+        try? await Task.sleep(nanoseconds: 40_000_000)
+        
+        // Start the capture process again
+        await start()
     }
 
     // - Tag: UpdateCaptureConfig
@@ -220,6 +220,7 @@ import SwiftUI
         guard isRunning else {
             return
         }
+        
         Task {
             for idx in contentFilters.indices {
                 let streamConfiguration = createStreamConfiguration(width: contentSizes[idx].width, height: contentSizes[idx].height)

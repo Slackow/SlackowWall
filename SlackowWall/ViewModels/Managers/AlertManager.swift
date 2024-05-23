@@ -14,6 +14,7 @@ class AlertManager: ObservableObject {
     
     init() {
         checkPermissions()
+        requestAccessibilityPermissions()
     }
     
     func checkPermissions() {
