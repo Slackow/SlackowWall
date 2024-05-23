@@ -96,14 +96,20 @@ struct DimensionCardView: View {
             let scale = max(CGFloat(width)/s.width, CGFloat(height)/s.height)
             self.width = Int(CGFloat(width) / scale)
             self.height = Int(CGFloat(height) / scale)
+            if let x = x {
+                self.x = Int(CGFloat(x) / scale)
+            }
+            if let y = y {
+                self.y = Int(CGFloat(y) / scale)
+            }
         }
     }
     
     private func centerWindows() {
         if let s = NSScreen.main?.visibleFrame.size,
            let width = width, let height = height {
-            x = (Int(s.width) - width)/2
-            y = (Int(s.height) - height)/2
+            x = max((Int(s.width) - width)/2, 0)
+            y = max((Int(s.height) - height)/2, 0)
         }
     }
 }
