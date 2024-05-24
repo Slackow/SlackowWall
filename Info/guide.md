@@ -81,30 +81,30 @@ After this, SlackowWall should functionally work for you with the standard wall 
 ## OBS Setup
 
 In order to get OBS to target the instance you are currently in, additional setup is required.
-For OBS you need to create just two scenes, One that displays the Wall and one that displays the current instance. There is also a video down below that shows all these instructions being followed.
+For OBS, you need to create just two scenes: one that displays the Wall and one that displays the current instance. There is also a video below that shows all these instructions being followed.
 
 ### Scenes/Sources
 
 In the wall scene add a macOS Screen Capture that targets SlackowWall's window. **You'll have to reselect the window everytime you restart SlackowWall**.
 
-In the other scene add a macOS Screen Capture to target your current minecraft instance, you should call this "minecraft" (case sensitive) make this instance target one of your instances, you'll also have to reselect this everytime you start running, but it can start as any instance.
+In the other scene, add a macOS Screen Capture to target your current Minecraft instance. You should call this “minecraft”, (case sensitive), and make this instance target one of your instances. You’ll also have to reselect this every time you start running, but it can start as any instance.
 
 Be sure to not use any deprecated captures in any scene! They can ruin performance.
 
 ### OBS Script
 
-Finally, you need to add and configure the associated OBS Script. If you've opened the app at least once it should be located under `~/Library/Application Support/SlackowWall/instance_selector.lua` There is also a button to open the folder containing the script in SlackowWall's settings.
+Finally, you need to add and configure the associated OBS Script. If you've opened the app at least once it should be located under `~/Library/Application Support/SlackowWall/instance_selector.lua`. There is also a button to open the folder containing the script in SlackowWall's settings.
 
 
-In OBS's menubar, go under `Tools > Scripts` and press the plus icon in the menu, you can either navigate to the script directly in this window, or drag the script from another finder window to open it (shown in the video)
+In OBS's menubar, go under `Tools > Scripts` and press the plus icon in the menu, you can either navigate to the script directly in this window, or drag the script from another finder window to open it (shown in the video).
 
-In the script menu there should be a textfield, if this is empty it will be interpreted as "minecraft". This textfield is the name of the *source* that the script will modify to display your game.
+In the script menu, there should be a text field. If this is empty it will be interpreted as "minecraft". This textfield is the name of the *source* that the script will modify to display your game.
 
 ### Script keybinds
 
-You also need to synchronize some keybinds from SlackowWall to OBS in order for the script to work. In particular you should set the `Run Instance Hotkey` in OBS to have the same values as your `Run Hovered` and `Run Hovered and Reset Others` hotkeys (default `R` and `F`)
+You also need to synchronize some keybinds from SlackowWall to OBS in order for the script to work. In particular you should set the `Run Instance Hotkey` in OBS to have the same values as your `Run Hovered` and `Run Hovered and Reset Others` hotkeys (default `R` and `F`).
 
-Your Global Reset key (default `U`) should also be bound to switch to your wall scene.
+Your Global Reset key, (default `U`), should also be bound to switch to your wall scene.
 
 Here's a short [video]() showing the entire OBS setup process.
 
