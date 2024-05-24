@@ -2,7 +2,7 @@
 
 ## Required Software
 - SlackowWall requires you use [PrismLauncher](https://prismlauncher.org) (highly recommended) or [MultiMC](https://multimc.org) for it to detect your instances.
-- Also make sure your OBS version is 30.1.2 or higher, and the arm version if you are on an M series mac.
+- Also make sure your [OBS](https://obsproject.com/) version is 30.1.2 or higher, and the arm version if you are on an M series mac.
 
 ## Setting up Instances
 Before getting started with Installing SlackowWall, you should make your instances in Prism.
@@ -74,4 +74,37 @@ After granting accessibility permissions, press the refresh icon in the top righ
 
 You'll need to restart the app now.
 
-If you see "No Minecraft Instances Detected" open the first instance and then press the refresh icon once more. After this, SlackowWall should functionally work for you, you can go into its settings menu with `CMD + ,` and read through some of the options, and adjust them how you like.
+If you see "No Minecraft Instances Detected" open the first instance and then press the refresh icon once more.
+
+After this, SlackowWall should functionally work for you with the standard wall keybinds, you can go into the settings menu with `CMD + ,` and read through some of the options, and adjust them how you like, most settings contain a description or are relatively straightforward.
+
+## OBS Setup
+
+In order to get OBS to target the instance you are currently in, additional setup is required.
+For OBS you need to create just two scenes, One that displays the Wall and one that displays the current instance. There is also a video down below that shows all these instructions being followed.
+
+### Scenes/Sources
+
+In the wall scene add a macOS Screen Capture that targets SlackowWall's window. **You'll have to reselect the window everytime you restart SlackowWall**.
+
+In the other scene add a macOS Screen Capture to target your current minecraft instance, you should call this "minecraft" (case sensitive) make this instance target one of your instances, you'll also have to reselect this everytime you start running, but it can start as any instance.
+
+Be sure to not use any deprecated captures in any scene! They can ruin performance.
+
+### OBS Script
+
+Finally, you need to add and configure the associated OBS Script. If you've opened the app at least once it should be located under `~/Library/Application Support/SlackowWall/instance_selector.lua` There is also a button to open the folder containing the script in SlackowWall's settings.
+
+
+In OBS's menubar, go under `Tools > Scripts` and press the plus icon in the menu, you can either navigate to the script directly in this window, or drag the script from another finder window to open it (shown in the video)
+
+In the script menu there should be a textfield, if this is empty it will be interpreted as "minecraft". This textfield is the name of the *source* that the script will modify to display your game.
+
+### Script keybinds
+
+You also need to synchronize some keybinds from SlackowWall to OBS in order for the script to work. In particular you should set the `Run Instance Hotkey` in OBS to have the same values as your `Run Hovered` and `Run Hovered and Reset Others` hotkeys (default `R` and `F`)
+
+Your Global Reset key (default `U`) should also be bound to switch to your wall scene.
+
+Here's a short [video]() showing the entire OBS setup process.
+

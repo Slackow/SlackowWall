@@ -53,14 +53,10 @@ class OBSManager: ObservableObject {
     
     func copyScriptToClipboard() {
         let pasteboard = NSPasteboard.general
-        let fallback = "~/Library/Application Support/SlackowWall"
+        let url = getScriptPath()?.path(percentEncoded: false) ?? 
+        "~/Library/Application Support/SlackowWall/instance_selector.lua"
         pasteboard.clearContents()
-        
-        if let url = getScriptPath() {
-            pasteboard.setString(url.absoluteString, forType: .fileURL)
-        } else {
-            pasteboard.setString(fallback, forType: .fileURL)
-        }
+        pasteboard.setString(url, forType: .string)
     }
     
     private func getScriptPath() -> URL? {
