@@ -1,11 +1,15 @@
 # SlackowWall Setup Guide
 
+If you require additional assistance check out the maccord discord [here](https://discord.gg/zxGDAEWf3h).
+
+TL-DR at the end for more experienced users.
+
 ## Required Software
 - SlackowWall requires you use [PrismLauncher](https://prismlauncher.org) (highly recommended) or [MultiMC](https://multimc.org) for it to detect your instances.
 - Also make sure your [OBS](https://obsproject.com/) version is 30.1.2 or higher, and the arm version if you are on an M series mac.
 
 ## Setting up Instances
-Before getting started with Installing SlackowWall, you should make your instances in Prism.
+Before getting started with Installing SlackowWall, you should make your instances in PrismLauncher.
 
 ### Setup Instance 1
 
@@ -16,6 +20,10 @@ Your first instance can be a clone of an existing one, or one you get from follo
 Required Mods:
 - StandardSettings version 1.2.3 or higher
 - Atum
+
+Recommended Mods:
+- Sodium Mac (fixes a memory leak)
+- State Output Mod (Prevents you from reseting instances that are on a dirt screen, make sure to enable this setting too if you get it)
 
 #### Configurations
 For standard settings, ensure that you have `pauseOnLostFocus:false` and `f3PauseOnWorldJoin:true` in your instance. (You may have to start your instance if you just added the latest StandardSettings).
@@ -106,5 +114,25 @@ You also need to synchronize some keybinds from SlackowWall to OBS in order for 
 
 Your Global Reset key, (default `U`), should also be bound to switch to your wall scene.
 
-Here's a short [video]() showing the entire OBS setup process.
+### OBS Setup Video
+Here's a short [video](https://youtu.be/kjjeruApArc) showing the entire OBS setup process.
 
+You may need to restart OBS after setting it up for it to work.
+
+
+## Startup demo
+Here's a [video](https://youtu.be/XSigMv134tE) showing the steps to take when you want to use SlackowWall now.
+
+And you're done!
+
+
+## TL-DR
+For the instances you need atum and the latest standard settings at least, with the new option enabled `f3PauseOnWorldLoad`  (and `pauseOnLostFocus` disabled)
+You also need to make sure each instance folder ends with 1-x where x is the number of instances you have
+
+It also comes with an OBS Script that should put itself into `~/Library/Application Support/SlackowWall` when you start the app for the first time, you want to add that as a script in OBS, you should be using OBS 30.1.2 or higher
+
+In OBS you want to make two scenes, one of these will have the wall, the other will be your minecraft scene, In the minecraft scene make an instance called "minecraft" exactly like that, lowercase, make it a window capture and ideally link it to one of your instances before you start using the wall.
+For the other scene, just link it directly to the main window of SlackowWall
+
+In settings for OBS when you have the script enabled you should see a new hotkey in your menu, "Run Hotkey" Make sure this is the same as your hotkey(s) in SlackowWall (R and F by default), also add a hotkey for switching to the wall scene when you press the global reset key (U by default)
