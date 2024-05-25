@@ -132,7 +132,7 @@ You also need to make sure each instance folder ends with 1-x where x is the num
 
 It also comes with an OBS Script that should put itself into `~/Library/Application Support/SlackowWall` when you start the app for the first time, you want to add that as a script in OBS, you should be using OBS 30.1.2 or higher
 
-In OBS you want to make two scenes, one of these will have the wall, the other will be your minecraft scene, In the minecraft scene make an instance called "minecraft" exactly like that, lowercase, make it a window capture and ideally link it to one of your instances before you start using the wall.
+In OBS you want to make two scenes, one of these will have the wall, the other will be your minecraft scene, In the minecraft scene make a source called "minecraft" exactly like that, lowercase, make it a window capture and ideally link it to one of your instances before you start using the wall.
 For the other scene, just link it directly to the main window of SlackowWall
 
 In settings for OBS when you have the script enabled you should see a new hotkey in your menu, "Run Hotkey" Make sure this is the same as your hotkey(s) in SlackowWall (R and F by default), also add a hotkey for switching to the wall scene when you press the global reset key (U by default)
