@@ -85,6 +85,8 @@ You'll need to restart the app now.
 
 If you see "No Minecraft Instances Detected" open the first instance and then press the refresh icon once more.
 
+**Finally, before any instance will respond to keybinds, you must first focus on each minecraft window and simply click on it at least once after they've launched.**
+
 After this, SlackowWall should functionally work for you with the standard wall keybinds, you can go into the settings menu with `CMD + ,` and read through some of the options, and adjust them how you like, most settings contain a description or are relatively straightforward.
 
 ## OBS Setup
