@@ -23,6 +23,7 @@ Required Mods:
 
 Recommended Mods:
 - Sodium Mac (fixes a memory leak)
+- SleepBG (Lowers framerates of unfocussed instances)
 - State Output Mod (Prevents you from reseting instances that are on a dirt screen, make sure to enable this setting too if you get it)
 
 #### Configurations
