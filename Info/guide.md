@@ -125,6 +125,12 @@ Here's a [video](https://youtu.be/XSigMv134tE) showing the steps to take when yo
 
 And you're done!
 
+## Additional Info
+
+### Wide Resets/instances
+
+In the behavior tab of the settings you can configure the size your game should be while you're in SlackowWall vs while you're in game, and add two additional sizes for other resolutions.
+
 
 ## TL-DR
 For the instances you need atum and the latest standard settings at least, with the new option enabled `f3PauseOnWorldLoad`  (and `pauseOnLostFocus` disabled)
