@@ -256,13 +256,22 @@ import SwiftUI
     }
 
     private func filterWindows(_ windows: [SCWindow]) -> [SCWindow] {
-        // Remove all windows that are not Minecraft Instances
         windows.filter { window in
             guard let processID = window.owningApplication?.processID, let title = window.title else { return false }
-            return ((title.contains("Minecraft") && window.displayName.contains("java")) ||
-                    title.contains("Prism Launcher") ||
-                    title.contains("MultiMC")) &&
-                    shortcutManager.instanceIDs.contains(processID)
+            
+            let versionPattern = "1\\.(\\d+)(\\.\\d+)?"
+            let regex = try? NSRegularExpression(pattern: versionPattern)
+            let matches = regex?.matches(in: title, range: NSRange(title.startIndex..., in: title))
+            
+            if let match = matches?.first,
+               let majorRange = Range(match.range(at: 1), in: title),
+               let majorVersion = Int(title[majorRange]),
+               majorVersion >= 6,
+               title.contains("Minecraft") {
+                return shortcutManager.instanceIDs.contains(processID)
+            }
+            
+            return (title.contains("Prism Launcher") || title.contains("MultiMC")) && shortcutManager.instanceIDs.contains(processID)
         }
     }
 }
