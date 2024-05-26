@@ -134,7 +134,6 @@ class InstanceManager: ObservableObject {
         if keyPressed == "t" {
             resetAllUnlocked()
             keyPressed = nil
-            hoveredInstance = nil
         }
 
         if hoveredInstance == nil {
@@ -225,9 +224,6 @@ class InstanceManager: ObservableObject {
         Task {
             await ScreenRecorder.shared.stop()
             ShortcutManager.shared.killAll()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                exit(0)
-            }
         }
     }
 

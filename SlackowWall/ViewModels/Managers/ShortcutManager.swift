@@ -150,8 +150,7 @@ final class ShortcutManager: ObservableObject {
             var titleValue: AnyObject?
             AXUIElementCopyAttributeValue(window, kAXTitleAttribute as CFString, &titleValue)
             guard let title = titleValue as? String, title != "Window" else { continue }
-            
-            
+        
             var posValue: AnyObject?
             var sizeValue: AnyObject?
             AXUIElementCopyAttributeValue(window, kAXPositionAttribute as CFString, &posValue)
@@ -205,16 +204,33 @@ final class ShortcutManager: ObservableObject {
         task.waitUntilExit()
     }
     
-    /// kills all minecraft instances
     func killAll() {
-        let task = Process()
-        let killProcess = "killall prismlauncher;" + instanceIDs
-            .map { "kill -9 \($0)" }
-            .joined(separator: ";")
-        task.launchPath = "/bin/sh"
-        task.arguments = ["-c", killProcess]
-        task.launch()
-        task.waitUntilExit()
+        let runningApps = getAllApps()
+        var appsToTerminate: [NSRunningApplication] = []
+        
+        // Send terminate signal to the apps
+        for app in runningApps {
+            if instanceIDs.contains(app.processIdentifier) {
+                app.terminate()
+                appsToTerminate.append(app)
+            }
+        }
+        
+        // Check if the apps have terminated
+        let queue = DispatchQueue.global(qos: .background)
+        let timer = DispatchSource.makeTimerSource(queue: queue)
+        timer.schedule(deadline: .now(), repeating: 0.1)
+        
+        timer.setEventHandler {
+            if appsToTerminate.allSatisfy({ $0.isTerminated }) {
+                timer.cancel()
+                DispatchQueue.main.async {
+                    exit(0)
+                }
+            }
+        }
+        
+        timer.resume()
     }
     
     func getAllApps() -> [NSRunningApplication] {

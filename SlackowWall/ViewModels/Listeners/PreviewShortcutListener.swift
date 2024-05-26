@@ -20,6 +20,7 @@ struct PreviewShortcutListener: NSViewRepresentable {
         }
 
         override var acceptsFirstResponder: Bool { true }
+        
         override func keyDown(with event: NSEvent) {
             let p = ProfileManager.shared.profile
             switch event.keyCode {
