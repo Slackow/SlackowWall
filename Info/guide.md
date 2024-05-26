@@ -23,6 +23,7 @@ Required Mods:
 
 Recommended Mods:
 - Sodium Mac (fixes a memory leak)
+- SleepBG (Lowers framerates of unfocussed instances)
 - State Output Mod (Prevents you from reseting instances that are on a dirt screen, make sure to enable this setting too if you get it)
 
 #### Configurations
@@ -84,6 +85,8 @@ You'll need to restart the app now.
 
 If you see "No Minecraft Instances Detected" open the first instance and then press the refresh icon once more.
 
+**Finally, before any instance will respond to keybinds, you must first focus on each minecraft window and simply click on it at least once after they've launched.**
+
 After this, SlackowWall should functionally work for you with the standard wall keybinds, you can go into the settings menu with `CMD + ,` and read through some of the options, and adjust them how you like, most settings contain a description or are relatively straightforward.
 
 ## OBS Setup
@@ -124,6 +127,12 @@ You may need to restart OBS after setting it up for it to work.
 Here's a [video](https://youtu.be/XSigMv134tE) showing the steps to take when you want to use SlackowWall now.
 
 And you're done!
+
+## Additional Info
+
+### Wide Resets/instances
+
+In the behavior tab of the settings you can configure the size your game should be while you're in SlackowWall vs while you're in game, and add two additional sizes for other resolutions.
 
 
 ## TL-DR
