@@ -86,11 +86,14 @@ final class ShortcutManager: ObservableObject {
         
         let pid = activeWindow.processIdentifier
         guard instanceIDs.contains(pid) else { return }
+        
         print("Focusing!")
         resetInstance(pid: pid)
+        
         if ProfileManager.shared.profile.shouldHideWindows {
             unhideInstances()
         }
+        
         closeSettingsWindow()
         NSApp.activate(ignoringOtherApps: true)
         resizeReset(pid: pid)
@@ -242,10 +245,9 @@ final class ShortcutManager: ObservableObject {
         if let num = instanceNums[pid] {
             return num
         } else {
-            // get instance num from Command Line Arguments
-            if app.localizedName == "java" {
+            if isMinecraftInstance(app: app) {
                 if let args = Utils.processArguments(pid: pid) {
-                    if let nativesArg = args.first(where: {$0.starts(with: "-Djava.library.path=")}) {
+                    if let nativesArg = args.first(where: { $0.starts(with: "-Djava.library.path=") }) {
                         let numTwo = nativesArg.dropLast("/natives".count).suffix(2)
                         let numChar = numTwo.suffix(1)
                         if let num = UInt(numTwo) ?? UInt(numChar) {
@@ -259,6 +261,18 @@ final class ShortcutManager: ObservableObject {
             instanceNums[pid] = 0
             return 0
         }
+    }
+    
+    func isMinecraftInstance(app: NSRunningApplication) -> Bool {
+        if let args = Utils.processArguments(pid: app.processIdentifier) {
+            let minecraftArgs = ["net.minecraft.client.main.Main", "-Djava.library.path="]
+            for arg in minecraftArgs {
+                if args.contains(where: { $0.contains(arg) }) {
+                    return true
+                }
+            }
+        }
+        return false
     }
     
     func resetInstance(pid: pid_t) {

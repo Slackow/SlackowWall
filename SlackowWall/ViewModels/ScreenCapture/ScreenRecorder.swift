@@ -257,8 +257,13 @@ import SwiftUI
 
     private func filterWindows(_ windows: [SCWindow]) -> [SCWindow] {
         // Remove all windows that are not Minecraft Instances
-        windows
-            .filter({ $0.displayName.contains("Minecraft") && shortcutManager.instanceIDs.contains($0.owningApplication?.processID ?? 0) })
+        windows.filter { window in
+            guard let processID = window.owningApplication?.processID, let title = window.title else { return false }
+            return ((title.contains("Minecraft") && window.displayName.contains("java")) ||
+                    title.contains("Prism Launcher") ||
+                    title.contains("MultiMC")) &&
+                    shortcutManager.instanceIDs.contains(processID)
+        }
     }
 }
 
