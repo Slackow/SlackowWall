@@ -62,9 +62,9 @@ class InstanceManager: ObservableObject {
     func switchToInstance(idx: Int) {
         let pid = getInstanceProcess(idx: idx)
         OBSManager.shared.writeWID(idx: idx + 1)
-        print("User opened")
+        LogManager.shared.appendLog("Pressed: \(pid) #(\(idx))")
         Task {
-            print("Switching Window")
+            LogManager.shared.appendLog("Switching...")
             if ProfileManager.shared.profile.shouldHideWindows {
                 let pids = ShortcutManager.shared.instanceIDs.filter {$0 != pid}
                 hideWindows(pids)
@@ -73,15 +73,14 @@ class InstanceManager: ObservableObject {
             focusWindow(pid)
             
             ShortcutManager.shared.sendEscape(pid: pid)
+            
             if ProfileManager.shared.profile.f1OnJoin {
                 ShortcutManager.shared.sendF1(pid: pid)
-                print("Sent f1!!")
             }
-            ShortcutManager.shared.states[idx].checkState = .NONE
             
-            print("Switched")
+            ShortcutManager.shared.states[idx].checkState = .NONE
+            LogManager.shared.appendLog("Switched to instance")
         }
-        print("pressed: \(pid) #(\(idx))")
     }
     
     func lockInstance(idx: Int) {
@@ -92,9 +91,9 @@ class InstanceManager: ObservableObject {
             withAnimation {
                 SoundManager.shared.playSound(sound: "lock")
             }
-            print("Locking \(idx)")
+            LogManager.shared.appendLog("Locking \(idx)")
         } else {
-            print("Unlocking \(idx)")
+            LogManager.shared.appendLog ("Unlocking \(idx)")
         }
     }
     
@@ -183,18 +182,17 @@ class InstanceManager: ObservableObject {
     }
 
     private func resetAllUnlocked() {
-        print("\n\n\n\n")
+        LogManager.shared.appendLog("Reset all possible")
         let instanceIDs = ShortcutManager.shared.instanceIDs
         var idx = 0
         for instance in instanceIDs {
             if canReset(idx: idx) {
                 ShortcutManager.shared.resetInstance(pid: instance)
             } else {
-                print("Did not reset: \(ShortcutManager.shared.states[idx].state)")
+                LogManager.shared.appendLog("Did not reset: \(instance), State: \(ShortcutManager.shared.states[idx].state)")
             }
             idx += 1
         }
-        print("Reset All possible")
     }
     
     func showInstanceInfo() {

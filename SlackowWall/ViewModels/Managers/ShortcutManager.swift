@@ -35,7 +35,7 @@ final class ShortcutManager: ObservableObject {
             print("\($0.localizedName ?? "nil") pid:\($0.processIdentifier) num: \(getInstanceNum(app: $0))")
             let num = getInstanceNum(app: $0)
             if num > 0 {
-                print("name \($0.localizedName ?? "")")
+                LogManager.shared.appendLog("Window Name: \($0.localizedName ?? ""), Instance Number: \(num)")
             }
         }
     }
@@ -57,7 +57,8 @@ final class ShortcutManager: ObservableObject {
             return data
         }
         
-        print(instanceIDs)
+        LogManager.shared.appendLog("Instance IDs:", instanceIDs)
+        logStatePaths()
         print(states)
     }
     
@@ -69,6 +70,14 @@ final class ShortcutManager: ObservableObject {
     
     private func closeSettingsWindow() {
         NSApplication.shared.windows.filter({ $0.title == "Settings"}).first?.close()
+    }
+    
+    private func logStatePaths() {
+        let homeDirectory = FileManager.default.homeDirectoryForCurrentUser.path
+        states.forEach { info in
+            let sanitizedPath = info.statePath.replacingOccurrences(of: homeDirectory, with: "~")
+            LogManager.shared.appendLog(sanitizedPath, showInConsole: false)
+        }
     }
     
     func handleGlobalKey(_ key: NSEvent) {
@@ -87,7 +96,7 @@ final class ShortcutManager: ObservableObject {
         let pid = activeWindow.processIdentifier
         guard instanceIDs.contains(pid) else { return }
         
-        print("Focusing!")
+        LogManager.shared.appendLog("Returning...")
         resetInstance(pid: pid)
         
         if ProfileManager.shared.profile.shouldHideWindows {
@@ -97,6 +106,7 @@ final class ShortcutManager: ObservableObject {
         closeSettingsWindow()
         NSApp.activate(ignoringOtherApps: true)
         resizeReset(pid: pid)
+        LogManager.shared.appendLog("Returned to SlackowWall")
     }
     
     func resizePlanar() {
@@ -144,7 +154,8 @@ final class ShortcutManager: ObservableObject {
         if !(width > 0 && height > 0) || pids.isEmpty {
             return
         }
-        print("Resizing!")
+        
+        LogManager.shared.appendLog("Resizing Instance: \(pid)")
         
         let appRef = AXUIElementCreateApplication(pid)
         var value: AnyObject?
@@ -181,7 +192,7 @@ final class ShortcutManager: ObservableObject {
             
             AXUIElementSetAttributeValue(window, kAXPositionAttribute as CFString, positionRef)
             AXUIElementSetAttributeValue(window, kAXSizeAttribute as CFString, sizeRef)
-            print("Done Resizing!", newSize)
+            LogManager.shared.appendLog("Finished Resizing Instance: \(pid), \(newSize)")
         }
         
     }
@@ -216,6 +227,7 @@ final class ShortcutManager: ObservableObject {
             if instanceIDs.contains(app.processIdentifier) {
                 app.terminate()
                 appsToTerminate.append(app)
+                LogManager.shared.appendLog("Terminating Instance:", app.processIdentifier)
             }
         }
         
@@ -228,6 +240,7 @@ final class ShortcutManager: ObservableObject {
             if appsToTerminate.allSatisfy({ $0.isTerminated }) {
                 timer.cancel()
                 DispatchQueue.main.async {
+                    LogManager.shared.appendLog("Closed SlackowWall")
                     exit(0)
                 }
             }
@@ -359,7 +372,7 @@ final class ShortcutManager: ObservableObject {
     }
     
     func sendKey(key: CGKeyCode, pid: pid_t) {
-        print("Sending key \(key) to \(pid)")
+        LogManager.shared.appendLog("Sending key \(key) to \(pid)")
         let src = CGEventSource(stateID: .hidSystemState)
         let kspd = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: true)
         let kspu = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: false)

@@ -37,6 +37,7 @@
 		B63168C52979AE95005958E9 /* PreviewActionsListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63168C42979AE95005958E9 /* PreviewActionsListener.swift */; };
 		B63168C72979E8D7005958E9 /* SettingsCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63168C62979E8D7005958E9 /* SettingsCardView.swift */; };
 		B637DB38296B965D00A73F62 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B637DB37296B965D00A73F62 /* SettingsView.swift */; };
+		B67A9D142C04DDA400270811 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67A9D132C04DDA400270811 /* LogManager.swift */; };
 		B68D8C292BEA95BA00072AC5 /* InstanceStates.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68D8C282BEA95BA00072AC5 /* InstanceStates.swift */; };
 		B68D8C2B2BEA96E200072AC5 /* CheckingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68D8C2A2BEA96E200072AC5 /* CheckingMode.swift */; };
 		B68D8C2D2BEBC0FC00072AC5 /* CaptureGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68D8C2C2BEBC0FC00072AC5 /* CaptureGridView.swift */; };
@@ -105,6 +106,7 @@
 		B63168C42979AE95005958E9 /* PreviewActionsListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewActionsListener.swift; sourceTree = "<group>"; };
 		B63168C62979E8D7005958E9 /* SettingsCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCardView.swift; sourceTree = "<group>"; };
 		B637DB37296B965D00A73F62 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		B67A9D132C04DDA400270811 /* LogManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogManager.swift; sourceTree = "<group>"; };
 		B68D8C282BEA95BA00072AC5 /* InstanceStates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceStates.swift; sourceTree = "<group>"; };
 		B68D8C2A2BEA96E200072AC5 /* CheckingMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckingMode.swift; sourceTree = "<group>"; };
 		B68D8C2C2BEBC0FC00072AC5 /* CaptureGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureGridView.swift; sourceTree = "<group>"; };
@@ -224,6 +226,7 @@
 				B6E30C142BF5AB8C008E7004 /* ProfileManager.swift */,
 				6D8A7EB6382B6AEC9A3FF7EF /* OBSManager.swift */,
 				B6C17C0E2BFCEA3C00F30C1F /* AlertManager.swift */,
+				B67A9D132C04DDA400270811 /* LogManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -552,6 +555,7 @@
 				B6A1FDE32BDF456800EF2180 /* SettingsButtonView.swift in Sources */,
 				B6A1FDE82BDF5BBF00EF2180 /* CreditsView.swift in Sources */,
 				B6C17C0D2BFC491700F30C1F /* WallAlert.swift in Sources */,
+				B67A9D142C04DDA400270811 /* LogManager.swift in Sources */,
 				498FB3DE289A65B000405753 /* Constants.swift in Sources */,
 				B6E30C152BF5AB8C008E7004 /* ProfileManager.swift in Sources */,
 				B6E9E36E2970A42D00DF6466 /* ScreenRecorder.swift in Sources */,
@@ -722,7 +726,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 240526a;
+				CURRENT_PROJECT_VERSION = 240527a;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
 				DEVELOPMENT_TEAM = D64G2TTYWM;
@@ -758,7 +762,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 240526a;
+				CURRENT_PROJECT_VERSION = 240527a;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
 				DEVELOPMENT_TEAM = D64G2TTYWM;

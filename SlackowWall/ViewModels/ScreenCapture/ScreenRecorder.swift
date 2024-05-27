@@ -60,12 +60,12 @@ import SwiftUI
         get async {
             do {
                 // If the app doesn't have Screen Recording permission, this call generates an exception.
-                print("Checking for permission to screen")
+                LogManager.shared.appendLog("Checking for screen capture permissions")
                 try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
-                print("verdict achieved! true")
+                LogManager.shared.appendLog("Verdict Achieved: true")
                 return true
             } catch {
-                print("verdict achieved! false", error.localizedDescription)
+                LogManager.shared.appendLog("Verdict Achieved: false, Error: \(error.localizedDescription).")
                 AlertManager.shared.alert = .noScreenPermission
                 return false
             }
@@ -91,7 +91,7 @@ import SwiftUI
                 windowFilters[window.windowID] = filter
                 contentSizes.append(CGSize(width: filter.contentRect.width, height: filter.contentRect.height))
                 filters.append(filter)
-                print("Appended filter: \(window.displayName) \(window.owningApplication?.processID ?? 0)")
+                LogManager.shared.appendLog("Appended Filter: (\(window.displayName)) (\(window.owningApplication?.processID ?? 0))")
             }
         }
         
@@ -136,6 +136,8 @@ import SwiftUI
 
         // Update the running state.
         isRunning = true
+        LogManager.shared.appendLog("Screen capture started")
+        
         let filters = contentFilters
         for idx in filters.indices {
             let capturePreview = CapturePreview()
@@ -150,6 +152,7 @@ import SwiftUI
                     }
                 } catch let error {
                     logger.error("\(error.localizedDescription)")
+                    LogManager.shared.appendLog("Error:", error.localizedDescription)
                     // Unable to start the stream. Set the running state to false.
                     InstanceManager.shared.showInfo = true
                     isRunning = false
@@ -179,6 +182,7 @@ import SwiftUI
     func resetAndStartCapture(shouldAutoSwitch: Bool = true) async {
         // Stop the current capture if it's running
         if isRunning {
+            LogManager.shared.appendLog("Refreshing screen capture...")
             await stop(removeStreams: true)
         }
         

@@ -38,7 +38,7 @@ class ProfileManager: ObservableObject {
             profile = Profile()
         }
         
-        print("Active Profile:", activeProfile)
+        LogManager.shared.appendLog("Active Profile:", activeProfile)
     }
     
     func observeUserDefaults() {
@@ -109,6 +109,7 @@ class ProfileManager: ObservableObject {
                     if activeProfile != profile {
                         activeProfile = profile
                         self.profile = Profile()
+                        LogManager.shared.appendLog("Auto switched profiles")
                         return
                     }
                 }
