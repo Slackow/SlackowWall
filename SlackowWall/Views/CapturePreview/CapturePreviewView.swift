@@ -51,7 +51,7 @@ struct CapturePreviewView: View {
             .opacity(animateAppearance ? 1 : 0)
             .overlay(PreviewActionsListener(lockAction: { key in
                 if key.modifierFlags.contains(.shift) {
-                    instanceManager.lockInstance(idx: idx)
+                    instanceManager.toggleInstanceLock(idx: idx)
                 }
             }))
             .onHover { isHovered in

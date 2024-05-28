@@ -8,8 +8,11 @@
 import SwiftUI
 
 struct DimensionCardView: View {
+    @ObservedObject private var profileManager = ProfileManager.shared
+    
     var name: String
     var description: String?
+    var isGameplayMode: Bool = false
     
     @Binding var x: Int?
     @Binding var y: Int?
@@ -20,6 +23,10 @@ struct DimensionCardView: View {
         return width == nil || height == nil
     }
     
+    private var containsDimensions: Bool {
+        return width ?? 0 > 0 || height ?? 0 > 0
+    }
+    
     private var outsideWindowFrame: Bool {
         guard let screen = NSScreen.main?.visibleFrame else { return true }
         let screenWidth = Int(screen.width)
@@ -27,11 +34,15 @@ struct DimensionCardView: View {
         
         return screenWidth >= (width ?? 0) && screenHeight >= (height ?? 0)
     }
-
+    
+    private var hasResetDimensions: Bool {
+        return (profileManager.profile.baseWidth ?? 0) > 0 && (profileManager.profile.baseHeight ?? 0) > 0
+    }
+    
     var body: some View {
         SettingsCardView {
             Form {
-                VStack {
+                VStack(spacing: 8) {
                     VStack(spacing: 3) {
                         Text("\(name) Mode")
                             .fontWeight(.semibold)
@@ -73,6 +84,13 @@ struct DimensionCardView: View {
                     .padding(.vertical, 8)
                     
                     HStack {
+                        if !isGameplayMode && !hasResetDimensions && containsDimensions {
+                            Text("Missing Gameplay Dimensions")
+                                .font(.caption2)
+                                .foregroundStyle(.red)
+                                .fontWeight(.semibold)
+                        }
+                        
                         Button(action: scaleToMonitor) {
                             Text("Scale to Monitor")
                         }
@@ -86,6 +104,8 @@ struct DimensionCardView: View {
                     }
                 }
             }
+            .animation(.easeInOut, value: hasResetDimensions)
+            .animation(.easeInOut, value: containsDimensions)
         }
     }
     

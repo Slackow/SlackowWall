@@ -35,9 +35,9 @@ class OBSManager: ObservableObject {
         // Copy the file from the bundle to the Application Support directory
         do {
             try fileManager.copyItem(at: src, to: dst)
-            print("Wrote script!")
+            LogManager.shared.appendLog("Wrote script successfully")
         } catch {
-            print("Error writing script:", error.localizedDescription)
+            LogManager.shared.appendLog("Error Writing Script:", error.localizedDescription)
         }
     }
     

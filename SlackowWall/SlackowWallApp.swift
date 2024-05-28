@@ -92,6 +92,19 @@ struct SlackowWallApp: App {
                     UpdateManager.shared.checkForUpdates()
                 }
             })
+            CommandGroup(after: .help) {
+                Divider()
+                
+                Menu("Log Files") {
+                    Button(action: LogManager.shared.openLogFolder) {
+                        Text("Show Log Files")
+                    }
+                    
+                    Button(action: LogManager.shared.openLatestLogInConsole) {
+                        Text("View Current Log")
+                    }
+                }
+            }
         }
         .windowResizability(.contentSize)
     }

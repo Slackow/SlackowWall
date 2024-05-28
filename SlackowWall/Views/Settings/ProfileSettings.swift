@@ -130,6 +130,7 @@ struct ProfileSettings: View {
             }
         }
         .onChange(of: profileManager.activeProfile) { value in
+            LogManager.shared.appendLog("Switched Profiles:", value)
             profileManager.profile = Profile()
             
             if selectedProfile != value {

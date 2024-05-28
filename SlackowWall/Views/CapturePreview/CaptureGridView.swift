@@ -80,7 +80,7 @@ struct CaptureGridView: View {
             }
             .padding(5)
             .task {
-                print("Screen Recorder Started!")
+                LogManager.shared.appendLog("Attempting to start screen capture...")
                 if await screenRecorder.canRecord {
                     await screenRecorder.resetAndStartCapture()
                 }

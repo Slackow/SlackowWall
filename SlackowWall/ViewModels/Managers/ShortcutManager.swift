@@ -35,7 +35,7 @@ final class ShortcutManager: ObservableObject {
             print("\($0.localizedName ?? "nil") pid:\($0.processIdentifier) num: \(getInstanceNum(app: $0))")
             let num = getInstanceNum(app: $0)
             if num > 0 {
-                print("name \($0.localizedName ?? "")")
+                LogManager.shared.appendLog("Window Name: \($0.localizedName ?? ""), Instance Number: \(num)")
             }
         }
     }
@@ -57,7 +57,8 @@ final class ShortcutManager: ObservableObject {
             return data
         }
         
-        print(instanceIDs)
+        LogManager.shared.appendLog("Instance IDs:", instanceIDs)
+        logStatePaths()
         print(states)
     }
     
@@ -69,6 +70,14 @@ final class ShortcutManager: ObservableObject {
     
     private func closeSettingsWindow() {
         NSApplication.shared.windows.filter({ $0.title == "Settings"}).first?.close()
+    }
+    
+    private func logStatePaths() {
+        let homeDirectory = FileManager.default.homeDirectoryForCurrentUser.path
+        states.forEach { info in
+            let sanitizedPath = info.statePath.replacingOccurrences(of: homeDirectory, with: "~")
+            LogManager.shared.appendLog(sanitizedPath, showInConsole: false)
+        }
     }
     
     func handleGlobalKey(_ key: NSEvent) {
@@ -86,14 +95,18 @@ final class ShortcutManager: ObservableObject {
         
         let pid = activeWindow.processIdentifier
         guard instanceIDs.contains(pid) else { return }
-        print("Focusing!")
+        
+        LogManager.shared.appendLog("Returning...")
         resetInstance(pid: pid)
+        
         if ProfileManager.shared.profile.shouldHideWindows {
             unhideInstances()
         }
+        
         closeSettingsWindow()
         NSApp.activate(ignoringOtherApps: true)
         resizeReset(pid: pid)
+        LogManager.shared.appendLog("Returned to SlackowWall")
     }
     
     func resizePlanar() {
@@ -141,7 +154,8 @@ final class ShortcutManager: ObservableObject {
         if !(width > 0 && height > 0) || pids.isEmpty {
             return
         }
-        print("Resizing!")
+        
+        LogManager.shared.appendLog("Resizing Instance: \(pid)")
         
         let appRef = AXUIElementCreateApplication(pid)
         var value: AnyObject?
@@ -150,8 +164,7 @@ final class ShortcutManager: ObservableObject {
             var titleValue: AnyObject?
             AXUIElementCopyAttributeValue(window, kAXTitleAttribute as CFString, &titleValue)
             guard let title = titleValue as? String, title != "Window" else { continue }
-            
-            
+        
             var posValue: AnyObject?
             var sizeValue: AnyObject?
             AXUIElementCopyAttributeValue(window, kAXPositionAttribute as CFString, &posValue)
@@ -179,7 +192,7 @@ final class ShortcutManager: ObservableObject {
             
             AXUIElementSetAttributeValue(window, kAXPositionAttribute as CFString, positionRef)
             AXUIElementSetAttributeValue(window, kAXSizeAttribute as CFString, sizeRef)
-            print("Done Resizing!", newSize)
+            LogManager.shared.appendLog("Finished Resizing Instance: \(pid), \(newSize)")
         }
         
     }
@@ -205,16 +218,35 @@ final class ShortcutManager: ObservableObject {
         task.waitUntilExit()
     }
     
-    /// kills all minecraft instances
     func killAll() {
-        let task = Process()
-        let killProcess = "killall prismlauncher;" + instanceIDs
-            .map { "kill -9 \($0)" }
-            .joined(separator: ";")
-        task.launchPath = "/bin/sh"
-        task.arguments = ["-c", killProcess]
-        task.launch()
-        task.waitUntilExit()
+        let runningApps = getAllApps()
+        var appsToTerminate: [NSRunningApplication] = []
+        
+        // Send terminate signal to the apps
+        for app in runningApps {
+            if instanceIDs.contains(app.processIdentifier) {
+                app.terminate()
+                appsToTerminate.append(app)
+                LogManager.shared.appendLog("Terminating Instance:", app.processIdentifier, showInConsole: false)
+            }
+        }
+        
+        // Check if the apps have terminated
+        let queue = DispatchQueue.global(qos: .background)
+        let timer = DispatchSource.makeTimerSource(queue: queue)
+        timer.schedule(deadline: .now(), repeating: 0.1)
+        
+        timer.setEventHandler {
+            if appsToTerminate.allSatisfy({ $0.isTerminated }) {
+                timer.cancel()
+                DispatchQueue.main.async {
+                    LogManager.shared.appendLog("Closed SlackowWall", showInConsole: false)
+                    exit(0)
+                }
+            }
+        }
+        
+        timer.resume()
     }
     
     func getAllApps() -> [NSRunningApplication] {
@@ -226,10 +258,9 @@ final class ShortcutManager: ObservableObject {
         if let num = instanceNums[pid] {
             return num
         } else {
-            // get instance num from Command Line Arguments
-            if app.localizedName == "java" {
+            if isMinecraftInstance(app: app) {
                 if let args = Utils.processArguments(pid: pid) {
-                    if let nativesArg = args.first(where: {$0.starts(with: "-Djava.library.path=")}) {
+                    if let nativesArg = args.first(where: { $0.starts(with: "-Djava.library.path=") }) {
                         let numTwo = nativesArg.dropLast("/natives".count).suffix(2)
                         let numChar = numTwo.suffix(1)
                         if let num = UInt(numTwo) ?? UInt(numChar) {
@@ -243,6 +274,18 @@ final class ShortcutManager: ObservableObject {
             instanceNums[pid] = 0
             return 0
         }
+    }
+    
+    func isMinecraftInstance(app: NSRunningApplication) -> Bool {
+        if let args = Utils.processArguments(pid: app.processIdentifier) {
+            let minecraftArgs = ["net.minecraft.client.main.Main", "-Djava.library.path="]
+            for arg in minecraftArgs {
+                if args.contains(where: { $0.contains(arg) }) {
+                    return true
+                }
+            }
+        }
+        return false
     }
     
     func resetInstance(pid: pid_t) {
@@ -329,7 +372,7 @@ final class ShortcutManager: ObservableObject {
     }
     
     func sendKey(key: CGKeyCode, pid: pid_t) {
-        print("Sending key \(key) to \(pid)")
+        LogManager.shared.appendLog("Sending key \(key) to \(pid)")
         let src = CGEventSource(stateID: .hidSystemState)
         let kspd = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: true)
         let kspu = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: false)
