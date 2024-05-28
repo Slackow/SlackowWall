@@ -35,21 +35,31 @@ class InstanceManager: ObservableObject {
                 self?.screenSize = NSScreen.main?.visibleFrame.size
             }
     }
-
+    
     @MainActor func openInstance(idx: Int) {
         if (NSApplication.shared.isActive) {
+            if ProfileManager.shared.profile.checkStateOutput {
+                let instanceInfo = ShortcutManager.shared.states[idx]
+                instanceInfo.updateState(force: true)
+                
+                if instanceInfo.state != InstanceStates.paused && instanceInfo.state != InstanceStates.unpaused {
+                    lockInstance(idx: idx)
+                    return
+                }
+            }
+            
             switchToInstance(idx: idx)
             unlockInstance(idx: idx)
         }
     }
-
+    
     func hideWindows(_ targetPIDs: [pid_t]) {
         for pid in targetPIDs {
             let app = AXUIElementCreateApplication(pid)
             var error: AXError = AXError.success
             error = AXUIElementSetAttributeValue(app, kAXHiddenAttribute as CFString, kCFBooleanTrue)
             if error != .success {
-                print("Error setting visibility attribute for PID \(pid): \(error)")
+                LogManager.shared.appendLog("Error setting visibility attribute for \(pid): \(error)")
             }
         }
     }
@@ -57,12 +67,12 @@ class InstanceManager: ObservableObject {
     func focusWindow(_ targetPID: pid_t) {
         NSRunningApplication(processIdentifier: targetPID)?.activate(options: [.activateAllWindows, .activateIgnoringOtherApps])
     }
-
     
     func switchToInstance(idx: Int) {
         let pid = getInstanceProcess(idx: idx)
         OBSManager.shared.writeWID(idx: idx + 1)
         LogManager.shared.appendLog("Pressed: \(pid) #(\(idx))")
+        
         Task {
             LogManager.shared.appendLog("Switching...")
             if ProfileManager.shared.profile.shouldHideWindows {
@@ -83,18 +93,26 @@ class InstanceManager: ObservableObject {
         }
     }
     
-    func lockInstance(idx: Int) {
+    func toggleInstanceLock(idx: Int) {
         let oldLocked = lockedInstances
         lockedInstances ^= 1 << idx
         
         if oldLocked < lockedInstances {
-            withAnimation {
-                SoundManager.shared.playSound(sound: "lock")
-            }
+            SoundManager.shared.playSound(sound: "lock")
             LogManager.shared.appendLog("Locking \(idx)")
         } else {
             LogManager.shared.appendLog ("Unlocking \(idx)")
         }
+    }
+    
+    func lockInstance(idx: Int) {
+        if !isLocked(idx: idx) {
+            toggleInstanceLock(idx: idx)
+        }
+    }
+    
+    @inline(__always) public func unlockInstance(idx: Int) {
+        lockedInstances &= ~(1 << idx)
     }
     
     func copyMods() {
@@ -126,33 +144,35 @@ class InstanceManager: ObservableObject {
             } catch { print(error.localizedDescription) }
         }
     }
-
+    
     @MainActor func handleKeyEvent(idx: Int) {
         let pid = getInstanceProcess(idx: idx)
-
+        
         if keyPressed == "t" {
             resetAllUnlocked()
             keyPressed = nil
+            return
         }
-
+        
         if hoveredInstance == nil {
             keyPressed = nil
+            return
         }
-
+        
         if hoveredInstance == idx {
             switch keyPressed {
-            case "r": openInstance(idx: idx)
-            case "e": ShortcutManager.shared.resetInstance(pid: pid)
-            case "f": enterAndResetUnlocked(idx: idx)
-            case "p": ShortcutManager.shared.sendF3Esc(pid: pid)
-            case "c": lockInstance(idx: idx)
-            case "u": ShortcutManager.shared.globalReset()
-            default: return
+                case "r": openInstance(idx: idx)
+                case "e": ShortcutManager.shared.resetInstance(pid: pid)
+                case "f": enterAndResetUnlocked(idx: idx)
+                case "p": ShortcutManager.shared.sendF3Esc(pid: pid)
+                case "c": toggleInstanceLock(idx: idx)
+                case "u": ShortcutManager.shared.globalReset()
+                default: return
             }
             keyPressed = nil
         }
     }
-
+    
     @MainActor private func enterAndResetUnlocked(idx: Int) {
         let pid = getInstanceProcess(idx: idx)
         let instanceIDs = ShortcutManager.shared.instanceIDs
@@ -177,10 +197,7 @@ class InstanceManager: ObservableObject {
         state.updateState(force: true)
         return state.state != InstanceStates.waiting && state.state != InstanceStates.generating
     }
-    @inline(__always) public func unlockInstance(idx: Int) {
-        lockedInstances &= ~(1 << idx)
-    }
-
+    
     private func resetAllUnlocked() {
         LogManager.shared.appendLog("Reset all possible")
         let instanceIDs = ShortcutManager.shared.instanceIDs
@@ -224,11 +241,11 @@ class InstanceManager: ObservableObject {
             ShortcutManager.shared.killAll()
         }
     }
-
+    
     func getInstanceProcess(idx: Int) -> pid_t {
         return ShortcutManager.shared.states[idx].pid
     }
-
+    
     func move(forward: Bool, direct: Bool = false) {
         moving = true
         Task {
@@ -238,7 +255,7 @@ class InstanceManager: ObservableObject {
             let width = ProfileManager.shared.profile.setWidth ?? 0
             let height = ProfileManager.shared.profile.setHeight ?? 0
             let setSize = width > 0 && height > 0
-
+            
             if (xOff == 0 && yOff == 0 && !setSize) || pids.isEmpty {
                 DispatchQueue.main.async { self.moving = false }
                 return
@@ -251,7 +268,7 @@ class InstanceManager: ObservableObject {
                 
                 await ScreenRecorder.shared.stop(removeStreams: true)
             }
-
+            
             for pid in pids {
                 let appRef = AXUIElementCreateApplication(pid)
                 var value: AnyObject?
@@ -262,7 +279,7 @@ class InstanceManager: ObservableObject {
                         if let title = titleValue as? String, title != "Window" {
                             var newPosition = direct ? CGPoint(x: CGFloat(xOff), y: CGFloat(yOff)) : CGPoint(x: CGFloat(xOff), y: CGFloat(yOff))
                             var newSize = CGSize(width: CGFloat(width), height: CGFloat(height))
-
+                            
                             if let positionRef = AXValueCreate(AXValueType.cgPoint, &newPosition), let sizeRef = AXValueCreate(AXValueType.cgSize, &newSize) {
                                 AXUIElementSetAttributeValue(window, kAXPositionAttribute as CFString, positionRef)
                                 if setSize {
