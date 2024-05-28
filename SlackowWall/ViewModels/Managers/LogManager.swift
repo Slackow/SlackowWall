@@ -52,7 +52,7 @@ class LogManager {
         let timestamp: String
         if includeTimestamp {
             let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "HH:mm:ss"
+            dateFormatter.dateFormat = "HH:mm:ss.SSS"
             timestamp = "[\(dateFormatter.string(from: Date()))] "
         } else {
             timestamp = ""

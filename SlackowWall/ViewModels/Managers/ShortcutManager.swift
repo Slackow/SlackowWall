@@ -227,7 +227,7 @@ final class ShortcutManager: ObservableObject {
             if instanceIDs.contains(app.processIdentifier) {
                 app.terminate()
                 appsToTerminate.append(app)
-                LogManager.shared.appendLog("Terminating Instance:", app.processIdentifier)
+                LogManager.shared.appendLog("Terminating Instance:", app.processIdentifier, showInConsole: false)
             }
         }
         
@@ -240,7 +240,7 @@ final class ShortcutManager: ObservableObject {
             if appsToTerminate.allSatisfy({ $0.isTerminated }) {
                 timer.cancel()
                 DispatchQueue.main.async {
-                    LogManager.shared.appendLog("Closed SlackowWall")
+                    LogManager.shared.appendLog("Closed SlackowWall", showInConsole: false)
                     exit(0)
                 }
             }
