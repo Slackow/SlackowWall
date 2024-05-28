@@ -148,4 +148,22 @@ class LogManager {
         
         appendLogNewLine()
     }
+    
+    func openLogFolder() {
+        let logFolderPath = "/tmp/SlackowWall/"
+        let logFolderURL = URL(fileURLWithPath: logFolderPath)
+        
+        if FileManager.default.fileExists(atPath: logFolderPath) {
+            NSWorkspace.shared.open(logFolderURL)
+        }
+    }
+    
+    func openLatestLogInConsole() {
+        let logFilePath = "/tmp/SlackowWall/latest.log"
+        let logFileURL = URL(fileURLWithPath: logFilePath)
+        
+        if FileManager.default.fileExists(atPath: logFilePath) {
+            NSWorkspace.shared.open(logFileURL)
+        }
+    }
 }
