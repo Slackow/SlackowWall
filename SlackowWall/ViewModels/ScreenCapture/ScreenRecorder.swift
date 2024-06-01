@@ -85,14 +85,12 @@ import SwiftUI
                 (instances[$0.owningApplication?.processID ?? 0] ?? 0, $0.windowID) })
         }
         
-        for window in availableWindows {
-            if windowFilters[window.windowID] == nil {
-                let filter = SCContentFilter(desktopIndependentWindow: window)
-                windowFilters[window.windowID] = filter
-                contentSizes.append(CGSize(width: filter.contentRect.width, height: filter.contentRect.height))
-                filters.append(filter)
-                LogManager.shared.appendLog("Appended Filter: (\(window.displayName)) (\(window.owningApplication?.processID ?? 0))")
-            }
+        for window in availableWindows where windowFilters[window.windowID] == nil {
+            let filter = SCContentFilter(desktopIndependentWindow: window)
+            windowFilters[window.windowID] = filter
+            contentSizes.append(CGSize(width: filter.contentRect.width, height: filter.contentRect.height))
+            filters.append(filter)
+            LogManager.shared.appendLog("Appended Filter: (\(window.displayName)) (\(window.owningApplication?.processID ?? 0))")
         }
         
         return filters

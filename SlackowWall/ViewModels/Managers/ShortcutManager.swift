@@ -223,12 +223,10 @@ final class ShortcutManager: ObservableObject {
         var appsToTerminate: [NSRunningApplication] = []
         
         // Send terminate signal to the apps
-        for app in runningApps {
-            if instanceIDs.contains(app.processIdentifier) {
-                app.terminate()
-                appsToTerminate.append(app)
-                LogManager.shared.appendLog("Terminating Instance:", app.processIdentifier, showInConsole: false)
-            }
+        for app in runningApps where instanceIDs.contains(app.processIdentifier) {
+            app.terminate()
+            appsToTerminate.append(app)
+            LogManager.shared.appendLog("Terminating Instance:", app.processIdentifier, showInConsole: false)
         }
         
         // Check if the apps have terminated

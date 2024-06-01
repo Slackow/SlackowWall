@@ -5,17 +5,34 @@
 //  Created by Kihron on 5/27/24.
 //
 
+import Gzip
 import SwiftUI
 
 class LogManager {
-    private let logPath = "/tmp/SlackowWall/latest.log"
+    private let logDirectory = "/tmp/SlackowWall/"
     
     static let shared = LogManager()
     
+    private var logPath: String {
+        return logDirectory + "latest.log"
+    }
+    
     init() {
+        createLogDirectory()
         createLogFile()
         prependSystemInfo()
         appendLogSection("Log Output")
+    }
+    
+    private func createLogDirectory() {
+        let fileManager = FileManager.default
+        let logDirectoryURL = URL(fileURLWithPath: logDirectory)
+        
+        do {
+            try fileManager.createDirectory(at: logDirectoryURL, withIntermediateDirectories: true, attributes: nil)
+        } catch {
+            print("Failed to create log directory: \(error)")
+        }
     }
     
     private func createLogFile() {
@@ -29,10 +46,12 @@ class LogManager {
                     let dateFormatter = DateFormatter()
                     dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
                     let dateString = dateFormatter.string(from: creationDate)
-                    let backupLogPath = "/tmp/SlackowWall/\(dateString).log"
+                    let backupLogPath = logDirectory + "\(dateString).log"
                     let backupLogURL = URL(fileURLWithPath: backupLogPath)
                     
                     try fileManager.moveItem(at: logURL, to: backupLogURL)
+                    
+                    compressLogFile(at: backupLogURL)
                 } else {
                     print("Failed to get creation date of log file")
                 }
@@ -44,7 +63,25 @@ class LogManager {
         // Create new log file
         fileManager.createFile(atPath: logPath, contents: nil, attributes: nil)
     }
+    
+    private func compressLogFile(at url: URL) {
+        let fileManager = FileManager.default
+        let sourceURL = url
+        let destinationURL = sourceURL.appendingPathExtension("gz")
         
+        do {
+            let sourceData = try Data(contentsOf: sourceURL)
+            let compressedData = try sourceData.gzipped(level: .bestCompression)
+            
+            try compressedData.write(to: destinationURL)
+            try fileManager.removeItem(at: sourceURL)
+            
+            print("Successfully compressed log file to: \(destinationURL.path)")
+        } catch {
+            print("Failed to compress log file: \(error)")
+        }
+    }
+    
     func appendLog(_ items: Any..., showInConsole: Bool = true, includeTimestamp: Bool = true) {
         let logURL = URL(fileURLWithPath: logPath)
         let message = items.map { String(describing: $0) }.joined(separator: " ")
@@ -150,19 +187,17 @@ class LogManager {
     }
     
     func openLogFolder() {
-        let logFolderPath = "/tmp/SlackowWall/"
-        let logFolderURL = URL(fileURLWithPath: logFolderPath)
+        let logFolderURL = URL(fileURLWithPath: logDirectory)
         
-        if FileManager.default.fileExists(atPath: logFolderPath) {
+        if FileManager.default.fileExists(atPath: logDirectory) {
             NSWorkspace.shared.open(logFolderURL)
         }
     }
     
     func openLatestLogInConsole() {
-        let logFilePath = "/tmp/SlackowWall/latest.log"
-        let logFileURL = URL(fileURLWithPath: logFilePath)
+        let logFileURL = URL(fileURLWithPath: logPath)
         
-        if FileManager.default.fileExists(atPath: logFilePath) {
+        if FileManager.default.fileExists(atPath: logPath) {
             NSWorkspace.shared.open(logFileURL)
         }
     }
