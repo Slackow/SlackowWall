@@ -34,6 +34,7 @@
 		ABC355CBA8307F06A7D5A4EE /* lock.wav in Resources */ = {isa = PBXBuildFile; fileRef = ABC35D404984DCF48AD8261C /* lock.wav */; };
 		B61D9A762B890EDA007A35CE /* SettingsLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61D9A752B890EDA007A35CE /* SettingsLabel.swift */; };
 		B61D9A7D2B8916B1007A35CE /* RemoveSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61D9A7C2B8916B1007A35CE /* RemoveSidebar.swift */; };
+		B62B05652C0ADE7500EC087E /* Gzip in Frameworks */ = {isa = PBXBuildFile; productRef = B62B05642C0ADE7500EC087E /* Gzip */; };
 		B63168C52979AE95005958E9 /* PreviewActionsListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63168C42979AE95005958E9 /* PreviewActionsListener.swift */; };
 		B63168C72979E8D7005958E9 /* SettingsCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63168C62979E8D7005958E9 /* SettingsCardView.swift */; };
 		B637DB38296B965D00A73F62 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B637DB37296B965D00A73F62 /* SettingsView.swift */; };
@@ -148,6 +149,7 @@
 			files = (
 				B6B9FE8D2BA1698D0026C268 /* Sparkle in Frameworks */,
 				B6A1FDEB2BDF5BF000EF2180 /* CachedAsyncImage in Frameworks */,
+				B62B05652C0ADE7500EC087E /* Gzip in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -468,6 +470,7 @@
 			packageProductDependencies = (
 				B6B9FE8C2BA1698D0026C268 /* Sparkle */,
 				B6A1FDEA2BDF5BF000EF2180 /* CachedAsyncImage */,
+				B62B05642C0ADE7500EC087E /* Gzip */,
 			);
 			productName = SlackowWall;
 			productReference = 498FB3C828987F5B00405753 /* SlackowWall.app */;
@@ -500,6 +503,7 @@
 			packageReferences = (
 				B6B9FE8B2BA1698D0026C268 /* XCRemoteSwiftPackageReference "Sparkle" */,
 				B6A1FDE92BDF5BF000EF2180 /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */,
+				B62B05632C0ADE7500EC087E /* XCRemoteSwiftPackageReference "GzipSwift" */,
 			);
 			productRefGroup = 498FB3C928987F5B00405753 /* Products */;
 			projectDirPath = "";
@@ -726,7 +730,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 240527;
+				CURRENT_PROJECT_VERSION = 240601;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
 				DEVELOPMENT_TEAM = D64G2TTYWM;
@@ -743,7 +747,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.slackow.SlackowWall;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -762,7 +766,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 240527;
+				CURRENT_PROJECT_VERSION = 240601;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
 				DEVELOPMENT_TEAM = D64G2TTYWM;
@@ -779,7 +783,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.slackow.SlackowWall;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -813,6 +817,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		B62B05632C0ADE7500EC087E /* XCRemoteSwiftPackageReference "GzipSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/1024jp/GzipSwift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.1;
+			};
+		};
 		B6A1FDE92BDF5BF000EF2180 /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/lorenzofiamingo/swiftui-cached-async-image";
@@ -832,6 +844,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		B62B05642C0ADE7500EC087E /* Gzip */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B62B05632C0ADE7500EC087E /* XCRemoteSwiftPackageReference "GzipSwift" */;
+			productName = Gzip;
+		};
 		B6A1FDEA2BDF5BF000EF2180 /* CachedAsyncImage */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B6A1FDE92BDF5BF000EF2180 /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */;
