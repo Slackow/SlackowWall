@@ -2,7 +2,7 @@
 //  CapturePreviewView.swift
 //  SlackowWall
 //
-//  Created by Kihron on 3/13/24.
+//  Created by Kihron on 7/20/24.
 //
 
 import SwiftUI
@@ -12,34 +12,34 @@ struct CapturePreviewView: View {
     @ObservedObject private var profileManager = ProfileManager.shared
     @ObservedObject private var instanceManager = InstanceManager.shared
     
+    @ObservedObject private var captureGrid = CaptureGrid.shared
+    
+    @ObservedObject var instance: TrackedInstance
+    
     @State private var actualSize: CGSize = .zero
     @State private var animateAppearance = false
-    
-    var preview: CapturePreview
-    var size: CGSize
-    var idx: Int
     
     private let titleBarHeight: CGFloat = 30
     
     private var adjustedTitlebarHeight: CGFloat {
         guard actualSize.height > 0 else { return titleBarHeight }
-        let heightScaleFactor = actualSize.height / size.height
+        let heightScaleFactor = actualSize.height / instance.captureRect.height
         return titleBarHeight * heightScaleFactor
     }
     
     private var scaleFactor: CGFloat {
-        let aspectRatioWidth = size.height * 16.0 / 9
-        return min(1.0, aspectRatioWidth / size.width)
+        let aspectRatioWidth = instance.captureRect.height * 16.0 / 9
+        return min(1.0, aspectRatioWidth / instance.captureRect.width)
     }
     
     private var scaledDimensions: CGSize {
-        let aspectRatioWidth = size.height * 16.0 / 9
-        return CGSize(width: min(aspectRatioWidth, size.width), height: size.height)
+        let aspectRatioWidth = instance.captureRect.height * 16.0 / 9
+        return CGSize(width: min(aspectRatioWidth, instance.captureRect.width), height: instance.captureRect.height)
     }
     
     var body: some View {
-        preview
-            .aspectRatio(profileManager.profile.forceAspectRatio ? scaledDimensions : size, contentMode: .fit)
+        instance.capturePreview
+            .aspectRatio(profileManager.profile.forceAspectRatio ? scaledDimensions : instance.captureRect, contentMode: .fit)
             .scaleEffect(CGSize(width: profileManager.profile.forceAspectRatio ? scaleFactor : 1.0, height: 1.0))
             .modifier(SizeReader(size: $actualSize))
             .mask {
@@ -51,22 +51,22 @@ struct CapturePreviewView: View {
             .opacity(animateAppearance ? 1 : 0)
             .overlay(PreviewActionsListener(lockAction: { key in
                 if key.modifierFlags.contains(.shift) {
-                    instanceManager.toggleInstanceLock(idx: idx)
+                    instance.toggleLock()
                 }
             }))
             .onHover { isHovered in
                 if isHovered {
-                    instanceManager.hoveredInstance = idx
+                    instanceManager.hoveredInstance = instance
                 } else {
                     instanceManager.hoveredInstance = nil
                 }
             }
             .onChange(of: instanceManager.keyPressed) { _ in
-                instanceManager.handleKeyEvent(idx: idx)
+                instanceManager.handleKeyEvent(instance: instance)
             }
             .onAppear {
-                if instanceManager.animateGrid {
-                    let delay = Double(idx) * 0.07
+                if captureGrid.animateGrid {
+                    let delay = Double(instance.instanceNumber) * 0.07
                     DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                         withAnimation(.smooth) {
                             animateAppearance = true

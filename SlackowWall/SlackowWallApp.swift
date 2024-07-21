@@ -12,6 +12,7 @@ struct SlackowWallApp: App {
     @Environment(\.openWindow) private var openWindow
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
+    @ObservedObject private var trackingManager = TrackingManager.shared
     @ObservedObject private var instanceManager = InstanceManager.shared
     @ObservedObject private var shortcutManager = ShortcutManager.shared
     @ObservedObject private var alertManager = AlertManager.shared
@@ -24,7 +25,7 @@ struct SlackowWallApp: App {
                 ToolbarItem(placement: .automatic) {
                     HStack(spacing: 8) {
                         HStack(spacing: 8) {
-                            if !shortcutManager.instanceIDs.isEmpty {
+                            if !trackingManager.trackedInstances.isEmpty {
                                 Button(action: { instanceManager.stopAll() }) {
                                     Image(systemName: "stop.fill")
                                         .foregroundColor(.red)
@@ -38,7 +39,7 @@ struct SlackowWallApp: App {
                             }
                         }
                         .frame(width: 48, height: 40, alignment: .trailing)
-                        .animation(.easeInOut(duration: 0.3), value: shortcutManager.instanceIDs)
+                        .animation(.easeInOut(duration: 0.3), value: trackingManager.trackedInstances)
                         .animation(.easeInOut(duration: 0.3), value: alertManager.alert)
                         
                         Button(action: { Task { openWindow(id: "settings-window") }}) {
@@ -47,7 +48,7 @@ struct SlackowWallApp: App {
                         
                         Button(action: { Task {
                             alertManager.checkPermissions()
-                            instanceManager.showInfo = false
+                            CaptureGrid.shared.showInfo = false
                             await ScreenRecorder.shared.resetAndStartCapture()
                         }}) {
                             Image(systemName: "arrow.clockwise")

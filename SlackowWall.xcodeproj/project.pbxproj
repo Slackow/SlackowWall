@@ -38,6 +38,7 @@
 		B63168C52979AE95005958E9 /* PreviewActionsListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63168C42979AE95005958E9 /* PreviewActionsListener.swift */; };
 		B63168C72979E8D7005958E9 /* SettingsCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63168C62979E8D7005958E9 /* SettingsCardView.swift */; };
 		B637DB38296B965D00A73F62 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B637DB37296B965D00A73F62 /* SettingsView.swift */; };
+		B66B374B2C4CA8BB0055482A /* CapturePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66B374A2C4CA8BA0055482A /* CapturePreviewView.swift */; };
 		B67A9D142C04DDA400270811 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67A9D132C04DDA400270811 /* LogManager.swift */; };
 		B68D8C292BEA95BA00072AC5 /* InstanceStates.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68D8C282BEA95BA00072AC5 /* InstanceStates.swift */; };
 		B68D8C2B2BEA96E200072AC5 /* CheckingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68D8C2A2BEA96E200072AC5 /* CheckingMode.swift */; };
@@ -49,7 +50,7 @@
 		B6A55D8E2BA2829400D06086 /* RemoveFocusOnTap.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A55D8D2BA2829400D06086 /* RemoveFocusOnTap.swift */; };
 		B6A55D912BA2917500D06086 /* Dictionary+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A55D902BA2917500D06086 /* Dictionary+Ext.swift */; };
 		B6A55D932BA291A800D06086 /* Optional+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A55D922BA291A800D06086 /* Optional+Ext.swift */; };
-		B6A55D952BA2A7FE00D06086 /* CapturePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A55D942BA2A7FE00D06086 /* CapturePreviewView.swift */; };
+		B6A55D952BA2A7FE00D06086 /* TrackedInstanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A55D942BA2A7FE00D06086 /* TrackedInstanceView.swift */; };
 		B6A55D992BA2AFC500D06086 /* SCWindow+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A55D982BA2AFC400D06086 /* SCWindow+Ext.swift */; };
 		B6B9FE8D2BA1698D0026C268 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = B6B9FE8C2BA1698D0026C268 /* Sparkle */; };
 		B6B9FE932BA16CC00026C268 /* UpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B9FE922BA16CC00026C268 /* UpdateManager.swift */; };
@@ -72,6 +73,10 @@
 		B6E9E36E2970A42D00DF6466 /* ScreenRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E9E36D2970A42D00DF6466 /* ScreenRecorder.swift */; };
 		B6E9E3702970A52E00DF6466 /* CapturePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E9E36F2970A52E00DF6466 /* CapturePreview.swift */; };
 		B6E9E3722970A55800DF6466 /* CaptureEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E9E3712970A55800DF6466 /* CaptureEngine.swift */; };
+		B6F7E3992C4C6B5A009EE1F3 /* TrackedInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F7E3982C4C6B5A009EE1F3 /* TrackedInstance.swift */; };
+		B6F7E39B2C4C7B54009EE1F3 /* TrackingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F7E39A2C4C7B54009EE1F3 /* TrackingManager.swift */; };
+		B6F7E39D2C4C8343009EE1F3 /* CaptureGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F7E39C2C4C8343009EE1F3 /* CaptureGrid.swift */; };
+		B6F7E3A02C4C98E3009EE1F3 /* BehaviorSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F7E39F2C4C98E3009EE1F3 /* BehaviorSettingsViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -107,6 +112,7 @@
 		B63168C42979AE95005958E9 /* PreviewActionsListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewActionsListener.swift; sourceTree = "<group>"; };
 		B63168C62979E8D7005958E9 /* SettingsCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCardView.swift; sourceTree = "<group>"; };
 		B637DB37296B965D00A73F62 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		B66B374A2C4CA8BA0055482A /* CapturePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapturePreviewView.swift; sourceTree = "<group>"; };
 		B67A9D132C04DDA400270811 /* LogManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogManager.swift; sourceTree = "<group>"; };
 		B68D8C282BEA95BA00072AC5 /* InstanceStates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceStates.swift; sourceTree = "<group>"; };
 		B68D8C2A2BEA96E200072AC5 /* CheckingMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckingMode.swift; sourceTree = "<group>"; };
@@ -117,7 +123,7 @@
 		B6A55D8D2BA2829400D06086 /* RemoveFocusOnTap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoveFocusOnTap.swift; sourceTree = "<group>"; };
 		B6A55D902BA2917500D06086 /* Dictionary+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Ext.swift"; sourceTree = "<group>"; };
 		B6A55D922BA291A800D06086 /* Optional+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Optional+Ext.swift"; sourceTree = "<group>"; };
-		B6A55D942BA2A7FE00D06086 /* CapturePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapturePreviewView.swift; sourceTree = "<group>"; };
+		B6A55D942BA2A7FE00D06086 /* TrackedInstanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackedInstanceView.swift; sourceTree = "<group>"; };
 		B6A55D982BA2AFC400D06086 /* SCWindow+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SCWindow+Ext.swift"; sourceTree = "<group>"; };
 		B6B9FE922BA16CC00026C268 /* UpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateManager.swift; sourceTree = "<group>"; };
 		B6B9FE942BA16D730026C268 /* SettingsSliderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsSliderView.swift; sourceTree = "<group>"; };
@@ -140,6 +146,10 @@
 		B6E9E36D2970A42D00DF6466 /* ScreenRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecorder.swift; sourceTree = "<group>"; };
 		B6E9E36F2970A52E00DF6466 /* CapturePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapturePreview.swift; sourceTree = "<group>"; };
 		B6E9E3712970A55800DF6466 /* CaptureEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureEngine.swift; sourceTree = "<group>"; };
+		B6F7E3982C4C6B5A009EE1F3 /* TrackedInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackedInstance.swift; sourceTree = "<group>"; };
+		B6F7E39A2C4C7B54009EE1F3 /* TrackingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingManager.swift; sourceTree = "<group>"; };
+		B6F7E39C2C4C8343009EE1F3 /* CaptureGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureGrid.swift; sourceTree = "<group>"; };
+		B6F7E39F2C4C98E3009EE1F3 /* BehaviorSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BehaviorSettingsViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -221,6 +231,7 @@
 			isa = PBXGroup;
 			children = (
 				6D8A77391AD6F3FC7C4C3F67 /* ShortcutManager.swift */,
+				B6F7E39A2C4C7B54009EE1F3 /* TrackingManager.swift */,
 				6D8A733BE10C0A7DC11C7BCF /* InstanceManager.swift */,
 				B6B9FE922BA16CC00026C268 /* UpdateManager.swift */,
 				6D8A790289C5B8E8251D1E31 /* SoundManager.swift */,
@@ -258,8 +269,9 @@
 			isa = PBXGroup;
 			children = (
 				6D8A71655654992BE658F2A9 /* InstanceInfo.swift */,
-				B6D29FE52BA2123E004F20A2 /* ReleaseEntry.swift */,
+				B6F7E3982C4C6B5A009EE1F3 /* TrackedInstance.swift */,
 				49CCFA8D2BAD188600842FCD /* StandardConfig.swift */,
+				B6D29FE52BA2123E004F20A2 /* ReleaseEntry.swift */,
 				B6E30C162BF71B13008E7004 /* Profile.swift */,
 			);
 			path = Models;
@@ -357,7 +369,8 @@
 			isa = PBXGroup;
 			children = (
 				B68D8C2C2BEBC0FC00072AC5 /* CaptureGridView.swift */,
-				B6A55D942BA2A7FE00D06086 /* CapturePreviewView.swift */,
+				B6A55D942BA2A7FE00D06086 /* TrackedInstanceView.swift */,
+				B66B374A2C4CA8BA0055482A /* CapturePreviewView.swift */,
 				B6E9E36F2970A52E00DF6466 /* CapturePreview.swift */,
 			);
 			path = CapturePreview;
@@ -366,6 +379,8 @@
 		B672AFDB2BEBF48800FECF51 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				B6F7E3A22C4CA0D4009EE1F3 /* Main */,
+				B6F7E39E2C4C98D5009EE1F3 /* Settings */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -449,6 +464,22 @@
 				B6E9E3712970A55800DF6466 /* CaptureEngine.swift */,
 			);
 			path = ScreenCapture;
+			sourceTree = "<group>";
+		};
+		B6F7E39E2C4C98D5009EE1F3 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				B6F7E39F2C4C98E3009EE1F3 /* BehaviorSettingsViewModel.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		B6F7E3A22C4CA0D4009EE1F3 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				B6F7E39C2C4C8343009EE1F3 /* CaptureGrid.swift */,
+			);
+			path = Main;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -557,6 +588,7 @@
 				498FB3CC28987F5B00405753 /* SlackowWallApp.swift in Sources */,
 				B6B9FE932BA16CC00026C268 /* UpdateManager.swift in Sources */,
 				B6A1FDE32BDF456800EF2180 /* SettingsButtonView.swift in Sources */,
+				B6F7E3992C4C6B5A009EE1F3 /* TrackedInstance.swift in Sources */,
 				B6A1FDE82BDF5BBF00EF2180 /* CreditsView.swift in Sources */,
 				B6C17C0D2BFC491700F30C1F /* WallAlert.swift in Sources */,
 				B67A9D142C04DDA400270811 /* LogManager.swift in Sources */,
@@ -564,6 +596,7 @@
 				B6E30C152BF5AB8C008E7004 /* ProfileManager.swift in Sources */,
 				B6E9E36E2970A42D00DF6466 /* ScreenRecorder.swift in Sources */,
 				B6B9FE972BA16D730026C268 /* SettingsSliderView.swift in Sources */,
+				B6F7E39D2C4C8343009EE1F3 /* CaptureGrid.swift in Sources */,
 				6D8A79A5A9E467B05B05C742 /* InstanceManager.swift in Sources */,
 				B6C17C0B2BFC48E300F30C1F /* ToolbarAlertView.swift in Sources */,
 				B63168C52979AE95005958E9 /* PreviewActionsListener.swift in Sources */,
@@ -575,7 +608,9 @@
 				49CCFA8E2BAD188600842FCD /* StandardConfig.swift in Sources */,
 				6D8A7C560BB403B8F8251B8D /* ShortcutManager.swift in Sources */,
 				B6E30C172BF71B13008E7004 /* Profile.swift in Sources */,
+				B66B374B2C4CA8BB0055482A /* CapturePreviewView.swift in Sources */,
 				6D8A76DD802153F673BCCB60 /* SoundManager.swift in Sources */,
+				B6F7E3A02C4C98E3009EE1F3 /* BehaviorSettingsViewModel.swift in Sources */,
 				49FA20352BF3B5B300BA8CD0 /* DimensionCardView.swift in Sources */,
 				B6B9FE9D2BA16DB00026C268 /* SizeReader.swift in Sources */,
 				6D8A7F78665C71106EE9F8CA /* OBSManager.swift in Sources */,
@@ -585,7 +620,8 @@
 				B68D8C2D2BEBC0FC00072AC5 /* CaptureGridView.swift in Sources */,
 				B6A55D8E2BA2829400D06086 /* RemoveFocusOnTap.swift in Sources */,
 				B6B9FE992BA16D730026C268 /* SettingsPickerView.swift in Sources */,
-				B6A55D952BA2A7FE00D06086 /* CapturePreviewView.swift in Sources */,
+				B6A55D952BA2A7FE00D06086 /* TrackedInstanceView.swift in Sources */,
+				B6F7E39B2C4C7B54009EE1F3 /* TrackingManager.swift in Sources */,
 				B6D29FE62BA2123E004F20A2 /* ReleaseEntry.swift in Sources */,
 				B6B9FEA02BA16DDC0026C268 /* SettingsOption.swift in Sources */,
 				6D8A72A43936AFAEFF91FCF9 /* InstanceInfo.swift in Sources */,
@@ -730,7 +766,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 240601;
+				CURRENT_PROJECT_VERSION = 240721;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
 				DEVELOPMENT_TEAM = D64G2TTYWM;
@@ -747,7 +783,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.slackow.SlackowWall;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -766,7 +802,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 240601;
+				CURRENT_PROJECT_VERSION = 240721;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
 				DEVELOPMENT_TEAM = D64G2TTYWM;
@@ -783,7 +819,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.slackow.SlackowWall;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

@@ -12,9 +12,7 @@ struct BehaviorSettings: View {
     @ObservedObject private var instanceManager = InstanceManager.shared
     @ObservedObject private var shortcutManager = ShortcutManager.shared
     
-    private var screenSize: String {
-        return instanceManager.screenSize?.debugDescription.replacingOccurrences(of: ".0", with: "") ?? "Unknown"
-    }
+    @StateObject private var viewModel = BehaviorSettingsViewModel()
     
     var body: some View {
         ScrollView {
@@ -39,11 +37,11 @@ struct BehaviorSettings: View {
                     SettingsToggleView(title: "Use State Output", description: "Turn this on if you have the state output mod, it prevents an instance from reseting if it is still generating the world.", option: $profileManager.profile.checkStateOutput)
                 }
                 
-                SettingsLabel(title: "Window Dimensions", description: "The dimensions of the game windows in different cases. These values should not exceed the current monitor size: [\(screenSize)](0).")
+                SettingsLabel(title: "Window Dimensions", description: "The dimensions of the game windows in different cases. These values should not exceed the current monitor size: [\(viewModel.screenSize)](0).")
                     .tint(.orange)
                     .allowsHitTesting(false)
                     .contentTransition(.numericText())
-                    .animation(.smooth, value: screenSize)
+                    .animation(.smooth, value: viewModel.screenSize)
                     .padding(.top, 5)
                 
                 DimensionCardView(name: "Gameplay", description: "The size of the game while you are in an instance, which is required for the other modes to work.", isGameplayMode: true, x: $profileManager.profile.baseX, y: $profileManager.profile.baseY, width: $profileManager.profile.baseWidth, height: $profileManager.profile.baseHeight)

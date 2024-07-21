@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct InstancesSettings: View {
+    @ObservedObject private var trackingManager = TrackingManager.shared
     @ObservedObject private var profileManager = ProfileManager.shared
     @ObservedObject private var instanceManager = InstanceManager.shared
     @ObservedObject private var shortcutManager = ShortcutManager.shared
@@ -53,24 +54,24 @@ struct InstancesSettings: View {
 
                 SettingsCardView {
                     VStack {
-                        SettingsButtonView(title: "Stop All (\(shortcutManager.instanceIDs.count))", description: "Closes all currently tracked instances and SlackowWall itself.", action: instanceManager.stopAll) {
+                        SettingsButtonView(title: "Stop All (\(trackingManager.trackedInstances.count))", description: "Closes all currently tracked instances and SlackowWall itself.", action: instanceManager.stopAll) {
                             Image(systemName: "stop.fill")
                                 .foregroundColor(.red)
                         }
                         .disabled(instanceManager.isStopping)
                         .contentTransition(.numericText())
-                        .animation(.linear, value: shortcutManager.instanceIDs.count)
+                        .animation(.linear, value: trackingManager.trackedInstances.count)
 
                         Divider()
                             .padding(.bottom, 4)
 
                         SettingsButtonView(title: "Copy Mods to All", description: "Copies all mods from the first instance to all other open instances. This operation will close all instances.", buttonText: "Sync", action: instanceManager.copyMods)
-                            .disabled(shortcutManager.instanceIDs.count < 2)
+                            .disabled(trackingManager.trackedInstances.count < 2)
 
                         Divider()
 
                         SettingsButtonView(title: "First Instance Config", description: "Opens the config folder of the first instance.", buttonText: "...", action: shortcutManager.openFirstConfig)
-                            .disabled(shortcutManager.instanceIDs.isEmpty)
+                            .disabled(trackingManager.trackedInstances.isEmpty)
                     }
                 }
 
@@ -112,7 +113,7 @@ struct InstancesSettings: View {
                                 Button(action: { instanceManager.move(forward: true, direct: true) }) {
                                     Text("Adjust")
                                 }
-                                .disabled(instanceManager.moving || shortcutManager.instanceIDs.isEmpty)
+                                .disabled(instanceManager.moving || trackingManager.trackedInstances.isEmpty)
                                 .frame(maxWidth: .infinity, alignment: .trailing)
                             }
                         }

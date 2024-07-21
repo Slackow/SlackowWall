@@ -19,7 +19,7 @@ import SwiftUI
             updateEngine()
         }
     }
-
+    
     @Published var selectedWindow: SCWindow? {
         didSet {
             updateEngine()
@@ -34,28 +34,28 @@ import SwiftUI
     
     @Published var isRunning = false
     @Published var contentSizes: [CGSize] = []
-
+    
     /// A view that renders the screen content.
     @Published var capturePreviews: [CapturePreview] = []
-
+    
     @Published private(set) var availableDisplays = [SCDisplay]()
     @Published private(set) var availableWindows = [SCWindow]()
     
     private var availableApps = [SCRunningApplication]()
     private var windowFilters: [CGWindowID: SCContentFilter] = [:]
-
+    
     // The object that manages the SCStream.
     private let captureEngine = CaptureEngine()
-
+    
     private var isSetup = false
-
+    
     private let logger = Logger()
     
     static let shared = ScreenRecorder()
     
     // Combine subscribers.
     private var subscriptions = Set<AnyCancellable>()
-
+    
     var canRecord: Bool {
         get async {
             do {
@@ -74,18 +74,27 @@ import SwiftUI
     
     private var contentFilters: [SCContentFilter] {
         var filters: [SCContentFilter] = []
-        let instances = shortcutManager.instanceNums
         
         availableWindows.sort { window, window2 in
-            (instances[window.owningApplication?.processID ?? 0] ?? 0) < (instances[window2.owningApplication?.processID ?? 0] ?? 0)
+            guard let pid1 = window.owningApplication?.processID,
+                  let pid2 = window2.owningApplication?.processID,
+                  let instance1 = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid1 }),
+                  let instance2 = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid2 }) else {
+                return false
+            }
+            return instance1.instanceNumber < instance2.instanceNumber
         }
         
         if !obsManager.acted {
-            obsManager.storeWindowIDs(info: availableWindows.map { 
-                (instances[$0.owningApplication?.processID ?? 0] ?? 0, $0.windowID) })
+            obsManager.storeWindowIDs(info: availableWindows.map { window in
+                (TrackingManager.shared.trackedInstances.first(where: { $0.pid == window.owningApplication?.processID })?.instanceNumber ?? 0, window.windowID) })
         }
         
         for window in availableWindows where windowFilters[window.windowID] == nil {
+            if let pid = window.owningApplication?.processID, let trackedInstance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid }) {
+                trackedInstance.windowID = window.windowID
+            }
+            
             let filter = SCContentFilter(desktopIndependentWindow: window)
             windowFilters[window.windowID] = filter
             contentSizes.append(CGSize(width: filter.contentRect.width, height: filter.contentRect.height))
@@ -125,40 +134,41 @@ import SwiftUI
         guard !isRunning else {
             return
         }
-
+        
         if !isSetup {
-            // Starting polling for available screen content.
+            // Start polling for available screen content.
             await refreshAvailableContent()
             isSetup = true
         }
-
+        
         // Update the running state.
         isRunning = true
         LogManager.shared.appendLog("Screen capture started")
         
         let filters = contentFilters
-        for idx in filters.indices {
-            let capturePreview = CapturePreview()
+        for (idx, filter) in filters.enumerated() {
+            let capturePreview = TrackingManager.shared.trackedInstances[idx].capturePreview
+            TrackingManager.shared.trackedInstances[idx].captureRect = CGSize(width: filter.contentRect.width, height: filter.contentRect.height)
             capturePreviews.append(capturePreview)
             
-            let streamConfiguration = createStreamConfiguration(width: contentSizes[idx].width, height: contentSizes[idx].height)
-
+            let streamConfiguration = createStreamConfiguration(width: filter.contentRect.width, height: filter.contentRect.height)
+            
             Task {
                 do {
-                    for try await frame in captureEngine.startCapture(configuration: streamConfiguration, filter: filters[idx]) {
+                    for try await frame in captureEngine.startCapture(configuration: streamConfiguration, filter: filter) {
                         capturePreview.updateFrame(frame)
                     }
                 } catch let error {
                     logger.error("\(error.localizedDescription)")
                     LogManager.shared.appendLog("Error:", error.localizedDescription)
                     // Unable to start the stream. Set the running state to false.
-                    InstanceManager.shared.showInfo = true
+                    CaptureGrid.shared.showInfo = true
                     isRunning = false
                 }
             }
         }
     }
-
+    
     // Stops capturing screen content.
     func stop(removeStreams: Bool = false) async {
         guard isRunning else {
@@ -203,20 +213,20 @@ import SwiftUI
             }
         }
         
-        shortcutManager.fetchInstanceInfo()
-        shortcutManager.instanceIDs.forEach(shortcutManager.resizeReset)
-        
+        TrackingManager.shared.fetchInstances()
+        TrackingManager.shared.trackedInstances.map({ $0.pid }).forEach(shortcutManager.resizeReset)
+
         if ProfileManager.shared.profile.shouldHideWindows {
             shortcutManager.unhideInstances()
         }
-            
+        
         // 40ms delay so macOS can catch up, a hack yes, but lol?
         try? await Task.sleep(nanoseconds: 40_000_000)
         
         // Start the capture process again
         await start()
     }
-
+    
     // - Tag: UpdateCaptureConfig
     private func updateEngine() {
         guard isRunning else {
@@ -230,7 +240,7 @@ import SwiftUI
             }
         }
     }
-
+    
     // - Tag: GetAvailableContent
     private func refreshAvailableContent() async {
         do {
@@ -239,13 +249,13 @@ import SwiftUI
             
             let availableContent = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: false)
             availableDisplays = availableContent.displays
-
+            
             let windows = filterWindows(availableContent.windows)
             if windows != availableWindows {
                 availableWindows = windows
             }
             availableApps = availableContent.applications
-
+            
             if selectedDisplay == nil {
                 selectedDisplay = availableDisplays.first
             }
@@ -256,7 +266,7 @@ import SwiftUI
             logger.error("Failed to get the shareable content: \(error.localizedDescription)")
         }
     }
-
+    
     private func filterWindows(_ windows: [SCWindow]) -> [SCWindow] {
         windows.filter { window in
             guard let processID = window.owningApplication?.processID, let title = window.title else { return false }
@@ -270,10 +280,10 @@ import SwiftUI
                let majorVersion = Int(title[majorRange]),
                majorVersion >= 6,
                title.contains("Minecraft") {
-                return shortcutManager.instanceIDs.contains(processID)
+                return TrackingManager.shared.trackedInstances.contains(where: { $0.pid == processID })
             }
             
-            return (title.contains("Prism Launcher") || title.contains("MultiMC")) && shortcutManager.instanceIDs.contains(processID)
+            return (title.contains("Prism Launcher") || title.contains("MultiMC")) && TrackingManager.shared.trackedInstances.contains(where: { $0.pid == processID })
         }
     }
 }

@@ -124,7 +124,7 @@ struct ProfileSettings: View {
                 Task {
                     ScreenRecorder.shared.capturePreviews.removeAll()
                     profileManager.activeProfile = value
-                    InstanceManager.shared.showInfo = false
+                    CaptureGrid.shared.showInfo = false
                     await ScreenRecorder.shared.resetAndStartCapture(shouldAutoSwitch: false)
                 }
             }

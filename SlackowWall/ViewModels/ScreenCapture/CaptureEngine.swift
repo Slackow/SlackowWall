@@ -118,17 +118,17 @@ private class CaptureEngineStreamOutput: NSObject, SCStreamOutput, SCStreamDeleg
         
         // Determine which type of data the sample buffer contains.
         switch outputType {
-        case .screen:
-            // Create a CapturedFrame structure for a video sample buffer.
-            guard let frame = createFrame(for: sampleBuffer) else { return }
-            capturedFrameHandler?(frame)
-        case .audio:
-            // Create an AVAudioPCMBuffer from an audio sample buffer.
-//            guard let samples = createPCMBuffer(for: sampleBuffer) else { return }
-//            pcmBufferHandler?(samples)
-            return
-        @unknown default:
-            fatalError("Encountered unknown stream output type: \(outputType)")
+            case .screen:
+                // Create a CapturedFrame structure for a video sample buffer.
+                guard let frame = createFrame(for: sampleBuffer) else { return }
+                capturedFrameHandler?(frame)
+            case .audio:
+                // Create an AVAudioPCMBuffer from an audio sample buffer.
+                //            guard let samples = createPCMBuffer(for: sampleBuffer) else { return }
+                //            pcmBufferHandler?(samples)
+                return
+            @unknown default:
+                fatalError("Encountered unknown stream output type: \(outputType)")
         }
     }
     

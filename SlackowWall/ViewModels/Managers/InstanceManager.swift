@@ -3,53 +3,35 @@
 //
 
 import SwiftUI
-import Combine
+
 
 class InstanceManager: ObservableObject {
-    @Published var screenSize: CGSize?
-    
-    @Published var lockedInstances: Int64 = 0
-    @Published var hoveredInstance: Int? = nil
+    @Published var hoveredInstance: TrackedInstance? = nil
     @Published var keyPressed: Character? = nil
     
-    @Published var isActive: Bool = true
     @Published var isStopping = false
     @Published var moving = false
     
-    @Published var animateGrid: Bool = false
-    @Published var showInfo: Bool = false
-    
     static let shared = InstanceManager()
     
-    private var cancellable: AnyCancellable?
-    
     init() {
-        self.screenSize = NSScreen.main?.visibleFrame.size
-        setupScreenChangeNotification()
+
     }
     
-    private func setupScreenChangeNotification() {
-        cancellable = NotificationCenter.default
-            .publisher(for: NSApplication.didChangeScreenParametersNotification)
-            .sink { [weak self] _ in
-                self?.screenSize = NSScreen.main?.visibleFrame.size
-            }
-    }
-    
-    @MainActor func openInstance(idx: Int) {
+    @MainActor func openInstance(instance: TrackedInstance) {
         if (NSApplication.shared.isActive) {
             if ProfileManager.shared.profile.checkStateOutput {
-                let instanceInfo = ShortcutManager.shared.states[idx]
+                let instanceInfo = instance.info
                 instanceInfo.updateState(force: true)
                 
                 if instanceInfo.state != InstanceStates.paused && instanceInfo.state != InstanceStates.unpaused {
-                    lockInstance(idx: idx)
+                    instance.lock()
                     return
                 }
             }
             
-            switchToInstance(idx: idx)
-            unlockInstance(idx: idx)
+            switchToInstance(instance: instance)
+            instance.unlock()
         }
     }
     
@@ -68,15 +50,17 @@ class InstanceManager: ObservableObject {
         NSRunningApplication(processIdentifier: targetPID)?.activate(options: [.activateAllWindows, .activateIgnoringOtherApps])
     }
     
-    func switchToInstance(idx: Int) {
-        let pid = getInstanceProcess(idx: idx)
-        OBSManager.shared.writeWID(idx: idx + 1)
-        LogManager.shared.appendLog("Pressed: \(pid) #(\(idx))")
+    func switchToInstance(instance: TrackedInstance) {
+        guard let windowID = instance.windowID else { return }
+        let pid = instance.pid
+        
+        OBSManager.shared.writeWID(windowID: windowID)
+        LogManager.shared.appendLog("Pressed: \(pid) #(\(instance.instanceNumber))")
         
         Task {
             LogManager.shared.appendLog("Switching...")
             if ProfileManager.shared.profile.shouldHideWindows {
-                let pids = ShortcutManager.shared.instanceIDs.filter {$0 != pid}
+                let pids = TrackingManager.shared.trackedInstances.map({ $0.pid }).filter({$0 != pid})
                 hideWindows(pids)
             }
             ShortcutManager.shared.resizeBase(pid: pid)
@@ -88,65 +72,45 @@ class InstanceManager: ObservableObject {
                 ShortcutManager.shared.sendF1(pid: pid)
             }
             
-            ShortcutManager.shared.states[idx].checkState = .NONE
+            instance.info.checkState = .NONE
             LogManager.shared.appendLog("Switched to instance")
         }
     }
     
-    func toggleInstanceLock(idx: Int) {
-        let oldLocked = lockedInstances
-        lockedInstances ^= 1 << idx
-        
-        if oldLocked < lockedInstances {
-            SoundManager.shared.playSound(sound: "lock")
-            LogManager.shared.appendLog("Locking \(idx)")
-        } else {
-            LogManager.shared.appendLog ("Unlocking \(idx)")
-        }
-    }
-    
-    func lockInstance(idx: Int) {
-        if !isLocked(idx: idx) {
-            toggleInstanceLock(idx: idx)
-        }
-    }
-    
-    @inline(__always) public func unlockInstance(idx: Int) {
-        lockedInstances &= ~(1 << idx)
-    }
-    
     func copyMods() {
-        ShortcutManager.shared.killAll()
-        guard let statePath = ShortcutManager.shared.states.first?.statePath else { return }
+        guard let statePath =  TrackingManager.shared.trackedInstances.map({ $0.info }).first?.statePath else { return }
         let src = URL(filePath: statePath).deletingLastPathComponent().appendingPathComponent("mods")
-        let f = FileManager.default
-        ShortcutManager.shared.states.dropFirst().forEach {
+        let fileManager = FileManager.default
+        
+        TrackingManager.shared.trackedInstances.map({ $0.info }).dropFirst().forEach {
             let dst = URL(filePath: $0.statePath).deletingLastPathComponent().appendingPathComponent("mods")
             
-            print("copying all from", src.path, "to", dst.path)
+            print("Copying all from", src.path, "to", dst.path)
             
             do {
-                if f.fileExists(atPath: dst.path) {
-                    try f.removeItem(at: dst)
+                if fileManager.fileExists(atPath: dst.path) {
+                    try fileManager.removeItem(at: dst)
                 }
                 // Create the destination directory
-                try f.createDirectory(at: dst, withIntermediateDirectories: true, attributes: nil)
+                try fileManager.createDirectory(at: dst, withIntermediateDirectories: true, attributes: nil)
                 
                 // Get the list of items in the source directory
-                let items = try f.contentsOfDirectory(atPath: src.path)
+                let items = try fileManager.contentsOfDirectory(atPath: src.path)
                 
                 // Copy each item from the source to the destination
                 for item in items {
                     let srcItem = src.appendingPathComponent(item)
                     let dstItem = dst.appendingPathComponent(item)
-                    try f.copyItem(at: srcItem, to: dstItem)
+                    try fileManager.copyItem(at: srcItem, to: dstItem)
                 }
             } catch { print(error.localizedDescription) }
         }
+        
+        TrackingManager.shared.killAll()
     }
     
-    @MainActor func handleKeyEvent(idx: Int) {
-        let pid = getInstanceProcess(idx: idx)
+    @MainActor func handleKeyEvent(instance: TrackedInstance) {
+        let pid = instance.pid
         
         if keyPressed == "t" {
             resetAllUnlocked()
@@ -159,13 +123,13 @@ class InstanceManager: ObservableObject {
             return
         }
         
-        if hoveredInstance == idx {
+        if hoveredInstance == instance {
             switch keyPressed {
-                case "r": openInstance(idx: idx)
-                case "e": ShortcutManager.shared.resetInstance(pid: pid)
-                case "f": enterAndResetUnlocked(idx: idx)
+                case "r": openInstance(instance: instance)
+                case "e": resetInstance(instance: instance)
+                case "f": enterAndResetUnlocked(instance: instance)
                 case "p": ShortcutManager.shared.sendF3Esc(pid: pid)
-                case "c": toggleInstanceLock(idx: idx)
+                case "c": instance.toggleLock()
                 case "u": ShortcutManager.shared.globalReset()
                 default: return
             }
@@ -173,64 +137,41 @@ class InstanceManager: ObservableObject {
         }
     }
     
-    @MainActor private func enterAndResetUnlocked(idx: Int) {
-        let pid = getInstanceProcess(idx: idx)
-        let instanceIDs = ShortcutManager.shared.instanceIDs
-        openInstance(idx: idx)
-        var idx = 0
-        for instance in instanceIDs {
-            if instance != pid && canReset(idx: idx) {
-                ShortcutManager.shared.resetInstance(pid: instance)
+    @MainActor private func enterAndResetUnlocked(instance: TrackedInstance) {
+        let pid = instance.pid
+        openInstance(instance: instance)
+        for instance in TrackingManager.shared.trackedInstances {
+            if instance.pid != pid && canReset(instance: instance) {
+                resetInstance(instance: instance)
             }
-            idx += 1
         }
     }
     
-    @inline(__always) public func isLocked(idx: Int) -> Bool {
-        return (lockedInstances & (1 << idx)) != 0
-    }
-    
-    @inline(__always) private func canReset(idx: Int) -> Bool {
-        if isLocked(idx: idx) { return false }
+    private func canReset(instance: TrackedInstance) -> Bool {
+        if instance.isLocked { return false }
         if !ProfileManager.shared.profile.checkStateOutput { return true }
-        let state = ShortcutManager.shared.states[idx]
-        state.updateState(force: true)
-        return state.state != InstanceStates.waiting && state.state != InstanceStates.generating
+        let info = instance.info
+        info.updateState(force: true)
+        return info.state != InstanceStates.waiting && info.state != InstanceStates.generating
     }
     
     private func resetAllUnlocked() {
         LogManager.shared.appendLog("Reset all possible")
-        let instanceIDs = ShortcutManager.shared.instanceIDs
-        var idx = 0
-        for instance in instanceIDs {
-            if canReset(idx: idx) {
-                ShortcutManager.shared.resetInstance(pid: instance)
+        for instance in TrackingManager.shared.trackedInstances {
+            if canReset(instance: instance) {
+                resetInstance(instance: instance)
             } else {
-                LogManager.shared.appendLog("Did not reset: \(instance), State: \(ShortcutManager.shared.states[idx].state)")
-            }
-            idx += 1
-        }
-    }
-    
-    func showInstanceInfo() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            withAnimation(.smooth) {
-                self.showInfo = true
+                LogManager.shared.appendLog("Did not reset: \(instance.pid), State: \(instance.info.state)")
             }
         }
     }
     
-    func handleGridAnimation(value: Int) {
-        if value > 0 {
-            animateGrid = true
-            
-            let delay = (Double(value) * 0.07) + 0.07
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                self.animateGrid = false
-            }
-        } else {
-            animateGrid = false
-        }
+    func resetInstance(instance: TrackedInstance) {
+        let info = instance.info
+        info.checkState = .GENNING
+        ShortcutManager.shared.sendReset(pid: instance.pid)
+        ShortcutManager.shared.playResetSound()
+        instance.unlock()
     }
     
     func stopAll() {
@@ -238,12 +179,8 @@ class InstanceManager: ObservableObject {
         
         Task {
             await ScreenRecorder.shared.stop()
-            ShortcutManager.shared.killAll()
+            TrackingManager.shared.killAll()
         }
-    }
-    
-    func getInstanceProcess(idx: Int) -> pid_t {
-        return ShortcutManager.shared.states[idx].pid
     }
     
     func move(forward: Bool, direct: Bool = false) {
@@ -251,7 +188,7 @@ class InstanceManager: ObservableObject {
         Task {
             let xOff = (ProfileManager.shared.profile.moveXOffset ?? 0) * (forward ? 1 : -1)
             let yOff = (ProfileManager.shared.profile.moveYOffset ?? 0) * (forward ? 1 : -1)
-            let pids = ShortcutManager.shared.instanceIDs
+            let pids = TrackingManager.shared.trackedInstances.map { $0.pid }
             let width = ProfileManager.shared.profile.setWidth ?? 0
             let height = ProfileManager.shared.profile.setHeight ?? 0
             let setSize = width > 0 && height > 0
@@ -263,7 +200,7 @@ class InstanceManager: ObservableObject {
             
             if setSize {
                 DispatchQueue.main.async {
-                    self.showInfo = false
+                    CaptureGrid.shared.showInfo = false
                 }
                 
                 await ScreenRecorder.shared.stop(removeStreams: true)

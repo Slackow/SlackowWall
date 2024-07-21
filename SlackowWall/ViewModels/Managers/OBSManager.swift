@@ -74,10 +74,9 @@ class OBSManager: ObservableObject {
         print("Hey I stored the window ID's: \(wids)")
     }
     
-    @discardableResult func writeWID(idx: Int) -> CGWindowID {
+    @discardableResult func writeWID(windowID: CGWindowID) -> CGWindowID {
         let filePath = obsScriptPath
-        let wid = wids[idx] ?? 0
-        let fileContents = "\(UUID()):\(wid)"
+        let fileContents = "\(UUID()):\(windowID)"
         let fileManager = FileManager.default
         
         if !fileManager.fileExists(atPath: filePath) {
@@ -92,6 +91,6 @@ class OBSManager: ObservableObject {
         } catch {
             print("Error writing to file: \(error)")
         }
-        return wid
+        return windowID
     }
 }

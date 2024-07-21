@@ -11,73 +11,20 @@ import AVFoundation
 import ApplicationServices
 
 final class ShortcutManager: ObservableObject {
-    @Published var instanceNums = [pid_t:Int]()
-    @Published var instanceIDs = [pid_t]()
-    @Published var states = [InstanceInfo]()
-    
     static let shared = ShortcutManager()
     
     init() {
-        fetchInstanceInfo()
         
-        // updateStates()
-    }
-    
-    func fetchInstanceInfo() {
-        fetchInstanceNums()
-        fetchInstanceIDs()
-    }
-    
-    private func fetchInstanceNums() {
-        instanceNums.removeAll()
-        
-        getAllApps().forEach {
-            print("\($0.localizedName ?? "nil") pid:\($0.processIdentifier) num: \(getInstanceNum(app: $0))")
-            let num = getInstanceNum(app: $0)
-            if num > 0 {
-                LogManager.shared.appendLog("Window Name: \($0.localizedName ?? ""), Instance Number: \(num)")
-            }
-        }
-    }
-    
-    private func fetchInstanceIDs() {
-        instanceIDs.removeAll()
-        
-        let byInstanceNum = instanceNums.swapKeyValues()
-        instanceIDs = Array((1..<byInstanceNum.count).map({ byInstanceNum[$0] ?? 0 }))
-        states = instanceIDs.map { pid in
-            let data = InstanceInfo(pid: pid)
-            if let args = Utils.processArguments(pid: pid) {
-                if let nativesArg = args.first(where: {$0.starts(with: "-Djava.library.path=")}) {
-                    let arg = nativesArg.dropLast("/natives".count)
-                        .dropFirst("-Djava.library.path=".count)
-                    data.statePath = "\(arg)/.minecraft/wpstateout.txt"
-                }
-            }
-            return data
-        }
-        
-        LogManager.shared.appendLog("Instance IDs:", instanceIDs)
-        logStatePaths()
-        print(states)
     }
     
     func openFirstConfig() {
-        guard let firstStatePath = states.first?.statePath else { return }
+        guard let firstStatePath = TrackingManager.shared.trackedInstances.first?.info.statePath else { return }
         let path = URL(filePath: firstStatePath).deletingLastPathComponent().appendingPathComponent("config")
         NSWorkspace.shared.open(path)
     }
     
     private func closeSettingsWindow() {
         NSApplication.shared.windows.filter({ $0.title == "Settings"}).first?.close()
-    }
-    
-    private func logStatePaths() {
-        let homeDirectory = FileManager.default.homeDirectoryForCurrentUser.path
-        states.forEach { info in
-            let sanitizedPath = info.statePath.replacingOccurrences(of: homeDirectory, with: "~")
-            LogManager.shared.appendLog(sanitizedPath, showInConsole: false)
-        }
     }
     
     func handleGlobalKey(_ key: NSEvent) {
@@ -90,14 +37,14 @@ final class ShortcutManager: ObservableObject {
     }
     
     func globalReset() {
-        let apps = NSWorkspace.shared.runningApplications.filter{ $0.activationPolicy == .regular }
-        guard let activeWindow = apps.first(where:{$0.isActive}) else { return }
+        let apps = NSWorkspace.shared.runningApplications.filter { $0.activationPolicy == .regular }
+        guard let activeWindow = apps.first(where: { $0.isActive }) else { return }
         
         let pid = activeWindow.processIdentifier
-        guard instanceIDs.contains(pid) else { return }
+        guard let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid }) else { return }
         
         LogManager.shared.appendLog("Returning...")
-        resetInstance(pid: pid)
+        InstanceManager.shared.resetInstance(instance: instance)
         
         if ProfileManager.shared.profile.shouldHideWindows {
             unhideInstances()
@@ -105,13 +52,13 @@ final class ShortcutManager: ObservableObject {
         
         closeSettingsWindow()
         NSApp.activate(ignoringOtherApps: true)
-        resizeReset(pid: pid)
+        resizeReset(pid: instance.pid)
         LogManager.shared.appendLog("Returned to SlackowWall")
     }
     
     func resizePlanar() {
         let apps = NSWorkspace.shared.runningApplications.filter{ $0.activationPolicy == .regular }
-        guard let activeWindow = apps.first(where:{$0.isActive}), instanceIDs.contains(activeWindow.processIdentifier) else { return }
+        guard let activeWindow = apps.first(where:{$0.isActive}), TrackingManager.shared.getValues(\.pid).contains(activeWindow.processIdentifier) else { return }
         let w = convertToFloat(ProfileManager.shared.profile.wideWidth)
         let h = convertToFloat(ProfileManager.shared.profile.wideHeight)
         let x = ProfileManager.shared.profile.wideX.map(CGFloat.init)
@@ -137,7 +84,7 @@ final class ShortcutManager: ObservableObject {
     
     func resizeAlt() {
         let apps = NSWorkspace.shared.runningApplications.filter{ $0.activationPolicy == .regular }
-        guard let activeWindow = apps.first(where:{$0.isActive}), instanceIDs.contains(activeWindow.processIdentifier) else { return }
+        guard let activeWindow = apps.first(where:{$0.isActive}), TrackingManager.shared.getValues(\.pid).contains(activeWindow.processIdentifier) else { return }
         let w = convertToFloat(ProfileManager.shared.profile.altWidth)
         let h = convertToFloat(ProfileManager.shared.profile.altHeight)
         let x = ProfileManager.shared.profile.altX.map(CGFloat.init)
@@ -150,7 +97,7 @@ final class ShortcutManager: ObservableObject {
     }
     
     func resize(pid: pid_t, x: CGFloat? = nil, y: CGFloat? = nil, width: CGFloat, height: CGFloat, force: Bool = false) {
-        let pids = ShortcutManager.shared.instanceIDs
+        let pids = TrackingManager.shared.getValues(\.pid)
         if !(width > 0 && height > 0) || pids.isEmpty {
             return
         }
@@ -198,7 +145,7 @@ final class ShortcutManager: ObservableObject {
     }
     
     func unhideInstances() {
-        let pids = ShortcutManager.shared.instanceIDs
+        let pids = TrackingManager.shared.getValues(\.pid)
         for pid in pids {
             let app = AXUIElementCreateApplication(pid)
             var error: AXError = AXError.success
@@ -218,133 +165,9 @@ final class ShortcutManager: ObservableObject {
         task.waitUntilExit()
     }
     
-    func killAll() {
-        let runningApps = getAllApps()
-        var appsToTerminate: [NSRunningApplication] = []
-        
-        // Send terminate signal to the apps
-        for app in runningApps where instanceIDs.contains(app.processIdentifier) {
-            app.terminate()
-            appsToTerminate.append(app)
-            LogManager.shared.appendLog("Terminating Instance:", app.processIdentifier, showInConsole: false)
-        }
-        
-        // Check if the apps have terminated
-        let queue = DispatchQueue.global(qos: .background)
-        let timer = DispatchSource.makeTimerSource(queue: queue)
-        timer.schedule(deadline: .now(), repeating: 0.1)
-        
-        timer.setEventHandler {
-            if appsToTerminate.allSatisfy({ $0.isTerminated }) {
-                timer.cancel()
-                DispatchQueue.main.async {
-                    LogManager.shared.appendLog("Closed SlackowWall", showInConsole: false)
-                    exit(0)
-                }
-            }
-        }
-        
-        timer.resume()
-    }
-    
-    func getAllApps() -> [NSRunningApplication] {
-        return NSWorkspace.shared.runningApplications.filter{  $0.activationPolicy == .regular }
-    }
-    
-    func getInstanceNum(app: NSRunningApplication) -> Int {
-        let pid = app.processIdentifier
-        if let num = instanceNums[pid] {
-            return num
-        } else {
-            if isMinecraftInstance(app: app) {
-                if let args = Utils.processArguments(pid: pid) {
-                    if let nativesArg = args.first(where: { $0.starts(with: "-Djava.library.path=") }) {
-                        let numTwo = nativesArg.dropLast("/natives".count).suffix(2)
-                        let numChar = numTwo.suffix(1)
-                        if let num = UInt(numTwo) ?? UInt(numChar) {
-                            let num = Int(num)
-                            instanceNums[pid] = num
-                            return num
-                        }
-                    }
-                }
-            }
-            instanceNums[pid] = 0
-            return 0
-        }
-    }
-    
-    func isMinecraftInstance(app: NSRunningApplication) -> Bool {
-        if let args = Utils.processArguments(pid: app.processIdentifier) {
-            let minecraftArgs = ["net.minecraft.client.main.Main", "-Djava.library.path="]
-            for arg in minecraftArgs {
-                if args.contains(where: { $0.contains(arg) }) {
-                    return true
-                }
-            }
-        }
-        return false
-    }
-    
-    func resetInstance(pid: pid_t) {
-        if let instNum = instanceNums[pid] {
-            let info = states[instNum - 1]
-            info.checkState = .GENNING
-            sendReset(pid: pid)
-            playResetSound()
-            InstanceManager.shared.unlockInstance(idx: instNum - 1)
-        }
-    }
-    
     func playResetSound() {
         SoundManager.shared.playSound(sound: "reset")
     }
-    
-    func updateStates() {
-        let instCount = instanceIDs.count
-        for i in 0..<instCount {
-            let stateData = states[i]
-            var sentF3 = false
-            if stateData.untilF3 > 0 {
-                stateData.untilF3 -= 1
-                if stateData.untilF3 == 0 {
-                    sendF3Esc(pid: stateData.pid)
-                    sentF3 = true
-                }
-            }
-            
-            if !sentF3 && stateData.updateState() {
-                print(stateData.description)
-                if stateData.state == InstanceStates.title {} // if title
-                else if stateData.state == InstanceStates.previewing { // if previewing
-                    stateData.untilF3 = 4
-                } else if (stateData.prevState == InstanceStates.previewing || stateData.prevState == InstanceStates.waiting) && stateData.state == InstanceStates.unpaused { // if prev state was world previewing
-                    stateData.untilF3 = 4
-                    stateData.checkState = .ENSURING
-                    continue
-                } else if stateData.state == InstanceStates.unpaused { // disable checking if slipped
-                    stateData.checkState = .NONE
-                }
-            }
-            
-            if !sentF3 && stateData.checkState == .ENSURING {
-                print(stateData.description)
-                stateData.updateState()
-                if stateData.state != InstanceStates.unpaused { // if not paused
-                    stateData.checkState = .NONE
-                    stateData.untilF3 = 0
-                } else if stateData.untilF3 <= 0 {
-                    stateData.untilF3 = 25
-                }
-            }
-        }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now().advanced(by: DispatchTimeInterval.milliseconds(30))) {
-            //print(self.states.map {"\($0.state) \($0.logRead)"})
-            self.updateStates()
-        }
-    }
-    
     
     func sendReset(pid: pid_t) {
         // send F6
