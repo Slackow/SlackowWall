@@ -76,7 +76,7 @@ struct CaptureGridView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .animation(.easeInOut, value: profileManager.profile.alignment)
                     .animation(.easeInOut, value: profileManager.profile.sections)
-                    .background(PreviewShortcutListener(key: $instanceManager.keyPressed))
+                    .background(PreviewShortcutListener(key: $instanceManager.keyAction))
                 }
             }
             .padding(5)

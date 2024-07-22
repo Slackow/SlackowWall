@@ -5,12 +5,12 @@
 import SwiftUI
 
 struct PreviewShortcutListener: NSViewRepresentable {
-    @Binding var key: Character?
+    @Binding var key: KeyAction?
 
     class KeyView: NSView {
-        @Binding var key: Character?
+        @Binding var key: KeyAction?
 
-        init(key: Binding<Character?>) {
+        init(key: Binding<KeyAction?>) {
             self._key = key
             super.init(frame: .zero)
         }
@@ -22,16 +22,8 @@ struct PreviewShortcutListener: NSViewRepresentable {
         override var acceptsFirstResponder: Bool { true }
         
         override func keyDown(with event: NSEvent) {
-            let p = ProfileManager.shared.profile
-            switch event.keyCode {
-            case p.runKey: key = "r"
-            case p.resetOneKey: key = "e"
-            case p.resetOthersKey: key = "f"
-            case p.resetAllKey: key = "t"
-            case p.lockKey: key = "c"
-            case p.resetGKey: key = "u"
-            default: return
-            }
+            guard let action = KeyAction.from(keyCode: event.keyCode) else { return }
+            key = action
         }
     }
 
@@ -43,8 +35,5 @@ struct PreviewShortcutListener: NSViewRepresentable {
         return view
     }
 
-    func updateNSView(_ nsView: NSView, context: Context) {
-    }
-    
-    
+    func updateNSView(_ nsView: NSView, context: Context) {}
 }

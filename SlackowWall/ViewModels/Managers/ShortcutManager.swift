@@ -17,12 +17,6 @@ final class ShortcutManager: ObservableObject {
         
     }
     
-    func openFirstConfig() {
-        guard let firstStatePath = TrackingManager.shared.trackedInstances.first?.info.statePath else { return }
-        let path = URL(filePath: firstStatePath).deletingLastPathComponent().appendingPathComponent("config")
-        NSWorkspace.shared.open(path)
-    }
-    
     private func closeSettingsWindow() {
         NSApplication.shared.windows.filter({ $0.title == "Settings"}).first?.close()
     }
@@ -47,7 +41,7 @@ final class ShortcutManager: ObservableObject {
         InstanceManager.shared.resetInstance(instance: instance)
         
         if ProfileManager.shared.profile.shouldHideWindows {
-            unhideInstances()
+            WindowController.unhideWindows(TrackingManager.shared.getValues(\.pid))
         }
         
         closeSettingsWindow()
@@ -92,10 +86,6 @@ final class ShortcutManager: ObservableObject {
         resize(pid: activeWindow.processIdentifier, x: x, y: y, width: w, height: h)
     }
     
-    func convertToFloat(_ int: Int?) -> CGFloat {
-        return CGFloat(int ?? 0)
-    }
-    
     func resize(pid: pid_t, x: CGFloat? = nil, y: CGFloat? = nil, width: CGFloat, height: CGFloat, force: Bool = false) {
         let pids = TrackingManager.shared.getValues(\.pid)
         if !(width > 0 && height > 0) || pids.isEmpty {
@@ -104,56 +94,28 @@ final class ShortcutManager: ObservableObject {
         
         LogManager.shared.appendLog("Resizing Instance: \(pid)")
         
-        let appRef = AXUIElementCreateApplication(pid)
-        var value: AnyObject?
-        guard AXUIElementCopyAttributeValue(appRef, kAXWindowsAttribute as CFString, &value) == .success, let windows = value as? [AXUIElement] else { return }
-        for window in windows {
-            var titleValue: AnyObject?
-            AXUIElementCopyAttributeValue(window, kAXTitleAttribute as CFString, &titleValue)
-            guard let title = titleValue as? String, title != "Window" else { continue }
-        
-            var posValue: AnyObject?
-            var sizeValue: AnyObject?
-            AXUIElementCopyAttributeValue(window, kAXPositionAttribute as CFString, &posValue)
-            AXUIElementCopyAttributeValue(window, kAXSizeAttribute as CFString, &sizeValue)
-            guard let posValue = posValue, let sizeValue = sizeValue else { return }
-            
-            var pos = CGPoint.zero
-            var size = CGSize.zero
-            AXValueGetValue(posValue as! AXValue, AXValueType.cgPoint, &pos)
-            AXValueGetValue(sizeValue as! AXValue, AXValueType.cgSize, &size)
-            
-            if !force && size.width == width && size.height == height {
+        if let currentSize = WindowController.getWindowSize(pid: pid), let currentPosition = WindowController.getWindowPosition(pid: pid) {
+            if !force && currentSize.width == width && currentSize.height == height {
                 resizeBase(pid: pid)
                 return
             }
             
-            var newSize = CGSize(width: width, height: height)
-               
+            let newSize = CGSize(width: width, height: height)
+            let newPosition = CGPoint(x: x ?? (currentPosition.x - (newSize.width - currentSize.width) * 0.5),
+                                      y: y ?? (currentPosition.y - (newSize.height - currentSize.height) * 0.5))
             
-            var newPosition = CGPoint(x: x ?? (pos.x - (newSize.width - size.width) * 0.5),
-                                      y: y ?? (pos.y - (newSize.height - size.height) * 0.5))
-            
-            guard let positionRef = AXValueCreate(AXValueType.cgPoint, &newPosition),
-                    let sizeRef = AXValueCreate(AXValueType.cgSize, &newSize) else { continue }
-            
-            AXUIElementSetAttributeValue(window, kAXPositionAttribute as CFString, positionRef)
-            AXUIElementSetAttributeValue(window, kAXSizeAttribute as CFString, sizeRef)
+            WindowController.modifyWindow(pid: pid, x: newPosition.x, y: newPosition.y, width: newSize.width, height: newSize.height)
             LogManager.shared.appendLog("Finished Resizing Instance: \(pid), \(newSize)")
         }
-        
     }
     
-    func unhideInstances() {
-        let pids = TrackingManager.shared.getValues(\.pid)
-        for pid in pids {
-            let app = AXUIElementCreateApplication(pid)
-            var error: AXError = AXError.success
-            error = AXUIElementSetAttributeValue(app, kAXHiddenAttribute as CFString, kCFBooleanFalse)
-            if error != .success {
-                print("Error setting visibility attribute for PID \(pid): \(error)")
-            }
-        }
+    func resetKeybinds() {
+        ProfileManager.shared.profile.resetGKey = .u
+        ProfileManager.shared.profile.resetAllKey = .t
+        ProfileManager.shared.profile.resetOneKey = .e
+        ProfileManager.shared.profile.resetOthersKey = .f
+        ProfileManager.shared.profile.runKey = .r
+        ProfileManager.shared.profile.lockKey = .c
     }
     
     func killReplayD(){
@@ -165,59 +127,7 @@ final class ShortcutManager: ObservableObject {
         task.waitUntilExit()
     }
     
-    func playResetSound() {
-        SoundManager.shared.playSound(sound: "reset")
-    }
-    
-    func sendReset(pid: pid_t) {
-        // send F6
-        sendKey(key: .f6, pid: pid)
-    }
-    
-    func sendF1(pid: pid_t) {
-        sendKey(key: .f1, pid: pid)
-    }
-    
-    func sendF11(pid: pid_t) {
-        sendKey(key: .f11, pid: pid)
-    }
-    
-    func sendF3Esc(pid: pid_t) {
-        // send F3 + ESC
-        sendKeyCombo(keys: 0x63, 0x35, pid: pid)
-        print("\(pid) << f3 esc")
-    }
-    
-    func sendEscape(pid: pid_t) {
-        sendKey(key: .escape, pid: pid)
-    }
-    
-    func sendKey(key: CGKeyCode, pid: pid_t) {
-        LogManager.shared.appendLog("Sending key \(key) to \(pid)")
-        let src = CGEventSource(stateID: .hidSystemState)
-        let kspd = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: true)
-        let kspu = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: false)
-        
-        kspd?.postToPid( pid )
-        kspu?.postToPid( pid )
-    }
-    
-    func sendKeyCombo(keys: CGKeyCode..., pid: pid_t) {
-        let src = CGEventSource(stateID: .hidSystemState)
-        for key in keys {
-            CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: true)?.postToPid(pid)
-        }
-        for key in keys.reversed() {
-            CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: false)?.postToPid(pid)
-        }
-    }
-    
-    func resetKeybinds() {
-        ProfileManager.shared.profile.resetGKey = .u
-        ProfileManager.shared.profile.resetAllKey = .t
-        ProfileManager.shared.profile.resetOneKey = .e
-        ProfileManager.shared.profile.resetOthersKey = .f
-        ProfileManager.shared.profile.runKey = .r
-        ProfileManager.shared.profile.lockKey = .c
+    private func convertToFloat(_ int: Int?) -> CGFloat {
+        return CGFloat(int ?? 0)
     }
 }

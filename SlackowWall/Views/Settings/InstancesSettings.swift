@@ -70,7 +70,7 @@ struct InstancesSettings: View {
 
                         Divider()
 
-                        SettingsButtonView(title: "First Instance Config", description: "Opens the config folder of the first instance.", buttonText: "...", action: shortcutManager.openFirstConfig)
+                        SettingsButtonView(title: "First Instance Config", description: "Opens the config folder of the first instance.", buttonText: "...", action: instanceManager.openFirstConfig)
                             .disabled(trackingManager.trackedInstances.isEmpty)
                     }
                 }
@@ -110,7 +110,7 @@ struct InstancesSettings: View {
                                 }
                                 .frame(width: 80)
 
-                                Button(action: { instanceManager.move(forward: true, direct: true) }) {
+                                Button(action: { Task { await instanceManager.adjustInstances() }}) {
                                     Text("Adjust")
                                 }
                                 .disabled(instanceManager.moving || trackingManager.trackedInstances.isEmpty)

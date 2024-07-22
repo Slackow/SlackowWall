@@ -217,7 +217,7 @@ import SwiftUI
         TrackingManager.shared.trackedInstances.map({ $0.pid }).forEach(shortcutManager.resizeReset)
 
         if ProfileManager.shared.profile.shouldHideWindows {
-            shortcutManager.unhideInstances()
+            WindowController.unhideWindows(TrackingManager.shared.getValues(\.pid))
         }
         
         // 40ms delay so macOS can catch up, a hack yes, but lol?
