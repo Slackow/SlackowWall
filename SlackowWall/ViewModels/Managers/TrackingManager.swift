@@ -10,6 +10,10 @@ import SwiftUI
 class TrackingManager: ObservableObject {
     @Published var trackedInstances = [TrackedInstance]()
     
+    var isCaptureReady: Bool {
+        return trackedInstances.contains(where: { $0.stream.captureFilter != nil })
+    }
+    
     static let shared = TrackingManager()
     
     init() {
@@ -21,11 +25,29 @@ class TrackingManager: ObservableObject {
     }
     
     func fetchInstances() {
-        trackedInstances.removeAll()
+        // Get the list of currently running Minecraft applications
+        let currentApps = getAllApps().filter { isMinecraftInstance(app: $0) }
+        let currentPIDs = Set(currentApps.map { $0.processIdentifier })
         
-        getAllApps().forEach { app in
-            if let trackedInstance = createTrackedInstance(app: app) {
-                trackedInstances.append(trackedInstance)
+        // Update existing instances and remove those no longer running
+        trackedInstances.removeAll { trackedInstance in
+            if currentPIDs.contains(trackedInstance.pid) {
+                // Update existing tracked instance
+                trackedInstance.stream.clearCapture()
+                return false
+            } else {
+                // Remove instance that no longer exists
+                LogManager.shared.appendLog("Removing instance \(trackedInstance.instanceNumber)")
+                return true
+            }
+        }
+        
+        // Add new instances
+        currentApps.forEach { app in
+            if !trackedInstances.contains(where: { $0.pid == app.processIdentifier }) {
+                if let trackedInstance = createTrackedInstance(app: app) {
+                    trackedInstances.append(trackedInstance)
+                }
             }
         }
         

@@ -35,7 +35,7 @@ class CaptureGrid: ObservableObject {
     }
         
     @MainActor func indicesForSection(_ section: Int) -> Range<Int> {
-        let totalPreviews = ScreenRecorder.shared.capturePreviews.count
+        let totalPreviews = TrackingManager.shared.trackedInstances.count
         let baseItemsPerSection = totalPreviews / ProfileManager.shared.profile.sections
         let extraItems = totalPreviews % ProfileManager.shared.profile.sections
         
@@ -49,7 +49,7 @@ class CaptureGrid: ObservableObject {
     }
     
     @MainActor func maximumItemsPerSection() -> Int {
-        let totalPreviews = ScreenRecorder.shared.capturePreviews.count
+        let totalPreviews = TrackingManager.shared.trackedInstances.count
         let sections = ProfileManager.shared.profile.sections
         return Int(ceil(Double(totalPreviews) / Double(sections)))
     }
@@ -62,11 +62,13 @@ class CaptureGrid: ObservableObject {
         }
     }
     
-    func handleGridAnimation(value: Int) {
-        if value > 0 {
+    func handleGridAnimation() {
+        let count = TrackingManager.shared.trackedInstances.count
+        
+        if count > 0 {
             animateGrid = true
             
-            let delay = (Double(value) * 0.07) + 0.07
+            let delay = (Double(count) * 0.07) + 0.07
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 self.animateGrid = false
             }

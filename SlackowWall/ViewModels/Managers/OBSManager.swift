@@ -9,9 +9,6 @@ class OBSManager: ObservableObject {
     
     static let shared = OBSManager()
     
-    var acted = false
-    private var wids: [Int:CGWindowID] = [:]
-    
     init() {
         
     }
@@ -63,15 +60,6 @@ class OBSManager: ObservableObject {
         guard let appSupportURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?
             .appendingPathComponent("SlackowWall") else { return nil }
         return appSupportURL.appendingPathComponent("instance_selector.lua")
-    }
-    
-    func storeWindowIDs(info: [(Int, CGWindowID)]) {
-        if acted { return }
-        acted = true
-        for (key, wid) in info {
-            wids[key] = wid
-        }
-        print("Hey I stored the window ID's: \(wids)")
     }
     
     @discardableResult func writeWID(windowID: CGWindowID) -> CGWindowID {

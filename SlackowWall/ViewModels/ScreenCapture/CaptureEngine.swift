@@ -57,19 +57,15 @@ class CaptureEngine: NSObject, @unchecked Sendable {
     }
     
     func stopCapture(removeStreams: Bool = false) async {
-        do {
-            for stream in streams {
-                try await stream.stopCapture()
-            }
-            
-            if removeStreams {
-                streams.removeAll()
-            }
-            
-            continuation?.finish()
-        } catch {
-            continuation?.finish(throwing: error)
+        for stream in streams {
+            try? await stream.stopCapture()
         }
+        
+        if removeStreams {
+            streams.removeAll()
+        }
+        
+        continuation?.finish()
     }
     
     func resumeCapture() async {

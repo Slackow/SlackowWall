@@ -122,9 +122,9 @@ struct ProfileSettings: View {
         .onChange(of: selectedProfile) { value in
             if profileManager.activeProfile != selectedProfile {
                 Task {
-                    ScreenRecorder.shared.capturePreviews.removeAll()
                     profileManager.activeProfile = value
                     CaptureGrid.shared.showInfo = false
+                    TrackingManager.shared.trackedInstances.forEach({ $0.stream.clearCapture() })
                     await ScreenRecorder.shared.resetAndStartCapture(shouldAutoSwitch: false)
                 }
             }

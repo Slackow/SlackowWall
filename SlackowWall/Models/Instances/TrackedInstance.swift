@@ -6,25 +6,29 @@
 //
 
 import SwiftUI
+import ScreenCaptureKit
 
-class TrackedInstance: ObservableObject, Hashable, Equatable {
+class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
+    let id: UUID
+    
     let pid: pid_t
     var windowID: CGWindowID?
     let instanceNumber: Int
     
     @Published var info: InstanceInfo
-    @Published var capturePreview: CapturePreview
-    @Published var captureRect: CGSize
+    @Published var stream: InstanceStream
     
     @Published var isLocked: Bool
+    @Published var wasClosed: Bool
     
     init(pid: pid_t, instanceNumber: Int) {
+        self.id = UUID()
         self.pid = pid
         self.instanceNumber = instanceNumber
         self.info = TrackedInstance.calculateInstanceInfo(pid: pid)
-        self.capturePreview = CapturePreview()
-        self.captureRect = .zero
+        self.stream = InstanceStream()
         self.isLocked = false
+        self.wasClosed = false
     }
     
     private static func calculateInstanceInfo(pid: pid_t) -> InstanceInfo {
@@ -75,10 +79,11 @@ class TrackedInstance: ObservableObject, Hashable, Equatable {
     }
     
     static func == (lhs: TrackedInstance, rhs: TrackedInstance) -> Bool {
-        return lhs.pid == rhs.pid && lhs.instanceNumber == rhs.instanceNumber
+        return lhs.id == rhs.id
     }
     
     func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
         hasher.combine(pid)
         hasher.combine(instanceNumber)
     }

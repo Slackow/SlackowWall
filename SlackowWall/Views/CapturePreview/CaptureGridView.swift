@@ -21,7 +21,7 @@ struct CaptureGridView: View {
     var body: some View {
         GeometryReader { proxy in
             VStack {
-                if screenRecorder.capturePreviews.isEmpty {
+                if !trackingManager.isCaptureReady {
                     if trackingManager.trackedInstances.isEmpty {
                         Text("No Minecraft\nInstances Detected")
                             .font(.largeTitle)
@@ -36,11 +36,13 @@ struct CaptureGridView: View {
                                 ForEach(0..<profileManager.profile.sections, id: \.self) { section in
                                     HStack(spacing: 0) {
                                         ForEach(viewModel.indicesForSection(section), id: \.self) { idx in
-                                            if section == 0 && idx == 0 {
-                                                captureContentView(trackedInstance: TrackingManager.shared.trackedInstances[idx])
-                                                    .modifier(SizeReader(size: $viewModel.sectionSize))
-                                            } else {
-                                                captureContentView(trackedInstance: TrackingManager.shared.trackedInstances[idx])
+                                            if idx < trackingManager.trackedInstances.count {
+                                                if section == 0 && idx == 0 {
+                                                    captureContentView(trackedInstance: trackingManager.trackedInstances[idx])
+                                                        .modifier(SizeReader(size: $viewModel.sectionSize))
+                                                } else {
+                                                    captureContentView(trackedInstance: trackingManager.trackedInstances[idx])
+                                                }
                                             }
                                         }
                                         
@@ -56,11 +58,13 @@ struct CaptureGridView: View {
                                 ForEach(0..<profileManager.profile.sections, id: \.self) { section in
                                     VStack(spacing: 0) {
                                         ForEach(viewModel.indicesForSection(section), id: \.self) { idx in
-                                            if section == 0 && idx == 0 {
-                                                captureContentView(trackedInstance: TrackingManager.shared.trackedInstances[idx])
-                                                    .modifier(SizeReader(size: $viewModel.sectionSize))
-                                            } else {
-                                                captureContentView(trackedInstance: TrackingManager.shared.trackedInstances[idx])
+                                            if idx < trackingManager.trackedInstances.count {
+                                                if section == 0 && idx == 0 {
+                                                    captureContentView(trackedInstance: trackingManager.trackedInstances[idx])
+                                                        .modifier(SizeReader(size: $viewModel.sectionSize))
+                                                } else {
+                                                    captureContentView(trackedInstance: trackingManager.trackedInstances[idx])
+                                                }
                                             }
                                         }
                                         
@@ -76,6 +80,8 @@ struct CaptureGridView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .animation(.easeInOut, value: profileManager.profile.alignment)
                     .animation(.easeInOut, value: profileManager.profile.sections)
+                    .animation(.smooth, value: trackingManager.trackedInstances.count)
+                    .animation(.none, value: trackingManager.trackedInstances.isEmpty)
                     .background(PreviewShortcutListener(key: $instanceManager.keyAction))
                 }
             }
@@ -94,8 +100,8 @@ struct CaptureGridView: View {
                     viewModel.showInstanceInfo()
                 }
             }
-            .onChange(of: screenRecorder.capturePreviews.count) { value in
-                viewModel.handleGridAnimation(value: value)
+            .onChange(of: trackingManager.isCaptureReady) { _ in
+                viewModel.handleGridAnimation()
             }
             .onAppear {
                 viewModel.showInstanceInfo()
@@ -105,6 +111,7 @@ struct CaptureGridView: View {
     
     private func captureContentView(trackedInstance: TrackedInstance) -> some View {
         TrackedInstanceView(instance: trackedInstance)
+            .id(trackedInstance)
             .matchedGeometryEffect(id: trackedInstance, in: gridSpace)
     }
 }

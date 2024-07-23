@@ -23,23 +23,23 @@ struct CapturePreviewView: View {
     
     private var adjustedTitlebarHeight: CGFloat {
         guard actualSize.height > 0 else { return titleBarHeight }
-        let heightScaleFactor = actualSize.height / instance.captureRect.height
+        let heightScaleFactor = actualSize.height / instance.stream.captureRect.height
         return titleBarHeight * heightScaleFactor
     }
     
     private var scaleFactor: CGFloat {
-        let aspectRatioWidth = instance.captureRect.height * 16.0 / 9
-        return min(1.0, aspectRatioWidth / instance.captureRect.width)
+        let aspectRatioWidth = instance.stream.captureRect.height * 16.0 / 9
+        return min(1.0, aspectRatioWidth / instance.stream.captureRect.width)
     }
     
     private var scaledDimensions: CGSize {
-        let aspectRatioWidth = instance.captureRect.height * 16.0 / 9
-        return CGSize(width: min(aspectRatioWidth, instance.captureRect.width), height: instance.captureRect.height)
+        let aspectRatioWidth = instance.stream.captureRect.height * 16.0 / 9
+        return CGSize(width: min(aspectRatioWidth, instance.stream.captureRect.width), height: instance.stream.captureRect.height)
     }
     
     var body: some View {
-        instance.capturePreview
-            .aspectRatio(profileManager.profile.forceAspectRatio ? scaledDimensions : instance.captureRect, contentMode: .fit)
+        instance.stream.capturePreview
+            .aspectRatio(profileManager.profile.forceAspectRatio ? scaledDimensions : instance.stream.captureRect, contentMode: .fit)
             .scaleEffect(CGSize(width: profileManager.profile.forceAspectRatio ? scaleFactor : 1.0, height: 1.0))
             .modifier(SizeReader(size: $actualSize))
             .mask {
@@ -66,10 +66,12 @@ struct CapturePreviewView: View {
             }
             .onAppear {
                 if captureGrid.animateGrid {
-                    let delay = Double(instance.instanceNumber) * 0.07
-                    DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                        withAnimation(.smooth) {
-                            animateAppearance = true
+                    if let index = TrackingManager.shared.trackedInstances.firstIndex(where: { $0 == instance }) {
+                        let delay = Double(index) * 0.07
+                        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                            withAnimation(.smooth) {
+                                animateAppearance = true
+                            }
                         }
                     }
                 } else {

@@ -65,6 +65,9 @@
 		B6C17C0B2BFC48E300F30C1F /* ToolbarAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C17C0A2BFC48E300F30C1F /* ToolbarAlertView.swift */; };
 		B6C17C0D2BFC491700F30C1F /* WallAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C17C0C2BFC491700F30C1F /* WallAlert.swift */; };
 		B6C17C0F2BFCEA3C00F30C1F /* AlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C17C0E2BFCEA3C00F30C1F /* AlertManager.swift */; };
+		B6C530732C502A7600B7C7D5 /* StreamError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C530722C502A7600B7C7D5 /* StreamError.swift */; };
+		B6C530762C5033B000B7C7D5 /* InstanceStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C530752C5033B000B7C7D5 /* InstanceStream.swift */; };
+		B6C530782C5037B200B7C7D5 /* StreamErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C530772C5037B200B7C7D5 /* StreamErrorView.swift */; };
 		B6D29FE62BA2123E004F20A2 /* ReleaseEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D29FE52BA2123E004F20A2 /* ReleaseEntry.swift */; };
 		B6D29FEA2BA212DA004F20A2 /* UpdateReleaseEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D29FE82BA212DA004F20A2 /* UpdateReleaseEntryView.swift */; };
 		B6D29FEB2BA212DA004F20A2 /* UpdateMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D29FE92BA212DA004F20A2 /* UpdateMessageView.swift */; };
@@ -139,6 +142,9 @@
 		B6C17C0A2BFC48E300F30C1F /* ToolbarAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarAlertView.swift; sourceTree = "<group>"; };
 		B6C17C0C2BFC491700F30C1F /* WallAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WallAlert.swift; sourceTree = "<group>"; };
 		B6C17C0E2BFCEA3C00F30C1F /* AlertManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertManager.swift; sourceTree = "<group>"; };
+		B6C530722C502A7600B7C7D5 /* StreamError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamError.swift; sourceTree = "<group>"; };
+		B6C530752C5033B000B7C7D5 /* InstanceStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceStream.swift; sourceTree = "<group>"; };
+		B6C530772C5037B200B7C7D5 /* StreamErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamErrorView.swift; sourceTree = "<group>"; };
 		B6D29FE52BA2123E004F20A2 /* ReleaseEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReleaseEntry.swift; sourceTree = "<group>"; };
 		B6D29FE82BA212DA004F20A2 /* UpdateReleaseEntryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateReleaseEntryView.swift; sourceTree = "<group>"; };
 		B6D29FE92BA212DA004F20A2 /* UpdateMessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateMessageView.swift; sourceTree = "<group>"; };
@@ -261,11 +267,11 @@
 		6D8A7790675806E7F6736FEA /* Enums */ = {
 			isa = PBXGroup;
 			children = (
+				B6C530712C502A5E00B7C7D5 /* Errors */,
 				6D8A723DF9C8AD7D30AC21AF /* Alignment.swift */,
 				4915C3A82AC6A86F00B60D1D /* SettingsBarItem.swift */,
 				B68D8C2A2BEA96E200072AC5 /* CheckingMode.swift */,
 				B63154042C4E08E60013DB8A /* KeyAction.swift */,
-				B6C17C0C2BFC491700F30C1F /* WallAlert.swift */,
 			);
 			path = Enums;
 			sourceTree = "<group>";
@@ -273,8 +279,7 @@
 		6D8A7F0DB70FB31BFFA7392F /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				6D8A71655654992BE658F2A9 /* InstanceInfo.swift */,
-				B6F7E3982C4C6B5A009EE1F3 /* TrackedInstance.swift */,
+				B6C530742C50338700B7C7D5 /* Instances */,
 				49CCFA8D2BAD188600842FCD /* StandardConfig.swift */,
 				B6D29FE52BA2123E004F20A2 /* ReleaseEntry.swift */,
 				B6E30C162BF71B13008E7004 /* Profile.swift */,
@@ -377,6 +382,7 @@
 				B68D8C2C2BEBC0FC00072AC5 /* CaptureGridView.swift */,
 				B6A55D942BA2A7FE00D06086 /* TrackedInstanceView.swift */,
 				B66B374A2C4CA8BA0055482A /* CapturePreviewView.swift */,
+				B6C530772C5037B200B7C7D5 /* StreamErrorView.swift */,
 				B6E9E36F2970A52E00DF6466 /* CapturePreview.swift */,
 			);
 			path = CapturePreview;
@@ -451,6 +457,25 @@
 				B6C17C0A2BFC48E300F30C1F /* ToolbarAlertView.swift */,
 			);
 			path = Toolbar;
+			sourceTree = "<group>";
+		};
+		B6C530712C502A5E00B7C7D5 /* Errors */ = {
+			isa = PBXGroup;
+			children = (
+				B6C17C0C2BFC491700F30C1F /* WallAlert.swift */,
+				B6C530722C502A7600B7C7D5 /* StreamError.swift */,
+			);
+			path = Errors;
+			sourceTree = "<group>";
+		};
+		B6C530742C50338700B7C7D5 /* Instances */ = {
+			isa = PBXGroup;
+			children = (
+				B6F7E3982C4C6B5A009EE1F3 /* TrackedInstance.swift */,
+				B6C530752C5033B000B7C7D5 /* InstanceStream.swift */,
+				6D8A71655654992BE658F2A9 /* InstanceInfo.swift */,
+			);
+			path = Instances;
 			sourceTree = "<group>";
 		};
 		B6D29FE72BA212CF004F20A2 /* Updates */ = {
@@ -583,6 +608,7 @@
 				4915C3AB2AC7636F00B60D1D /* InstancesSettings.swift in Sources */,
 				B6C17C082BF7A9CE00F30C1F /* ProfileSettings.swift in Sources */,
 				493A122F2B88FAA0009BE0B3 /* KeybindingView.swift in Sources */,
+				B6C530782C5037B200B7C7D5 /* StreamErrorView.swift in Sources */,
 				B6E9E3722970A55800DF6466 /* CaptureEngine.swift in Sources */,
 				B6C17C0F2BFCEA3C00F30C1F /* AlertManager.swift in Sources */,
 				B63154052C4E08E60013DB8A /* KeyAction.swift in Sources */,
@@ -606,7 +632,9 @@
 				B6F7E39D2C4C8343009EE1F3 /* CaptureGrid.swift in Sources */,
 				6D8A79A5A9E467B05B05C742 /* InstanceManager.swift in Sources */,
 				B63154002C4DFDE40013DB8A /* KeyDispatcher.swift in Sources */,
+				B6C530732C502A7600B7C7D5 /* StreamError.swift in Sources */,
 				B6C17C0B2BFC48E300F30C1F /* ToolbarAlertView.swift in Sources */,
+				B6C530762C5033B000B7C7D5 /* InstanceStream.swift in Sources */,
 				B63168C52979AE95005958E9 /* PreviewActionsListener.swift in Sources */,
 				4915C3A92AC6A86F00B60D1D /* SettingsBarItem.swift in Sources */,
 				6D8A799228DD26E62A8CBE16 /* PreviewShortcutListener.swift in Sources */,
