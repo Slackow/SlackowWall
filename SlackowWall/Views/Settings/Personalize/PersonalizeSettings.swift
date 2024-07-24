@@ -70,7 +70,7 @@ struct PersonalizeSettings: View {
         let workItem = DispatchWorkItem {
             Task {
                 await ScreenRecorder.shared.resetAndStartCapture()
-                CaptureGrid.shared.showInfo = false
+                GridManager.shared.showInfo = false
             }
         }
         

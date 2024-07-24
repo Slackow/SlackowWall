@@ -1,5 +1,5 @@
 //
-//  CaptureGrid.swift
+//  GridManager.swift
 //  SlackowWall
 //
 //  Created by Kihron on 7/20/24.
@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-class CaptureGrid: ObservableObject {
+class GridManager: ObservableObject {
     @Published var sectionSize: CGSize = .zero
     @Published var animateGrid: Bool = false
     
     @Published var isActive: Bool = true
     @Published var showInfo: Bool = false
     
-    static let shared = CaptureGrid()
+    static let shared = GridManager()
     
     init() {
         
@@ -62,7 +62,7 @@ class CaptureGrid: ObservableObject {
         }
     }
     
-    func handleGridAnimation() {
+    func applyGridAnimation() {
         let count = TrackingManager.shared.trackedInstances.count
         
         if count > 0 {

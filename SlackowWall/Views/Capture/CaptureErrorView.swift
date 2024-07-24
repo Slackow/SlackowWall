@@ -1,5 +1,5 @@
 //
-//  StreamErrorView.swift
+//  CaptureErrorView.swift
 //  SlackowWall
 //
 //  Created by Kihron on 7/23/24.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct StreamErrorView: View {
+struct CaptureErrorView: View {
     var error: StreamError?
     
     var body: some View {
@@ -30,5 +30,5 @@ struct StreamErrorView: View {
 }
 
 #Preview {
-    StreamErrorView(error: .unknown(errorCode: 0))
+    CaptureErrorView(error: .unknown(errorCode: 0))
 }

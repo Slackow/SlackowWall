@@ -26,19 +26,7 @@ struct SlackowWallApp: App {
                     HStack(spacing: 8) {
                         HStack(spacing: 8) {
                             if !trackingManager.trackedInstances.isEmpty {
-                                Button(action: { instanceManager.stopAll() }) {
-                                    if #available(macOS 14.0, *) {
-                                        Image(systemName: "stop.fill")
-                                            .foregroundColor(.red)
-                                            .frame(width: 20, height: 20)
-                                            .symbolEffect(.pulse, options: .repeating, value: instanceManager.isStopping)
-                                    } else {
-                                        Image(systemName: "stop.fill")
-                                            .foregroundColor(.red)
-                                            .frame(width: 20, height: 20)
-                                    }
-                                }
-                                .disabled(instanceManager.isStopping)
+                                ToolbarStopView()
                             }
                             
                             if alertManager.alert != nil {
@@ -49,17 +37,9 @@ struct SlackowWallApp: App {
                         .animation(.easeInOut(duration: 0.3), value: trackingManager.trackedInstances)
                         .animation(.easeInOut(duration: 0.3), value: alertManager.alert)
                         
-                        Button(action: { Task { openWindow(id: "settings-window") }}) {
-                            Image(systemName: "gear")
-                        }
+                        ToolbarSettingsView()
                         
-                        Button(action: { Task {
-                            alertManager.checkPermissions()
-                            CaptureGrid.shared.showInfo = false
-                            await ScreenRecorder.shared.resetAndStartCapture()
-                        }}) {
-                            Image(systemName: "arrow.clockwise")
-                        }
+                        ToolbarRefreshView()
                     }
                 }
             }

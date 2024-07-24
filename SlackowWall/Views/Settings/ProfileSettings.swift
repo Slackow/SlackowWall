@@ -125,12 +125,12 @@ struct ProfileSettings: View {
                     profileManager.activeProfile = value
                     TrackingManager.shared.trackedInstances.forEach({ $0.stream.clearCapture() })
                     await ScreenRecorder.shared.resetAndStartCapture(shouldAutoSwitch: false)
-                    CaptureGrid.shared.showInfo = false
+                    GridManager.shared.showInfo = false
                 }
             } else if profileManager.profileCreatedOrDeleted {
                 Task {
                     await ScreenRecorder.shared.resetAndStartCapture(shouldAutoSwitch: false)
-                    CaptureGrid.shared.showInfo = false
+                    GridManager.shared.showInfo = false
                     profileManager.profileCreatedOrDeleted = false
                 }
             }

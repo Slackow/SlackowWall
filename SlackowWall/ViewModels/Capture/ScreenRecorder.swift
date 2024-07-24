@@ -15,8 +15,6 @@ import SwiftUI
     @ObservedObject private var obsManager = OBSManager.shared
     
     @Published var isRunning = false
-    
-    
     @Published private(set) var availableWindows = [SCWindow]()
     
     private var availableApps = [SCRunningApplication]()
@@ -33,6 +31,13 @@ import SwiftUI
     
     // Combine subscribers.
     private var subscriptions = Set<AnyCancellable>()
+    
+    func startCapture() async {
+        LogManager.shared.appendLog("Attempting to start screen capture...")
+        if await canRecord {
+            await resetAndStartCapture()
+        }
+    }
     
     var canRecord: Bool {
         get async {
@@ -136,14 +141,14 @@ import SwiftUI
                                 instance.wasClosed = true
 //                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
 //                                    Task {
-//                                        CaptureGrid.shared.showInfo = false
+//                                        GridManager.shared.showInfo = false
 //                                        self.trackingManager.trackedInstances.removeAll(where: { $0 == instance })
 //                                        await self.resetAndStartCapture()
 //                                    }
 //                                }
                             case .unknown:
                                 instance.stream.streamError = streamError
-                                CaptureGrid.shared.showInfo = true
+                                GridManager.shared.showInfo = true
                         }
                     }
                 }

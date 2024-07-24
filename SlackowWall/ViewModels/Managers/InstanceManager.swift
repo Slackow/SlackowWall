@@ -203,7 +203,7 @@ class InstanceManager: ObservableObject {
         
         if setSize {
             DispatchQueue.main.async {
-                CaptureGrid.shared.showInfo = false
+                GridManager.shared.showInfo = false
             }
             
             await ScreenRecorder.shared.stop(removeStreams: true)

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @ObservedObject private var captureGrid = CaptureGrid.shared
+    @ObservedObject private var gridManager = GridManager.shared
     @ObservedObject private var updateManager = UpdateManager.shared
     
     var body: some View {
@@ -18,10 +18,10 @@ struct ContentView: View {
                     UpdateMessageView(title: "App Updated")
                 }
                 .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
-                    captureGrid.isActive = true
+                    gridManager.isActive = true
                 }
                 .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in
-                    captureGrid.isActive = false
+                    gridManager.isActive = false
                 }
         }
         .background(.black)

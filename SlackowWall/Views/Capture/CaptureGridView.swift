@@ -11,99 +11,86 @@ import ScreenCaptureKit
 struct CaptureGridView: View {
     @ObservedObject private var trackingManager = TrackingManager.shared
     @ObservedObject private var profileManager = ProfileManager.shared
-    @ObservedObject private var shortcutManager = ShortcutManager.shared
     @ObservedObject private var screenRecorder = ScreenRecorder.shared
     @ObservedObject private var instanceManager = InstanceManager.shared
+    @ObservedObject private var gridManager = GridManager.shared
     
-    @ObservedObject private var viewModel = CaptureGrid.shared
     @Namespace private var gridSpace
     
     var body: some View {
-        GeometryReader { proxy in
-            VStack {
-                if !trackingManager.isCaptureReady {
-                    if trackingManager.trackedInstances.isEmpty {
-                        Text("No Minecraft\nInstances Detected")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                            .multilineTextAlignment(.center)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    }
-                } else {
-                    Group {
-                        if profileManager.profile.alignment == .horizontal {
-                            VStack(alignment: .leading, spacing: 0) {
-                                ForEach(0..<profileManager.profile.sections, id: \.self) { section in
-                                    HStack(spacing: 0) {
-                                        ForEach(viewModel.indicesForSection(section), id: \.self) { idx in
-                                            if idx < trackingManager.trackedInstances.count {
-                                                if section == 0 && idx == 0 {
-                                                    captureContentView(trackedInstance: trackingManager.trackedInstances[idx])
-                                                        .modifier(SizeReader(size: $viewModel.sectionSize))
-                                                } else {
-                                                    captureContentView(trackedInstance: trackingManager.trackedInstances[idx])
-                                                }
-                                            }
-                                        }
-                                        
-                                        if viewModel.indicesForSection(section).count < viewModel.maximumItemsPerSection() {
-                                            Spacer()
-                                                .frame(width: viewModel.sectionSize.width)
-                                        }
+        VStack {
+            if !trackingManager.isCaptureReady {
+                if trackingManager.trackedInstances.isEmpty {
+                    Text("No Minecraft\nInstances Detected")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+            } else {
+                Group {
+                    if profileManager.profile.alignment == .horizontal {
+                        VStack(alignment: .leading, spacing: 0) {
+                            ForEach(0..<profileManager.profile.sections, id: \.self) { section in
+                                HStack(spacing: 0) {
+                                    createSection(section: section)
+                                    
+                                    if gridManager.indicesForSection(section).count < gridManager.maximumItemsPerSection() {
+                                        Spacer()
+                                            .frame(width: gridManager.sectionSize.width)
                                     }
                                 }
                             }
-                        } else {
-                            HStack(alignment: .top, spacing: 0) {
-                                ForEach(0..<profileManager.profile.sections, id: \.self) { section in
-                                    VStack(spacing: 0) {
-                                        ForEach(viewModel.indicesForSection(section), id: \.self) { idx in
-                                            if idx < trackingManager.trackedInstances.count {
-                                                if section == 0 && idx == 0 {
-                                                    captureContentView(trackedInstance: trackingManager.trackedInstances[idx])
-                                                        .modifier(SizeReader(size: $viewModel.sectionSize))
-                                                } else {
-                                                    captureContentView(trackedInstance: trackingManager.trackedInstances[idx])
-                                                }
-                                            }
-                                        }
-                                        
-                                        if viewModel.indicesForSection(section).count < viewModel.maximumItemsPerSection() {
-                                            Spacer()
-                                                .frame(height: viewModel.sectionSize.height)
-                                        }
+                        }
+                    } else {
+                        HStack(alignment: .top, spacing: 0) {
+                            ForEach(0..<profileManager.profile.sections, id: \.self) { section in
+                                VStack(spacing: 0) {
+                                    createSection(section: section)
+                                    
+                                    if gridManager.indicesForSection(section).count < gridManager.maximumItemsPerSection() {
+                                        Spacer()
+                                            .frame(height: gridManager.sectionSize.height)
                                     }
                                 }
                             }
                         }
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .animation(.easeInOut, value: profileManager.profile.alignment)
-                    .animation(.easeInOut, value: profileManager.profile.sections)
-                    .animation(.smooth, value: trackingManager.trackedInstances.count)
-                    .background(PreviewShortcutListener(key: $instanceManager.keyAction))
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .animation(.easeInOut, value: profileManager.profile.alignment)
+                .animation(.easeInOut, value: profileManager.profile.sections)
+                .animation(.smooth, value: trackingManager.trackedInstances.count)
+                .background(KeybindListener(key: $instanceManager.keyAction))
             }
-            .padding(5)
-            .task {
-                LogManager.shared.appendLog("Attempting to start screen capture...")
-                if await screenRecorder.canRecord {
-                    await screenRecorder.resetAndStartCapture()
+        }
+        .padding(5)
+        .task { await screenRecorder.startCapture() }
+        .onChange(of: gridManager.isActive) { value in
+            gridManager.handleLostFocus(isActive: value)
+        }
+        .onChange(of: gridManager.showInfo) { value in
+            if !value {
+                gridManager.showInstanceInfo()
+            }
+        }
+        .onChange(of: trackingManager.isCaptureReady) { _ in
+            gridManager.applyGridAnimation()
+        }
+        .onAppear {
+            gridManager.showInstanceInfo()
+        }
+    }
+    
+    private func createSection(section: Int) -> some View {
+        ForEach(gridManager.indicesForSection(section), id: \.self) { idx in
+            if idx < trackingManager.trackedInstances.count {
+                if section == 0 && idx == 0 {
+                    captureContentView(trackedInstance: trackingManager.trackedInstances[idx])
+                        .modifier(SizeReader(size: $gridManager.sectionSize))
+                } else {
+                    captureContentView(trackedInstance: trackingManager.trackedInstances[idx])
                 }
-            }
-            .onChange(of: viewModel.isActive) { value in
-                viewModel.handleLostFocus(isActive: value)
-            }
-            .onChange(of: viewModel.showInfo) { value in
-                if !value {
-                    viewModel.showInstanceInfo()
-                }
-            }
-            .onChange(of: trackingManager.isCaptureReady) { _ in
-                viewModel.handleGridAnimation()
-            }
-            .onAppear {
-                viewModel.showInstanceInfo()
             }
         }
     }

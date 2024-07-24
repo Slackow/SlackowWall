@@ -37,6 +37,8 @@ struct LockIconEditor: View {
                             .frame(width: 42, height: 42)
                         }
                         .buttonStyle(.plain)
+                        .padding(.bottom, 10)
+                        .disabled(editMode)
                         
                         ForEach(LockPreset.allCases) { preset in
                             Button(action: { personalizeManager.selectLockPreset(preset: preset) }) {
@@ -54,43 +56,50 @@ struct LockIconEditor: View {
                                 .contentShape(.rect)
                             }
                             .buttonStyle(.plain)
+                            .padding(.bottom, 10)
+                            .disabled(editMode)
                         }
                         
                         ForEach(personalizeManager.lockIcons) { lock in
-                            Button(action: { personalizeManager.selectUserLockIcon(userLock: lock) }) {
-                                ZStack {
-                                    RoundedRectangle(cornerRadius: 5)
-                                        .stroke(lock == profileManager.profile.selectedUserLock ? .white : .gray, lineWidth: 1)
-                                    
-                                    Image(nsImage: lock.getIconImage() ?? NSImage())
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 32, height: 32)
-                                        .foregroundStyle(.red)
+                            ZStack {
+                                Button(action: { personalizeManager.selectUserLockIcon(userLock: lock) }) {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 5)
+                                            .stroke(lock == profileManager.profile.selectedUserLock ? .white : .gray, lineWidth: 1)
+                                        
+                                        Image(nsImage: lock.getIconImage() ?? NSImage())
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 32, height: 32)
+                                            .foregroundStyle(.red)
+                                    }
+                                    .frame(width: 42, height: 42)
+                                    .contentShape(.rect)
                                 }
-                                .frame(width: 42, height: 42)
-                                .contentShape(.rect)
-                            }
-                            .buttonStyle(.plain)
-                            .disabled(editMode)
-                            .overlay {
+                                .disabled(editMode)
+                                
                                 if editMode {
                                     Button(action: { personalizeManager.deleteLockIcon(userLock: lock) }) {
                                         ZStack {
                                             Circle()
                                                 .fill(.red)
+                                                .frame(width: 16, height: 16)
                                             
                                             Image(systemName: "xmark")
                                                 .font(.caption2)
                                                 .fontWeight(.bold)
                                         }
                                         .frame(width: 16, height: 16)
+                                        .contentShape(.rect)
                                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                                        .offset(x: 6, y: -5)
+                                        .padding(.trailing, 4)
+                                        .padding(.top, -6)
                                     }
                                     .buttonStyle(.plain)
                                 }
                             }
+                            .buttonStyle(.plain)
+                            .padding(.bottom, 10)
                         }
                     }
                     .animation(.easeInOut, value: editMode)

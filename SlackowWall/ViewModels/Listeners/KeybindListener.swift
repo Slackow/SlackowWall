@@ -4,7 +4,7 @@
 
 import SwiftUI
 
-struct PreviewShortcutListener: NSViewRepresentable {
+struct KeybindListener: NSViewRepresentable {
     @Binding var key: KeyAction?
 
     class KeyView: NSView {

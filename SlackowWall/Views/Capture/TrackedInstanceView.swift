@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TrackedInstanceView: View {
-    @ObservedObject private var captureGrid = CaptureGrid.shared
+    @ObservedObject private var gridManager = GridManager.shared
     @ObservedObject private var profileManager = ProfileManager.shared
     
     @ObservedObject var instance: TrackedInstance
@@ -23,11 +23,11 @@ struct TrackedInstanceView: View {
                 .background {
                     Text("Instance \(instance.instanceNumber)")
                         .padding(.trailing, 4)
-                        .opacity(captureGrid.showInfo ? 1 : 0)
+                        .opacity(gridManager.showInfo ? 1 : 0)
                 }
                 .opacity(hasStreamError ? 0 : 1)
                 .overlay {
-                    StreamErrorView(error: instance.stream.streamError)
+                    CaptureErrorView(error: instance.stream.streamError)
                 }
                 .animation(.easeInOut, value: instance.stream.streamError)
             
@@ -38,8 +38,8 @@ struct TrackedInstanceView: View {
                         .padding(.horizontal, 4)
                         .padding(.top, 6)
                         .padding(.bottom, 3)
-                        .opacity(captureGrid.showInfo ? 1 : 0)
-                        .animation(.easeInOut, value: captureGrid.showInfo)
+                        .opacity(gridManager.showInfo ? 1 : 0)
+                        .animation(.easeInOut, value: gridManager.showInfo)
                 }
                 
                 if profileManager.profile.showInstanceNumbers {
@@ -55,8 +55,8 @@ struct TrackedInstanceView: View {
                     .padding(4)
                 }
             }
-            .opacity(captureGrid.showInfo ? 1 : 0)
-            .animation(.easeInOut, value: captureGrid.showInfo)
+            .opacity(gridManager.showInfo ? 1 : 0)
+            .animation(.easeInOut, value: gridManager.showInfo)
             .animation(.easeInOut, value: profileManager.profile.showInstanceNumbers)
             .animation(profileManager.profile.lockAnimation ? .bouncy : .none, value: instance.isLocked)
         }
