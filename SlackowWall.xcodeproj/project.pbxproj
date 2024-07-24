@@ -68,6 +68,12 @@
 		B6C530732C502A7600B7C7D5 /* StreamError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C530722C502A7600B7C7D5 /* StreamError.swift */; };
 		B6C530762C5033B000B7C7D5 /* InstanceStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C530752C5033B000B7C7D5 /* InstanceStream.swift */; };
 		B6C530782C5037B200B7C7D5 /* StreamErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C530772C5037B200B7C7D5 /* StreamErrorView.swift */; };
+		B6C5307A2C50593C00B7C7D5 /* PersonalizeSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C530792C50593C00B7C7D5 /* PersonalizeSettings.swift */; };
+		B6C5307D2C50736000B7C7D5 /* PersonalizeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C5307C2C50736000B7C7D5 /* PersonalizeManager.swift */; };
+		B6C530842C50828F00B7C7D5 /* LockIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C530832C50828F00B7C7D5 /* LockIcon.swift */; };
+		B6C530862C5086F300B7C7D5 /* UserLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C530852C5086F300B7C7D5 /* UserLock.swift */; };
+		B6C530892C508EAE00B7C7D5 /* LockIconEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C530882C508EAE00B7C7D5 /* LockIconEditor.swift */; };
+		B6C5308B2C50A67A00B7C7D5 /* LockPreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C5308A2C50A67A00B7C7D5 /* LockPreset.swift */; };
 		B6D29FE62BA2123E004F20A2 /* ReleaseEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D29FE52BA2123E004F20A2 /* ReleaseEntry.swift */; };
 		B6D29FEA2BA212DA004F20A2 /* UpdateReleaseEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D29FE82BA212DA004F20A2 /* UpdateReleaseEntryView.swift */; };
 		B6D29FEB2BA212DA004F20A2 /* UpdateMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D29FE92BA212DA004F20A2 /* UpdateMessageView.swift */; };
@@ -145,6 +151,12 @@
 		B6C530722C502A7600B7C7D5 /* StreamError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamError.swift; sourceTree = "<group>"; };
 		B6C530752C5033B000B7C7D5 /* InstanceStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceStream.swift; sourceTree = "<group>"; };
 		B6C530772C5037B200B7C7D5 /* StreamErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamErrorView.swift; sourceTree = "<group>"; };
+		B6C530792C50593C00B7C7D5 /* PersonalizeSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalizeSettings.swift; sourceTree = "<group>"; };
+		B6C5307C2C50736000B7C7D5 /* PersonalizeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalizeManager.swift; sourceTree = "<group>"; };
+		B6C530832C50828F00B7C7D5 /* LockIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockIcon.swift; sourceTree = "<group>"; };
+		B6C530852C5086F300B7C7D5 /* UserLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLock.swift; sourceTree = "<group>"; };
+		B6C530882C508EAE00B7C7D5 /* LockIconEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockIconEditor.swift; sourceTree = "<group>"; };
+		B6C5308A2C50A67A00B7C7D5 /* LockPreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockPreset.swift; sourceTree = "<group>"; };
 		B6D29FE52BA2123E004F20A2 /* ReleaseEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReleaseEntry.swift; sourceTree = "<group>"; };
 		B6D29FE82BA212DA004F20A2 /* UpdateReleaseEntryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateReleaseEntryView.swift; sourceTree = "<group>"; };
 		B6D29FE92BA212DA004F20A2 /* UpdateMessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateMessageView.swift; sourceTree = "<group>"; };
@@ -245,6 +257,7 @@
 				6D8A733BE10C0A7DC11C7BCF /* InstanceManager.swift */,
 				B6B9FE922BA16CC00026C268 /* UpdateManager.swift */,
 				6D8A790289C5B8E8251D1E31 /* SoundManager.swift */,
+				B6C5307C2C50736000B7C7D5 /* PersonalizeManager.swift */,
 				49F739A42B9279BE008CB609 /* GameSettingsManager.swift */,
 				B6E30C142BF5AB8C008E7004 /* ProfileManager.swift */,
 				6D8A7EB6382B6AEC9A3FF7EF /* OBSManager.swift */,
@@ -271,6 +284,7 @@
 				6D8A723DF9C8AD7D30AC21AF /* Alignment.swift */,
 				4915C3A82AC6A86F00B60D1D /* SettingsBarItem.swift */,
 				B68D8C2A2BEA96E200072AC5 /* CheckingMode.swift */,
+				B6C5308A2C50A67A00B7C7D5 /* LockPreset.swift */,
 				B63154042C4E08E60013DB8A /* KeyAction.swift */,
 			);
 			path = Enums;
@@ -283,6 +297,7 @@
 				49CCFA8D2BAD188600842FCD /* StandardConfig.swift */,
 				B6D29FE52BA2123E004F20A2 /* ReleaseEntry.swift */,
 				B6E30C162BF71B13008E7004 /* Profile.swift */,
+				B6C530852C5086F300B7C7D5 /* UserLock.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -343,7 +358,8 @@
 		B637DB32296B943F00A73F62 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				B640D52B296F2D65005041CC /* CapturePreview */,
+				B640D52B296F2D65005041CC /* Capture */,
+				B6C530822C50827F00B7C7D5 /* Components */,
 				B637DB36296B964F00A73F62 /* Settings */,
 				B6C17C092BFC48BB00F30C1F /* Toolbar */,
 				498FB3CD28987F5B00405753 /* ContentView.swift */,
@@ -368,6 +384,7 @@
 				B61D9A742B890BAB007A35CE /* Main */,
 				49FA20332BF3B59B00BA8CD0 /* Behavior */,
 				B6A55D9A2BA2B3A200D06086 /* Keybindings */,
+				B6C530872C508E8C00B7C7D5 /* Personalize */,
 				B6D29FE72BA212CF004F20A2 /* Updates */,
 				B6A1FDE42BDF5BAF00EF2180 /* Credits */,
 				4915C3AA2AC7636F00B60D1D /* InstancesSettings.swift */,
@@ -376,7 +393,7 @@
 			path = Settings;
 			sourceTree = "<group>";
 		};
-		B640D52B296F2D65005041CC /* CapturePreview */ = {
+		B640D52B296F2D65005041CC /* Capture */ = {
 			isa = PBXGroup;
 			children = (
 				B68D8C2C2BEBC0FC00072AC5 /* CaptureGridView.swift */,
@@ -385,7 +402,7 @@
 				B6C530772C5037B200B7C7D5 /* StreamErrorView.swift */,
 				B6E9E36F2970A52E00DF6466 /* CapturePreview.swift */,
 			);
-			path = CapturePreview;
+			path = Capture;
 			sourceTree = "<group>";
 		};
 		B672AFDB2BEBF48800FECF51 /* Views */ = {
@@ -476,6 +493,23 @@
 				6D8A71655654992BE658F2A9 /* InstanceInfo.swift */,
 			);
 			path = Instances;
+			sourceTree = "<group>";
+		};
+		B6C530822C50827F00B7C7D5 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				B6C530832C50828F00B7C7D5 /* LockIcon.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		B6C530872C508E8C00B7C7D5 /* Personalize */ = {
+			isa = PBXGroup;
+			children = (
+				B6C530792C50593C00B7C7D5 /* PersonalizeSettings.swift */,
+				B6C530882C508EAE00B7C7D5 /* LockIconEditor.swift */,
+			);
+			path = Personalize;
 			sourceTree = "<group>";
 		};
 		B6D29FE72BA212CF004F20A2 /* Updates */ = {
@@ -609,6 +643,7 @@
 				B6C17C082BF7A9CE00F30C1F /* ProfileSettings.swift in Sources */,
 				493A122F2B88FAA0009BE0B3 /* KeybindingView.swift in Sources */,
 				B6C530782C5037B200B7C7D5 /* StreamErrorView.swift in Sources */,
+				B6C530842C50828F00B7C7D5 /* LockIcon.swift in Sources */,
 				B6E9E3722970A55800DF6466 /* CaptureEngine.swift in Sources */,
 				B6C17C0F2BFCEA3C00F30C1F /* AlertManager.swift in Sources */,
 				B63154052C4E08E60013DB8A /* KeyAction.swift in Sources */,
@@ -626,6 +661,7 @@
 				B6C17C0D2BFC491700F30C1F /* WallAlert.swift in Sources */,
 				B67A9D142C04DDA400270811 /* LogManager.swift in Sources */,
 				498FB3DE289A65B000405753 /* Constants.swift in Sources */,
+				B6C5307A2C50593C00B7C7D5 /* PersonalizeSettings.swift in Sources */,
 				B6E30C152BF5AB8C008E7004 /* ProfileManager.swift in Sources */,
 				B6E9E36E2970A42D00DF6466 /* ScreenRecorder.swift in Sources */,
 				B6B9FE972BA16D730026C268 /* SettingsSliderView.swift in Sources */,
@@ -634,6 +670,7 @@
 				B63154002C4DFDE40013DB8A /* KeyDispatcher.swift in Sources */,
 				B6C530732C502A7600B7C7D5 /* StreamError.swift in Sources */,
 				B6C17C0B2BFC48E300F30C1F /* ToolbarAlertView.swift in Sources */,
+				B6C5307D2C50736000B7C7D5 /* PersonalizeManager.swift in Sources */,
 				B6C530762C5033B000B7C7D5 /* InstanceStream.swift in Sources */,
 				B63168C52979AE95005958E9 /* PreviewActionsListener.swift in Sources */,
 				4915C3A92AC6A86F00B60D1D /* SettingsBarItem.swift in Sources */,
@@ -651,7 +688,9 @@
 				B6B9FE9D2BA16DB00026C268 /* SizeReader.swift in Sources */,
 				6D8A7F78665C71106EE9F8CA /* OBSManager.swift in Sources */,
 				6D8A7183DE266313FBD84A7F /* Alignment.swift in Sources */,
+				B6C530892C508EAE00B7C7D5 /* LockIconEditor.swift in Sources */,
 				B6A55D992BA2AFC500D06086 /* SCWindow+Ext.swift in Sources */,
+				B6C5308B2C50A67A00B7C7D5 /* LockPreset.swift in Sources */,
 				B68D8C2D2BEBC0FC00072AC5 /* CaptureGridView.swift in Sources */,
 				B6A55D8E2BA2829400D06086 /* RemoveFocusOnTap.swift in Sources */,
 				B6B9FE992BA16D730026C268 /* SettingsPickerView.swift in Sources */,
@@ -660,6 +699,7 @@
 				B6D29FE62BA2123E004F20A2 /* ReleaseEntry.swift in Sources */,
 				B6B9FEA02BA16DDC0026C268 /* SettingsOption.swift in Sources */,
 				6D8A72A43936AFAEFF91FCF9 /* InstanceInfo.swift in Sources */,
+				B6C530862C5086F300B7C7D5 /* UserLock.swift in Sources */,
 				B6D29FEB2BA212DA004F20A2 /* UpdateMessageView.swift in Sources */,
 				B68D8C2B2BEA96E200072AC5 /* CheckingMode.swift in Sources */,
 				B63154032C4E04E20013DB8A /* WindowController.swift in Sources */,
@@ -802,7 +842,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 240721;
+				CURRENT_PROJECT_VERSION = 240723;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
 				DEVELOPMENT_TEAM = D64G2TTYWM;
@@ -838,7 +878,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 240721;
+				CURRENT_PROJECT_VERSION = 240723;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
 				DEVELOPMENT_TEAM = D64G2TTYWM;

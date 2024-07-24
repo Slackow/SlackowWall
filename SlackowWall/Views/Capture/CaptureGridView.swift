@@ -81,7 +81,6 @@ struct CaptureGridView: View {
                     .animation(.easeInOut, value: profileManager.profile.alignment)
                     .animation(.easeInOut, value: profileManager.profile.sections)
                     .animation(.smooth, value: trackingManager.trackedInstances.count)
-                    .animation(.none, value: trackingManager.trackedInstances.isEmpty)
                     .background(PreviewShortcutListener(key: $instanceManager.keyAction))
                 }
             }

@@ -27,9 +27,16 @@ struct SlackowWallApp: App {
                         HStack(spacing: 8) {
                             if !trackingManager.trackedInstances.isEmpty {
                                 Button(action: { instanceManager.stopAll() }) {
-                                    Image(systemName: "stop.fill")
-                                        .foregroundColor(.red)
-                                        .frame(width: 20, height: 20)
+                                    if #available(macOS 14.0, *) {
+                                        Image(systemName: "stop.fill")
+                                            .foregroundColor(.red)
+                                            .frame(width: 20, height: 20)
+                                            .symbolEffect(.pulse, options: .repeating, value: instanceManager.isStopping)
+                                    } else {
+                                        Image(systemName: "stop.fill")
+                                            .foregroundColor(.red)
+                                            .frame(width: 20, height: 20)
+                                    }
                                 }
                                 .disabled(instanceManager.isStopping)
                             }

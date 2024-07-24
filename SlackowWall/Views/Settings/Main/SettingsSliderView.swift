@@ -19,7 +19,10 @@ struct SettingsSliderView: View {
     var body: some View {
         HStack {
             Text(title)
+                .monospacedDigit()
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .contentTransition(.numericText())
+                .animation(.smooth, value: title)
             
             HStack {
                 Image(systemName: leftIcon)

@@ -15,6 +15,8 @@ struct SettingsButtonView<Content: View>: View {
     var action: ()->()
     
     @State private var textHeight: CGSize = .zero
+    @State private var contentHeight: CGSize = .zero
+    @State private var labelHeight: CGSize = .zero
     private var content: (() -> Content)?
     
     // Initializer for simple text button
@@ -33,8 +35,16 @@ struct SettingsButtonView<Content: View>: View {
         self.content = content
     }
     
+    private var alignment: VerticalAlignment {
+        if contentHeight.height > labelHeight.height {
+            return .top
+        } else {
+            return description != nil && textHeight.height > 20 ? .top : .center
+        }
+    }
+    
     var body: some View {
-        HStack(alignment: description != nil && textHeight.height > 20 ? .top : .center) {
+        HStack(alignment: alignment) {
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
                 
@@ -48,11 +58,13 @@ struct SettingsButtonView<Content: View>: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+            .modifier(SizeReader(size: $labelHeight))
             
             if let content = content {
                 Button(action: action) {
                     content()
                 }
+                .modifier(SizeReader(size: $contentHeight))
             } else if let buttonText = buttonText {
                 Button(action: action) {
                     Text(buttonText)

@@ -50,7 +50,6 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
         let wasLocked = isLocked
         isLocked.toggle()
         
-        objectWillChange.send()
         if wasLocked != isLocked {
             if isLocked {
                 SoundManager.shared.playSound(sound: "lock")
@@ -66,7 +65,6 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
             isLocked = true
             SoundManager.shared.playSound(sound: "lock")
             LogManager.shared.appendLog("Locking instance \(instanceNumber)")
-            objectWillChange.send()
         }
     }
     
@@ -74,7 +72,6 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
         if isLocked {
             isLocked = false
             LogManager.shared.appendLog("Unlocking instance \(instanceNumber)")
-            objectWillChange.send()
         }
     }
     

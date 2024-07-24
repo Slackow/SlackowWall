@@ -63,6 +63,15 @@ struct Profile {
     @AppStorage("\(activeProfileStore).resetOneKey") var resetOneKey: KeyCode? = .e
     @AppStorage("\(activeProfileStore).lockKey") var lockKey: KeyCode? = .c
     
+    //Personalize
+    @AppStorage("\(activeProfileStore).streamFPS") var streamFPS: Double = 15
+    
+    @AppStorage("\(activeProfileStore).lockMode") var lockMode: LockMode = .preset
+    @AppStorage("\(activeProfileStore).selectedUserLock") var selectedUserLock: UserLock? = nil
+    @AppStorage("\(activeProfileStore).selectedLockPreset") var selectedLockPreset: LockPreset = .apple
+    @AppStorage("\(activeProfileStore).lockScale") var lockScale: Double = 1
+    @AppStorage("\(activeProfileStore).lockAnimation") var lockAnimation: Bool = true
+    
     static var activeProfileStore: String {
         let identifier = UserDefaults.standard.string(forKey: "activeProfile")
         return identifier ?? "main"

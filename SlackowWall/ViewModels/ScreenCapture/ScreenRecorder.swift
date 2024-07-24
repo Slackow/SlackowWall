@@ -86,8 +86,8 @@ import SwiftUI
         streamConfig.width = Int(width)
         streamConfig.height = Int(height)
         
-        // Set the capture interval at 15 fps.
-        streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: 15)
+        // Set the capture interval.
+        streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: CMTimeScale(ProfileManager.shared.profile.streamFPS))
         
         // Increase the depth of the frame queue to ensure high fps at the expense of increasing
         // the memory footprint of WindowServer.
@@ -134,12 +134,13 @@ import SwiftUI
                         switch streamError {
                             case .appClosed:
                                 instance.wasClosed = true
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                    Task {
-                                        CaptureGrid.shared.showInfo = false
-                                        await self.resetAndStartCapture()
-                                    }
-                                }
+//                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//                                    Task {
+//                                        CaptureGrid.shared.showInfo = false
+//                                        self.trackingManager.trackedInstances.removeAll(where: { $0 == instance })
+//                                        await self.resetAndStartCapture()
+//                                    }
+//                                }
                             case .unknown:
                                 instance.stream.streamError = streamError
                                 CaptureGrid.shared.showInfo = true
@@ -191,7 +192,7 @@ import SwiftUI
         trackingManager.fetchInstances()
         trackingManager.trackedInstances.map({ $0.pid }).forEach(ShortcutManager.shared.resizeReset)
 
-        if ProfileManager.shared.profile.shouldHideWindows {
+        if ProfileManager.shared.profile.shouldHideWindows && !ProfileManager.shared.profileCreatedOrDeleted {
             WindowController.unhideWindows(trackingManager.getValues(\.pid))
         }
         

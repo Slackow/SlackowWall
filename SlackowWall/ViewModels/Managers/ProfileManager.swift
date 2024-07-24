@@ -11,7 +11,9 @@ import Combine
 class ProfileManager: ObservableObject {
     @AppStorage("profiles") var profiles: [String] = []
     @AppStorage("activeProfile") var activeProfile: String = ""
+    
     @Published var profile: Profile = Profile()
+    @Published var profileCreatedOrDeleted: Bool = false
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -70,6 +72,8 @@ class ProfileManager: ObservableObject {
         }
         
         profile.profileName = newName
+        profileCreatedOrDeleted = true
+        TrackingManager.shared.trackedInstances.forEach({ $0.stream.clearCapture() })
     }
     
     func deleteCurrentProfile() {
@@ -92,6 +96,8 @@ class ProfileManager: ObservableObject {
             
             activeProfile = profiles[max(0, idx - 1)]
             profile = Profile()
+            profileCreatedOrDeleted = true
+            TrackingManager.shared.trackedInstances.forEach({ $0.stream.clearCapture() })
         }
     }
     

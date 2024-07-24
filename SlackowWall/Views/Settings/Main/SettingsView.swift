@@ -47,6 +47,8 @@ struct SettingsView: View {
                     BehaviorSettings()
                 case .keybindings:
                     KeybindingsSettings()
+                case .personalize:
+                    PersonalizeSettings()
                 case .profiles:
                     ProfileSettings()
                 case .updates:

@@ -33,11 +33,11 @@ struct TrackedInstanceView: View {
             
             VStack(alignment: .trailing, spacing: 0) {
                 if instance.isLocked {
-                    Image(systemName: "lock.fill")
-                        .scaleEffect(CGSize(width: 2, height: 2))
-                        .foregroundColor(.red)
+                    LockIcon()
+                        .frame(width: 32 * profileManager.profile.lockScale, height: 32 * profileManager.profile.lockScale)
                         .padding(.horizontal, 4)
-                        .padding(.vertical, 10)
+                        .padding(.top, 6)
+                        .padding(.bottom, 3)
                         .opacity(captureGrid.showInfo ? 1 : 0)
                         .animation(.easeInOut, value: captureGrid.showInfo)
                 }
@@ -58,7 +58,7 @@ struct TrackedInstanceView: View {
             .opacity(captureGrid.showInfo ? 1 : 0)
             .animation(.easeInOut, value: captureGrid.showInfo)
             .animation(.easeInOut, value: profileManager.profile.showInstanceNumbers)
-            .animation(.bouncy, value: instance.isLocked)
+            .animation(profileManager.profile.lockAnimation ? .bouncy : .none, value: instance.isLocked)
         }
         .disabled(instance.wasClosed || hasStreamError)
         .opacity(instance.wasClosed ? 0 : 1)
