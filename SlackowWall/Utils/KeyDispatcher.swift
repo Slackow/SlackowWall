@@ -8,6 +8,8 @@
 import SwiftUI
 
 class KeyDispatcher {
+    private init() {}
+    
     // Send F6
     static func sendReset(pid: pid_t) {
         SoundManager.shared.playSound(sound: "reset")

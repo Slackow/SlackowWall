@@ -10,7 +10,7 @@ import CachedAsyncImage
 
 struct CreditsView: View {
     var body: some View {
-        VStack {
+        SettingsPageView(title: "Credits") {
             SettingsCardView {
                 VStack {
                     CreditsEntryView(name: "Slackow", role: "Developer", icon: "wrench.adjustable.fill", color: .teal)
@@ -37,8 +37,6 @@ struct CreditsView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .padding()
     }
     
     private func getAvatarURL(_ name: String) -> URL? {

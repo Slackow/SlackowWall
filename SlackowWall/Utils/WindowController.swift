@@ -8,6 +8,8 @@
 import SwiftUI
 
 class WindowController {
+    private init() {}
+    
     static func focusWindow(_ pid: pid_t) {
         NSRunningApplication(processIdentifier: pid)?.activate(options: [.activateAllWindows, .activateIgnoringOtherApps])
     }

@@ -1,5 +1,5 @@
 //
-//  BehaviorSettingsViewModel.swift
+//  DimensionSettingsViewModel.swift
 //  SlackowWall
 //
 //  Created by Kihron on 7/20/24.
@@ -8,7 +8,7 @@
 import SwiftUI
 import Combine
 
-class BehaviorSettingsViewModel: ObservableObject {
+class DimensionSettingsViewModel: ObservableObject {
     private var screenDimensions: CGSize?
     
     private var cancellable: AnyCancellable?

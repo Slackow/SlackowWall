@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct InstanceStates {
+    private init() {}
+    
     static let waiting: UInt8 = 0x77
     static let paused: UInt8 = 0x73
     static let unpaused: UInt8 = 0x61

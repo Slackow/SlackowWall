@@ -33,7 +33,7 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
     
     private static func calculateInstanceInfo(pid: pid_t) -> InstanceInfo {
         let data = InstanceInfo(pid: pid)
-        if let args = Utils.processArguments(pid: pid) {
+        if let args = Utilities.processArguments(pid: pid) {
             if let nativesArg = args.first(where: { $0.starts(with: "-Djava.library.path=") }) {
                 let arg = nativesArg.dropLast("/natives".count).dropFirst("-Djava.library.path=".count)
                 data.statePath = "\(arg)/.minecraft/wpstateout.txt"

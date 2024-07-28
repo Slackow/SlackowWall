@@ -21,12 +21,14 @@ struct LockIcon: View {
                 preset.image
                     .resizable()
                     .aspectRatio(contentMode: .fit)
+                    .transition(.opacity.combined(with: .scale))
                     .foregroundColor(.red)
                     .id(preset)
             } else if let lock = personalizeManager.selectedUserLock?.getIconImage() {
                 Image(nsImage: lock)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
+                    .transition(.opacity.combined(with: .scale))
             }
         }
         .animation(.easeInOut, value: profileManager.profile.lockMode)

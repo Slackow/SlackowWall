@@ -7,7 +7,9 @@
 
 import Foundation
 
-final class Utils {
+final class Utilities {
+    private init() {}
+    
     // https://gist.github.com/swillits/df648e87016772c7f7e5dbed2b345066?permalink_comment_id=3399235
     // https://stackoverflow.com/questions/72443976/how-to-get-arguments-of-nsrunningapplication
     static func processArguments(pid: pid_t) -> [String]? {

@@ -61,7 +61,7 @@ class TrackingManager: ObservableObject {
     
     private func createTrackedInstance(app: NSRunningApplication) -> TrackedInstance? {
         guard isMinecraftInstance(app: app),
-              let args = Utils.processArguments(pid: app.processIdentifier),
+              let args = Utilities.processArguments(pid: app.processIdentifier),
               let nativesArg = args.first(where: { $0.starts(with: "-Djava.library.path=") }) else {
             return nil
         }
@@ -78,7 +78,7 @@ class TrackingManager: ObservableObject {
     }
     
     private func isMinecraftInstance(app: NSRunningApplication) -> Bool {
-        guard let args = Utils.processArguments(pid: app.processIdentifier) else {
+        guard let args = Utilities.processArguments(pid: app.processIdentifier) else {
             return false
         }
         

@@ -4,7 +4,6 @@
 
 import SwiftUI
 
-
 class InstanceManager: ObservableObject {
     @Published var hoveredInstance: TrackedInstance? = nil
     @Published var keyAction: KeyAction? = nil
@@ -19,42 +18,17 @@ class InstanceManager: ObservableObject {
     }
     
     func openFirstConfig() {
-        guard let firstStatePath = TrackingManager.shared.trackedInstances.first?.info.statePath else { return }
-        let path = URL(filePath: firstStatePath).deletingLastPathComponent().appendingPathComponent("config")
+        guard let firstInstance = TrackingManager.shared.trackedInstances.first(where: { $0.instanceNumber == 1 }) else { return }
+        let statePath = firstInstance.info.statePath
+        
+        let path = URL(filePath: statePath).deletingLastPathComponent().appendingPathComponent("config")
         NSWorkspace.shared.open(path)
     }
     
-    private func switchToInstance(instance: TrackedInstance) {
-        guard let windowID = instance.windowID else { return }
-        let pid = instance.pid
-        
-        OBSManager.shared.writeWID(windowID: windowID)
-        LogManager.shared.appendLog("Pressed: \(pid) #(\(instance.instanceNumber))")
-        
-        Task {
-            LogManager.shared.appendLog("Switching...")
-            
-            if ProfileManager.shared.profile.shouldHideWindows {
-                let pids = TrackingManager.shared.trackedInstances.map({ $0.pid }).filter({$0 != pid})
-                WindowController.hideWindows(pids)
-            }
-            
-            ShortcutManager.shared.resizeBase(pid: pid)
-            WindowController.focusWindow(pid)
-            
-            KeyDispatcher.sendEscape(pid: pid)
-            
-            if ProfileManager.shared.profile.f1OnJoin {
-                KeyDispatcher.sendF1(pid: pid)
-            }
-            
-            instance.info.checkState = .NONE
-            LogManager.shared.appendLog("Switched to instance")
-        }
-    }
-    
     func copyMods() {
-        guard let statePath =  TrackingManager.shared.trackedInstances.map({ $0.info }).first?.statePath else { return }
+        guard let firstInstance = TrackingManager.shared.trackedInstances.first(where: { $0.instanceNumber == 1 }) else { return }
+        let statePath = firstInstance.info.statePath
+        
         let src = URL(filePath: statePath).deletingLastPathComponent().appendingPathComponent("mods")
         let fileManager = FileManager.default
         
@@ -85,7 +59,7 @@ class InstanceManager: ObservableObject {
         TrackingManager.shared.killAll()
     }
     
-    @MainActor func handleKeyEvent(instance: TrackedInstance) {
+    func handleKeyEvent(instance: TrackedInstance) {
         let pid = instance.pid
         
         if keyAction == .resetAll {
@@ -120,7 +94,36 @@ class InstanceManager: ObservableObject {
         }
     }
     
-    @MainActor private func openInstance(instance: TrackedInstance) {
+    private func switchToInstance(instance: TrackedInstance) {
+        guard let windowID = instance.windowID else { return }
+        let pid = instance.pid
+        
+        OBSManager.shared.writeWID(windowID: windowID)
+        LogManager.shared.appendLog("Pressed: \(pid) #(\(instance.instanceNumber))")
+        
+        Task {
+            LogManager.shared.appendLog("Switching...")
+            
+            if ProfileManager.shared.profile.shouldHideWindows {
+                let pids = TrackingManager.shared.trackedInstances.map({ $0.pid }).filter({$0 != pid})
+                WindowController.hideWindows(pids)
+            }
+            
+            ShortcutManager.shared.resizeBase(pid: pid)
+            WindowController.focusWindow(pid)
+            
+            KeyDispatcher.sendEscape(pid: pid)
+            
+            if ProfileManager.shared.profile.f1OnJoin {
+                KeyDispatcher.sendF1(pid: pid)
+            }
+            
+            instance.info.checkState = .NONE
+            LogManager.shared.appendLog("Switched to instance")
+        }
+    }
+    
+    private func openInstance(instance: TrackedInstance) {
         if (NSApplication.shared.isActive) {
             if ProfileManager.shared.profile.checkStateOutput {
                 let instanceInfo = instance.info
@@ -137,7 +140,7 @@ class InstanceManager: ObservableObject {
         }
     }
     
-    @MainActor private func enterAndResetUnlocked(instance: TrackedInstance) {
+    private func enterAndResetUnlocked(instance: TrackedInstance) {
         openInstance(instance: instance)
         
         for trackedInstance in TrackingManager.shared.trackedInstances {

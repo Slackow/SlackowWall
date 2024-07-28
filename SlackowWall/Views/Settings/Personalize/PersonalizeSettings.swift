@@ -15,46 +15,42 @@ struct PersonalizeSettings: View {
     @State private var showLockEditor: Bool = false
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 12) {
-                SettingsLabel(title: "Video")
-                
-                SettingsCardView {
-                    SettingsSliderView(title: "Stream FPS (\(Int(profileManager.profile.streamFPS)))", leftIcon: "figure.walk", rightIcon: "figure.walk.motion", value: $profileManager.profile.streamFPS, range: 15...60, step: 5)
-                }
-                
-                SettingsLabel(title: "Appearance", description: "Adjust different visual effects and components throughout the app.")
-                    .padding(.top, 5)
-                
-                SettingsCardView {
-                    VStack {
-                        SettingsButtonView(title: "Lock Icon", description: "Customize the lock image used throughout SlackowWall.", action: { showLockEditor.toggle() }) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 5)
-                                    .stroke(.gray)
-                                
-                                LockIcon()
-                                    .frame(width: 32, height: 32)
-                            }
-                            .frame(width: 42, height: 42)
-                            .contentShape(.rect)
+        SettingsPageView(title: "Personalize") {
+            SettingsLabel(title: "Video")
+            
+            SettingsCardView {
+                SettingsSliderView(title: "Stream FPS (\(Int(profileManager.profile.streamFPS)))", leftIcon: "figure.walk", rightIcon: "figure.walk.motion", value: $profileManager.profile.streamFPS, range: 15...60, step: 5)
+            }
+            
+            SettingsLabel(title: "Appearance", description: "Adjust different visual effects and components throughout the app.")
+                .padding(.top, 5)
+            
+            SettingsCardView {
+                VStack {
+                    SettingsButtonView(title: "Lock Icon", description: "Customize the lock image used throughout SlackowWall.", action: { showLockEditor.toggle() }) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 5)
+                                .stroke(.gray)
+                            
+                            LockIcon()
+                                .frame(width: 32, height: 32)
                         }
-                        .buttonStyle(.plain)
-                        
-                        Divider()
-                            .padding(.bottom, 4)
-                        
-                        SettingsSliderView(title: "Lock Scale", leftIcon: "dial.low.fill", rightIcon: "dial.high.fill", value: $profileManager.profile.lockScale, range: 0.5...1.5, step: 0.25)
-                        
-                        Divider()
-                            .padding(.bottom, 4)
-                        
-                        SettingsToggleView(title: "Lock Animation", option: $profileManager.profile.lockAnimation)
+                        .frame(width: 42, height: 42)
+                        .contentShape(.rect)
                     }
+                    .buttonStyle(.plain)
+                    
+                    Divider()
+                        .padding(.bottom, 4)
+                    
+                    SettingsSliderView(title: "Lock Scale", leftIcon: "dial.low.fill", rightIcon: "dial.high.fill", value: $profileManager.profile.lockScale, range: 0.5...1.5, step: 0.25)
+                    
+                    Divider()
+                        .padding(.bottom, 4)
+                    
+                    SettingsToggleView(title: "Lock Animation", option: $profileManager.profile.lockAnimation)
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .padding()
         }
         .sheet(isPresented: $showLockEditor) {
             LockIconEditor()

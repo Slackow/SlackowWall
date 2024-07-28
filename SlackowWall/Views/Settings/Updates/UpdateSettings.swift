@@ -43,6 +43,7 @@ struct UpdateSettings: View {
         }
         .padding([.horizontal, .top])
         .frame(maxHeight: .infinity, alignment: .topLeading)
+        .navigationTitle("Updates")
         .onChange(of: updateManager.checkAutomatically) { value in
             updateManager.automaticallyCheckForUpdates = value
         }

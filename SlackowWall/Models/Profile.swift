@@ -8,73 +8,79 @@
 import SwiftUI
 
 struct Profile {
-    //Profile
-    @AppStorage("\(activeProfileStore).profileName") var profileName: String = "Main"
-    @AppStorage("\(activeProfileStore).expectedMWidth") var expectedMWidth: Int? = nil
-    @AppStorage("\(activeProfileStore).expectedMHeight") var expectedMHeight: Int? = nil
+    // Profile
+    @AppStorage(key("profileName")) var profileName: String = "Main"
+    @AppStorage(key("expectedMWidth")) var expectedMWidth: Int? = nil
+    @AppStorage(key("expectedMHeight")) var expectedMHeight: Int? = nil
     
     // Main
-    @AppStorage("\(activeProfileStore).sections") var sections: Int = 2
-    @AppStorage("\(activeProfileStore).alignment") var alignment: Alignment = .horizontal
+    @AppStorage(key("sections")) var sections: Int = 2
+    @AppStorage(key("alignment")) var alignment: Alignment = .horizontal
     
-    @AppStorage("\(activeProfileStore).shouldHideWindows") var shouldHideWindows = true
-    @AppStorage("\(activeProfileStore).showInstanceNumbers") var showInstanceNumbers = true
-    @AppStorage("\(activeProfileStore).forceAspectRatio") var forceAspectRatio = false
+    @AppStorage(key("shouldHideWindows")) var shouldHideWindows = true
+    @AppStorage(key("showInstanceNumbers")) var showInstanceNumbers = true
+    @AppStorage(key("forceAspectRatio")) var forceAspectRatio = false
     
-    @AppStorage("\(activeProfileStore).moveXOffset") var moveXOffset: Int? = nil
-    @AppStorage("\(activeProfileStore).moveYOffset") var moveYOffset: Int? = nil
+    @AppStorage(key("moveXOffset")) var moveXOffset: Int? = nil
+    @AppStorage(key("moveYOffset")) var moveYOffset: Int? = nil
     
-    @AppStorage("\(activeProfileStore).setWidth") var setWidth: Int? = nil
-    @AppStorage("\(activeProfileStore).setHeight") var setHeight: Int? = nil
+    @AppStorage(key("setWidth")) var setWidth: Int? = nil
+    @AppStorage(key("setHeight")) var setHeight: Int? = nil
     
     // Behavior
-    @AppStorage("\(activeProfileStore).f1OnJoin") var f1OnJoin: Bool = false
-    @AppStorage("\(activeProfileStore).fullscreen") var fullscreen: Bool = false
-    @AppStorage("\(activeProfileStore).onlyOnFocus") var onlyOnFocus: Bool = true
-    @AppStorage("\(activeProfileStore).checkStateOutput") var checkStateOutput: Bool = false
+    @AppStorage(key("f1OnJoin")) var f1OnJoin: Bool = false
+    @AppStorage(key("fullscreen")) var fullscreen: Bool = false
+    @AppStorage(key("onlyOnFocus")) var onlyOnFocus: Bool = true
+    @AppStorage(key("checkStateOutput")) var checkStateOutput: Bool = false
     
-    @AppStorage("\(activeProfileStore).resetWidth") var resetWidth: Int? = nil
-    @AppStorage("\(activeProfileStore).resetHeight") var resetHeight: Int? = nil
-    @AppStorage("\(activeProfileStore).resetX") var resetX: Int? = nil
-    @AppStorage("\(activeProfileStore).resetY") var resetY: Int? = nil
+    @AppStorage(key("wallMode")) var wallMode: WallMode = .wall
     
-    @AppStorage("\(activeProfileStore).baseWidth") var baseWidth: Int? = nil
-    @AppStorage("\(activeProfileStore).baseHeight") var baseHeight: Int? = nil
-    @AppStorage("\(activeProfileStore).baseX") var baseX: Int? = nil
-    @AppStorage("\(activeProfileStore).baseY") var baseY: Int? = nil
+    @AppStorage(key("resetWidth")) var resetWidth: Int? = nil
+    @AppStorage(key("resetHeight")) var resetHeight: Int? = nil
+    @AppStorage(key("resetX")) var resetX: Int? = nil
+    @AppStorage(key("resetY")) var resetY: Int? = nil
     
-    @AppStorage("\(activeProfileStore).wideWidth") var wideWidth: Int? = nil
-    @AppStorage("\(activeProfileStore).wideHeight") var wideHeight: Int? = nil
-    @AppStorage("\(activeProfileStore).wideX") var wideX: Int? = nil
-    @AppStorage("\(activeProfileStore).wideY") var wideY: Int? = nil
+    @AppStorage(key("baseWidth")) var baseWidth: Int? = nil
+    @AppStorage(key("baseHeight")) var baseHeight: Int? = nil
+    @AppStorage(key("baseX")) var baseX: Int? = nil
+    @AppStorage(key("baseY")) var baseY: Int? = nil
     
-    @AppStorage("\(activeProfileStore).altWidth") var altWidth: Int? = nil
-    @AppStorage("\(activeProfileStore).altHeight") var altHeight: Int? = nil
-    @AppStorage("\(activeProfileStore).altX") var altX: Int? = nil
-    @AppStorage("\(activeProfileStore).altY") var altY: Int? = nil
+    @AppStorage(key("wideWidth")) var wideWidth: Int? = nil
+    @AppStorage(key("wideHeight")) var wideHeight: Int? = nil
+    @AppStorage(key("wideX")) var wideX: Int? = nil
+    @AppStorage(key("wideY")) var wideY: Int? = nil
+    
+    @AppStorage(key("altWidth")) var altWidth: Int? = nil
+    @AppStorage(key("altHeight")) var altHeight: Int? = nil
+    @AppStorage(key("altX")) var altX: Int? = nil
+    @AppStorage(key("altY")) var altY: Int? = nil
     
     // Keybinds
-    @AppStorage("\(activeProfileStore).resetGKey") var resetGKey: KeyCode? = .u
-    @AppStorage("\(activeProfileStore).planarGKey") var planarGKey: KeyCode? = nil
-    @AppStorage("\(activeProfileStore).altGKey") var altGKey: KeyCode? = nil
-    @AppStorage("\(activeProfileStore).resetAllKey") var resetAllKey: KeyCode? = .t
-    @AppStorage("\(activeProfileStore).resetOthersKey") var resetOthersKey: KeyCode? = .f
-    @AppStorage("\(activeProfileStore).runKey") var runKey: KeyCode? = .r
-    @AppStorage("\(activeProfileStore).resetOneKey") var resetOneKey: KeyCode? = .e
-    @AppStorage("\(activeProfileStore).lockKey") var lockKey: KeyCode? = .c
+    @AppStorage(key("resetGKey")) var resetGKey: KeyCode? = .u
+    @AppStorage(key("planarGKey")) var planarGKey: KeyCode? = nil
+    @AppStorage(key("altGKey")) var altGKey: KeyCode? = nil
+    @AppStorage(key("resetAllKey")) var resetAllKey: KeyCode? = .t
+    @AppStorage(key("resetOthersKey")) var resetOthersKey: KeyCode? = .f
+    @AppStorage(key("runKey")) var runKey: KeyCode? = .r
+    @AppStorage(key("resetOneKey")) var resetOneKey: KeyCode? = .e
+    @AppStorage(key("lockKey")) var lockKey: KeyCode? = .c
     
-    //Personalize
-    @AppStorage("\(activeProfileStore).streamFPS") var streamFPS: Double = 15
+    // Personalize
+    @AppStorage(key("streamFPS")) var streamFPS: Double = 15
     
-    @AppStorage("\(activeProfileStore).lockMode") var lockMode: LockMode = .preset
-    @AppStorage("\(activeProfileStore).selectedUserLock") var selectedUserLock: UserLock? = nil
-    @AppStorage("\(activeProfileStore).selectedLockPreset") var selectedLockPreset: LockPreset = .apple
-    @AppStorage("\(activeProfileStore).lockScale") var lockScale: Double = 1
-    @AppStorage("\(activeProfileStore).lockAnimation") var lockAnimation: Bool = true
+    @AppStorage(key("lockMode")) var lockMode: LockMode = .preset
+    @AppStorage(key("selectedUserLock")) var selectedUserLock: UserLock? = nil
+    @AppStorage(key("selectedLockPreset")) var selectedLockPreset: LockPreset = .apple
+    @AppStorage(key("lockScale")) var lockScale: Double = 1
+    @AppStorage(key("lockAnimation")) var lockAnimation: Bool = true
     
-    static var activeProfileStore: String {
+    private static var activeProfileStore: String {
         let identifier = UserDefaults.standard.string(forKey: "activeProfile")
         return identifier ?? "main"
+    }
+    
+    private static func key(_ name: String) -> String {
+        return "\(activeProfileStore).\(name)"
     }
     
     init() {
