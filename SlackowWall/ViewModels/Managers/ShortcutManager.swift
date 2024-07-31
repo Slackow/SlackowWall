@@ -37,22 +37,44 @@ final class ShortcutManager: ObservableObject {
         let pid = activeWindow.processIdentifier
         guard let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid }) else { return }
         
-        returnToWall(from: instance)
-//        switch ProfileManager.shared.profile.wallMode {
-//            case .wall:
-//                returnToWall(from: instance)
-//            case .lock:
-//                if let nextInstance = TrackingManager.shared.trackedInstances.first(where: { $0.isLocked == true }) {
-//                    InstanceManager.shared.resetInstance(instance: instance)
-//                    resizeReset(pid: instance.pid)
-//                    
-//                    InstanceManager.shared.openInstance(instance: nextInstance)
-//                } else {
-//                    returnToWall(from: instance)
-//                }
-//            case .multi:
-//                returnToWall(from: instance)
-//        }
+        switch ProfileManager.shared.profile.wallMode {
+            case .wall:
+                returnToWall(from: instance)
+            case .lock:
+                if let nextInstance = TrackingManager.shared.trackedInstances.first(where: { $0.isLocked == true }) {
+                    InstanceManager.shared.openInstance(instance: nextInstance, shouldWait: true)
+                    InstanceManager.shared.resetInstance(instance: instance)
+                    resizeReset(pid: instance.pid)
+                } else {
+                    returnToWall(from: instance)
+                }
+            case .multi:
+                if let currentInstanceIndex = TrackingManager.shared.trackedInstances.firstIndex(where: { $0.instanceNumber == instance.instanceNumber }) {
+                    let totalInstances = TrackingManager.shared.trackedInstances.count
+                    var nextInstance: TrackedInstance?
+                    
+                    for offset in 1..<totalInstances {
+                        let nextIndex = (currentInstanceIndex + offset) % totalInstances
+                        let nextCandidate = TrackingManager.shared.trackedInstances[nextIndex]
+                        nextCandidate.info.updateState(force: true)
+                        
+                        if nextCandidate.info.state == InstanceStates.paused || nextCandidate.info.state == InstanceStates.unpaused {
+                            nextInstance = nextCandidate
+                            break
+                        }
+                    }
+                    
+                    if let nextInstance = nextInstance {
+                        InstanceManager.shared.openInstance(instance: nextInstance, shouldWait: true)
+                        InstanceManager.shared.resetInstance(instance: instance)
+                        resizeReset(pid: instance.pid)
+                    } else {
+                        returnToWall(from: instance)
+                    }
+                } else {
+                    returnToWall(from: instance)
+                }
+        }
     }
     
     private func returnToWall(from instance: TrackedInstance) {

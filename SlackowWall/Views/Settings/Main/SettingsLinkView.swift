@@ -47,6 +47,7 @@ struct SettingsLinkView<Destination: View>: View {
                     .foregroundStyle(.gray)
             }
             .padding(.vertical, description != nil ? 0 : 3)
+            .contentShape(.rect)
         }
         .buttonStyle(.plain)
     }

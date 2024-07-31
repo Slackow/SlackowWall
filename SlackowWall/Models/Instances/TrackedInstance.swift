@@ -15,7 +15,7 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
     var windowID: CGWindowID?
     let instanceNumber: Int
     
-    @Published var info: InstanceInfo
+    var info: InstanceInfo
     @Published var stream: InstanceStream
     
     @Published var isLocked: Bool

@@ -94,14 +94,14 @@ class InstanceManager: ObservableObject {
         }
     }
     
-    private func switchToInstance(instance: TrackedInstance) {
+    private func switchToInstance(instance: TrackedInstance, shouldWait: Bool) {
         guard let windowID = instance.windowID else { return }
         let pid = instance.pid
         
         OBSManager.shared.writeWID(windowID: windowID)
         LogManager.shared.appendLog("Pressed: \(pid) #(\(instance.instanceNumber))")
         
-        Task {
+        if shouldWait {
             LogManager.shared.appendLog("Switching...")
             
             if ProfileManager.shared.profile.shouldHideWindows {
@@ -110,6 +110,8 @@ class InstanceManager: ObservableObject {
             }
             
             ShortcutManager.shared.resizeBase(pid: pid)
+            
+            NSApp.activate(ignoringOtherApps: true)
             WindowController.focusWindow(pid)
             
             KeyDispatcher.sendEscape(pid: pid)
@@ -120,24 +122,45 @@ class InstanceManager: ObservableObject {
             
             instance.info.checkState = .NONE
             LogManager.shared.appendLog("Switched to instance")
+        } else {
+            Task {
+                LogManager.shared.appendLog("Switching...")
+                
+                if ProfileManager.shared.profile.shouldHideWindows {
+                    let pids = TrackingManager.shared.trackedInstances.map({ $0.pid }).filter({$0 != pid})
+                    WindowController.hideWindows(pids)
+                }
+                
+                ShortcutManager.shared.resizeBase(pid: pid)
+                
+                await NSApp.activate(ignoringOtherApps: true)
+                WindowController.focusWindow(pid)
+                
+                KeyDispatcher.sendEscape(pid: pid)
+                
+                if ProfileManager.shared.profile.f1OnJoin {
+                    KeyDispatcher.sendF1(pid: pid)
+                }
+                
+                instance.info.checkState = .NONE
+                LogManager.shared.appendLog("Switched to instance")
+            }
         }
     }
     
-    private func openInstance(instance: TrackedInstance) {
-        if (NSApplication.shared.isActive) {
-            if ProfileManager.shared.profile.checkStateOutput {
-                let instanceInfo = instance.info
-                instanceInfo.updateState(force: true)
-                
-                if instanceInfo.state != InstanceStates.paused && instanceInfo.state != InstanceStates.unpaused {
-                    instance.lock()
-                    return
-                }
-            }
+    func openInstance(instance: TrackedInstance, shouldWait: Bool = false) {
+        if ProfileManager.shared.profile.checkStateOutput {
+            let instanceInfo = instance.info
+            instanceInfo.updateState(force: true)
             
-            switchToInstance(instance: instance)
-            instance.unlock()
+            if instanceInfo.state != InstanceStates.paused && instanceInfo.state != InstanceStates.unpaused {
+                instance.lock()
+                return
+            }
         }
+        
+        switchToInstance(instance: instance, shouldWait: shouldWait)
+        instance.unlock()
     }
     
     private func enterAndResetUnlocked(instance: TrackedInstance) {
