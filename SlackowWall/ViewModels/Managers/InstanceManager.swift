@@ -32,7 +32,7 @@ class InstanceManager: ObservableObject {
         let src = URL(filePath: statePath).deletingLastPathComponent().appendingPathComponent("mods")
         let fileManager = FileManager.default
         
-        TrackingManager.shared.trackedInstances.map({ $0.info }).dropFirst().forEach {
+        TrackingManager.shared.getValues(\.info).dropFirst().forEach {
             let dst = URL(filePath: $0.statePath).deletingLastPathComponent().appendingPathComponent("mods")
             
             print("Copying all from", src.path, "to", dst.path)
@@ -100,19 +100,13 @@ class InstanceManager: ObservableObject {
         
         OBSManager.shared.writeWID(windowID: windowID)
         LogManager.shared.appendLog("Pressed: \(pid) #(\(instance.instanceNumber))")
+        LogManager.shared.appendLog("Switching...")
         
-        if shouldWait {
-            LogManager.shared.appendLog("Switching...")
-            
+        let actions = {
             if ProfileManager.shared.profile.shouldHideWindows {
-                let pids = TrackingManager.shared.trackedInstances.map({ $0.pid }).filter({$0 != pid})
+                let pids = TrackingManager.shared.getValues(\.pid).filter({$0 != pid})
                 WindowController.hideWindows(pids)
             }
-            
-            ShortcutManager.shared.resizeBase(pid: pid)
-            
-            NSApp.activate(ignoringOtherApps: true)
-            WindowController.focusWindow(pid)
             
             KeyDispatcher.sendEscape(pid: pid)
             
@@ -122,41 +116,29 @@ class InstanceManager: ObservableObject {
             
             instance.info.checkState = .NONE
             LogManager.shared.appendLog("Switched to instance")
+        }
+        
+        if shouldWait {
+            ShortcutManager.shared.resizeBase(pid: pid)
+            NSApp.activate(ignoringOtherApps: true)
+            WindowController.focusWindow(pid)
+            actions()
         } else {
             Task {
-                LogManager.shared.appendLog("Switching...")
-                
-                if ProfileManager.shared.profile.shouldHideWindows {
-                    let pids = TrackingManager.shared.trackedInstances.map({ $0.pid }).filter({$0 != pid})
-                    WindowController.hideWindows(pids)
-                }
-                
                 ShortcutManager.shared.resizeBase(pid: pid)
-                
                 await NSApp.activate(ignoringOtherApps: true)
                 WindowController.focusWindow(pid)
-                
-                KeyDispatcher.sendEscape(pid: pid)
-                
-                if ProfileManager.shared.profile.f1OnJoin {
-                    KeyDispatcher.sendF1(pid: pid)
-                }
-                
-                instance.info.checkState = .NONE
-                LogManager.shared.appendLog("Switched to instance")
+                actions()
             }
         }
     }
     
     func openInstance(instance: TrackedInstance, shouldWait: Bool = false) {
-        if ProfileManager.shared.profile.checkStateOutput {
-            let instanceInfo = instance.info
-            instanceInfo.updateState(force: true)
-            
-            if instanceInfo.state != InstanceStates.paused && instanceInfo.state != InstanceStates.unpaused {
-                instance.lock()
-                return
-            }
+        instance.info.updateState(force: true)
+        
+        if !instance.isReady {
+            instance.lock()
+            return
         }
         
         switchToInstance(instance: instance, shouldWait: shouldWait)

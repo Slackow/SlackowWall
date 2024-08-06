@@ -16,7 +16,7 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
     let instanceNumber: Int
     
     var info: InstanceInfo
-    @Published var stream: InstanceStream
+    var stream: InstanceStream
     
     @Published var isLocked: Bool
     @Published var wasClosed: Bool
@@ -29,6 +29,14 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
         self.stream = InstanceStream()
         self.isLocked = false
         self.wasClosed = false
+    }
+    
+    var isReady: Bool {
+        if ProfileManager.shared.profile.checkStateOutput {
+            return info.state == InstanceStates.paused || info.state == InstanceStates.unpaused
+        } else {
+            return true
+        }
     }
     
     private static func calculateInstanceInfo(pid: pid_t) -> InstanceInfo {

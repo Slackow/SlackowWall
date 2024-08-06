@@ -32,27 +32,28 @@ class InstanceInfo: CustomStringConvertible {
     // for any world preview state output, this will map it to a unique byte and store it into state.
     @discardableResult func updateState(force: Bool = false) -> Bool {
         LogManager.shared.appendLog("Attempting to update instance state...")
-        prevState = state
         
-        if !force && checkState == .NONE {
+        // Skip updating state if not forced and checkState is .NONE
+        guard force || checkState != .NONE else {
             return false
         }
         
-        // Read the file into a data object
-        if let fileData = FileManager.default.contents(atPath: statePath), !fileData.isEmpty {
-            // Read the first byte of the file
-            var newState = fileData[0]
-            
-            // Check if the first byte is 'i'
-            if newState == 0x69 && fileData.count >= 12 {
-                // Read the twelfth byte of the file
-                newState = fileData[11]
-            }
-            state = newState
-        } else {
+        // Update previous state
+        prevState = state
+        
+        // Attempt to read file data
+        guard let fileData = FileManager.default.contents(atPath: statePath), !fileData.isEmpty else {
             print("Error: Failed to read file \(statePath)")
+            return false
         }
         
+        // Update state based on file data
+        var newState = fileData[0]
+        if newState == 0x69 && fileData.count >= 12 {
+            newState = fileData[11]
+        }
+        
+        state = newState
         LogManager.shared.appendLog("Updated State:", state)
         return prevState != state
     }

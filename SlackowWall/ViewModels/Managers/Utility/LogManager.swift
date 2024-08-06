@@ -9,7 +9,7 @@ import Gzip
 import SwiftUI
 
 class LogManager {
-    private let logDirectory = "/tmp/SlackowWall/"
+    private let logDirectory = "/tmp/SlackowWall/Logs/"
     
     static let shared = LogManager()
     

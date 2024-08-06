@@ -41,39 +41,9 @@ final class ShortcutManager: ObservableObject {
             case .wall:
                 returnToWall(from: instance)
             case .lock:
-                if let nextInstance = TrackingManager.shared.trackedInstances.first(where: { $0.isLocked == true }) {
-                    InstanceManager.shared.openInstance(instance: nextInstance, shouldWait: true)
-                    InstanceManager.shared.resetInstance(instance: instance)
-                    resizeReset(pid: instance.pid)
-                } else {
-                    returnToWall(from: instance)
-                }
+                handleLockMode(for: instance)
             case .multi:
-                if let currentInstanceIndex = TrackingManager.shared.trackedInstances.firstIndex(where: { $0.instanceNumber == instance.instanceNumber }) {
-                    let totalInstances = TrackingManager.shared.trackedInstances.count
-                    var nextInstance: TrackedInstance?
-                    
-                    for offset in 1..<totalInstances {
-                        let nextIndex = (currentInstanceIndex + offset) % totalInstances
-                        let nextCandidate = TrackingManager.shared.trackedInstances[nextIndex]
-                        nextCandidate.info.updateState(force: true)
-                        
-                        if nextCandidate.info.state == InstanceStates.paused || nextCandidate.info.state == InstanceStates.unpaused {
-                            nextInstance = nextCandidate
-                            break
-                        }
-                    }
-                    
-                    if let nextInstance = nextInstance {
-                        InstanceManager.shared.openInstance(instance: nextInstance, shouldWait: true)
-                        InstanceManager.shared.resetInstance(instance: instance)
-                        resizeReset(pid: instance.pid)
-                    } else {
-                        returnToWall(from: instance)
-                    }
-                } else {
-                    returnToWall(from: instance)
-                }
+                handleMultiMode(for: instance)
         }
     }
     
@@ -89,6 +59,45 @@ final class ShortcutManager: ObservableObject {
         NSApp.activate(ignoringOtherApps: true)
         resizeReset(pid: instance.pid)
         LogManager.shared.appendLog("Returned to SlackowWall")
+    }
+    
+    private func handleLockMode(for instance: TrackedInstance) {
+        guard let nextInstance = TrackingManager.shared.trackedInstances.first(where: { $0.isLocked == true }) else {
+            returnToWall(from: instance)
+            return
+        }
+        
+        InstanceManager.shared.openInstance(instance: nextInstance, shouldWait: true)
+        InstanceManager.shared.resetInstance(instance: instance)
+        resizeReset(pid: instance.pid)
+    }
+    
+    private func handleMultiMode(for instance: TrackedInstance) {
+        let trackedInstances = TrackingManager.shared.trackedInstances
+        let totalInstances = trackedInstances.count
+        
+        guard let currentInstanceIndex = trackedInstances.firstIndex(where: { $0.instanceNumber == instance.instanceNumber }) else {
+            returnToWall(from: instance)
+            return
+        }
+        
+        let instanceCandidate = (1..<totalInstances).lazy
+            .map { (currentInstanceIndex + $0) % totalInstances }
+            .map { index -> TrackedInstance in
+                let candidate = trackedInstances[index]
+                candidate.info.updateState(force: true)
+                return candidate
+            }
+            .first(where: { $0.isReady })
+        
+        guard let nextInstance = instanceCandidate else {
+            returnToWall(from: instance)
+            return
+        }
+        
+        InstanceManager.shared.openInstance(instance: nextInstance, shouldWait: true)
+        InstanceManager.shared.resetInstance(instance: instance)
+        resizeReset(pid: instance.pid)
     }
     
     func resizePlanar() {

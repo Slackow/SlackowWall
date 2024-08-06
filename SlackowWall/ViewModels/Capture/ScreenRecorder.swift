@@ -195,7 +195,7 @@ import SwiftUI
         }
         
         trackingManager.fetchInstances()
-        trackingManager.trackedInstances.map({ $0.pid }).forEach(ShortcutManager.shared.resizeReset)
+        trackingManager.getValues(\.pid).forEach(ShortcutManager.shared.resizeReset)
 
         if ProfileManager.shared.profile.shouldHideWindows && !ProfileManager.shared.profileCreatedOrDeleted {
             WindowController.unhideWindows(trackingManager.getValues(\.pid))
