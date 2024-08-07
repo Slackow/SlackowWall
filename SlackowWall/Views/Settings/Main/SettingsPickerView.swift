@@ -35,7 +35,7 @@ struct SettingsPickerView<T: SettingsOption>: View {
                         .font(.caption)
                         .foregroundStyle(.gray)
                         .padding(.trailing, 2)
-                        .allowsTightening(descInteractable)
+                        .allowsHitTesting(descInteractable)
                         .modifier(SizeReader(size: $textHeight))
                 }
             }

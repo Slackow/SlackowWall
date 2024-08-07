@@ -15,7 +15,7 @@ struct BehaviorSettings: View {
     var body: some View {
         SettingsPageView(title: "Behavior") {
             SettingsCardView {
-                SettingsPickerView(title: "Wall Mode", width: 70, selection: $profileManager.profile.wallMode)
+                SettingsPickerView(title: "Reset Mode", description: profileManager.profile.resetMode.description, descInteractable: false, width: 70, selection: $profileManager.profile.resetMode)
             }
             
             SettingsCardView {
@@ -42,6 +42,7 @@ struct BehaviorSettings: View {
                 SettingsLinkView(title: "Window Modes", destination: DimensionSettings())
             }
         }
+        .animation(.easeInOut, value: profileManager.profile.resetMode)
     }
 }
 

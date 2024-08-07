@@ -33,7 +33,7 @@ struct Profile {
     @AppStorage(key("onlyOnFocus")) var onlyOnFocus: Bool = true
     @AppStorage(key("checkStateOutput")) var checkStateOutput: Bool = false
     
-    @AppStorage(key("wallMode")) var wallMode: WallMode = .wall
+    @AppStorage(key("resetMode")) var resetMode: ResetMode = .wall
     
     @AppStorage(key("resetWidth")) var resetWidth: Int? = nil
     @AppStorage(key("resetHeight")) var resetHeight: Int? = nil

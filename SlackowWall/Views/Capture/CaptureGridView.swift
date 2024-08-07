@@ -85,12 +85,10 @@ struct CaptureGridView: View {
     private func createSection(section: Int) -> some View {
         ForEach(gridManager.indicesForSection(section), id: \.self) { idx in
             if idx < trackingManager.trackedInstances.count {
-                if section == 0 && idx == 0 {
-                    captureContentView(trackedInstance: trackingManager.trackedInstances[idx])
-                        .modifier(SizeReader(size: $gridManager.sectionSize))
-                } else {
-                    captureContentView(trackedInstance: trackingManager.trackedInstances[idx])
-                }
+                captureContentView(trackedInstance: trackingManager.trackedInstances[idx])
+                    .if(section == 0 && idx == 0) { view in
+                        view.modifier(SizeReader(size: $gridManager.sectionSize))
+                    }
             }
         }
     }

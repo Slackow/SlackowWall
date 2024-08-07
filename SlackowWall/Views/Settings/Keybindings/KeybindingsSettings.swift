@@ -11,7 +11,7 @@ struct KeybindingsSettings: View {
     @ObservedObject private var profileManager = ProfileManager.shared
     
     var body: some View {
-        SettingsPageView(title: "Keybinds") {
+        SettingsPageView(title: "Keybinds", shouldDisableFocus: false) {
             SettingsLabel(title: "Global Bindings", description: "These keybinds work system-wide and can be triggered within any application.")
             
             SettingsCardView {

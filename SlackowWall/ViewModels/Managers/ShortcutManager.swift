@@ -37,7 +37,7 @@ final class ShortcutManager: ObservableObject {
         let pid = activeWindow.processIdentifier
         guard let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid }) else { return }
         
-        switch ProfileManager.shared.profile.wallMode {
+        switch ProfileManager.shared.profile.resetMode {
             case .wall:
                 returnToWall(from: instance)
             case .lock:
