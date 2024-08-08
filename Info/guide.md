@@ -117,6 +117,8 @@ You also need to synchronize some keybinds from SlackowWall to OBS in order for 
 
 Your Global Reset key, (default `U`), should also be bound to switch to your wall scene.
 
+If you change your "resetting mode" option you'll likely have to adjust this
+
 ### OBS Setup Video
 Here's a short [video](https://youtu.be/kjjeruApArc) showing the entire OBS setup process.
 
