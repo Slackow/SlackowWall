@@ -72,6 +72,9 @@ class TrackingManager: ObservableObject {
         
         if let num = UInt(numString.suffix(2)) ?? UInt(numString.suffix(1)) {
             return TrackedInstance(pid: app.processIdentifier, instanceNumber: Int(num))
+        } else if ProfileManager.shared.profile.utilityMode {
+            let instNum = (self.getValues(\.instanceNumber).max() ?? 0) + 1
+            return TrackedInstance(pid: app.processIdentifier, instanceNumber: instNum)
         }
         
         return nil

@@ -20,6 +20,12 @@ struct BehaviorSettings: View {
             
             SettingsCardView {
                 VStack {
+                    SettingsToggleView(title: "Utility Mode", description: "Allows Non-Numbered instances to be captured by SlackowWall", descInteractable: false, option: $profileManager.profile.utilityMode)
+                        .tint(profileManager.profile.f1OnJoin ? .red : .gray)
+                        .animation(.easeInOut, value: profileManager.profile.f1OnJoin)
+                    
+                    Divider()
+                    
                     SettingsToggleView(title: "Press F1 on Join", description: "[This option may be illegal and could invalidate runs.](0)", descInteractable: false, option: $profileManager.profile.f1OnJoin)
                         .tint(profileManager.profile.f1OnJoin ? .red : .gray)
                         .animation(.easeInOut, value: profileManager.profile.f1OnJoin)

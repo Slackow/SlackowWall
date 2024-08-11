@@ -28,6 +28,7 @@ struct Profile {
     @AppStorage(key("setHeight")) var setHeight: Int? = nil
     
     // Behavior
+    @AppStorage(key("utilityMode")) var utilityMode: Bool = false
     @AppStorage(key("f1OnJoin")) var f1OnJoin: Bool = false
     @AppStorage(key("fullscreen")) var fullscreen: Bool = false
     @AppStorage(key("onlyOnFocus")) var onlyOnFocus: Bool = true
