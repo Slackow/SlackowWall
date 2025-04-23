@@ -37,6 +37,9 @@ struct PlaceholderInstanceView: View {
 //                        }
 //                    }
                 Menu ("") {
+                    Button("Focus Instance") {
+                        WindowController.focusWindow(instance.pid)
+                    }
                     Button("Open MC Folder") {
                         NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: instance.info.path)
                     }

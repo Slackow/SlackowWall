@@ -121,10 +121,17 @@ final class ShortcutManager: ObservableObject {
     }
     
     func resizeReset(pid: pid_t) {
-        let w = convertToFloat(ProfileManager.shared.profile.resetWidth)
-        let h = convertToFloat(ProfileManager.shared.profile.resetHeight)
-        let x = ProfileManager.shared.profile.resetX.map(CGFloat.init)
-        let y = ProfileManager.shared.profile.resetY.map(CGFloat.init)
+        var w = convertToFloat(ProfileManager.shared.profile.resetWidth)
+        var h = convertToFloat(ProfileManager.shared.profile.resetHeight)
+        var x = ProfileManager.shared.profile.resetX.map(CGFloat.init)
+        var y = ProfileManager.shared.profile.resetY.map(CGFloat.init)
+        
+        if !(w > 0 && h > 0) {
+            w = convertToFloat(ProfileManager.shared.profile.baseWidth)
+            h = convertToFloat(ProfileManager.shared.profile.baseHeight)
+            x = ProfileManager.shared.profile.baseX.map(CGFloat.init)
+            y = ProfileManager.shared.profile.baseY.map(CGFloat.init)
+        }
         resize(pid: pid, x: x, y: y, width: w, height: h, force: true)
     }
     

@@ -63,8 +63,8 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
     func sendResizeCommand(x: Int?, y: Int?, width: Int?, height: Int?) {
         let port = self.info.port
         guard let nwPort = NWEndpoint.Port(rawValue: port) else {
-           print("Invalid port value: \(port)")
-           return
+            LogManager.shared.appendLog("Invalid port value: \(port)")
+            return
         }
         func un(_ n: Int?) -> String { return n?.description ?? "-" }
         let command = "set \(un(x)) \(un(y)) \(un(width)) \(un(height))\n"
@@ -72,24 +72,24 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
         // Create an NWConnection to localhost on the instance's port.
         let connection = NWConnection(host: .init("127.0.0.1"), port: nwPort, using: .tcp)
         connection.stateUpdateHandler = { state in
-           print("Connection state: \(state)")
+            LogManager.shared.appendLog("Connection state: \(state)")
         }
         connection.start(queue: DispatchQueue.global())
         connection.send(content: command.data(using: .utf8), completion: .contentProcessed({ error in
            if let error {
-               print("Error sending resize command: \(error)")
+               LogManager.shared.appendLog("Error sending resize command: \(error)")
                connection.cancel()
                return
            } else {
-               print("Resize command sent: \(command)")
+               LogManager.shared.appendLog("Resize command sent: \(command)")
            }
             connection.receive(minimumIncompleteLength: 1, maximumLength: 1024) { data, context, isComplete, error in
                if let error {
-                   print("Receive error: \(error)")
+                   LogManager.shared.appendLog("Receive error: \(error)")
                } else if let data, let response = String(data: data, encoding: .utf8) {
-                   print("Received response: \(response.trimmingCharacters(in: .newlines))")
+                   LogManager.shared.appendLog("Received response: \(response.trimmingCharacters(in: .newlines))")
                } else {
-                   print("Connection closed by remote")
+                   LogManager.shared.appendLog("Connection closed by remote")
                }
                
                // 3) Close once we’ve gotten (or failed to get) that response
