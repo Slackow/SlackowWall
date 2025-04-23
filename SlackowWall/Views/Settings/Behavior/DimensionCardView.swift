@@ -11,13 +11,16 @@ struct DimensionCardView: View {
     @ObservedObject private var profileManager = ProfileManager.shared
     
     var name: String
-    var description: String?
+    var description: String
     var isGameplayMode: Bool = false
+    var keybind: Binding<KeyCode?>?
     
     @Binding var x: Int?
     @Binding var y: Int?
     @Binding var width: Int?
     @Binding var height: Int?
+    
+    
     
     private var invalidDimension: Bool {
         return width == nil || height == nil
@@ -27,7 +30,7 @@ struct DimensionCardView: View {
         return width ?? 0 > 0 || height ?? 0 > 0
     }
     
-    private var outsideWindowFrame: Bool {
+    private var insideWindowFrame: Bool {
         guard let screen = NSScreen.main?.visibleFrame else { return true }
         let screenWidth = Int(screen.width)
         let screenHeight = Int(screen.height)
@@ -48,25 +51,26 @@ struct DimensionCardView: View {
                             .fontWeight(.semibold)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        if let description = description {
-                            Text(.init(description))
-                                .font(.caption)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .foregroundStyle(.gray)
-                                .padding(.trailing, 2)
-                        }
+                        Text(.init("\(description)\n\(insideWindowFrame ? "" : "[This Dimension requires the BoundlessWindow Mod!](0)")"))
+                            .tint(.orange)
+                            .allowsHitTesting(false)
+                            .font(.caption)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundStyle(.gray)
+                            .padding(.trailing, 2)
+                        
                     }
                     
                     HStack(spacing: 24) {
                         HStack {
                             TextField("W", value: $width, format: .number.grouping(.never))
                                 .textFieldStyle(.roundedBorder)
-                                .foregroundStyle(!outsideWindowFrame ? .red : .primary)
+                                .foregroundStyle(!insideWindowFrame ? .orange : .primary)
                                 .frame(width: 80)
                             
                             TextField("H", value: $height, format: .number.grouping(.never))
                                 .textFieldStyle(.roundedBorder)
-                                .foregroundStyle(!outsideWindowFrame ? .red : .primary)
+                                .foregroundStyle(!insideWindowFrame ? .orange : .primary)
                                 .frame(width: 80)
                         }
                         
@@ -91,21 +95,26 @@ struct DimensionCardView: View {
                                 .fontWeight(.semibold)
                         }
                         
+                        if let keybind {
+                            KeybindingView(keybinding: keybind)
+                        }
+                        
                         Button(action: scaleToMonitor) {
                             Text("Scale to Monitor")
                         }
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                        .disabled(invalidDimension || outsideWindowFrame)
+                        .disabled(invalidDimension || insideWindowFrame)
                         
                         Button(action: centerWindows) {
                             Text("Center")
                         }
                         .disabled(invalidDimension)
                     }
+                    .frame(maxWidth: .infinity, alignment: .trailing)
                 }
             }
             .animation(.easeInOut, value: hasResetDimensions)
             .animation(.easeInOut, value: containsDimensions)
+            .animation(.easeInOut, value: insideWindowFrame)
         }
     }
     
@@ -137,7 +146,7 @@ struct DimensionCardView: View {
 #Preview {
     VStack {
         let profileManager = ProfileManager.shared
-        DimensionCardView(name: "Wide", x: profileManager.profile.$wideX, y: profileManager.profile.$wideY, width: profileManager.profile.$wideWidth, height: profileManager.profile.$wideHeight)
+        DimensionCardView(name: "Wide", description: "None", x: profileManager.profile.$wideX, y: profileManager.profile.$wideY, width: profileManager.profile.$wideWidth, height: profileManager.profile.$wideHeight)
     }
     .padding(20)
 }

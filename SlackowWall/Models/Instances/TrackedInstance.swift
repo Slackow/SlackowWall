@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ScreenCaptureKit
+import Network
 
 class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
     let id: UUID
@@ -44,10 +45,57 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
         if let args = Utilities.processArguments(pid: pid) {
             if let nativesArg = args.first(where: { $0.starts(with: "-Djava.library.path=") }) {
                 let arg = nativesArg.dropLast("/natives".count).dropFirst("-Djava.library.path=".count)
-                data.statePath = "\(arg)/.minecraft/wpstateout.txt"
+                let possiblePaths = ["\(arg)/minecraft", "\(arg)/.minecraft"]
+                if let validPath = possiblePaths.first(where: FileManager.default.fileExists) {
+                    data.path = validPath
+                    if let contents = FileManager.default.contents(atPath: "\(validPath)/boundless_port.txt"),
+                        !contents.isEmpty,
+                       let port = String(data: contents, encoding: .utf8)
+                    {
+                        data.port = UInt16(port) ?? 0
+                    }
+                }
             }
         }
         return data
+    }
+    
+    func sendResizeCommand(x: Int?, y: Int?, width: Int?, height: Int?) {
+        let port = self.info.port
+        guard let nwPort = NWEndpoint.Port(rawValue: port) else {
+           print("Invalid port value: \(port)")
+           return
+        }
+        func un(_ n: Int?) -> String { return n?.description ?? "-" }
+        let command = "set \(un(x)) \(un(y)) \(un(width)) \(un(height))\n"
+        
+        // Create an NWConnection to localhost on the instance's port.
+        let connection = NWConnection(host: .init("127.0.0.1"), port: nwPort, using: .tcp)
+        connection.stateUpdateHandler = { state in
+           print("Connection state: \(state)")
+        }
+        connection.start(queue: DispatchQueue.global())
+        connection.send(content: command.data(using: .utf8), completion: .contentProcessed({ error in
+           if let error {
+               print("Error sending resize command: \(error)")
+               connection.cancel()
+               return
+           } else {
+               print("Resize command sent: \(command)")
+           }
+            connection.receive(minimumIncompleteLength: 1, maximumLength: 1024) { data, context, isComplete, error in
+               if let error {
+                   print("Receive error: \(error)")
+               } else if let data, let response = String(data: data, encoding: .utf8) {
+                   print("Received response: \(response.trimmingCharacters(in: .newlines))")
+               } else {
+                   print("Connection closed by remote")
+               }
+               
+               // 3) Close once we’ve gotten (or failed to get) that response
+               connection.cancel()
+           }
+        }))
     }
     
     func updateInstanceInfo() {

@@ -12,19 +12,28 @@ struct DimensionSettings: View {
     @StateObject private var viewModel = DimensionSettingsViewModel()
     
     var body: some View {
-        SettingsLabel(title: "Dimensions", description: "The dimensions of the game windows in different cases. These values should not exceed the current monitor size: [\(viewModel.screenSize)](0).")
-            .tint(.orange)
-            .allowsHitTesting(false)
-            .contentTransition(.numericText())
-            .animation(.smooth, value: viewModel.screenSize)
-        
-        DimensionCardView(name: "Gameplay", description: "The size of the game while you are in an instance, which is required for the other modes to work.", isGameplayMode: true, x: $profileManager.profile.baseX, y: $profileManager.profile.baseY, width: $profileManager.profile.baseWidth, height: $profileManager.profile.baseHeight)
-        
-        DimensionCardView(name: "Reset", description: "The size the game will be while you are in SlackowWall.", x: $profileManager.profile.resetX, y: $profileManager.profile.resetY, width: $profileManager.profile.resetWidth, height: $profileManager.profile.resetHeight)
-        
-        DimensionCardView(name: "Wide", description: "The size the game will be when you switch to wide instance mode.", x: $profileManager.profile.wideX, y: $profileManager.profile.wideY, width: $profileManager.profile.wideWidth, height: $profileManager.profile.wideHeight)
-        
-        DimensionCardView(name: "Alt Dimension", description: "The size the game will be when you switch to alt dimension mode.", x: $profileManager.profile.altX, y: $profileManager.profile.altY, width: $profileManager.profile.altWidth, height: $profileManager.profile.altHeight)
+        SettingsPageView(title: "Window Resizing", shouldDisableFocus: false) {
+            SettingsLabel(title: "Dimensions", description: "The dimensions of the game windows in different cases. These values should not exceed the current monitor size: [\(viewModel.screenSize)](0).")
+                .tint(.orange)
+                .allowsHitTesting(false)
+                .contentTransition(.numericText())
+                .animation(.smooth, value: viewModel.screenSize)
+            let p = profileManager.profile
+            DimensionCardView(name: "Gameplay", description: "The size of the game while you are in an instance, which is required for the other modes to work.",
+                              isGameplayMode: true, x: p.$baseX, y: p.$baseY, width: p.$baseWidth, height: p.$baseHeight)
+            
+            DimensionCardView(name: "Reset", description: "The size the game will be while you are in SlackowWall.",
+                              x: p.$resetX, y: p.$resetY, width: p.$resetWidth, height: p.$resetHeight)
+            
+            DimensionCardView(name: "Tall", description: "The size the game will be when you switch to tall mode.",
+                              keybind: p.$tallGKey, x: p.$tallX, y: p.$tallY, width: p.$tallWidth, height: p.$tallHeight)
+            
+            DimensionCardView(name: "Thin", description: "The size the game will be when you switch to thin mode.",
+                              keybind: p.$thinGKey, x: p.$thinX, y: p.$thinY, width: p.$thinWidth, height: p.$thinHeight)
+            
+            DimensionCardView(name: "Wide", description: "The size the game will be when you switch to wide instance mode.",
+                              keybind: p.$planarGKey, x: p.$wideX, y: p.$wideY, width: p.$wideWidth, height: p.$wideHeight)
+        }
     }
 }
 

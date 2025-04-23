@@ -18,6 +18,8 @@
 		498FB3D328987F5E00405753 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 498FB3D228987F5E00405753 /* Preview Assets.xcassets */; };
 		498FB3DE289A65B000405753 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498FB3DD289A65B000405753 /* Utilities.swift */; };
 		49CCFA8E2BAD188600842FCD /* StandardConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CCFA8D2BAD188600842FCD /* StandardConfig.swift */; };
+		49CD6EC72DB601DF00C83821 /* WallMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CD6EC62DB601DF00C83821 /* WallMode.swift */; };
+		49CD6EC92DB6912700C83821 /* PlaceholderInstanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CD6EC82DB6912700C83821 /* PlaceholderInstanceView.swift */; };
 		49D77A192BA61CF70042AA14 /* instance_selector.lua in Resources */ = {isa = PBXBuildFile; fileRef = 49D77A182BA61CF70042AA14 /* instance_selector.lua */; };
 		49F739A52B9279BE008CB609 /* GameSettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F739A42B9279BE008CB609 /* GameSettingsManager.swift */; };
 		49FA20352BF3B5B300BA8CD0 /* DimensionCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FA20342BF3B5B300BA8CD0 /* DimensionCardView.swift */; };
@@ -113,6 +115,8 @@
 		498FB3D428987F5E00405753 /* SlackowWall.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SlackowWall.entitlements; sourceTree = "<group>"; };
 		498FB3DD289A65B000405753 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		49CCFA8D2BAD188600842FCD /* StandardConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandardConfig.swift; sourceTree = "<group>"; };
+		49CD6EC62DB601DF00C83821 /* WallMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WallMode.swift; sourceTree = "<group>"; };
+		49CD6EC82DB6912700C83821 /* PlaceholderInstanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderInstanceView.swift; sourceTree = "<group>"; };
 		49D77A182BA61CF70042AA14 /* instance_selector.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = instance_selector.lua; sourceTree = "<group>"; };
 		49F739A42B9279BE008CB609 /* GameSettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSettingsManager.swift; sourceTree = "<group>"; };
 		49FA20342BF3B5B300BA8CD0 /* DimensionCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DimensionCardView.swift; sourceTree = "<group>"; };
@@ -304,6 +308,7 @@
 				B65667432C56C28400E0CF8A /* ResetMode.swift */,
 				B6C5308A2C50A67A00B7C7D5 /* LockPreset.swift */,
 				B63154042C4E08E60013DB8A /* KeyAction.swift */,
+				49CD6EC62DB601DF00C83821 /* WallMode.swift */,
 			);
 			path = Enums;
 			sourceTree = "<group>";
@@ -549,6 +554,7 @@
 			isa = PBXGroup;
 			children = (
 				B6C530832C50828F00B7C7D5 /* LockIcon.swift */,
+				49CD6EC82DB6912700C83821 /* PlaceholderInstanceView.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -720,6 +726,7 @@
 				49CCFA8E2BAD188600842FCD /* StandardConfig.swift in Sources */,
 				6D8A7C560BB403B8F8251B8D /* ShortcutManager.swift in Sources */,
 				B6E30C172BF71B13008E7004 /* Profile.swift in Sources */,
+				49CD6EC72DB601DF00C83821 /* WallMode.swift in Sources */,
 				B66B374B2C4CA8BB0055482A /* CapturePreviewView.swift in Sources */,
 				6D8A76DD802153F673BCCB60 /* SoundManager.swift in Sources */,
 				B6F7E3A02C4C98E3009EE1F3 /* DimensionSettingsViewModel.swift in Sources */,
@@ -736,6 +743,7 @@
 				B6A55D952BA2A7FE00D06086 /* TrackedInstanceView.swift in Sources */,
 				B6F7E39B2C4C7B54009EE1F3 /* TrackingManager.swift in Sources */,
 				B6DEB2C72C5194690039AB30 /* ToolbarStopView.swift in Sources */,
+				49CD6EC92DB6912700C83821 /* PlaceholderInstanceView.swift in Sources */,
 				B6D29FE62BA2123E004F20A2 /* ReleaseEntry.swift in Sources */,
 				B6B9FEA02BA16DDC0026C268 /* SettingsOption.swift in Sources */,
 				B63820962C535526009C0E35 /* DimensionSettings.swift in Sources */,
@@ -883,13 +891,12 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = SlackowWall/SlackowWall.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 240806;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
-				DEVELOPMENT_TEAM = D64G2TTYWM;
+				DEVELOPMENT_TEAM = 94CLS492CD;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -903,7 +910,8 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0.3;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.slackow.SlackowWall;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -919,13 +927,12 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = SlackowWall/SlackowWall.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 240806;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
-				DEVELOPMENT_TEAM = D64G2TTYWM;
+				DEVELOPMENT_TEAM = 94CLS492CD;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -939,7 +946,8 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0.3;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.slackow.SlackowWall;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -994,7 +1002,7 @@
 			repositoryURL = "https://github.com/sparkle-project/Sparkle";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 2.5.2;
+				minimumVersion = 2.6.4;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

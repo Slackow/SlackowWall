@@ -41,6 +41,9 @@ import SwiftUI
     
     var canRecord: Bool {
         get async {
+            if ProfileManager.shared.profile.utilityMode {
+                return false
+            }
             do {
                 // If the app doesn't have Screen Recording permission, this call generates an exception.
                 LogManager.shared.appendLog("Checking for screen capture permissions")
@@ -200,12 +203,13 @@ import SwiftUI
         if ProfileManager.shared.profile.shouldHideWindows && !ProfileManager.shared.profileCreatedOrDeleted {
             WindowController.unhideWindows(trackingManager.getValues(\.pid))
         }
-        
-        // 40ms delay so macOS can catch up, a hack yes, but lol?
-        try? await Task.sleep(nanoseconds: 40_000_000)
-        
-        // Start the capture process again
-        await start()
+        if !ProfileManager.shared.profile.utilityMode {
+            // 40ms delay so macOS can catch up, a hack yes, but lol?
+            try? await Task.sleep(nanoseconds: 40_000_000)
+            
+            // Start the capture process again
+            await start()
+        }
     }
     
     // - Tag: GetAvailableContent

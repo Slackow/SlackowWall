@@ -28,7 +28,7 @@ struct Profile {
     @AppStorage(key("setHeight")) var setHeight: Int? = nil
     
     // Behavior
-    @AppStorage(key("utilityMode")) var utilityMode: Bool = false
+    @AppStorage(key("utilityMode")) var utilityMode: Bool = true
     @AppStorage(key("f1OnJoin")) var f1OnJoin: Bool = false
     @AppStorage(key("fullscreen")) var fullscreen: Bool = false
     @AppStorage(key("onlyOnFocus")) var onlyOnFocus: Bool = true
@@ -51,15 +51,21 @@ struct Profile {
     @AppStorage(key("wideX")) var wideX: Int? = nil
     @AppStorage(key("wideY")) var wideY: Int? = nil
     
-    @AppStorage(key("altWidth")) var altWidth: Int? = nil
-    @AppStorage(key("altHeight")) var altHeight: Int? = nil
-    @AppStorage(key("altX")) var altX: Int? = nil
-    @AppStorage(key("altY")) var altY: Int? = nil
+    @AppStorage(key("thinWidth")) var thinWidth: Int? = nil
+    @AppStorage(key("thinHeight")) var thinHeight: Int? = nil
+    @AppStorage(key("thinX")) var thinX: Int? = nil
+    @AppStorage(key("thinY")) var thinY: Int? = nil
+    
+    @AppStorage(key("tallWidth")) var tallWidth: Int? = nil
+    @AppStorage(key("tallHeight")) var tallHeight: Int? = nil
+    @AppStorage(key("tallX")) var tallX: Int? = nil
+    @AppStorage(key("tallY")) var tallY: Int? = nil
     
     // Keybinds
     @AppStorage(key("resetGKey")) var resetGKey: KeyCode? = .u
+    @AppStorage(key("tallGKey")) var tallGKey: KeyCode? = nil
+    @AppStorage(key("thinGKey")) var thinGKey: KeyCode? = nil
     @AppStorage(key("planarGKey")) var planarGKey: KeyCode? = nil
-    @AppStorage(key("altGKey")) var altGKey: KeyCode? = nil
     @AppStorage(key("resetAllKey")) var resetAllKey: KeyCode? = .t
     @AppStorage(key("resetOthersKey")) var resetOthersKey: KeyCode? = .f
     @AppStorage(key("runKey")) var runKey: KeyCode? = .r

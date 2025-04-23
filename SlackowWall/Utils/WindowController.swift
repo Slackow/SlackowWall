@@ -109,14 +109,14 @@ class WindowController {
             for window in windows {
                 if let (title, pos, size) = getWindowAttributes(window: window), title != "Window" {
                     var newPosition = pos
-                    if let x = x, let y = y {
+                    if let x, let y {
                         newPosition = CGPoint(x: x, y: y)
                     } else {
                         newPosition = CGPoint(x: CGFloat(x ?? 0), y: CGFloat(y ?? 0))
                     }
                     
                     var newSize = size
-                    if let width = width, let height = height, width > 0, height > 0 {
+                    if let width, let height, width > 0, height > 0 {
                         newSize = CGSize(width: width, height: height)
                     }
                     

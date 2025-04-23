@@ -48,7 +48,7 @@ struct SettingsButtonView<Content: View>: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
                 
-                if let description = description {
+                if let description {
                     Text(.init(description))
                         .font(.caption)
                         .foregroundStyle(.gray)
@@ -60,12 +60,12 @@ struct SettingsButtonView<Content: View>: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .modifier(SizeReader(size: $labelHeight))
             
-            if let content = content {
+            if let content {
                 Button(action: action) {
                     content()
                 }
                 .modifier(SizeReader(size: $contentHeight))
-            } else if let buttonText = buttonText {
+            } else if let buttonText {
                 Button(action: action) {
                     Text(buttonText)
                 }

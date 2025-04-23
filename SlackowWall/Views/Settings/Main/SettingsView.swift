@@ -45,6 +45,8 @@ struct SettingsView: View {
                     InstancesSettings()
                 case .behavior:
                     BehaviorSettings()
+                case .window_resizing:
+                    DimensionSettings()
                 case .keybindings:
                     KeybindingsSettings()
                 case .personalize:

@@ -8,7 +8,7 @@
 import SwiftUI
 
 enum SettingsBarItem: CaseIterable, Identifiable, Hashable {
-    case instances, behavior, keybindings, personalize, profiles, updates, credits
+    case instances, behavior, window_resizing, keybindings, personalize, profiles, updates, credits
     
     var id: Self {
         return self
@@ -20,6 +20,8 @@ enum SettingsBarItem: CaseIterable, Identifiable, Hashable {
                 .init(red: 0.1, green: 0.1, blue: 0.1)
             case .behavior:
                 .indigo
+            case .window_resizing:
+                .orange
             case .keybindings:
                 .blue
             case .personalize:
@@ -39,6 +41,8 @@ enum SettingsBarItem: CaseIterable, Identifiable, Hashable {
                 "Instances"
             case .behavior:
                 "Behavior"
+            case .window_resizing:
+                "Window Resizing"
             case .keybindings:
                 "Keybindings"
             case .personalize:
@@ -58,6 +62,8 @@ enum SettingsBarItem: CaseIterable, Identifiable, Hashable {
                 "safari.fill"
             case .behavior:
                 "hammer.fill"
+            case .window_resizing:
+                "macwindow.and.cursorarrow"
             case .keybindings:
                 "arrowkeys.fill"
             case .personalize:

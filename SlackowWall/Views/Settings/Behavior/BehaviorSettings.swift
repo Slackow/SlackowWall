@@ -21,8 +21,7 @@ struct BehaviorSettings: View {
             SettingsCardView {
                 VStack {
                     SettingsToggleView(title: "Utility Mode", description: "Allows Non-Numbered instances to be captured by SlackowWall", descInteractable: false, option: $profileManager.profile.utilityMode)
-                        .tint(profileManager.profile.f1OnJoin ? .red : .gray)
-                        .animation(.easeInOut, value: profileManager.profile.f1OnJoin)
+                        .animation(.easeInOut, value: profileManager.profile.utilityMode)
                     
                     Divider()
                     
@@ -42,10 +41,6 @@ struct BehaviorSettings: View {
             
             SettingsCardView {
                 SettingsToggleView(title: "Use State Output", description: "Turn this on if you have the state output mod, it prevents an instance from reseting if it is still generating the world.", option: $profileManager.profile.checkStateOutput)
-            }
-            
-            SettingsCardView {
-                SettingsLinkView(title: "Window Modes", destination: DimensionSettings())
             }
         }
         .animation(.easeInOut, value: profileManager.profile.resetMode)

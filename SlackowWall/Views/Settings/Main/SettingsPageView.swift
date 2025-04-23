@@ -58,6 +58,7 @@ struct SettingsPageView<Content: View>: View {
 #Preview {
     SettingsPageView(title: "Test") {
         Text("Hi")
+            .foregroundStyle(.white)
     }
     .frame(width: 500)
 }

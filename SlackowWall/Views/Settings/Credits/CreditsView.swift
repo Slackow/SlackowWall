@@ -18,6 +18,8 @@ struct CreditsView: View {
                     CreditsEntryView(name: "Kihron", role: "Developer", icon: "wrench.adjustable.fill", color: .orange)
                     
                     CreditsEntryView(name: "nealxm", role: "Beta Tester", icon: "atom", color: .green)
+                    
+                    CreditsEntryView(name: "olock5", role: "Supporter", icon:"heart.fill", color: .pink)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -31,12 +33,21 @@ struct CreditsView: View {
                         .font(.title)
                         .foregroundStyle(.pink)
                     
-                    Text(.init("If you're finding SlackowWall helpful and would like to support its development, consider making a donation on our [Ko-fi](https://ko-fi.com/kscode)."))
+                    Text(donationString)
                         .tint(.pink)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
+    }
+    
+    private var donationString: AttributedString {
+        var attr = try! AttributedString(markdown: "If you’re finding SlackowWall helpful and would like to support its development, consider making a donation on our [Ko-fi](https://ko-fi.com/kscode).")
+        // iterate runs and underline only the link
+        for run in attr.runs where run.link != nil {
+            attr[run.range].underlineStyle = .single
+        }
+        return attr
     }
     
     private func getAvatarURL(_ name: String) -> URL? {

@@ -14,23 +14,26 @@ struct TrackedInstanceView: View {
     @ObservedObject var instance: TrackedInstance
     
     private var hasStreamError: Bool {
-        return instance.stream.streamError != nil
+        return !profileManager.profile.utilityMode && instance.stream.streamError != nil
     }
     
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            CapturePreviewView(instance: instance)
-                .background {
-                    Text("Instance \(instance.instanceNumber)")
-                        .padding(.trailing, 4)
-                        .opacity(gridManager.showInfo ? 1 : 0)
-                }
-                .opacity(hasStreamError ? 0 : 1)
-                .overlay {
-                    CaptureErrorView(error: instance.stream.streamError)
-                }
-                .animation(.easeInOut, value: instance.stream.streamError)
-            
+            if profileManager.profile.utilityMode {
+                PlaceholderInstanceView(instance: instance)
+            } else {
+                CapturePreviewView(instance: instance)
+                    .background {
+                        Text("Instance \(instance.instanceNumber)")
+                            .padding(.trailing, 4)
+                            .opacity(gridManager.showInfo ? 1 : 0)
+                    }
+                    .opacity(hasStreamError ? 0 : 1)
+                    .overlay {
+                        CaptureErrorView(error: instance.stream.streamError)
+                    }
+                    .animation(.easeInOut, value: instance.stream.streamError)
+            }
             VStack(alignment: .trailing, spacing: 0) {
                 if instance.isLocked {
                     LockIcon()
@@ -42,7 +45,7 @@ struct TrackedInstanceView: View {
                         .animation(.easeInOut, value: gridManager.showInfo)
                 }
                 
-                if profileManager.profile.showInstanceNumbers {
+                if profileManager.profile.showInstanceNumbers && !profileManager.profile.utilityMode {
                     ZStack {
                         Circle()
                             .fill(.ultraThickMaterial)

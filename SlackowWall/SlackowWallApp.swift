@@ -16,6 +16,7 @@ struct SlackowWallApp: App {
     @ObservedObject private var instanceManager = InstanceManager.shared
     @ObservedObject private var shortcutManager = ShortcutManager.shared
     @ObservedObject private var alertManager = AlertManager.shared
+    @ObservedObject private var profileManager = ProfileManager.shared
     
     var body: some Scene {
         Window("SlackowWall", id: "slackowwall-window") {
@@ -36,13 +37,16 @@ struct SlackowWallApp: App {
                         .frame(width: 48, height: 40, alignment: .trailing)
                         .animation(.easeInOut(duration: 0.3), value: trackingManager.trackedInstances)
                         .animation(.easeInOut(duration: 0.3), value: alertManager.alert)
-                        
+//                        Toggle("", isOn: $profileManager.profile.utilityMode)
+//                            .labelsHidden()
+//                            .toggleStyle(.switch)
                         ToolbarSettingsView()
                         
                         ToolbarRefreshView()
                     }
                 }
             }
+            .navigationTitle("SlackowWall - Profile: \(profileManager.profile.profileName)")
         }
         .windowResizability(.contentSize)
         
@@ -108,7 +112,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Monitor for global key presses
-        eventMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.keyUp]) { event in
+        eventMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.keyDown, .keyUp]) { event in
             ShortcutManager.shared.handleGlobalKey(event)
         }
         OBSManager.shared.writeScript()

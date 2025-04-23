@@ -26,7 +26,7 @@ struct CreditsEntryView: View {
             
             Text("\(name) - \(role)")
             
-            if let icon = icon {
+            if let icon {
                 Image(systemName: icon)
                     .foregroundStyle(color ?? .white)
             }

@@ -18,7 +18,7 @@ struct SettingsLabel: View {
                 .font(font ?? .headline)
                 .frame(maxWidth: .infinity, alignment: .leading)
             
-            if let description = description {
+            if let description {
                 Text(.init(description))
                     .font(.caption)
                     .frame(maxWidth: .infinity, alignment: .leading)

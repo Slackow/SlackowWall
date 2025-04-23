@@ -32,7 +32,7 @@ struct SettingsLinkView<Destination: View>: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(title)
                     
-                    if let description = description {
+                    if let description {
                         Text(.init(description))
                             .font(.caption)
                             .foregroundStyle(.gray)

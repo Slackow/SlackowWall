@@ -22,10 +22,12 @@ final class ShortcutManager: ObservableObject {
     }
     
     func handleGlobalKey(_ key: NSEvent) {
-        switch key.keyCode {
-            case ProfileManager.shared.profile.resetGKey: globalReset()
-            case ProfileManager.shared.profile.planarGKey: resizePlanar()
-            case ProfileManager.shared.profile.altGKey: resizeAlt()
+        let p = ProfileManager.shared.profile
+        switch (key.type, key.keyCode) {
+            case (.keyUp, p.resetGKey): globalReset()
+            case (.keyDown, p.planarGKey): resizePlanar()
+            case (.keyDown, p.tallGKey): resizeTall()
+            case (.keyDown, p.thinGKey): resizeThin()
             case _: return
         }
     }
@@ -81,7 +83,7 @@ final class ShortcutManager: ObservableObject {
             return
         }
         
-        let instanceCandidate = (1..<totalInstances).lazy
+        let nextInstance = (1..<totalInstances).lazy
             .map { (currentInstanceIndex + $0) % totalInstances }
             .map { index -> TrackedInstance in
                 let candidate = trackedInstances[index]
@@ -90,7 +92,7 @@ final class ShortcutManager: ObservableObject {
             }
             .first(where: { $0.isReady })
         
-        guard let nextInstance = instanceCandidate else {
+        guard let nextInstance else {
             returnToWall(from: instance)
             return
         }
@@ -126,13 +128,23 @@ final class ShortcutManager: ObservableObject {
         resize(pid: pid, x: x, y: y, width: w, height: h, force: true)
     }
     
-    func resizeAlt() {
+    func resizeThin() {
         let apps = NSWorkspace.shared.runningApplications.filter{ $0.activationPolicy == .regular }
         guard let activeWindow = apps.first(where:{$0.isActive}), TrackingManager.shared.getValues(\.pid).contains(activeWindow.processIdentifier) else { return }
-        let w = convertToFloat(ProfileManager.shared.profile.altWidth)
-        let h = convertToFloat(ProfileManager.shared.profile.altHeight)
-        let x = ProfileManager.shared.profile.altX.map(CGFloat.init)
-        let y = ProfileManager.shared.profile.altY.map(CGFloat.init)
+        let w = convertToFloat(ProfileManager.shared.profile.thinWidth)
+        let h = convertToFloat(ProfileManager.shared.profile.thinHeight)
+        let x = ProfileManager.shared.profile.thinX.map(CGFloat.init)
+        let y = ProfileManager.shared.profile.thinY.map(CGFloat.init)
+        resize(pid: activeWindow.processIdentifier, x: x, y: y, width: w, height: h)
+    }
+    
+    func resizeTall() {
+        let apps = NSWorkspace.shared.runningApplications.filter{ $0.activationPolicy == .regular }
+        guard let activeWindow = apps.first(where:{$0.isActive}), TrackingManager.shared.getValues(\.pid).contains(activeWindow.processIdentifier) else { return }
+        let w = convertToFloat(ProfileManager.shared.profile.tallWidth)
+        let h = convertToFloat(ProfileManager.shared.profile.tallHeight)
+        let x = ProfileManager.shared.profile.tallX.map(CGFloat.init)
+        let y = ProfileManager.shared.profile.tallY.map(CGFloat.init)
         resize(pid: activeWindow.processIdentifier, x: x, y: y, width: w, height: h)
     }
     
@@ -153,8 +165,11 @@ final class ShortcutManager: ObservableObject {
             let newSize = CGSize(width: width, height: height)
             let newPosition = CGPoint(x: x ?? (currentPosition.x - (newSize.width - currentSize.width) * 0.5),
                                       y: y ?? (currentPosition.y - (newSize.height - currentSize.height) * 0.5))
-            
-            WindowController.modifyWindow(pid: pid, x: newPosition.x, y: newPosition.y, width: newSize.width, height: newSize.height)
+            if let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid && $0.info.port > 0 }) {
+                instance.sendResizeCommand(x: Int(newPosition.x), y: Int(newPosition.y), width: Int(newSize.width), height: Int(newSize.height))
+            } else {
+                WindowController.modifyWindow(pid: pid, x: newPosition.x, y: newPosition.y, width: newSize.width, height: newSize.height)
+            }
             LogManager.shared.appendLog("Finished Resizing Instance: \(pid), \(newSize)")
         }
     }

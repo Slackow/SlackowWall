@@ -18,7 +18,7 @@ struct SettingsPickerView<T: SettingsOption>: View {
     
     var filter: [T]?
     var options: [T] {
-        if let filter = filter {
+        if let filter {
             return filter
         } else {
             return Array(T.allCases)
@@ -30,7 +30,7 @@ struct SettingsPickerView<T: SettingsOption>: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
                 
-                if let description = description {
+                if let description {
                     Text(.init(description))
                         .font(.caption)
                         .foregroundStyle(.gray)

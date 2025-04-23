@@ -43,7 +43,7 @@ struct CapturePreviewView: View {
                     instanceManager.hoveredInstance = nil
                 }
             }
-            .onChange(of: instanceManager.keyAction) { _ in
+            .onChange(of: instanceManager.keyAction) {
                 instanceManager.handleKeyEvent(instance: previewRenderer.instance)
             }
             .onAppear {

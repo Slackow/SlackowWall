@@ -20,7 +20,11 @@ import SwiftUI
 class InstanceInfo: CustomStringConvertible {
     var state: UInt8 = "t".utf8.first!
     var prevState: UInt8 = "t".utf8.first!
-    var statePath: String = ""
+    var statePath: String {
+        return path.isEmpty ? "" : "\(path)/wpstateout.txt"
+    }
+    var path: String = ""
+    var port: UInt16 = 0
     var untilF3: Int = 0
     var checkState: CheckingMode = .NONE
     var pid: pid_t

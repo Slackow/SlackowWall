@@ -55,7 +55,7 @@ class TrackingManager: ObservableObject {
         trackedInstances.sort { $0.instanceNumber < $1.instanceNumber }
         
         // Log the tracked instances
-        LogManager.shared.appendLog("Tracked Instances:", trackedInstances.map { $0.pid })
+        LogManager.shared.appendLog("Tracked Instances:", trackedInstances.map(\.pid))
         logStatePaths()
     }
     
@@ -70,11 +70,11 @@ class TrackingManager: ObservableObject {
             .dropFirst("-Djava.library.path=".count)
             .dropLast("/natives".count)
         
-        if let num = UInt(numString.suffix(2)) ?? UInt(numString.suffix(1)) {
-            return TrackedInstance(pid: app.processIdentifier, instanceNumber: Int(num))
-        } else if ProfileManager.shared.profile.utilityMode {
+        if ProfileManager.shared.profile.utilityMode {
             let instNum = (self.getValues(\.instanceNumber).max() ?? 0) + 1
             return TrackedInstance(pid: app.processIdentifier, instanceNumber: instNum)
+        } else if let num = UInt(numString.suffix(2)) ?? UInt(numString.suffix(1)) {
+            return TrackedInstance(pid: app.processIdentifier, instanceNumber: Int(num))
         }
         
         return nil
