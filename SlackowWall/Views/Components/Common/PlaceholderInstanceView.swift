@@ -10,6 +10,12 @@ import SwiftUI
 struct PlaceholderInstanceView: View {
     var instance: TrackedInstance
     @State var isHovered: Bool = false
+    
+    var instanceName: Substring {
+        let result = instance.info.path.split(separator: "/").dropLast(1).last ?? "??"
+        return result == "Application Support" ? "Minecraft" : result
+    }
+    
     var body: some View {
         ZStack {
             VStack {
@@ -17,8 +23,12 @@ struct PlaceholderInstanceView: View {
                     Image(nsImage: nsImage)
                         .resizable()
                         .frame(width: 120, height: 120)
+                } else {
+                    Image("minecraft_logo")
+                        .resizable()
+                        .frame(width: 120, height: 120)
                 }
-                Text("Instance \"\(instance.info.path.split(separator: "/").dropLast(1).last ?? "??")\"")
+                Text("Instance \"\(instanceName)\"")
                     .font(.title)
                     .fontWeight(.semibold)
             }
@@ -40,8 +50,10 @@ struct PlaceholderInstanceView: View {
                     Button("Focus Instance") {
                         WindowController.focusWindow(instance.pid)
                     }
-                    Button("Open MC Folder") {
-                        NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: instance.info.path)
+                    if !instance.info.path.isEmpty {
+                        Button("Open MC Folder") {
+                            NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: instance.info.path)
+                        }
                     }
 //                    Button("Check/Update Mods") {
 //                        print("Folder Not Opened")
@@ -65,8 +77,9 @@ struct PlaceholderInstanceView: View {
         .frame(width: 600, height: 350)
         .background {
             RoundedRectangle(cornerRadius: 10)
-                .fill(.ultraThinMaterial)
                 .stroke(.gray, lineWidth: 3)
+                .background(.ultraThinMaterial)
+                
         }
         .onHover(perform: {isHovered = $0})
     }

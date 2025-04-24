@@ -44,10 +44,10 @@ struct UpdateSettings: View {
         .padding([.horizontal, .top])
         .frame(maxHeight: .infinity, alignment: .topLeading)
         .navigationTitle("Updates")
-        .onChange(of: updateManager.checkAutomatically) { old, value in
+        .onChange(of: updateManager.checkAutomatically) { value in
             updateManager.automaticallyCheckForUpdates = value
         }
-        .onChange(of: updateManager.downloadAutomatically) { old, value in
+        .onChange(of: updateManager.downloadAutomatically) { value in
             updateManager.automaticallyDownloadUpdates = value
         }
         .sheet(isPresented: $showReleaseNotes) {

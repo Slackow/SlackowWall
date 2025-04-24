@@ -12,10 +12,11 @@ class PreviewRenderer: ObservableObject {
     @Published var isVisible = false
     
     let instance: TrackedInstance
-    private let titleBarHeight: CGFloat = 30
+    private var titleBarHeight: CGFloat
     
     init(instance: TrackedInstance) {
         self.instance = instance
+        self.titleBarHeight = instance.info.port > 0 ? 0 : 30
     }
     
     var capturePreview: some View {
@@ -23,7 +24,8 @@ class PreviewRenderer: ObservableObject {
     }
     
     var captureRect: CGSize {
-        instance.stream.captureRect
+        let rect = instance.stream.captureRect
+        return rect.width == 0 || rect.height == 0 ? CGSize(width: max(1.0, rect.width), height: max(1.0, rect.height)) : rect
     }
     
     var scaledDimensions: CGSize {

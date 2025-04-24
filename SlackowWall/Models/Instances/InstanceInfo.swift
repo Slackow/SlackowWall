@@ -24,6 +24,7 @@ class InstanceInfo: CustomStringConvertible {
         return path.isEmpty ? "" : "\(path)/wpstateout.txt"
     }
     var path: String = ""
+    var version: String = ""
     var port: UInt16 = 0
     var untilF3: Int = 0
     var checkState: CheckingMode = .NONE

@@ -82,7 +82,7 @@ class LogManager {
         }
     }
     
-    func appendLog(_ items: Any..., showInConsole: Bool = true, includeTimestamp: Bool = true) {
+    @discardableResult func appendLog(_ items: Any..., showInConsole: Bool = true, includeTimestamp: Bool = true) -> Self {
         let logURL = URL(fileURLWithPath: logPath)
         let message = items.map { String(describing: $0) }.joined(separator: " ")
         
@@ -99,13 +99,12 @@ class LogManager {
         
         do {
             let fileHandle = try FileHandle(forWritingTo: logURL)
-            fileHandle.seekToEndOfFile()
+            defer { try? fileHandle.close() }
+            try fileHandle.seekToEnd()
             
             if let data = messageWithNewline.data(using: .utf8) {
-                fileHandle.write(data)
+                try fileHandle.write(contentsOf: data)
             }
-            
-            fileHandle.closeFile()
             
             if showInConsole {
                 print(message)
@@ -113,42 +112,45 @@ class LogManager {
         } catch {
             print("Failed to write to log file: \(error)")
         }
+        return self
     }
     
-    func appendLogSection(_ title: String) {
+    @discardableResult func appendLogSection(_ title: String) -> Self {
         let logURL = URL(fileURLWithPath: logPath)
         let titleWithNewline = title + ":\n"
         
         do {
             let fileHandle = try FileHandle(forWritingTo: logURL)
-            fileHandle.seekToEndOfFile()
+            defer { try? fileHandle.close() }
+            try fileHandle.seekToEnd()
             
             if let data = titleWithNewline.data(using: .utf8) {
-                fileHandle.write(data)
+                try fileHandle.write(contentsOf: data)
             }
             
-            fileHandle.closeFile()
         } catch {
             print("Failed to write to log file: \(error)")
         }
+        return self
     }
     
-    func appendLogNewLine() {
+    @discardableResult func appendLogNewLine() -> Self {
         let logURL = URL(fileURLWithPath: logPath)
         let newLine = "\n"
         
         do {
             let fileHandle = try FileHandle(forWritingTo: logURL)
-            fileHandle.seekToEndOfFile()
+            defer { try? fileHandle.close() }
+            try fileHandle.seekToEnd()
             
             if let data = newLine.data(using: .utf8) {
-                fileHandle.write(data)
+                try fileHandle.write(contentsOf: data)
             }
             
-            fileHandle.closeFile()
         } catch {
             print("Failed to write to log file: \(error)")
         }
+        return self
     }
     
     private func prependSystemInfo() {

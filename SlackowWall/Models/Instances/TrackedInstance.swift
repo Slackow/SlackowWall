@@ -42,21 +42,43 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
     
     private static func calculateInstanceInfo(pid: pid_t) -> InstanceInfo {
         let data = InstanceInfo(pid: pid)
+        var path = ""
+        var version = ""
         if let args = Utilities.processArguments(pid: pid) {
-            if let nativesArg = args.first(where: { $0.starts(with: "-Djava.library.path=") }) {
+            // Vanilla Launcher
+            if let vanillaIdx = args.firstIndex(of: "--gameDir") {
+                path = args[safe: vanillaIdx + 1] ?? ""
+                if let vanillaVersionIdx = args.firstIndex(of: "--version") {
+                    version = args[safe: vanillaVersionIdx + 1] ?? ""
+                    let prefix = try? /fabric-loader-\d+\.\d+(?:\.\d+)?-/.prefixMatch(in: version)
+                    version = prefix.map {String(version.dropFirst($0.count))} ?? version
+                }
+            // Prism/MultiMC etc
+            } else if let nativesArg = args.first(where: { $0.starts(with: "-Djava.library.path=") }) {
                 let arg = nativesArg.dropLast("/natives".count).dropFirst("-Djava.library.path=".count)
                 let possiblePaths = ["\(arg)/minecraft", "\(arg)/.minecraft"]
-                if let validPath = possiblePaths.first(where: FileManager.default.fileExists) {
-                    data.path = validPath
-                    if let contents = FileManager.default.contents(atPath: "\(validPath)/boundless_port.txt"),
-                        !contents.isEmpty,
-                       let port = String(data: contents, encoding: .utf8)
-                    {
-                        data.port = UInt16(port) ?? 0
-                    }
+                path = possiblePaths.first(where: FileManager.default.fileExists) ?? ""
+                let regex = #/minecraft-([\d.]+?)-client\.jar|intermediary/([\d.]+?)/intermediary/#
+                let matches = args.compactMap { try? regex.firstMatch(in: $0) }
+                if let match = matches.first {
+                    version = String(match.1 ?? match.2 ?? "")
                 }
             }
         }
+        data.path = path
+        data.version = version
+        if let contents = FileManager.default.contents(atPath: "\(path)/boundless_port.txt"),
+            !contents.isEmpty,
+           let port = String(data: contents, encoding: .utf8)
+        {
+            data.port = UInt16(port) ?? 0
+        }
+        LogManager.shared
+            .appendLog("Added Instance \(pid)")
+            .appendLog("Path: \(data.path)")
+            .appendLog("Version: \(data.version)")
+            .appendLog("Port: \(data.port)")
+            .appendLogNewLine()
         return data
     }
     
@@ -81,7 +103,7 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
                connection.cancel()
                return
            } else {
-               LogManager.shared.appendLog("Resize command sent: \(command)")
+               LogManager.shared.appendLog("Resize command sent: \(command.trimmingCharacters(in: .newlines))")
            }
             connection.receive(minimumIncompleteLength: 1, maximumLength: 1024) { data, context, isComplete, error in
                if let error {

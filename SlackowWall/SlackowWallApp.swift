@@ -37,9 +37,9 @@ struct SlackowWallApp: App {
                         .frame(width: 48, height: 40, alignment: .trailing)
                         .animation(.easeInOut(duration: 0.3), value: trackingManager.trackedInstances)
                         .animation(.easeInOut(duration: 0.3), value: alertManager.alert)
-//                        Toggle("", isOn: $profileManager.profile.utilityMode)
-//                            .labelsHidden()
-//                            .toggleStyle(.switch)
+                        
+                        ToolbarUtilityModeView()
+                        
                         ToolbarSettingsView()
                         
                         ToolbarRefreshView()

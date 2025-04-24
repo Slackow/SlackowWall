@@ -21,6 +21,8 @@
 		49CD6EC72DB601DF00C83821 /* WallMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CD6EC62DB601DF00C83821 /* WallMode.swift */; };
 		49CD6EC92DB6912700C83821 /* PlaceholderInstanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CD6EC82DB6912700C83821 /* PlaceholderInstanceView.swift */; };
 		49D77A192BA61CF70042AA14 /* instance_selector.lua in Resources */ = {isa = PBXBuildFile; fileRef = 49D77A182BA61CF70042AA14 /* instance_selector.lua */; };
+		49DF6EF92DB9830F00503534 /* Collection+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DF6EF82DB9830F00503534 /* Collection+Ext.swift */; };
+		49DF6EFB2DBAC46800503534 /* ToolbarUtilityModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DF6EFA2DBAC46800503534 /* ToolbarUtilityModeView.swift */; };
 		49F739A52B9279BE008CB609 /* GameSettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F739A42B9279BE008CB609 /* GameSettingsManager.swift */; };
 		49FA20352BF3B5B300BA8CD0 /* DimensionCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FA20342BF3B5B300BA8CD0 /* DimensionCardView.swift */; };
 		6D8A7183DE266313FBD84A7F /* Alignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D8A723DF9C8AD7D30AC21AF /* Alignment.swift */; };
@@ -118,6 +120,8 @@
 		49CD6EC62DB601DF00C83821 /* WallMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WallMode.swift; sourceTree = "<group>"; };
 		49CD6EC82DB6912700C83821 /* PlaceholderInstanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderInstanceView.swift; sourceTree = "<group>"; };
 		49D77A182BA61CF70042AA14 /* instance_selector.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = instance_selector.lua; sourceTree = "<group>"; };
+		49DF6EF82DB9830F00503534 /* Collection+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+Ext.swift"; sourceTree = "<group>"; };
+		49DF6EFA2DBAC46800503534 /* ToolbarUtilityModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarUtilityModeView.swift; sourceTree = "<group>"; };
 		49F739A42B9279BE008CB609 /* GameSettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSettingsManager.swift; sourceTree = "<group>"; };
 		49FA20342BF3B5B300BA8CD0 /* DimensionCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DimensionCardView.swift; sourceTree = "<group>"; };
 		6D8A71655654992BE658F2A9 /* InstanceInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InstanceInfo.swift; sourceTree = "<group>"; };
@@ -450,6 +454,7 @@
 		B6A55D8F2BA2915900D06086 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				49DF6EF82DB9830F00503534 /* Collection+Ext.swift */,
 				B6A55D902BA2917500D06086 /* Dictionary+Ext.swift */,
 				B6A55D922BA291A800D06086 /* Optional+Ext.swift */,
 				B6A55D982BA2AFC400D06086 /* SCWindow+Ext.swift */,
@@ -496,6 +501,7 @@
 		B6C17C092BFC48BB00F30C1F /* Toolbar */ = {
 			isa = PBXGroup;
 			children = (
+				49DF6EFA2DBAC46800503534 /* ToolbarUtilityModeView.swift */,
 				B6C17C0A2BFC48E300F30C1F /* ToolbarAlertView.swift */,
 				B6DEB2C62C5194690039AB30 /* ToolbarStopView.swift */,
 				B6DEB2C82C51951D0039AB30 /* ToolbarRefreshView.swift */,
@@ -709,6 +715,7 @@
 				B6E30C152BF5AB8C008E7004 /* ProfileManager.swift in Sources */,
 				B6E9E36E2970A42D00DF6466 /* ScreenRecorder.swift in Sources */,
 				B6B9FE972BA16D730026C268 /* SettingsSliderView.swift in Sources */,
+				49DF6EF92DB9830F00503534 /* Collection+Ext.swift in Sources */,
 				B6F7E39D2C4C8343009EE1F3 /* GridManager.swift in Sources */,
 				6D8A79A5A9E467B05B05C742 /* InstanceManager.swift in Sources */,
 				B63154002C4DFDE40013DB8A /* KeyDispatcher.swift in Sources */,
@@ -716,6 +723,7 @@
 				B6DEB2CB2C5195B80039AB30 /* ToolbarSettingsView.swift in Sources */,
 				B6C17C0B2BFC48E300F30C1F /* ToolbarAlertView.swift in Sources */,
 				B6C5307D2C50736000B7C7D5 /* PersonalizeManager.swift in Sources */,
+				49DF6EFB2DBAC46800503534 /* ToolbarUtilityModeView.swift in Sources */,
 				B6C530762C5033B000B7C7D5 /* InstanceStream.swift in Sources */,
 				B63168C52979AE95005958E9 /* MouseListener.swift in Sources */,
 				4915C3A92AC6A86F00B60D1D /* SettingsBarItem.swift in Sources */,
@@ -893,7 +901,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 240811;
+				CURRENT_PROJECT_VERSION = 250424;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
 				DEVELOPMENT_TEAM = 94CLS492CD;
@@ -910,7 +918,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.slackow.SlackowWall;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -929,7 +937,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 240811;
+				CURRENT_PROJECT_VERSION = 250424;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
 				DEVELOPMENT_TEAM = 94CLS492CD;
@@ -946,7 +954,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.slackow.SlackowWall;
 				PRODUCT_NAME = "$(TARGET_NAME)";

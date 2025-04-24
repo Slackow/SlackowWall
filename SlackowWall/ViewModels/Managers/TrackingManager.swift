@@ -43,6 +43,9 @@ class TrackingManager: ObservableObject {
         }
         
         // Add new instances
+        LogManager.shared
+            .appendLog("Adding Instances:")
+            .appendLogNewLine()
         currentApps.forEach { app in
             if !trackedInstances.contains(where: { $0.pid == app.processIdentifier }) {
                 if let trackedInstance = createTrackedInstance(app: app) {

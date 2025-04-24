@@ -113,7 +113,7 @@ struct ProfileSettings: View {
                 .frame(width: 56, height: 32, alignment: .trailing)
             }
         }
-        .onChange(of: selectedProfile) { old, value in
+        .onChange(of: selectedProfile) { value in
             if profileManager.activeProfile != selectedProfile {
                 Task {
                     profileManager.activeProfile = value
@@ -129,7 +129,7 @@ struct ProfileSettings: View {
                 }
             }
         }
-        .onChange(of: profileManager.activeProfile) { old, value in
+        .onChange(of: profileManager.activeProfile) { value in
             LogManager.shared.appendLog("Switched Profiles:", value)
             profileManager.profile = Profile()
             

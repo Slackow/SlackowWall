@@ -4,11 +4,17 @@ If you require additional assistance check out the maccord discord [here](https:
 
 TL-DR at the end for more experienced users.
 
+## FOR 1.16.1 \< IMPORTANT \>
+
+It's recommended that you use [SeedQueue](https://github.com/KingContaria/seedqueue) instead, which means you can skip most of the setup here, as your wall would be contained within a single instance and you would need no OBS script. SlackowWall would still be useful for you to resize your window and otherwise manage your instances via the Utility Mode (similar to Jingle on Windows)
+
 ## Required Software
+
 - SlackowWall requires you use [PrismLauncher](https://prismlauncher.org) (highly recommended) or [MultiMC](https://multimc.org) for it to detect your instances.
 - Also make sure your [OBS](https://obsproject.com/) version is 30.1.2 or higher, and the arm version if you are on an M series mac.
 
 ## Setting up Instances
+
 Before getting started with Installing SlackowWall, you should make your instances in PrismLauncher.
 
 ### Setup Instance 1
@@ -18,15 +24,18 @@ The name of your first instance should end with a **1**, instance numbers are de
 Your first instance can be a clone of an existing one, or one you get from following [this guide](https://www.youtube.com/watch?v=GomIeW5xdBM). but make sure your instance also fulfills the following requirements. (This is also a great time to update your mods by checking [here](https://mods.tildejustin.dev/))
 
 Required Mods:
+
 - StandardSettings version 1.2.3 or higher
 - Atum
 
 Recommended Mods:
+
 - Sodium Mac (fixes a memory leak)
 - SleepBG (Lowers framerates of unfocussed instances)
 - State Output Mod (Prevents you from reseting instances that are on a dirt screen, make sure to enable this setting too if you get it)
 
 #### Configurations
+
 For standard settings, ensure that you have `pauseOnLostFocus:false` and `f3PauseOnWorldJoin:true` in your instance. (You may have to start your instance if you just added the latest StandardSettings).
 
 ![standardsettings file](images/standard1.png)
@@ -37,6 +46,7 @@ If F3 pausing doesn't exist in your version (<1.13) then leave `pauseOnLostFocus
 Also leave your Atum keybind to the default of `F6`.
 
 ### Setup Instance 2
+
 Copy your first instance, this time end the instance name with a **2** instead. Also untick the `Copy Saves` option, but leave everything else ticked. (ex: `1.16Inst2`)
 
 Now the only thing you have to change is the `standardoptions.txt` file. Copy the path of the **first** instance's `standardoptions.txt` file by holding option after right clicking it:
@@ -50,6 +60,7 @@ Now replace the contents of the **second** instance's `standardoptions.txt` file
 This will make the second instance reference the settings from the first, so you only have to adjust the first instance's settings in the future.
 
 ### Setup Remaining Instances
+
 Now you can create your remaining instances, typically a total of 4, 6, or 9 depending on your hardware, but you can add more if desired.
 
 Similarlly to creating the second instance, clone the second instance and change the number at the end to be the next instance number (ex: `1.16Inst3`, `1.16Inst4`, `1.16Inst5`)
@@ -59,6 +70,7 @@ Just like before, if you mess up a name when creating an instance, do not rename
 You've now created all your instances!
 
 ## Getting SlackowWall
+
 - Download `SlackowWall.dmg` from [here](https://github.com/Slackow/SlackowWall/releases/latest/), SlackowWall auto-updates, so no need to get it again after this.
 - Open it and drag the app into your Applications folder.
 
@@ -73,7 +85,8 @@ You've now created all your instances!
 
 ![warning](images/SlackowWallWarning.png)
 
-- Press “Open.” (If you don’t have that option, try it a second time.)
+- Press “Open.” (If you don’t have that option, try it a second time.) \
+  _On **macOS 15** or later, you have to go to Security and Privacy to click "Open Anyway" at this step instead._
 
 ## Setup SlackowWall
 
@@ -106,10 +119,9 @@ Be sure to not use any deprecated captures in any scene! They can ruin performan
 
 Finally, you need to add and configure the associated OBS Script. If you've opened the app at least once it should be located under `~/Library/Application Support/SlackowWall/instance_selector.lua`. There is also a button to open the folder containing the script in SlackowWall's settings.
 
-
 In OBS's menubar, go under `Tools > Scripts` and press the plus icon in the menu, you can either navigate to the script directly in this window, or drag the script from another finder window to open it (shown in the video).
 
-In the script menu, there should be a text field. If this is empty it will be interpreted as "minecraft". This textfield is the name of the *source* that the script will modify to display your game.
+In the script menu, there should be a text field. If this is empty it will be interpreted as "minecraft". This textfield is the name of the _source_ that the script will modify to display your game.
 
 ### Script keybinds
 
@@ -120,12 +132,13 @@ Your Global Reset key, (default `U`), should also be bound to switch to your wal
 If you change your "resetting mode" option you'll likely have to adjust this
 
 ### OBS Setup Video
+
 Here's a short [video](https://youtu.be/kjjeruApArc) showing the entire OBS setup process.
 
 You may need to restart OBS after setting it up for it to work.
 
-
 ## Startup demo
+
 Here's a [video](https://youtu.be/XSigMv134tE) showing the steps to take when you want to use SlackowWall now.
 
 And you're done!
@@ -136,9 +149,9 @@ And you're done!
 
 In the behavior tab of the settings you can configure the size your game should be while you're in SlackowWall vs while you're in game, and add two additional sizes for other resolutions.
 
-
 ## TL-DR
-For the instances you need atum and the latest standard settings at least, with the new option enabled `f3PauseOnWorldLoad`  (and `pauseOnLostFocus` disabled)
+
+For the instances you need atum and the latest standard settings at least, with the option enabled `f3PauseOnWorldLoad` (and `pauseOnLostFocus` disabled)
 You also need to make sure each instance folder ends with 1-x where x is the number of instances you have
 
 It also comes with an OBS Script that should put itself into `~/Library/Application Support/SlackowWall` when you start the app for the first time, you want to add that as a script in OBS, you should be using OBS 30.1.2 or higher

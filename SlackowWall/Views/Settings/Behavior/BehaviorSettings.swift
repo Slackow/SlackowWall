@@ -20,7 +20,7 @@ struct BehaviorSettings: View {
 
             SettingsCardView {
                 VStack {
-                    SettingsToggleView(title: "Utility Mode", description: "Allows Non-Numbered instances to be captured by SlackowWall.", descInteractable: false, option: $profileManager.profile.utilityMode)
+                    SettingsToggleView(title: "Utility Mode", description: "Allows Non-Numbered instances to be captured by SlackowWall, and enables some miscellaneous features.", descInteractable: false, option: $profileManager.profile.utilityMode)
                         .animation(.easeInOut, value: profileManager.profile.utilityMode)
 
                     Divider()

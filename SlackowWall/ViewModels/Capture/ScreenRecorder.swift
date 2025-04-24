@@ -122,36 +122,39 @@ import SwiftUI
         LogManager.shared.appendLog("Screen capture started")
         refreshContentFilters()
         
-        for instance in trackingManager.trackedInstances {
-            guard let filter = instance.stream.captureFilter else { continue }
-    
-            let streamConfiguration = createStreamConfiguration(width: filter.contentRect.width, height: filter.contentRect.height)
-            instance.stream.captureRect = CGSize(width: filter.contentRect.width, height: filter.contentRect.height)
-            
-            Task {
-                do {
-                    for try await frame in captureEngine.startCapture(configuration: streamConfiguration, filter: filter) {
-                        instance.stream.capturePreview.updateFrame(frame)
-                    }
-                } catch let error {
-                    logger.error("\(error.localizedDescription)")
-                    LogManager.shared.appendLog("Stream error (\(instance.pid)):", error.localizedDescription, error.self)
-                    
-                    if let error = error as? SCStreamError {
-                        let streamError = StreamError(errorCode: error.errorCode)
-                        switch streamError {
-                            case .appClosed:
-                                instance.wasClosed = true
-//                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//                                    Task {
-//                                        GridManager.shared.showInfo = false
-//                                        self.trackingManager.trackedInstances.removeAll(where: { $0 == instance })
-//                                        await self.resetAndStartCapture()
-//                                    }
-//                                }
-                            case .unknown:
-                                instance.stream.streamError = streamError
-                                GridManager.shared.showInfo = true
+
+        if #available(macOS 14.0, *) {
+            for instance in trackingManager.trackedInstances {
+                guard let filter = instance.stream.captureFilter else { continue }
+                let streamConfiguration = createStreamConfiguration(width: filter.contentRect.width, height: filter.contentRect.height)
+                
+                instance.stream.captureRect = CGSize(width: filter.contentRect.width, height: filter.contentRect.height)
+                
+                Task {
+                    do {
+                        for try await frame in captureEngine.startCapture(configuration: streamConfiguration, filter: filter) {
+                            instance.stream.capturePreview.updateFrame(frame)
+                        }
+                    } catch let error {
+                        logger.error("\(error.localizedDescription)")
+                        LogManager.shared.appendLog("Stream error (\(instance.pid)):", error.localizedDescription, error.self)
+                        
+                        if let error = error as? SCStreamError {
+                            let streamError = StreamError(errorCode: error.errorCode)
+                            switch streamError {
+                                case .appClosed:
+                                    instance.wasClosed = true
+                                    //                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                    //                                    Task {
+                                    //                                        GridManager.shared.showInfo = false
+                                    //                                        self.trackingManager.trackedInstances.removeAll(where: { $0 == instance })
+                                    //                                        await self.resetAndStartCapture()
+                                    //                                    }
+                                    //                                }
+                                case .unknown:
+                                    instance.stream.streamError = streamError
+                                    GridManager.shared.showInfo = true
+                            }
                         }
                     }
                 }
