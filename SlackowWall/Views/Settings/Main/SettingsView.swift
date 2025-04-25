@@ -9,12 +9,10 @@ import SwiftUI
 
 struct SettingsView: View {
     @ObservedObject private var alertManager = AlertManager.shared
-    
-    @State var sideBarVisibility: NavigationSplitViewVisibility = .doubleColumn
     @State var selectedSettingsBarItem: SettingsBarItem = .instances
     
     var body: some View {
-        NavigationSplitView(columnVisibility: $sideBarVisibility) {
+        NavigationSplitView {
             List(SettingsBarItem.allCases, selection: $selectedSettingsBarItem) { item in
                 HStack(alignment: .center, spacing: 10) {
                     ZStack {
@@ -36,28 +34,31 @@ struct SettingsView: View {
                 .padding(.vertical, 5)
                 .contentShape(Rectangle())
             }
-            .frame(width: 205)
             .removeSidebar()
+            .navigationSplitViewColumnWidth(200)
         }
         detail: {
-            switch selectedSettingsBarItem {
-                case .instances:
-                    InstancesSettings()
-                case .behavior:
-                    BehaviorSettings()
-                case .window_resizing:
-                    DimensionSettings()
-                case .keybindings:
-                    KeybindingsSettings()
-                case .personalize:
-                    PersonalizeSettings()
-                case .profiles:
-                    ProfileSettings()
-                case .updates:
-                    UpdateSettings()
-                case .credits:
-                    CreditsView()
+            Group {
+                switch selectedSettingsBarItem {
+                    case .instances:
+                        InstancesSettings()
+                    case .behavior:
+                        BehaviorSettings()
+                    case .window_resizing:
+                        DimensionSettings()
+                    case .keybindings:
+                        KeybindingsSettings()
+                    case .personalize:
+                        PersonalizeSettings()
+                    case .profiles:
+                        ProfileSettings()
+                    case .updates:
+                        UpdateSettings()
+                    case .credits:
+                        CreditsView()
+                }
             }
+            .navigationSplitViewColumnWidth(500)
         }
         .toolbar {
             ToolbarItem(placement: .navigation) {

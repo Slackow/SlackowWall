@@ -63,6 +63,7 @@
 		B6A55D932BA291A800D06086 /* Optional+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A55D922BA291A800D06086 /* Optional+Ext.swift */; };
 		B6A55D952BA2A7FE00D06086 /* TrackedInstanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A55D942BA2A7FE00D06086 /* TrackedInstanceView.swift */; };
 		B6A55D992BA2AFC500D06086 /* SCWindow+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A55D982BA2AFC400D06086 /* SCWindow+Ext.swift */; };
+		B6B393E32DBB403200C1A589 /* NSSplitViewItem+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B393E22DBB403200C1A589 /* NSSplitViewItem+Ext.swift */; };
 		B6B9FE8D2BA1698D0026C268 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = B6B9FE8C2BA1698D0026C268 /* Sparkle */; };
 		B6B9FE932BA16CC00026C268 /* UpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B9FE922BA16CC00026C268 /* UpdateManager.swift */; };
 		B6B9FE972BA16D730026C268 /* SettingsSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B9FE942BA16D730026C268 /* SettingsSliderView.swift */; };
@@ -160,6 +161,7 @@
 		B6A55D922BA291A800D06086 /* Optional+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Optional+Ext.swift"; sourceTree = "<group>"; };
 		B6A55D942BA2A7FE00D06086 /* TrackedInstanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackedInstanceView.swift; sourceTree = "<group>"; };
 		B6A55D982BA2AFC400D06086 /* SCWindow+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SCWindow+Ext.swift"; sourceTree = "<group>"; };
+		B6B393E22DBB403200C1A589 /* NSSplitViewItem+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSSplitViewItem+Ext.swift"; sourceTree = "<group>"; };
 		B6B9FE922BA16CC00026C268 /* UpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateManager.swift; sourceTree = "<group>"; };
 		B6B9FE942BA16D730026C268 /* SettingsSliderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsSliderView.swift; sourceTree = "<group>"; };
 		B6B9FE952BA16D730026C268 /* SettingsToggleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsToggleView.swift; sourceTree = "<group>"; };
@@ -454,6 +456,7 @@
 		B6A55D8F2BA2915900D06086 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				B6B393E22DBB403200C1A589 /* NSSplitViewItem+Ext.swift */,
 				49DF6EF82DB9830F00503534 /* Collection+Ext.swift */,
 				B6A55D902BA2917500D06086 /* Dictionary+Ext.swift */,
 				B6A55D922BA291A800D06086 /* Optional+Ext.swift */,
@@ -715,6 +718,7 @@
 				B6E30C152BF5AB8C008E7004 /* ProfileManager.swift in Sources */,
 				B6E9E36E2970A42D00DF6466 /* ScreenRecorder.swift in Sources */,
 				B6B9FE972BA16D730026C268 /* SettingsSliderView.swift in Sources */,
+				B6B393E32DBB403200C1A589 /* NSSplitViewItem+Ext.swift in Sources */,
 				49DF6EF92DB9830F00503534 /* Collection+Ext.swift in Sources */,
 				B6F7E39D2C4C8343009EE1F3 /* GridManager.swift in Sources */,
 				6D8A79A5A9E467B05B05C742 /* InstanceManager.swift in Sources */,
@@ -904,7 +908,7 @@
 				CURRENT_PROJECT_VERSION = 250424;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
-				DEVELOPMENT_TEAM = 94CLS492CD;
+				DEVELOPMENT_TEAM = D64G2TTYWM;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -940,7 +944,7 @@
 				CURRENT_PROJECT_VERSION = 250424;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Preview Content\"";
-				DEVELOPMENT_TEAM = 94CLS492CD;
+				DEVELOPMENT_TEAM = D64G2TTYWM;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;

@@ -17,7 +17,11 @@ struct SlackowWallApp: App {
     @ObservedObject private var shortcutManager = ShortcutManager.shared
     @ObservedObject private var alertManager = AlertManager.shared
     @ObservedObject private var profileManager = ProfileManager.shared
-    
+
+    init() {
+        NSSplitViewItem.swizzle()
+    }
+
     var body: some Scene {
         Window("SlackowWall", id: "slackowwall-window") {
             ContentView()
