@@ -15,11 +15,16 @@ struct ToolbarUtilityModeView: View {
     
     var body: some View {
             Button(action: {profileManager.profile.utilityMode.toggle()}) {
-                Image(systemName: "hammer\(profileManager.profile.utilityMode ? ".fill" : "")")
+                if isActuallyHovered {
+                    Image(systemName: "hammer\(profileManager.profile.utilityMode ? ".fill" : "")")
+                        .foregroundStyle(Color(nsColor: .labelColor))
+                } else {
+                    Image(systemName: "hammer\(profileManager.profile.utilityMode ? ".fill" : "")")
+                }
             }
             .popover(isPresented: $isHovered) {
                 Text("Utility Mode")
-                    .padding()
+                    .padding(6)
                     .allowsHitTesting(false)
             }
             .onHover {
