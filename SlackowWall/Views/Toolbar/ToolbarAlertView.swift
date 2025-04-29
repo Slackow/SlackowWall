@@ -27,14 +27,29 @@ struct ToolbarAlertView: View {
 }
 
 struct PopoverView: View {
+    @ObservedObject private var alertManager = AlertManager.shared
     @State var error: String
     
     var body: some View {
-        VStack {
+        VStack(spacing: 12) {
             Text(error)
                 .multilineTextAlignment(.center)
-                .padding()
+                .padding(.horizontal)
+                .padding(.top)
+            
+            if alertManager.alert == .noScreenPermission {
+                Button("Open System Settings") {
+                    alertManager.requestScreenRecordingPermission()
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.regular)
+                .padding(.bottom)
+            } else {
+                Spacer(minLength: 0)
+                    .padding(.bottom)
+            }
         }
+        .frame(width: 280)
     }
 }
 

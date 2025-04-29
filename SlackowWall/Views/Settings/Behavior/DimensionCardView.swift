@@ -31,11 +31,7 @@ struct DimensionCardView: View {
     }
     
     private var insideWindowFrame: Bool {
-        guard let screen = NSScreen.main?.visibleFrame else { return true }
-        let screenWidth = Int(screen.width)
-        let screenHeight = Int(screen.height)
-        
-        return screenWidth >= (width ?? 0) && screenHeight >= (height ?? 0)
+        return WindowController.dimensionsInBounds(width: width, height: height)
     }
     
     private var hasResetDimensions: Bool {
@@ -51,7 +47,7 @@ struct DimensionCardView: View {
                             .fontWeight(.semibold)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        Text(.init("\(description)\n\(insideWindowFrame ? "" : "[This Dimension requires the BoundlessWindow Mod!](0)")"))
+                        Text(.init("\(description)\n\(insideWindowFrame ? "" : "[This Dimension requires the BoundlessWindow Mod!](https://github.com/Slackow/BoundlessWindow)")"))
                             .tint(.orange)
                             .allowsHitTesting(false)
                             .font(.caption)
@@ -125,10 +121,10 @@ struct DimensionCardView: View {
             let scale = max(CGFloat(width)/s.width, CGFloat(height)/s.height)
             self.width = Int(CGFloat(width) / scale)
             self.height = Int(CGFloat(height) / scale)
-            if let x = x {
+            if let x {
                 self.x = Int(CGFloat(x) / scale)
             }
-            if let y = y {
+            if let y {
                 self.y = Int(CGFloat(y) / scale)
             }
         }
@@ -136,9 +132,9 @@ struct DimensionCardView: View {
     
     private func centerWindows() {
         if let s = NSScreen.main?.visibleFrame.size,
-           let width = width, let height = height {
-            x = max((Int(s.width) - width)/2, 0)
-            y = max((Int(s.height) - height)/2, 0)
+           let width, let height {
+            x = (Int(s.width) - width)/2
+            y = (Int(s.height) - height)/2
         }
     }
 }

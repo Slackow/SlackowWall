@@ -19,6 +19,17 @@ struct DimensionSettings: View {
                 .contentTransition(.numericText())
                 .animation(.smooth, value: viewModel.screenSize)
             let p = profileManager.profile
+            let dimensions = [(p.resetWidth, p.resetHeight), (p.baseWidth, p.baseHeight), (p.tallWidth, p.tallHeight), (p.thinWidth, p.thinHeight), (p.wideWidth, p.wideHeight)]
+            
+            let multipleOOB = dimensions.filter({!WindowController.dimensionsInBounds(width: $0, height: $1)}).count >= 2
+            Text(.init("More than one dimension out of bounds is illegal, and will invalidate your run!"))
+                .font(.caption)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .foregroundStyle(.red)
+                .opacity(multipleOOB ? 1 : 0)
+                .animation(.easeInOut, value: multipleOOB)
+            
+            
             DimensionCardView(name: "Gameplay", description: "The size of the game while you are in an instance, which is required for the other modes to work.",
                               isGameplayMode: true, x: p.$baseX, y: p.$baseY, width: p.$baseWidth, height: p.$baseHeight)
             

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct BehaviorSettings: View {
+    @ObservedObject private var screenRecorder = ScreenRecorder.shared
     @ObservedObject private var profileManager = ProfileManager.shared
     @ObservedObject private var instanceManager = InstanceManager.shared
     @ObservedObject private var shortcutManager = ShortcutManager.shared
@@ -22,6 +23,12 @@ struct BehaviorSettings: View {
                 VStack {
                     SettingsToggleView(title: "Utility Mode", description: "Allows Non-Numbered instances to be captured by SlackowWall, and enables some miscellaneous features.", descInteractable: false, option: $profileManager.profile.utilityMode)
                         .animation(.easeInOut, value: profileManager.profile.utilityMode)
+                        .onChange(of: profileManager.profile.utilityMode) { newValue in
+                            Task {
+                                // Notification will handle the alert state changes
+                                await ScreenRecorder.shared.resetAndStartCapture()
+                            }
+                        }
 
                     Divider()
 

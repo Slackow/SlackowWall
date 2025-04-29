@@ -34,6 +34,12 @@ import SwiftUI
     
     func startCapture() async {
         LogManager.shared.appendLog("Attempting to start screen capture...")
+        if ProfileManager.shared.profile.utilityMode {
+            // Skip screen recording permission check in utility mode
+            LogManager.shared.appendLog("Utility mode active - skipping screen capture")
+            return
+        }
+        
         if await canRecord {
             await resetAndStartCapture()
         }
@@ -41,20 +47,13 @@ import SwiftUI
     
     var canRecord: Bool {
         get async {
+            // Don't need to check permissions in utility mode
             if ProfileManager.shared.profile.utilityMode {
                 return false
             }
-            do {
-                // If the app doesn't have Screen Recording permission, this call generates an exception.
-                LogManager.shared.appendLog("Checking for screen capture permissions")
-                try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
-                LogManager.shared.appendLog("Verdict Achieved: true")
-                return true
-            } catch {
-                LogManager.shared.appendLog("Verdict Achieved: false, Error: \(error.localizedDescription).")
-                AlertManager.shared.alert = .noScreenPermission
-                return false
-            }
+            
+            // Use the AlertManager to check permissions and show alert if needed
+            return await AlertManager.shared.checkScreenRecordingPermission()
         }
     }
     
@@ -206,12 +205,18 @@ import SwiftUI
         if ProfileManager.shared.profile.shouldHideWindows && !ProfileManager.shared.profileCreatedOrDeleted {
             WindowController.unhideWindows(trackingManager.getValues(\.pid))
         }
+        
         if !ProfileManager.shared.profile.utilityMode {
+            // Only check screen recording permission and start capture when not in utility mode
+            LogManager.shared.appendLog("Normal mode - preparing screen capture")
+            
             // 40ms delay so macOS can catch up, a hack yes, but lol?
             try? await Task.sleep(nanoseconds: 40_000_000)
             
             // Start the capture process again
             await start()
+        } else {
+            LogManager.shared.appendLog("Utility mode - skipping screen capture")
         }
     }
     

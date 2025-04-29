@@ -18,7 +18,7 @@ class DimensionSettingsViewModel: ObservableObject {
     }
     
     init() {
-        self.screenDimensions = NSScreen.main?.visibleFrame.size
+        self.screenDimensions = NSScreen.main?.frame.size
         setupScreenChangeNotification()
     }
     

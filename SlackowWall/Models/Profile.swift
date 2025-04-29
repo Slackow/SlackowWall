@@ -28,7 +28,14 @@ struct Profile {
     @AppStorage(key("setHeight")) var setHeight: Int? = nil
     
     // Behavior
-    @AppStorage(key("utilityMode")) var utilityMode: Bool = true
+    @AppStorage(key("utilityMode")) var utilityMode: Bool = true {
+        didSet {
+            if oldValue != utilityMode {
+                // Post notification when utility mode changes
+                NotificationCenter.default.post(name: NSNotification.Name("UtilityModeChanged"), object: nil)
+            }
+        }
+    }
     @AppStorage(key("f1OnJoin")) var f1OnJoin: Bool = false
     @AppStorage(key("fullscreen")) var fullscreen: Bool = false
     @AppStorage(key("onlyOnFocus")) var onlyOnFocus: Bool = true

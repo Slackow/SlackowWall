@@ -63,6 +63,14 @@ class WindowController {
         return nil
     }
     
+    static func dimensionsInBounds(width: Int?, height: Int?) -> Bool {
+            guard let screen = NSScreen.main?.visibleFrame else { return true }
+            let screenWidth = Int(screen.width)
+            let screenHeight = Int(screen.height)
+            
+            return screenWidth >= (width ?? 0) && screenHeight >= (height ?? 0)
+    }
+    
     private static func getWindowProperty(pid: pid_t, attribute: String) -> AnyObject? {
         let appRef = AXUIElementCreateApplication(pid)
         var value: AnyObject?
