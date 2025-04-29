@@ -53,12 +53,12 @@ class InstanceInfo: CustomStringConvertible {
         }
         
         // Update state based on file data
-        var newState = fileData[0]
+        var newState = fileData[safe: 0]
         if newState == 0x69 && fileData.count >= 12 {
             newState = fileData[11]
         }
         
-        state = newState
+        state = newState ?? 0
         LogManager.shared.appendLog("Updated State:", state)
         return prevState != state
     }
