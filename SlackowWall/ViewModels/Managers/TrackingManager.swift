@@ -16,8 +16,20 @@ class TrackingManager: ObservableObject {
     
     static let shared = TrackingManager()
     
+    // Timer for automatic instance detection
+    private var instanceCheckTimer: Timer?
+    private var lastCheckedPIDs = Set<pid_t>()
+    
+    // Time interval for checking instances (in seconds)
+    private let instanceCheckInterval: TimeInterval = 2.0
+    
     init() {
         fetchInstances()
+        startInstanceCheckTimer()
+    }
+    
+    deinit {
+        stopInstanceCheckTimer()
     }
     
     func getValues<T>(_ path: KeyPath<TrackedInstance, T>) -> [T] {
@@ -101,6 +113,85 @@ class TrackingManager: ObservableObject {
         trackedInstances.map({$0.info }).forEach { info in
             let sanitizedPath = info.statePath.replacingOccurrences(of: homeDirectory, with: "~")
             LogManager.shared.appendLog(sanitizedPath, showInConsole: false)
+        }
+    }
+    
+    // MARK: - Instance Check Timer
+    
+    /// Start the timer that periodically checks for Minecraft instances
+    func startInstanceCheckTimer() {
+        // Stop any existing timer first
+        stopInstanceCheckTimer()
+        
+        // Initialize with current PIDs - make sure to include all tracked instances
+        fetchInstances()
+        lastCheckedPIDs = Set(trackedInstances.map { $0.pid })
+        
+        // Create a new timer that fires at the configured interval
+        instanceCheckTimer = Timer.scheduledTimer(
+            timeInterval: instanceCheckInterval,
+            target: self,
+            selector: #selector(checkForInstanceChanges),
+            userInfo: nil,
+            repeats: true
+        )
+        
+        // Make sure timer runs even during scrolling
+        RunLoop.current.add(instanceCheckTimer!, forMode: .common)
+        
+        LogManager.shared.appendLog("Instance change detection timer started (checking every \(instanceCheckInterval) seconds)")
+    }
+    
+    /// Stop the instance check timer
+    func stopInstanceCheckTimer() {
+        instanceCheckTimer?.invalidate()
+        instanceCheckTimer = nil
+    }
+    
+    /// Check for changes in Minecraft instances (added or removed)
+    @objc private func checkForInstanceChanges() {
+        // Get the current Minecraft apps
+        let currentApps = getAllApps().filter { isMinecraftInstance(app: $0) }
+        let currentPIDs = Set(currentApps.map { $0.processIdentifier })
+        
+        // If there's no change in the set of PIDs, do nothing
+        if currentPIDs == lastCheckedPIDs {
+            return
+        }
+        
+        // Calculate what changed
+        let addedPIDs = currentPIDs.subtracting(lastCheckedPIDs)
+        let removedPIDs = lastCheckedPIDs.subtracting(currentPIDs)
+        
+        // Only process if there are actual changes
+        if !addedPIDs.isEmpty || !removedPIDs.isEmpty {
+            // Log the changes with detailed info
+            if !addedPIDs.isEmpty {
+                let newInstances = currentApps.filter { addedPIDs.contains($0.processIdentifier) }
+                let instanceNames = newInstances.map { $0.localizedName ?? "Unknown" }
+                LogManager.shared.appendLog("New Minecraft instances detected: \(addedPIDs) - \(instanceNames)")
+            }
+            
+            if !removedPIDs.isEmpty {
+                LogManager.shared.appendLog("Minecraft instances closed: \(removedPIDs)")
+            }
+            
+            // Update the tracked instances
+            updateInstancesAndRefresh()
+        }
+        
+        // Always update the last checked PIDs
+        lastCheckedPIDs = currentPIDs
+    }
+    
+    /// Update tracked instances and refresh the capture
+    private func updateInstancesAndRefresh() {
+        // Update the instances
+        fetchInstances()
+        
+        // Trigger a capture refresh
+        Task {
+            await ScreenRecorder.shared.resetAndStartCapture()
         }
     }
     
