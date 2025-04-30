@@ -19,7 +19,15 @@ struct KeybindingsSettings: View {
                     HStack {
                         SettingsLabel(title: "Reset", description: "You may need to change this in [OBS](https://obsproject.com) too.", font: .body)
                         
-                        KeybindingView(keybinding: $profileManager.profile.resetGKey, defaultValue: .u)
+                        KeybindingView(keybinding: $profileManager.profile.resetGKey, defaultValue: nil)
+                    }
+                    
+                    Divider()
+                    
+                    HStack {
+                        SettingsLabel(title: "Switch to Gameplay Mode", description: "Go back to your normal dimensions quickly.", font: .body)
+                        
+                        KeybindingView(keybinding: $profileManager.profile.baseGKey, defaultValue: nil)
                     }
                     
                     Divider()

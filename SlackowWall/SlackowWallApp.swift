@@ -30,7 +30,7 @@ struct SlackowWallApp: App {
                 ToolbarItem(placement: .automatic) {
                     HStack(spacing: 8) {
                         HStack(spacing: 8) {
-                            if !trackingManager.trackedInstances.isEmpty {
+                            if !trackingManager.trackedInstances.isEmpty && !profileManager.profile.utilityMode {
                                 ToolbarStopView()
                             }
 

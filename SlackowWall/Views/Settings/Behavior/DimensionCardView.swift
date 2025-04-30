@@ -34,6 +34,10 @@ struct DimensionCardView: View {
         return WindowController.dimensionsInBounds(width: width, height: height)
     }
     
+    private var boundlessWarning: Bool {
+        return !insideWindowFrame && TrackingManager.shared.getValues(\.info).map(\.port).contains(0)
+    }
+    
     private var hasResetDimensions: Bool {
         return (profileManager.profile.baseWidth ?? 0) > 0 && (profileManager.profile.baseHeight ?? 0) > 0
     }
@@ -47,9 +51,8 @@ struct DimensionCardView: View {
                             .fontWeight(.semibold)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        Text(.init("\(description)\n\(insideWindowFrame ? "" : "[This Dimension requires the BoundlessWindow Mod!](https://github.com/Slackow/BoundlessWindow)")"))
+                        Text(.init("\(description)\n\(boundlessWarning ? "[This Dimension requires the BoundlessWindow Mod!](https://github.com/Slackow/BoundlessWindow)" : "")"))
                             .tint(.orange)
-                            .allowsHitTesting(false)
                             .font(.caption)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .foregroundStyle(.gray)
@@ -61,12 +64,12 @@ struct DimensionCardView: View {
                         HStack {
                             TextField("W", value: $width, format: .number.grouping(.never))
                                 .textFieldStyle(.roundedBorder)
-                                .foregroundStyle(!insideWindowFrame ? .orange : .primary)
+                                .foregroundStyle(.primary)
                                 .frame(width: 80)
                             
                             TextField("H", value: $height, format: .number.grouping(.never))
                                 .textFieldStyle(.roundedBorder)
-                                .foregroundStyle(!insideWindowFrame ? .orange : .primary)
+                                .foregroundStyle(.primary)
                                 .frame(width: 80)
                         }
                         
@@ -81,7 +84,8 @@ struct DimensionCardView: View {
                         }
                     }
                     .padding(.horizontal)
-                    .padding(.vertical, 8)
+                    .padding(.top, 3)
+                    .padding(.bottom, 8)
                     
                     HStack {
                         if !isGameplayMode && !hasResetDimensions && containsDimensions {
@@ -95,10 +99,9 @@ struct DimensionCardView: View {
                             KeybindingView(keybinding: keybind)
                         }
                         
-                        Button(action: scaleToMonitor) {
-                            Text("Scale to Monitor")
+                        Button(action: copyVisibleFrame) {
+                            Text("Copy Monitor")
                         }
-                        .disabled(invalidDimension || insideWindowFrame)
                         
                         Button(action: centerWindows) {
                             Text("Center")
@@ -110,12 +113,21 @@ struct DimensionCardView: View {
             }
             .animation(.easeInOut, value: hasResetDimensions)
             .animation(.easeInOut, value: containsDimensions)
-            .animation(.easeInOut, value: insideWindowFrame)
+            .animation(.easeInOut, value: boundlessWarning)
         }
     }
     
+    private func copyVisibleFrame() {
+            if let s = NSScreen.main?.visibleFrame.size {
+                self.width = Int(s.width)
+                self.height = Int(s.height)
+                self.x = 0
+                self.y = 0
+            }
+    }
+    
     private func scaleToMonitor() {
-        if let s = NSScreen.main?.visibleFrame.size,
+        if let s = NSScreen.main?.frame.size,
            let width = width, let height = height,
            Int(s.width) < width || Int(s.height) < height {
             let scale = max(CGFloat(width)/s.width, CGFloat(height)/s.height)
@@ -131,7 +143,7 @@ struct DimensionCardView: View {
     }
     
     private func centerWindows() {
-        if let s = NSScreen.main?.visibleFrame.size,
+        if let s = NSScreen.main?.frame.size,
            let width, let height {
             x = (Int(s.width) - width)/2
             y = (Int(s.height) - height)/2

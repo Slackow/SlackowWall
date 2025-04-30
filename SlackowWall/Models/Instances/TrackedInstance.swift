@@ -67,11 +67,17 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
         }
         data.path = path
         data.version = version
-        if let contents = FileManager.default.contents(atPath: "\(path)/boundless_port.txt"),
-            !contents.isEmpty,
-           let port = String(data: contents, encoding: .utf8)
+        // default to trying to use boundless if can't read these properties correctly
+        if let boundlessFile = getModifiedTime("\(path)/boundless_port.txt"),
+           let logFile = getCreatedTime("\(path)/logs/latest.log"),
+           boundlessFile < logFile {
+            LogManager.shared.appendLog("Found old boundless_port.txt, mod not present.")
+        } else if let contents = FileManager.default.contents(atPath: "\(path)/boundless_port.txt"),
+           !contents.isEmpty,
+           let port = String(data: contents, encoding: .utf8),
+           let port = UInt16(port)
         {
-            data.port = UInt16(port) ?? 0
+            data.port = port
         }
         LogManager.shared
             .appendLog("Added Instance \(pid)")
@@ -80,6 +86,14 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
             .appendLog("Port: \(data.port)")
             .appendLogNewLine()
         return data
+    }
+    
+    private static func getModifiedTime(_ filePath: String, fileManager: FileManager = FileManager.default) -> Date? {
+        try? fileManager.attributesOfItem(atPath: filePath)[FileAttributeKey.modificationDate] as? Date
+    }
+    
+    private static func getCreatedTime(_ filePath: String, fileManager: FileManager = FileManager.default) -> Date? {
+        try? fileManager.attributesOfItem(atPath: filePath)[FileAttributeKey.creationDate] as? Date
     }
     
     func sendResizeCommand(x: Int?, y: Int?, width: Int?, height: Int?) {

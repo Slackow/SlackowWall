@@ -19,7 +19,9 @@ struct CreditsView: View {
                     
                     CreditsEntryView(name: "nealxm", role: "Beta Tester", icon: "atom", color: .green)
                     
-                    CreditsEntryView(name: "olock5", role: "Supporter", icon:"heart.fill", color: .pink)
+                    CreditsEntryView(name: "olock5", role: "Supporter", icon: "heart.fill", color: .pink)
+                    
+                    CreditsEntryView(name: "mukvl", role: "Supporter", icon: "heart.fill", color: .pink)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }

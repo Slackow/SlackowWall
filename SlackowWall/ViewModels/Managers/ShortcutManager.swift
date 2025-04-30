@@ -26,6 +26,7 @@ final class ShortcutManager: ObservableObject {
         switch (key.type, key.keyCode) {
             case (.keyUp, p.resetGKey): globalReset()
             case (.keyDown, p.planarGKey): resizePlanar()
+            case (.keyDown, p.baseGKey): resizeBase()
             case (.keyDown, p.tallGKey): resizeTall()
             case (.keyDown, p.thinGKey): resizeThin()
             case _: return
@@ -78,7 +79,7 @@ final class ShortcutManager: ObservableObject {
         let trackedInstances = TrackingManager.shared.trackedInstances
         let totalInstances = trackedInstances.count
         
-        guard let currentInstanceIndex = trackedInstances.firstIndex(where: { $0.instanceNumber == instance.instanceNumber }) else {
+        guard let currentInstanceIndex = trackedInstances.firstIndex(where: { $0.pid == instance.pid }) else {
             returnToWall(from: instance)
             return
         }
@@ -102,17 +103,24 @@ final class ShortcutManager: ObservableObject {
         resizeReset(pid: instance.pid)
     }
     
-    func resizePlanar() {
+    func activeInstancePID() -> pid_t? {
         let apps = NSWorkspace.shared.runningApplications.filter{ $0.activationPolicy == .regular }
-        guard let activeWindow = apps.first(where:{$0.isActive}), TrackingManager.shared.getValues(\.pid).contains(activeWindow.processIdentifier) else { return }
+        return apps.first(where: \.isActive).map(\.processIdentifier).flatMap { pid in
+            TrackingManager.shared.getValues(\.pid).first {$0 == pid}
+        }
+    }
+    
+    func resizePlanar() {
+        guard let pid = activeInstancePID() else { return }
         let w = convertToFloat(ProfileManager.shared.profile.wideWidth)
         let h = convertToFloat(ProfileManager.shared.profile.wideHeight)
         let x = ProfileManager.shared.profile.wideX.map(CGFloat.init)
         let y = ProfileManager.shared.profile.wideY.map(CGFloat.init)
-        resize(pid: activeWindow.processIdentifier, x: x, y: y, width: w, height: h)
+        resize(pid: pid, x: x, y: y, width: w, height: h)
     }
     
-    func resizeBase(pid: pid_t) {
+    func resizeBase(pid: pid_t? = nil) {
+        guard let pid = pid ?? activeInstancePID() else { return }
         let w = convertToFloat(ProfileManager.shared.profile.baseWidth)
         let h = convertToFloat(ProfileManager.shared.profile.baseHeight)
         let x = ProfileManager.shared.profile.baseX.map(CGFloat.init)
@@ -136,23 +144,21 @@ final class ShortcutManager: ObservableObject {
     }
     
     func resizeThin() {
-        let apps = NSWorkspace.shared.runningApplications.filter{ $0.activationPolicy == .regular }
-        guard let activeWindow = apps.first(where:{$0.isActive}), TrackingManager.shared.getValues(\.pid).contains(activeWindow.processIdentifier) else { return }
+        guard let pid = activeInstancePID() else { return }
         let w = convertToFloat(ProfileManager.shared.profile.thinWidth)
         let h = convertToFloat(ProfileManager.shared.profile.thinHeight)
         let x = ProfileManager.shared.profile.thinX.map(CGFloat.init)
         let y = ProfileManager.shared.profile.thinY.map(CGFloat.init)
-        resize(pid: activeWindow.processIdentifier, x: x, y: y, width: w, height: h)
+        resize(pid: pid, x: x, y: y, width: w, height: h)
     }
     
     func resizeTall() {
-        let apps = NSWorkspace.shared.runningApplications.filter{ $0.activationPolicy == .regular }
-        guard let activeWindow = apps.first(where:{$0.isActive}), TrackingManager.shared.getValues(\.pid).contains(activeWindow.processIdentifier) else { return }
+        guard let pid = activeInstancePID() else { return }
         let w = convertToFloat(ProfileManager.shared.profile.tallWidth)
         let h = convertToFloat(ProfileManager.shared.profile.tallHeight)
         let x = ProfileManager.shared.profile.tallX.map(CGFloat.init)
         let y = ProfileManager.shared.profile.tallY.map(CGFloat.init)
-        resize(pid: activeWindow.processIdentifier, x: x, y: y, width: w, height: h)
+        resize(pid: pid, x: x, y: y, width: w, height: h)
     }
     
     func resize(pid: pid_t, x: CGFloat? = nil, y: CGFloat? = nil, width: CGFloat, height: CGFloat, force: Bool = false) {

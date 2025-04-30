@@ -20,8 +20,9 @@ class OBSManager: ObservableObject {
         let fileManager = FileManager.default
         guard let appSupportURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?.appendingPathComponent("SlackowWall") else { return }
         
-        // Create the directory if it doesn't exist
+        // Create the directories if they don't exist
         try? fileManager.createDirectory(at: appSupportURL, withIntermediateDirectories: true)
+        try? fileManager.createDirectory(at: appSupportURL.appendingPathComponent("Icons"), withIntermediateDirectories: true)
         
         let dst = appSupportURL.appendingPathComponent("instance_selector.lua")
         

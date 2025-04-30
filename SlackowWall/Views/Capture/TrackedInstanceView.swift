@@ -35,7 +35,7 @@ struct TrackedInstanceView: View {
                     .animation(.easeInOut, value: instance.stream.streamError)
             }
             VStack(alignment: .trailing, spacing: 0) {
-                if instance.isLocked {
+                if instance.isLocked && !profileManager.profile.utilityMode {
                     LockIcon()
                         .frame(width: 32 * profileManager.profile.lockScale, height: 32 * profileManager.profile.lockScale)
                         .padding(.horizontal, 4)

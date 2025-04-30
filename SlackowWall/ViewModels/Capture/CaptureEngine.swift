@@ -123,6 +123,8 @@ private class CaptureEngineStreamOutput: NSObject, SCStreamOutput, SCStreamDeleg
                 //            guard let samples = createPCMBuffer(for: sampleBuffer) else { return }
                 //            pcmBufferHandler?(samples)
                 return
+            case .microphone:
+                return
             @unknown default:
                 fatalError("Encountered unknown stream output type: \(outputType)")
         }

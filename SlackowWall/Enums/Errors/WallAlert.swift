@@ -19,7 +19,7 @@ enum WallAlert: Error, CaseIterable, Identifiable, Hashable {
             case .noScreenPermission:
                 "SlackowWall currently does not have\npermission to record your screen."
             case .noAccessibilityPermission:
-                "SlackowWall currently does not\nhave accessibility permission."
+                "SlackowWall currently does not have accessibility permission.\nIf enabled already try removing it and relaunching the app."
         }
     }
 }

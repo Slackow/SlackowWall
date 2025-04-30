@@ -69,10 +69,11 @@ struct Profile {
     @AppStorage(key("tallY")) var tallY: Int? = nil
     
     // Keybinds
-    @AppStorage(key("resetGKey")) var resetGKey: KeyCode? = .u
+    @AppStorage(key("resetGKey")) var resetGKey: KeyCode? = nil
     @AppStorage(key("tallGKey")) var tallGKey: KeyCode? = nil
     @AppStorage(key("thinGKey")) var thinGKey: KeyCode? = nil
     @AppStorage(key("planarGKey")) var planarGKey: KeyCode? = nil
+    @AppStorage(key("baseGKey")) var baseGKey: KeyCode? = nil
     @AppStorage(key("resetAllKey")) var resetAllKey: KeyCode? = .t
     @AppStorage(key("resetOthersKey")) var resetOthersKey: KeyCode? = .f
     @AppStorage(key("runKey")) var runKey: KeyCode? = .r

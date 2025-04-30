@@ -49,7 +49,7 @@ class TrackingManager: ObservableObject {
                 return false
             } else {
                 // Remove instance that no longer exists
-                LogManager.shared.appendLog("Removing instance \(trackedInstance.instanceNumber)")
+                LogManager.shared.appendLog("Removing instance \(trackedInstance.pid)")
                 return true
             }
         }
@@ -85,14 +85,12 @@ class TrackingManager: ObservableObject {
             .dropFirst("-Djava.library.path=".count)
             .dropLast("/natives".count)
         
-        if ProfileManager.shared.profile.utilityMode {
-            let instNum = (self.getValues(\.instanceNumber).max() ?? 0) + 1
-            return TrackedInstance(pid: app.processIdentifier, instanceNumber: instNum)
-        } else if let num = UInt(numString.suffix(2)) ?? UInt(numString.suffix(1)) {
+        if !ProfileManager.shared.profile.utilityMode,
+           let num = UInt(numString.suffix(2)) ?? UInt(numString.suffix(1)) {
             return TrackedInstance(pid: app.processIdentifier, instanceNumber: Int(num))
         }
-        
-        return nil
+        let instNum = (self.getValues(\.instanceNumber).max() ?? 0) + 1
+        return TrackedInstance(pid: app.processIdentifier, instanceNumber: instNum)
     }
     
     private func isMinecraftInstance(app: NSRunningApplication) -> Bool {

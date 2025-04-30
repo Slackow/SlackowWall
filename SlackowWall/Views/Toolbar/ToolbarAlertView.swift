@@ -45,8 +45,12 @@ struct PopoverView: View {
                 .controlSize(.regular)
                 .padding(.bottom)
             } else {
-                Spacer(minLength: 0)
-                    .padding(.bottom)
+                Button("Open System Settings") {
+                    alertManager.requestAccessibilityPermission()
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.regular)
+                .padding(.bottom)
             }
         }
         .frame(width: 280)

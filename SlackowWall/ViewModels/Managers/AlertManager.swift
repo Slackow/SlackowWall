@@ -97,4 +97,10 @@ class AlertManager: ObservableObject {
             NSWorkspace.shared.open(url)
         }
     }
+    
+    func requestAccessibilityPermission() {
+        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
+            NSWorkspace.shared.open(url)
+        }
+    }
 }
