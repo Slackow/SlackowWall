@@ -27,7 +27,7 @@ struct DimensionCardView: View {
     }
     
     private var containsDimensions: Bool {
-        return width ?? 0 > 0 || height ?? 0 > 0
+        return (width ?? 0) > 0 || (height ?? 0) > 0
     }
     
     private var insideWindowFrame: Bool {
@@ -35,7 +35,7 @@ struct DimensionCardView: View {
     }
     
     private var boundlessWarning: Bool {
-        return !insideWindowFrame && TrackingManager.shared.getValues(\.info).map(\.port).contains(0)
+        return !insideWindowFrame && TrackingManager.shared.getValues(\.info.isBoundless).contains(false)
     }
     
     private var hasResetDimensions: Bool {
@@ -124,22 +124,6 @@ struct DimensionCardView: View {
                 self.x = 0
                 self.y = 0
             }
-    }
-    
-    private func scaleToMonitor() {
-        if let s = NSScreen.main?.frame.size,
-           let width = width, let height = height,
-           Int(s.width) < width || Int(s.height) < height {
-            let scale = max(CGFloat(width)/s.width, CGFloat(height)/s.height)
-            self.width = Int(CGFloat(width) / scale)
-            self.height = Int(CGFloat(height) / scale)
-            if let x {
-                self.x = Int(CGFloat(x) / scale)
-            }
-            if let y {
-                self.y = Int(CGFloat(y) / scale)
-            }
-        }
     }
     
     private func centerWindows() {

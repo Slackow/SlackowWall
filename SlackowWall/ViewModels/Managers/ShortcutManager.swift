@@ -178,8 +178,8 @@ final class ShortcutManager: ObservableObject {
             let newSize = CGSize(width: width, height: height)
             let newPosition = CGPoint(x: x ?? (currentPosition.x - (newSize.width - currentSize.width) * 0.5),
                                       y: y ?? (currentPosition.y - (newSize.height - currentSize.height) * 0.5))
-            if let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid && $0.info.port > 0 }) {
-                instance.sendResizeCommand(x: Int(newPosition.x), y: Int(newPosition.y), width: Int(newSize.width), height: Int(newSize.height))
+            if let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid && $0.info.port > 3 }) {
+                WindowController.sendResizeCommand(instance: instance, x: Int(newPosition.x), y: Int(newPosition.y), width: Int(newSize.width), height: Int(newSize.height))
             } else {
                 WindowController.modifyWindow(pid: pid, x: newPosition.x, y: newPosition.y, width: newSize.width, height: newSize.height)
             }

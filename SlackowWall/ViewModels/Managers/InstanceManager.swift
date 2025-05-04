@@ -4,6 +4,7 @@
 
 import SwiftUI
 
+
 class InstanceManager: ObservableObject {
     @Published var hoveredInstance: TrackedInstance? = nil
     @Published var keyAction: KeyAction? = nil
@@ -190,10 +191,9 @@ class InstanceManager: ObservableObject {
         }
     }
     
+    @MainActor
     func adjustInstances() async {
-        DispatchQueue.main.async {
-            self.moving = true
-        }
+        await MainActor.run { self.moving = true }
         
         let profile = ProfileManager.shared.profile
         let pids = TrackingManager.shared.getValues(\.pid)
@@ -205,12 +205,12 @@ class InstanceManager: ObservableObject {
         let setSize = width > 0 && height > 0
         
         if (x == 0 && y == 0 && !setSize) || pids.isEmpty {
-            DispatchQueue.main.async { self.moving = false }
+            await MainActor.run { self.moving = false }
             return
         }
         
         if setSize {
-            DispatchQueue.main.async {
+            await MainActor.run {
                 GridManager.shared.showInfo = false
             }
             
@@ -225,8 +225,6 @@ class InstanceManager: ObservableObject {
             await ScreenRecorder.shared.resetAndStartCapture()
         }
         
-        DispatchQueue.main.async {
-            self.moving = false
-        }
+        await MainActor.run { self.moving = false }
     }
 }

@@ -9,7 +9,8 @@ import SwiftUI
 
 struct PlaceholderInstanceView: View {
     var instance: TrackedInstance
-    @State var isHovered: Bool = false
+    @State var isHovered: Bool = true
+    @State var isIndicatorHovered: Bool = false
     
     var instanceName: Substring {
         let result = instance.info.path.split(separator: "/").dropLast(1).last ?? "??"
@@ -33,19 +34,23 @@ struct PlaceholderInstanceView: View {
                     .fontWeight(.semibold)
             }
             HStack {
-//                Image(systemName: "chevron.down.circle.fill")
-//                    .resizable()
-//                    .frame(width: 30, height: 30)
-//                    .padding(.trailing, 4)
-//                    .padding(.top, 4)
-//                    .contextMenu {
-//                        Button("Open Folder") {
-//                            print("Folder Opened")
-//                        }
-//                        Button("Open Folder2") {
-//                            print("Folder Not Opened")
-//                        }
-//                    }
+                if instance.info.isBoundless {
+                    Image(systemName: "macwindow")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 30, height: 30)
+                        .padding(.top, 8)
+                        .padding(.leading, 8)
+                        .onHover { isIndicatorHovered = $0 }
+                        .popover(isPresented: $isIndicatorHovered) {
+                            Text("Using BoundlessWindow")
+                                .padding(6)
+                        }
+                        
+                }
+                Spacer()
+                    .frame(maxWidth: .infinity)
+                
                 Menu ("") {
                     Button("Focus Instance") {
                         WindowController.focusWindow(instance.pid)
@@ -63,11 +68,11 @@ struct PlaceholderInstanceView: View {
 //                    }
                 }
                 .menuStyle(.borderlessButton)
-                .frame(width: 19, height: 24)
+                .frame(width: 19, height: 19)
                 .background(.ultraThickMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
                 .scaleEffect(1.5)
-                .padding(.trailing, 9)
+                .padding(.trailing, 10)
                 .padding(.top, 10)
                 
             }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
@@ -81,7 +86,6 @@ struct PlaceholderInstanceView: View {
                 .background(.ultraThinMaterial)
                 
         }
-        .onHover(perform: {isHovered = $0})
     }
     
 }

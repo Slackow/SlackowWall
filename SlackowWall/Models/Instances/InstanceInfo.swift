@@ -29,6 +29,12 @@ class InstanceInfo: CustomStringConvertible {
     var untilF3: Int = 0
     var checkState: CheckingMode = .NONE
     var pid: pid_t
+    var isBoundless: Bool {
+        return port > 3
+    }
+    var notCheckingBoundless: Bool {
+        return port > 3 || port == 0
+    }
     
     init (pid: pid_t) {
         self.pid = pid

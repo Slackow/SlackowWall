@@ -126,16 +126,17 @@ class TrackingManager: ObservableObject {
         lastCheckedPIDs = Set(trackedInstances.map { $0.pid })
         
         // Create a new timer that fires at the configured interval
-        instanceCheckTimer = Timer.scheduledTimer(
+        let timer = Timer.scheduledTimer(
             timeInterval: instanceCheckInterval,
             target: self,
             selector: #selector(checkForInstanceChanges),
             userInfo: nil,
             repeats: true
         )
+        instanceCheckTimer = timer
         
         // Make sure timer runs even during scrolling
-        RunLoop.current.add(instanceCheckTimer!, forMode: .common)
+        RunLoop.current.add(timer, forMode: .common)
         
         LogManager.shared.appendLog("Instance change detection timer started (checking every \(instanceCheckInterval) seconds)")
     }
@@ -146,14 +147,26 @@ class TrackingManager: ObservableObject {
         instanceCheckTimer = nil
     }
     
+    private func checkBoundless() {
+        for instance in trackedInstances where !instance.info.notCheckingBoundless {
+            let tries = instance.info.port
+            LogManager.shared.appendLog("\(tries) tries left")
+            instance.recalculateInstanceInfo()
+            if instance.info.port <= 3 {
+                instance.info.port = tries - 1
+            }
+        }
+    }
+    
     /// Check for changes in Minecraft instances (added or removed)
     @objc private func checkForInstanceChanges() {
         // Get the current Minecraft apps
-        let currentApps = getAllApps().filter { isMinecraftInstance(app: $0) }
-        let currentPIDs = Set(currentApps.map { $0.processIdentifier })
+        let currentApps = getAllApps().filter(isMinecraftInstance)
+        let currentPIDs = Set(currentApps.map(\.processIdentifier))
         
         // If there's no change in the set of PIDs, do nothing
         if currentPIDs == lastCheckedPIDs {
+            checkBoundless()
             return
         }
         

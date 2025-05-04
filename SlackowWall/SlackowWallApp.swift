@@ -72,7 +72,7 @@ struct SlackowWallApp: App {
                             ),
                             NSApplication.AboutPanelOptionKey(
                                 rawValue: "Copyright"
-                            ): "Copyright © 2024 Slackow, Kihron."
+                            ): "Copyright © 2025 Slackow, Kihron."
                         ]
                     )
                 }
@@ -109,6 +109,7 @@ struct SlackowWallApp: App {
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     var eventMonitor: Any?
+    var pacemanProcess: Process?
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         true
@@ -120,9 +121,43 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             ShortcutManager.shared.handleGlobalKey(event)
         }
         OBSManager.shared.writeScript()
-
         // Start the instance check timer
         TrackingManager.shared.startInstanceCheckTimer()
+    }
+    
+    func startPaceman() {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+        process.arguments = [
+            "java",
+            "-Dapple.awt.UIElement=true",
+            "-jar",
+            "/Users/andrew/Library/Application Support/SlackowWall/paceman-tracker-0.7.0.jar",
+            "--nogui"
+        ]
+        process.terminationHandler = { _ in
+            LogManager.shared.appendLog("Paceman exited")
+        }
+
+        process.standardOutput = Pipe()
+        process.standardError = Pipe()
+
+        do {
+            try process.run()
+            LogManager.shared.appendLog("Paceman started")
+            pacemanProcess = process
+
+            // Put it in its own process group
+            setpgid(process.processIdentifier, process.processIdentifier)
+
+            // Ensure the group is killed on exit
+            atexit_b {
+                kill(-process.processIdentifier, SIGTERM)
+            }
+
+        } catch {
+            print("Failed to launch: \(error)")
+        }
     }
 
     func applicationWillFinishLaunching(_ notification: Notification) {
@@ -132,5 +167,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationWillTerminate(_ notification: Notification) {
         // Clean up the timer when the app is about to terminate
         TrackingManager.shared.stopInstanceCheckTimer()
+        pacemanProcess?.terminate()
     }
 }

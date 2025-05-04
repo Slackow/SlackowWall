@@ -7,7 +7,6 @@
 
 import SwiftUI
 import ScreenCaptureKit
-import Network
 
 class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
     let id: UUID
@@ -38,6 +37,10 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
         } else {
             return true
         }
+    }
+    
+    func recalculateInstanceInfo() {
+        self.info = TrackedInstance.calculateInstanceInfo(pid: pid)
     }
     
     private static func calculateInstanceInfo(pid: pid_t) -> InstanceInfo {
@@ -72,6 +75,10 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
            let logFile = getCreatedTime("\(path)/logs/latest.log"),
            boundlessFile < logFile {
             LogManager.shared.appendLog("Found old boundless_port.txt, mod not present.")
+            let port = FileManager.default.contents(atPath: "\(path)/boundless_port.txt")
+                .flatMap {String(data: $0, encoding: .utf8)}
+            LogManager.shared.appendLog("Would have used port: \(port ?? "N/A")")
+            data.port = 3
         } else if let contents = FileManager.default.contents(atPath: "\(path)/boundless_port.txt"),
            !contents.isEmpty,
            let port = String(data: contents, encoding: .utf8),
@@ -94,44 +101,6 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
     
     private static func getCreatedTime(_ filePath: String, fileManager: FileManager = FileManager.default) -> Date? {
         try? fileManager.attributesOfItem(atPath: filePath)[FileAttributeKey.creationDate] as? Date
-    }
-    
-    func sendResizeCommand(x: Int?, y: Int?, width: Int?, height: Int?) {
-        let port = self.info.port
-        guard let nwPort = NWEndpoint.Port(rawValue: port) else {
-            LogManager.shared.appendLog("Invalid port value: \(port)")
-            return
-        }
-        func un(_ n: Int?) -> String { return n?.description ?? "-" }
-        let command = "set \(un(x)) \(un(y)) \(un(width)) \(un(height))\n"
-        
-        // Create an NWConnection to localhost on the instance's port.
-        let connection = NWConnection(host: .init("127.0.0.1"), port: nwPort, using: .tcp)
-        connection.stateUpdateHandler = { state in
-            LogManager.shared.appendLog("Connection state: \(state)")
-        }
-        connection.start(queue: DispatchQueue.global())
-        connection.send(content: command.data(using: .utf8), completion: .contentProcessed({ error in
-           if let error {
-               LogManager.shared.appendLog("Error sending resize command: \(error)")
-               connection.cancel()
-               return
-           } else {
-               LogManager.shared.appendLog("Resize command sent: \(command.trimmingCharacters(in: .newlines))")
-           }
-            connection.receive(minimumIncompleteLength: 1, maximumLength: 1024) { data, context, isComplete, error in
-               if let error {
-                   LogManager.shared.appendLog("Receive error: \(error)")
-               } else if let data, let response = String(data: data, encoding: .utf8) {
-                   LogManager.shared.appendLog("Received response: \(response.trimmingCharacters(in: .newlines))")
-               } else {
-                   LogManager.shared.appendLog("Connection closed by remote")
-               }
-               
-               // 3) Close once we’ve gotten (or failed to get) that response
-               connection.cancel()
-           }
-        }))
     }
     
     func updateInstanceInfo() {

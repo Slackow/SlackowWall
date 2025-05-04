@@ -82,6 +82,12 @@ class LogManager {
         }
     }
     
+    @discardableResult func logPath(_ path: String) -> Self {
+        let homeDirectory = FileManager.default.homeDirectoryForCurrentUser.path
+        let sanitizedPath = path.replacingOccurrences(of: homeDirectory, with: "~")
+        return appendLog(sanitizedPath, showInConsole: false)
+    }
+    
     @discardableResult func appendLog(_ items: Any..., showInConsole: Bool = true, includeTimestamp: Bool = true) -> Self {
         let logURL = URL(fileURLWithPath: logPath)
         let message = items.map { String(describing: $0) }.joined(separator: " ")

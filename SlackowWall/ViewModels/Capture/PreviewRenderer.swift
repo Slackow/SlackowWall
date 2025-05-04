@@ -16,7 +16,7 @@ class PreviewRenderer: ObservableObject {
     
     init(instance: TrackedInstance) {
         self.instance = instance
-        self.titleBarHeight = instance.info.port > 0 ? 0 : 30
+        self.titleBarHeight = instance.info.port > 3 ? 0 : 30
     }
     
     var capturePreview: some View {
