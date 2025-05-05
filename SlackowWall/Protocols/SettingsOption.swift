@@ -7,6 +7,6 @@
 
 import SwiftUI
 
-protocol SettingsOption: CaseIterable, Identifiable, Hashable {
+protocol SettingsOption: CaseIterable, Identifiable, Hashable, Codable {
     var label: String { get }
 }

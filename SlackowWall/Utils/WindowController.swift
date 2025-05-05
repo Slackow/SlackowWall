@@ -124,6 +124,7 @@ class WindowController {
         connection.stateUpdateHandler = { state in
             LogManager.shared.appendLog("Connection state: \(state)")
         }
+
         connection.start(queue: DispatchQueue.global())
         connection.send(content: command.data(using: .utf8), completion: .contentProcessed({ error in
            if let error {

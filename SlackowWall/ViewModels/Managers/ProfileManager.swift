@@ -40,7 +40,7 @@ class ProfileManager: ObservableObject {
             profile = Profile()
         }
         
-        LogManager.shared.appendLog("Active Profile:", activeProfile)
+//        LogManager.shared.appendLog("Active Profile:", activeProfile)
     }
     
     func observeUserDefaults() {
