@@ -5,7 +5,7 @@
 import SwiftUI
 
 
-class InstanceManager: ObservableObject {
+@MainActor class InstanceManager: ObservableObject {
     @Published var hoveredInstance: TrackedInstance? = nil
     @Published var keyAction: KeyAction? = nil
     
@@ -95,7 +95,7 @@ class InstanceManager: ObservableObject {
         }
     }
     
-    private func switchToInstance(instance: TrackedInstance, shouldWait: Bool) {
+    private func switchToInstance(instance: TrackedInstance) {
         guard let windowID = instance.windowID else { return }
         let pid = instance.pid
         
@@ -118,23 +118,14 @@ class InstanceManager: ObservableObject {
             instance.info.checkState = .NONE
             LogManager.shared.appendLog("Switched to instance")
         }
-        
-        if shouldWait {
-            ShortcutManager.shared.resizeBase(pid: pid)
-            NSApp.activate(ignoringOtherApps: true)
-            WindowController.focusWindow(pid)
-            actions()
-        } else {
-            Task {
-                ShortcutManager.shared.resizeBase(pid: pid)
-                await NSApp.activate(ignoringOtherApps: true)
-                WindowController.focusWindow(pid)
-                actions()
-            }
-        }
+
+        ShortcutManager.shared.resizeBase(pid: pid)
+        NSApp.activate(ignoringOtherApps: true)
+        WindowController.focusWindow(pid)
+        actions()
     }
     
-    func openInstance(instance: TrackedInstance, shouldWait: Bool = false) {
+    func openInstance(instance: TrackedInstance) {
         instance.info.updateState(force: true)
         
         if !instance.isReady {
@@ -142,7 +133,7 @@ class InstanceManager: ObservableObject {
             return
         }
         
-        switchToInstance(instance: instance, shouldWait: shouldWait)
+        switchToInstance(instance: instance)
         instance.unlock()
     }
     

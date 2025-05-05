@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-class GridManager: ObservableObject {
+class GridManager: ObservableObject, Manager, RefreshObserver {
     @Published var sectionSize: CGSize = .zero
     @Published var animateGrid: Bool = false
     
@@ -75,5 +75,9 @@ class GridManager: ObservableObject {
         } else {
             animateGrid = false
         }
+    }
+
+    func handleRefreshNotification() async throws {
+
     }
 }

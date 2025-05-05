@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import ScreenCaptureKit
+@preconcurrency import ScreenCaptureKit
 import Combine
 
 class AlertManager: ObservableObject {

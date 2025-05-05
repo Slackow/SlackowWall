@@ -54,26 +54,26 @@ class ProfileManager: ObservableObject {
     }
     
     func createNewProfile() {
-        guard profiles.count < 10 else { return }
-        
-        activeProfile = UUID().uuidString
-        profiles.append(activeProfile)
-        
-        profile = Profile()
-        ShortcutManager.shared.resetKeybinds()
-        
-        let nameSet = Set(profileNames.map { $0.name })
-        var newName = "New Profile"
-        var x = 1
-        
-        while nameSet.contains(newName) {
-            newName = "New Profile \(x)"
-            x += 1
-        }
-        
-        profile.profileName = newName
-        profileCreatedOrDeleted = true
-        TrackingManager.shared.trackedInstances.forEach({ $0.stream.clearCapture() })
+//        guard profiles.count < 10 else { return }
+//        
+//        activeProfile = UUID().uuidString
+//        profiles.append(activeProfile)
+//        
+//        profile = Profile()
+//        ShortcutManager.shared.resetKeybinds()
+//        
+//        let nameSet = Set(profileNames.map { $0.name })
+//        var newName = "New Profile"
+//        var x = 1
+//        
+//        while nameSet.contains(newName) {
+//            newName = "New Profile \(x)"
+//            x += 1
+//        }
+//        
+//        profile.profileName = newName
+//        profileCreatedOrDeleted = true
+//        TrackingManager.shared.trackedInstances.forEach({ $0.stream.clearCapture() })
     }
     
     func deleteCurrentProfile() {

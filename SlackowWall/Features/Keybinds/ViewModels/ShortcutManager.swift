@@ -10,7 +10,7 @@ import ScreenCaptureKit
 import AVFoundation
 import ApplicationServices
 
-final class ShortcutManager: ObservableObject {
+class ShortcutManager: ObservableObject, Manager {
     static let shared = ShortcutManager()
     
     init() {
@@ -22,13 +22,13 @@ final class ShortcutManager: ObservableObject {
     }
     
     func handleGlobalKey(_ key: NSEvent) {
-        let p = ProfileManager.shared.profile
+        let settings = Settings[\.keybinds]
         switch (key.type, key.keyCode) {
-            case (.keyUp, p.resetGKey): globalReset()
-            case (.keyDown, p.planarGKey): resizePlanar()
-            case (.keyDown, p.baseGKey): resizeBase()
-            case (.keyDown, p.tallGKey): resizeTall()
-            case (.keyDown, p.thinGKey): resizeThin()
+            case (.keyUp, settings.resetGKey): globalReset()
+            case (.keyDown, settings.planarGKey): resizePlanar()
+            case (.keyDown, settings.baseGKey): resizeBase()
+            case (.keyDown, settings.tallGKey): resizeTall()
+            case (.keyDown, settings.thinGKey): resizeThin()
             case _: return
         }
     }
@@ -40,7 +40,7 @@ final class ShortcutManager: ObservableObject {
         let pid = activeWindow.processIdentifier
         guard let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid }) else { return }
         
-        switch ProfileManager.shared.profile.resetMode {
+        switch Settings[\.behavior].resetMode {
             case .wall:
                 returnToWall(from: instance)
             case .lock:
@@ -54,7 +54,7 @@ final class ShortcutManager: ObservableObject {
         LogManager.shared.appendLog("Returning...")
         InstanceManager.shared.resetInstance(instance: instance)
         
-        if ProfileManager.shared.profile.shouldHideWindows {
+        if Settings[\.behavior].shouldHideWindows {
             WindowController.unhideWindows(TrackingManager.shared.getValues(\.pid))
         }
         
@@ -70,7 +70,7 @@ final class ShortcutManager: ObservableObject {
             return
         }
         
-        InstanceManager.shared.openInstance(instance: nextInstance, shouldWait: true)
+        InstanceManager.shared.openInstance(instance: nextInstance)
         InstanceManager.shared.resetInstance(instance: instance)
         resizeReset(pid: instance.pid)
     }
@@ -98,7 +98,7 @@ final class ShortcutManager: ObservableObject {
             return
         }
         
-        InstanceManager.shared.openInstance(instance: nextInstance, shouldWait: true)
+        InstanceManager.shared.openInstance(instance: nextInstance)
         InstanceManager.shared.resetInstance(instance: instance)
         resizeReset(pid: instance.pid)
     }
@@ -112,52 +112,52 @@ final class ShortcutManager: ObservableObject {
     
     func resizePlanar() {
         guard let pid = activeInstancePID() else { return }
-        let w = convertToFloat(ProfileManager.shared.profile.wideWidth)
-        let h = convertToFloat(ProfileManager.shared.profile.wideHeight)
-        let x = ProfileManager.shared.profile.wideX.map(CGFloat.init)
-        let y = ProfileManager.shared.profile.wideY.map(CGFloat.init)
+        let w = convertToFloat(Settings[\.mode].wideWidth)
+        let h = convertToFloat(Settings[\.mode].wideHeight)
+        let x = Settings[\.mode].wideX.map(CGFloat.init)
+        let y = Settings[\.mode].wideY.map(CGFloat.init)
         resize(pid: pid, x: x, y: y, width: w, height: h)
     }
     
     func resizeBase(pid: pid_t? = nil) {
         guard let pid = pid ?? activeInstancePID() else { return }
-        let w = convertToFloat(ProfileManager.shared.profile.baseWidth)
-        let h = convertToFloat(ProfileManager.shared.profile.baseHeight)
-        let x = ProfileManager.shared.profile.baseX.map(CGFloat.init)
-        let y = ProfileManager.shared.profile.baseY.map(CGFloat.init)
+        let w = convertToFloat(Settings[\.mode].baseWidth)
+        let h = convertToFloat(Settings[\.mode].baseHeight)
+        let x = Settings[\.mode].baseX.map(CGFloat.init)
+        let y = Settings[\.mode].baseY.map(CGFloat.init)
         resize(pid: pid, x: x, y: y, width: w, height: h, force: true)
     }
     
     func resizeReset(pid: pid_t) {
-        var w = convertToFloat(ProfileManager.shared.profile.resetWidth)
-        var h = convertToFloat(ProfileManager.shared.profile.resetHeight)
-        var x = ProfileManager.shared.profile.resetX.map(CGFloat.init)
-        var y = ProfileManager.shared.profile.resetY.map(CGFloat.init)
+        var w = convertToFloat(Settings[\.mode].resetWidth)
+        var h = convertToFloat(Settings[\.mode].resetHeight)
+        var x = Settings[\.mode].resetX.map(CGFloat.init)
+        var y = Settings[\.mode].resetY.map(CGFloat.init)
         
         if !(w > 0 && h > 0) {
-            w = convertToFloat(ProfileManager.shared.profile.baseWidth)
-            h = convertToFloat(ProfileManager.shared.profile.baseHeight)
-            x = ProfileManager.shared.profile.baseX.map(CGFloat.init)
-            y = ProfileManager.shared.profile.baseY.map(CGFloat.init)
+            w = convertToFloat(Settings[\.mode].baseWidth)
+            h = convertToFloat(Settings[\.mode].baseHeight)
+            x = Settings[\.mode].baseX.map(CGFloat.init)
+            y = Settings[\.mode].baseY.map(CGFloat.init)
         }
         resize(pid: pid, x: x, y: y, width: w, height: h, force: true)
     }
     
     func resizeThin() {
         guard let pid = activeInstancePID() else { return }
-        let w = convertToFloat(ProfileManager.shared.profile.thinWidth)
-        let h = convertToFloat(ProfileManager.shared.profile.thinHeight)
-        let x = ProfileManager.shared.profile.thinX.map(CGFloat.init)
-        let y = ProfileManager.shared.profile.thinY.map(CGFloat.init)
+        let w = convertToFloat(Settings[\.mode].thinWidth)
+        let h = convertToFloat(Settings[\.mode].thinHeight)
+        let x = Settings[\.mode].thinX.map(CGFloat.init)
+        let y = Settings[\.mode].thinY.map(CGFloat.init)
         resize(pid: pid, x: x, y: y, width: w, height: h)
     }
     
     func resizeTall() {
         guard let pid = activeInstancePID() else { return }
-        let w = convertToFloat(ProfileManager.shared.profile.tallWidth)
-        let h = convertToFloat(ProfileManager.shared.profile.tallHeight)
-        let x = ProfileManager.shared.profile.tallX.map(CGFloat.init)
-        let y = ProfileManager.shared.profile.tallY.map(CGFloat.init)
+        let w = convertToFloat(Settings[\.mode].tallWidth)
+        let h = convertToFloat(Settings[\.mode].tallHeight)
+        let x = Settings[\.mode].tallX.map(CGFloat.init)
+        let y = Settings[\.mode].tallY.map(CGFloat.init)
         resize(pid: pid, x: x, y: y, width: w, height: h)
     }
     
@@ -188,12 +188,12 @@ final class ShortcutManager: ObservableObject {
     }
     
     func resetKeybinds() {
-        ProfileManager.shared.profile.resetGKey = .u
-        ProfileManager.shared.profile.resetAllKey = .t
-        ProfileManager.shared.profile.resetOneKey = .e
-        ProfileManager.shared.profile.resetOthersKey = .f
-        ProfileManager.shared.profile.runKey = .r
-        ProfileManager.shared.profile.lockKey = .c
+        Settings[\.keybinds].resetGKey = .u
+        Settings[\.keybinds].resetAllKey = .t
+        Settings[\.keybinds].resetOneKey = .e
+        Settings[\.keybinds].resetOthersKey = .f
+        Settings[\.keybinds].runKey = .r
+        Settings[\.keybinds].lockKey = .c
     }
     
     func killReplayD(){

@@ -9,11 +9,10 @@ import SwiftUI
 
 struct ToolbarSettingsView: View {
     @Environment(\.openWindow) private var openWindow
-    
     @State private var isHovered: Bool = false
     
     var body: some View {
-        Button(action: { Task { openWindow(id: "settings-window") }}) {
+        Button(action: { openWindow(id: "settings-window") }) {
             if isHovered {
                 Image(systemName: "gear")
                     .foregroundStyle(Color(nsColor: .labelColor))

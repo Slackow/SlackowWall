@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-class PreviewRenderer: ObservableObject {
+class PreviewRenderer: ObservableObject, Manager {
     @Published var actualSize: CGSize = .zero
     @Published var isVisible = false
     
