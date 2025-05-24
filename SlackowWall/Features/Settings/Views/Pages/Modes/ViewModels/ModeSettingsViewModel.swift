@@ -8,17 +8,17 @@
 import SwiftUI
 import Combine
 
-@MainActor class ModeSettingsViewModel: ObservableObject {
+class ModeSettingsViewModel: ObservableObject {
     private var screenDimensions: CGSize?
-    
+
     private var visibleScreenDimensions: CGSize?
-    
+
     private var cancellable: AnyCancellable?
-    
+
     var screenSize: String {
         return screenDimensions?.debugDescription.replacingOccurrences(of: ".0", with: "") ?? "Unknown"
     }
-    
+
     var visibleScreenSize: String {
         return visibleScreenDimensions?.debugDescription.replacingOccurrences(of: ".0", with: "") ?? "Unknown"
     }
@@ -34,7 +34,7 @@ import Combine
         self.visibleScreenDimensions = NSScreen.main?.visibleFrame.size
         setupScreenChangeNotification()
     }
-    
+
     private func setupScreenChangeNotification() {
         cancellable = NotificationCenter.default
             .publisher(for: NSApplication.didChangeScreenParametersNotification)

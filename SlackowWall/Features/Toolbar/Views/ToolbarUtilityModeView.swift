@@ -9,14 +9,13 @@ import SwiftUI
 
 struct ToolbarUtilityModeView: View {
     @ObservedObject private var screenRecorder = ScreenRecorder.shared
-    @ObservedObject private var profileManager = ProfileManager.shared
     
     @State private var isHovered: Bool = false
     @State private var isActuallyHovered: Bool = false
     
     var body: some View {
             Button(action: {
-                profileManager.profile.utilityMode.toggle()
+                Settings[\.behavior].utilityMode.toggle()
                 // Reset capture system when utility mode is toggled
                 Task {
                     // The notification will handle the alert state changes
@@ -24,10 +23,10 @@ struct ToolbarUtilityModeView: View {
                 }
             }) {
                 if isActuallyHovered {
-                    Image(systemName: "hammer\(profileManager.profile.utilityMode ? ".fill" : "")")
+                    Image(systemName: "hammer\(Settings[\.behavior].utilityMode ? ".fill" : "")")
                         .foregroundStyle(Color(nsColor: .labelColor))
                 } else {
-                    Image(systemName: "hammer\(profileManager.profile.utilityMode ? ".fill" : "")")
+                    Image(systemName: "hammer\(Settings[\.behavior].utilityMode ? ".fill" : "")")
                 }
             }
             .popover(isPresented: $isHovered) {
@@ -41,7 +40,7 @@ struct ToolbarUtilityModeView: View {
             }
             .onChange(of: isHovered) { hovered in
                 if hovered != isActuallyHovered {
-                    profileManager.profile.utilityMode.toggle()
+                    Settings[\.behavior].utilityMode.toggle()
                     // Reset capture system when utility mode is toggled via hover
                     Task {
                         // The notification will handle the alert state changes

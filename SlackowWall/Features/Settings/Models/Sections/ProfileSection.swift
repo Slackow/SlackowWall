@@ -13,7 +13,8 @@ extension Preferences {
     struct ProfileSection: Codable, Hashable {
         var id: UUID = UUID()
         var name: String = "Main"
-        var isActive: Bool = true
+        var expectedMWidth: Int? = nil
+        var expectedMHeight: Int? = nil
 
         init() {}
     }

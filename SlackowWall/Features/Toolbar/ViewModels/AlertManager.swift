@@ -12,8 +12,6 @@ import Combine
 class AlertManager: ObservableObject {
     @Published var alert: WallAlert? = .none
     
-    @ObservedObject private var profileManager = ProfileManager.shared
-    
     static let shared = AlertManager()
     
     init() {
@@ -31,9 +29,9 @@ class AlertManager: ObservableObject {
     
     @objc private func utilityModeChanged() {
         // If we're in utility mode, clear screen recording alerts
-        if profileManager.profile.utilityMode && alert == .noScreenPermission {
+        if Settings[\.behavior].utilityMode && alert == .noScreenPermission {
             alert = nil
-        } else if !profileManager.profile.utilityMode {
+        } else if !Settings[\.behavior].utilityMode {
             // If we're leaving utility mode, check for screen recording permission
             Task {
                 await checkScreenRecordingPermission()
@@ -59,7 +57,7 @@ class AlertManager: ObservableObject {
     }
     
     func checkScreenRecordingPermission() async -> Bool {
-        if profileManager.profile.utilityMode {
+        if Settings[\.behavior].utilityMode {
             return true // Skip check in utility mode
         }
         

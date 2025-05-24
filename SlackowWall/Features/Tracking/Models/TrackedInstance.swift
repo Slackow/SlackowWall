@@ -10,17 +10,17 @@ import ScreenCaptureKit
 
 class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
     let id: UUID
-    
+
     let pid: pid_t
     var windowID: CGWindowID?
     let instanceNumber: Int
-    
+
     var info: InstanceInfo
     var stream: InstanceStream
-    
+
     @Published var isLocked: Bool
     @Published var wasClosed: Bool
-    
+
     init(pid: pid_t, instanceNumber: Int) {
         self.id = UUID()
         self.pid = pid
@@ -30,19 +30,19 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
         self.isLocked = false
         self.wasClosed = false
     }
-    
+
     var isReady: Bool {
-        if ProfileManager.shared.profile.checkStateOutput {
+        if Settings[\.behavior].checkStateOutput {
             return info.state == InstanceStates.paused || info.state == InstanceStates.unpaused
         } else {
             return true
         }
     }
-    
+
     func recalculateInstanceInfo() {
         self.info = TrackedInstance.calculateInstanceInfo(pid: pid)
     }
-    
+
     private static func calculateInstanceInfo(pid: pid_t) -> InstanceInfo {
         let data = InstanceInfo(pid: pid)
         var path = ""
@@ -94,23 +94,23 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
             .appendLogNewLine()
         return data
     }
-    
+
     private static func getModifiedTime(_ filePath: String, fileManager: FileManager = FileManager.default) -> Date? {
         try? fileManager.attributesOfItem(atPath: filePath)[FileAttributeKey.modificationDate] as? Date
     }
-    
+
     private static func getCreatedTime(_ filePath: String, fileManager: FileManager = FileManager.default) -> Date? {
         try? fileManager.attributesOfItem(atPath: filePath)[FileAttributeKey.creationDate] as? Date
     }
-    
+
     func updateInstanceInfo() {
         self.info.updateState(force: true)
     }
-    
+
     func toggleLock() {
         let wasLocked = isLocked
         isLocked.toggle()
-        
+
         if wasLocked != isLocked {
             if isLocked {
                 SoundManager.shared.playSound(sound: "lock")
@@ -120,7 +120,7 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
             }
         }
     }
-    
+
     func lock() {
         if !isLocked {
             isLocked = true
@@ -128,18 +128,18 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
             LogManager.shared.appendLog("Locking instance \(instanceNumber)")
         }
     }
-    
+
     func unlock() {
         if isLocked {
             isLocked = false
             LogManager.shared.appendLog("Unlocking instance \(instanceNumber)")
         }
     }
-    
+
     static func == (lhs: TrackedInstance, rhs: TrackedInstance) -> Bool {
         return lhs.id == rhs.id
     }
-    
+
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
         hasher.combine(pid)

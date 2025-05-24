@@ -10,16 +10,20 @@ import ScreenCaptureKit
 
 struct CaptureGridView: View {
     @ObservedObject private var trackingManager = TrackingManager.shared
-    @ObservedObject private var profileManager = ProfileManager.shared
     @ObservedObject private var screenRecorder = ScreenRecorder.shared
     @ObservedObject private var instanceManager = InstanceManager.shared
     @ObservedObject private var gridManager = GridManager.shared
     
     @Namespace private var gridSpace
     
+    @AppSettings(\.behavior)
+    private var behavior
+    @AppSettings(\.instance)
+    private var instance
+    
     var body: some View {
         VStack {
-            if !trackingManager.isCaptureReady && (!profileManager.profile.utilityMode || trackingManager.trackedInstances.isEmpty) {
+            if !trackingManager.isCaptureReady && (!behavior.utilityMode || trackingManager.trackedInstances.isEmpty) {
                 if trackingManager.trackedInstances.isEmpty {
                     Text("No Minecraft\nInstances Detected")
                         .font(.largeTitle)
@@ -29,9 +33,9 @@ struct CaptureGridView: View {
                 }
             } else {
                 Group {
-                    if profileManager.profile.alignment == .horizontal {
+                    if instance.alignment == .horizontal {
                         VStack(alignment: .leading, spacing: 0) {
-                            ForEach(0..<profileManager.profile.sections, id: \.self) { section in
+                            ForEach(0..<instance.sections, id: \.self) { section in
                                 HStack(spacing: 0) {
                                     createSection(section: section)
                                     
@@ -44,7 +48,7 @@ struct CaptureGridView: View {
                         }
                     } else {
                         HStack(alignment: .top, spacing: 0) {
-                            ForEach(0..<profileManager.profile.sections, id: \.self) { section in
+                            ForEach(0..<instance.sections, id: \.self) { section in
                                 VStack(spacing: 0) {
                                     createSection(section: section)
                                     
@@ -58,8 +62,8 @@ struct CaptureGridView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .animation(.easeInOut, value: profileManager.profile.alignment)
-                .animation(.easeInOut, value: profileManager.profile.sections)
+                .animation(.easeInOut, value: instance.alignment)
+                .animation(.easeInOut, value: instance.sections)
                 .animation(.smooth, value: trackingManager.trackedInstances.count)
                 .background(KeybindListener(key: $instanceManager.keyAction))
             }

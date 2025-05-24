@@ -65,10 +65,12 @@ struct KeybindingView: View {
 }
 
 #Preview {
+    @AppSettings(\.keybinds)
+    var settings
     VStack {
-        KeybindingView(keybinding: ProfileManager.shared.profile.$resetGKey, defaultValue: .u)
+        KeybindingView(keybinding: $settings.resetGKey, defaultValue: nil)
             .padding()
-        KeybindingView(keybinding: ProfileManager.shared.profile.$resetAllKey, defaultValue: .t)
+        KeybindingView(keybinding: $settings.resetAllKey, defaultValue: .t)
             .padding()
     }
 }

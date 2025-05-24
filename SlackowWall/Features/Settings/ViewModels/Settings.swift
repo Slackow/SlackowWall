@@ -8,13 +8,21 @@
 import SwiftUI
 import Combine
 
-@MainActor class Settings: ObservableObject {
+class Settings: ObservableObject {
     private let fileManager = FileManager.default
 
-    static let shared: Settings = .init()
+    nonisolated(unsafe) static let shared: Settings = .init()
+    nonisolated(unsafe) var profileCreatedOrDeleted: Bool = false
 
-    @Published private(set) var currentProfile: UUID = .init() {
-        didSet { preferences = loadSettings() }
+    // Raw UUID string persisted in UserDefaults.
+    @AppStorage("currentProfile") private var currentProfileRawID: String = ""
+
+    // In‑memory UUID that the rest of the app uses.
+    @Published var currentProfile: UUID = .init() {
+        didSet {
+            currentProfileRawID = currentProfile.uuidString      // persist change
+            preferences = loadSettings()                         // reload profile
+        }
     }
 
     @Published var preferences: Preferences
@@ -23,12 +31,14 @@ import Combine
 
     private init() {
         self.preferences = .init()
-        self.currentProfile = Self.lastActiveProfile(baseURL: baseURL, fileManager: fileManager) ?? UUID()
+        // Bootstrap `currentProfile` from what’s stored on disk (or make a new one).
+        currentProfile = UUID(uuidString: currentProfileRawID) ?? UUID()
+        currentProfileRawID = currentProfile.uuidString
         observePreferences()
     }
 
     private func observePreferences() {
-        self.storeTask = self.$preferences.throttle(for: 2, scheduler: RunLoop.main, latest: true).sink {
+        self.storeTask = self.$preferences.sink {
             try? self.savePreferences($0)
         }
     }
@@ -91,11 +101,28 @@ import Combine
             .appendingPathComponent(id.uuidString)
             .appendingPathExtension("json")
     }
+    
+    func autoSwitch() {
+        let preferences = Settings.shared.availableProfiles
+            .compactMap{try? loadSettings(from: $0.id)}
+        for pref in preferences {
+            if let monWidth = pref.profile.expectedMWidth,
+               let monHeight = pref.profile.expectedMHeight,
+               let frame = NSScreen.main?.frame,
+               Int(frame.width) == monWidth, Int(frame.height) == monHeight,
+               self.preferences.profile.id != pref.profile.id
+            {
+                self.preferences = pref
+                LogManager.shared.appendLog("Auto switched profiles")
+                return
+            }
+        }
+    }
 }
 
 extension Settings {
     var availableProfiles: [(id: UUID, name: String)] {
-        (try? fileManager.contentsOfDirectory(atPath: baseURL.path))?
+        return (try? fileManager.contentsOfDirectory(atPath: baseURL.path))?
             .compactMap { filename in
                 guard filename.hasSuffix(".json"),
                       let id = UUID(uuidString: (filename as NSString).deletingPathExtension),
@@ -103,26 +130,6 @@ extension Settings {
                 else { return nil }
                 return (id, prefs.profile.name)
             } ?? []
-    }
-
-    private static func lastActiveProfile(baseURL: URL, fileManager: FileManager) -> UUID? {
-        try? fileManager.contentsOfDirectory(atPath: baseURL.path)
-            .compactMap { filename -> UUID? in
-                guard filename.hasSuffix(".json") else { return nil }
-
-                let idString = (filename as NSString).deletingPathExtension
-                guard let id = UUID(uuidString: idString) else { return nil }
-
-                let url   = baseURL.appendingPathComponent(idString)
-                    .appendingPathExtension("json")
-                guard
-                    let data  = try? Data(contentsOf: url),
-                    let prefs = try? JSONDecoder().decode(Preferences.self, from: data),
-                    prefs.profile.isActive
-                else { return nil }
-
-                return id
-            }.first
     }
 
     func createProfile() {
@@ -140,39 +147,38 @@ extension Settings {
         } catch {
             LogManager.shared.appendLog("Profile Error:", error)
         }
+        profileCreatedOrDeleted = true
+        TrackingManager.shared.trackedInstances.forEach({ $0.stream.clearCapture() })
     }
 
     func switchProfile(to id: UUID) throws {
         guard id != currentProfile else { return }
-        guard availableProfiles.contains(where: { $0.id == id }) else { throw ProfileError.notFound }
-
-        try setActiveFlag(for: currentProfile, to: false)
-        try setActiveFlag(for: id, to: true)
-
+        guard availableProfiles.map(\.id).contains(id) else { throw ProfileError.notFound }
+        try savePreferences(preferences, to: settingsURL(for: currentProfile))
+        guard let prefs = try loadSettings(from: id) else { throw ProfileError.notFound }
+        preferences = prefs
         currentProfile = id
     }
 
     func deleteCurrentProfile() {
         do {
-            guard availableProfiles.count > 1 else { throw ProfileError.cannotDeleteOnlyProfile }
-            guard let idx = availableProfiles.firstIndex(where: { $0.id == currentProfile }) else { throw ProfileError.notFound }
+            let profiles = availableProfiles
+            guard profiles.count > 1 else { throw ProfileError.cannotDeleteOnlyProfile }
+            guard let idx = profiles.firstIndex(where: { $0.id == currentProfile }) else { throw ProfileError.notFound }
 
-            print(settingsURL(for: currentProfile))
-            try fileManager.removeItem(at: settingsURL(for: currentProfile))
-            try switchProfile(to: availableProfiles[max(0, idx - 1)].id)
+            LogManager.shared.appendLog("Deleting:", settingsURL(for: currentProfile))
+            let id = currentProfile
+            try switchProfile(to: profiles[max(0, idx - 1)].id)
+            try fileManager.removeItem(at: settingsURL(for: id))
         } catch {
             LogManager.shared.appendLog("Profile Error:", error)
         }
-    }
-
-    private func setActiveFlag(for id: UUID, to value: Bool) throws {
-        guard var prefs = try loadSettings(from: id) else { return }
-        prefs.profile.isActive = value
-        try savePreferences(prefs, to: settingsURL(for: id))
+        profileCreatedOrDeleted = true
+        TrackingManager.shared.trackedInstances.forEach({ $0.stream.clearCapture() })
     }
 
     private func generateProfileName() -> String {
-        let usedNames = Set(availableProfiles.map { $0.name })
+        let usedNames = Set(availableProfiles.map(\.name))
         var name = "New Profile"
         var x = 1
 

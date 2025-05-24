@@ -16,7 +16,10 @@ struct SlackowWallApp: App {
     @ObservedObject private var instanceManager = InstanceManager.shared
     @ObservedObject private var shortcutManager = ShortcutManager.shared
     @ObservedObject private var alertManager = AlertManager.shared
-    @ObservedObject private var profileManager = ProfileManager.shared
+    @AppSettings(\.profile)
+    private var profile
+    @AppSettings(\.behavior)
+    private var behavior
 
     init() {
         NSSplitViewItem.swizzle()
@@ -30,7 +33,7 @@ struct SlackowWallApp: App {
                 ToolbarItem(placement: .automatic) {
                     HStack(spacing: 8) {
                         HStack(spacing: 8) {
-                            if !trackingManager.trackedInstances.isEmpty && !profileManager.profile.utilityMode {
+                            if !trackingManager.trackedInstances.isEmpty && !behavior.utilityMode {
                                 ToolbarStopView()
                             }
 
@@ -50,7 +53,7 @@ struct SlackowWallApp: App {
                     }
                 }
             }
-            .navigationTitle("SlackowWall - Profile: \(profileManager.profile.profileName)")
+            .navigationTitle("SlackowWall - Profile: \(profile.name)")
         }
         .windowResizability(.contentSize)
 

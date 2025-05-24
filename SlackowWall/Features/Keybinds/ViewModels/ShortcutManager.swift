@@ -188,12 +188,7 @@ class ShortcutManager: ObservableObject, Manager {
     }
     
     func resetKeybinds() {
-        Settings[\.keybinds].resetGKey = .u
-        Settings[\.keybinds].resetAllKey = .t
-        Settings[\.keybinds].resetOneKey = .e
-        Settings[\.keybinds].resetOthersKey = .f
-        Settings[\.keybinds].runKey = .r
-        Settings[\.keybinds].lockKey = .c
+        Settings[\.keybinds] = .init()
     }
     
     func killReplayD(){

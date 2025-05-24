@@ -32,9 +32,13 @@ import SwiftUI
     // Combine subscribers.
     private var subscriptions = Set<AnyCancellable>()
     
+    @AppSettings(\.behavior) private var behavior
+    @AppSettings(\.profile) private var profile
+    @AppSettings(\.personalize) private var personalize
+    
     func startCapture() async {
         LogManager.shared.appendLog("Attempting to start screen capture...")
-        if ProfileManager.shared.profile.utilityMode {
+        if behavior.utilityMode {
             // Skip screen recording permission check in utility mode
             LogManager.shared.appendLog("Utility mode active - skipping screen capture")
             return
@@ -48,7 +52,7 @@ import SwiftUI
     var canRecord: Bool {
         get async {
             // Don't need to check permissions in utility mode
-            if ProfileManager.shared.profile.utilityMode {
+            if behavior.utilityMode {
                 return false
             }
             
@@ -94,7 +98,7 @@ import SwiftUI
         streamConfig.height = Int(height)
         
         // Set the capture interval.
-        streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: CMTimeScale(ProfileManager.shared.profile.streamFPS))
+        streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: CMTimeScale(personalize.streamFPS))
         
         // Increase the depth of the frame queue to ensure high fps at the expense of increasing
         // the memory footprint of WindowServer.
@@ -193,20 +197,20 @@ import SwiftUI
         
         if shouldAutoSwitch {
             if let screen = NSScreen.main?.frame,
-               ProfileManager.shared.profile.expectedMWidth != Int(screen.width) ||
-                ProfileManager.shared.profile.expectedMHeight != Int(screen.height) {
-                ProfileManager.shared.autoSwitch()
+               profile.expectedMWidth != Int(screen.width) ||
+                profile.expectedMHeight != Int(screen.height) {
+                Settings.shared.autoSwitch()
             }
         }
         
         trackingManager.fetchInstances()
         trackingManager.getValues(\.pid).forEach(ShortcutManager.shared.resizeReset)
 
-        if ProfileManager.shared.profile.shouldHideWindows && !ProfileManager.shared.profileCreatedOrDeleted {
+        if Settings[\.behavior].shouldHideWindows && !Settings.shared.profileCreatedOrDeleted {
             WindowController.unhideWindows(trackingManager.getValues(\.pid))
         }
         
-        if !ProfileManager.shared.profile.utilityMode {
+        if !Settings[\.behavior].utilityMode {
             // Only check screen recording permission and start capture when not in utility mode
             LogManager.shared.appendLog("Normal mode - preparing screen capture")
             

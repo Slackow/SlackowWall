@@ -9,17 +9,16 @@ import SwiftUI
 
 struct TrackedInstanceView: View {
     @ObservedObject private var gridManager = GridManager.shared
-    @ObservedObject private var profileManager = ProfileManager.shared
     
     @ObservedObject var instance: TrackedInstance
     
     private var hasStreamError: Bool {
-        return !profileManager.profile.utilityMode && instance.stream.streamError != nil
+        return !Settings[\.behavior].utilityMode && instance.stream.streamError != nil
     }
     
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            if profileManager.profile.utilityMode {
+            if Settings[\.behavior].utilityMode {
                 PlaceholderInstanceView(instance: instance)
             } else {
                 CapturePreviewView(instance: instance)
@@ -35,9 +34,9 @@ struct TrackedInstanceView: View {
                     .animation(.easeInOut, value: instance.stream.streamError)
             }
             VStack(alignment: .trailing, spacing: 0) {
-                if instance.isLocked && !profileManager.profile.utilityMode {
+                if instance.isLocked && !Settings[\.behavior].utilityMode {
                     LockIcon()
-                        .frame(width: 32 * profileManager.profile.lockScale, height: 32 * profileManager.profile.lockScale)
+                        .frame(width: 32 * Settings[\.personalize].lockScale, height: 32 * Settings[\.personalize].lockScale)
                         .padding(.horizontal, 4)
                         .padding(.top, 6)
                         .padding(.bottom, 3)
@@ -45,7 +44,7 @@ struct TrackedInstanceView: View {
                         .animation(.easeInOut, value: gridManager.showInfo)
                 }
                 
-                if profileManager.profile.showInstanceNumbers && !profileManager.profile.utilityMode {
+                if Settings[\.instance].showInstanceNumbers && !Settings[\.behavior].utilityMode {
                     ZStack {
                         Circle()
                             .fill(.ultraThickMaterial)
@@ -60,8 +59,8 @@ struct TrackedInstanceView: View {
             }
             .opacity(gridManager.showInfo ? 1 : 0)
             .animation(.easeInOut, value: gridManager.showInfo)
-            .animation(.easeInOut, value: profileManager.profile.showInstanceNumbers)
-            .animation(profileManager.profile.lockAnimation ? .bouncy : .none, value: instance.isLocked)
+            .animation(.easeInOut, value: Settings[\.instance].showInstanceNumbers)
+            .animation(Settings[\.personalize].lockAnimation ? .bouncy : .none, value: instance.isLocked)
         }
         .disabled(instance.wasClosed || hasStreamError)
         .opacity(instance.wasClosed ? 0 : 1)

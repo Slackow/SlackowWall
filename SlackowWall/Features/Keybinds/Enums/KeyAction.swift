@@ -14,8 +14,8 @@ enum KeyAction {
     case resetGlobal
     case resetAll
     case lock
-    
-    @MainActor static func from(keyCode: UInt16) -> KeyAction? {
+
+    static func from(keyCode: UInt16) -> KeyAction? {
         let profile = Settings[\.keybinds]
         switch keyCode {
             case profile.runKey:

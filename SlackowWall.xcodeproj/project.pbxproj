@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		49BED0752DCEEC1B00B85B4E /* DefaultCodable in Frameworks */ = {isa = PBXBuildFile; productRef = 49BED0742DCEEC1B00B85B4E /* DefaultCodable */; };
 		B62B05652C0ADE7500EC087E /* Gzip in Frameworks */ = {isa = PBXBuildFile; productRef = B62B05642C0ADE7500EC087E /* Gzip */; };
-		B633AD7B2DC8606E00C252BD /* DefaultCodable in Frameworks */ = {isa = PBXBuildFile; productRef = B633AD7A2DC8606E00C252BD /* DefaultCodable */; };
 		B6A1FDEB2BDF5BF000EF2180 /* CachedAsyncImage in Frameworks */ = {isa = PBXBuildFile; productRef = B6A1FDEA2BDF5BF000EF2180 /* CachedAsyncImage */; };
 		B6B9FE8D2BA1698D0026C268 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = B6B9FE8C2BA1698D0026C268 /* Sparkle */; };
 /* End PBXBuildFile section */
@@ -37,7 +37,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B6B9FE8D2BA1698D0026C268 /* Sparkle in Frameworks */,
-				B633AD7B2DC8606E00C252BD /* DefaultCodable in Frameworks */,
+				49BED0752DCEEC1B00B85B4E /* DefaultCodable in Frameworks */,
 				B6A1FDEB2BDF5BF000EF2180 /* CachedAsyncImage in Frameworks */,
 				B62B05652C0ADE7500EC087E /* Gzip in Frameworks */,
 			);
@@ -85,7 +85,7 @@
 				B6B9FE8C2BA1698D0026C268 /* Sparkle */,
 				B6A1FDEA2BDF5BF000EF2180 /* CachedAsyncImage */,
 				B62B05642C0ADE7500EC087E /* Gzip */,
-				B633AD7A2DC8606E00C252BD /* DefaultCodable */,
+				49BED0742DCEEC1B00B85B4E /* DefaultCodable */,
 			);
 			productName = SlackowWall;
 			productReference = 498FB3C828987F5B00405753 /* SlackowWall.app */;
@@ -119,7 +119,7 @@
 				B6B9FE8B2BA1698D0026C268 /* XCRemoteSwiftPackageReference "Sparkle" */,
 				B6A1FDE92BDF5BF000EF2180 /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */,
 				B62B05632C0ADE7500EC087E /* XCRemoteSwiftPackageReference "GzipSwift" */,
-				B633AD792DC8606E00C252BD /* XCLocalSwiftPackageReference "../Macros/DefaultCodable" */,
+				49BED0732DCEEC1B00B85B4E /* XCLocalSwiftPackageReference "../../../misc/DefaultCodable" */,
 			);
 			productRefGroup = 498FB3C928987F5B00405753 /* Products */;
 			projectDirPath = "";
@@ -288,7 +288,7 @@
 				CURRENT_PROJECT_VERSION = 250430;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Resources/Preview Content\"";
-				DEVELOPMENT_TEAM = D64G2TTYWM;
+				DEVELOPMENT_TEAM = 94CLS492CD;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -325,7 +325,7 @@
 				CURRENT_PROJECT_VERSION = 250430;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Resources/Preview Content\"";
-				DEVELOPMENT_TEAM = D64G2TTYWM;
+				DEVELOPMENT_TEAM = 94CLS492CD;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -375,9 +375,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		B633AD792DC8606E00C252BD /* XCLocalSwiftPackageReference "../Macros/DefaultCodable" */ = {
+		49BED0732DCEEC1B00B85B4E /* XCLocalSwiftPackageReference "../../../misc/DefaultCodable" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = ../Macros/DefaultCodable;
+			relativePath = ../../../misc/DefaultCodable;
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -409,14 +409,14 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		49BED0742DCEEC1B00B85B4E /* DefaultCodable */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DefaultCodable;
+		};
 		B62B05642C0ADE7500EC087E /* Gzip */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B62B05632C0ADE7500EC087E /* XCRemoteSwiftPackageReference "GzipSwift" */;
 			productName = Gzip;
-		};
-		B633AD7A2DC8606E00C252BD /* DefaultCodable */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = DefaultCodable;
 		};
 		B6A1FDEA2BDF5BF000EF2180 /* CachedAsyncImage */ = {
 			isa = XCSwiftPackageProductDependency;

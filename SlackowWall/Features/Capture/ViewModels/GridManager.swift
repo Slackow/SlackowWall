@@ -21,7 +21,7 @@ class GridManager: ObservableObject, Manager, RefreshObserver {
     }
     
     @MainActor func handleLostFocus(isActive: Bool) {
-        if ProfileManager.shared.profile.onlyOnFocus {
+        if Settings[\.behavior].onlyOnFocus {
             if isActive {
                 Task {
                     await ScreenRecorder.shared.resumeCapture()
@@ -36,8 +36,8 @@ class GridManager: ObservableObject, Manager, RefreshObserver {
         
     @MainActor func indicesForSection(_ section: Int) -> Range<Int> {
         let totalPreviews = TrackingManager.shared.trackedInstances.count
-        let baseItemsPerSection = totalPreviews / ProfileManager.shared.profile.sections
-        let extraItems = totalPreviews % ProfileManager.shared.profile.sections
+        let baseItemsPerSection = totalPreviews / Settings[\.instance].sections
+        let extraItems = totalPreviews % Settings[\.instance].sections
         
         let startIndex = section * baseItemsPerSection + min(section, extraItems)
         var endIndex = startIndex + baseItemsPerSection
@@ -50,7 +50,7 @@ class GridManager: ObservableObject, Manager, RefreshObserver {
     
     @MainActor func maximumItemsPerSection() -> Int {
         let totalPreviews = TrackingManager.shared.trackedInstances.count
-        let sections = ProfileManager.shared.profile.sections
+        let sections = Settings[\.instance].sections
         return Int(ceil(Double(totalPreviews) / Double(sections)))
     }
     

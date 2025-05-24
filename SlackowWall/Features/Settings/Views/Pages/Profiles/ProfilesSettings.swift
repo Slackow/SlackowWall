@@ -11,13 +11,6 @@ struct ProfilesSettings: View {
     @ObservedObject private var settings = Settings.shared
     @AppSettings(\.profile) private var profile
 
-    @ObservedObject private var profileManager = ProfileManager.shared
-    @State private var selectedProfile: UUID
-
-    init() {
-        selectedProfile = Settings[\.profile].id
-    }
-
     var body: some View {
         SettingsPageView(title: "Profiles") {
             SettingsCardView {
@@ -32,7 +25,7 @@ struct ProfilesSettings: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    Picker("", selection: $selectedProfile) {
+                    Picker("", selection: $settings.currentProfile) {
                         ForEach(settings.availableProfiles, id: \.id) { profile in
                             Text(profile.name)
                                 .tag(profile.id)
@@ -79,11 +72,11 @@ struct ProfilesSettings: View {
                         
                         HStack(spacing: 24) {
                             HStack {
-                                TextField("W", value: $profileManager.profile.expectedMWidth, format: .number.grouping(.never))
+                                TextField("W", value: $profile.expectedMWidth, format: .number.grouping(.never))
                                     .textFieldStyle(.roundedBorder)
                                     .frame(width: 80)
                                 
-                                TextField("H", value: $profileManager.profile.expectedMHeight, format: .number.grouping(.never))
+                                TextField("H", value: $profile.expectedMHeight, format: .number.grouping(.never))
                                     .textFieldStyle(.roundedBorder)
                                     .frame(width: 80)
                             }
@@ -120,36 +113,31 @@ struct ProfilesSettings: View {
                 .frame(width: 56, height: 32, alignment: .trailing)
             }
         }
-        .onChange(of: selectedProfile) { value in
-            if profile.id != selectedProfile {
+        .onChange(of: profile.id) { value in
+            if profile.id != value {
                 Task {
                     try settings.switchProfile(to: value)
                     TrackingManager.shared.trackedInstances.forEach({ $0.stream.clearCapture() })
                     await ScreenRecorder.shared.resetAndStartCapture(shouldAutoSwitch: false)
                     GridManager.shared.showInfo = false
                 }
-            } else if profileManager.profileCreatedOrDeleted {
+            } else if Settings.shared.profileCreatedOrDeleted {
                 Task {
                     await ScreenRecorder.shared.resetAndStartCapture(shouldAutoSwitch: false)
                     GridManager.shared.showInfo = false
-                    profileManager.profileCreatedOrDeleted = false
+                    Settings.shared.profileCreatedOrDeleted = false
                 }
             }
         }
         .onChange(of: settings.currentProfile) { value in
             LogManager.shared.appendLog("Switched Profiles:", value)
-            profileManager.profile = Profile()
-            
-            if selectedProfile != profile.id {
-                selectedProfile = profile.id
-            }
         }
     }
     
     private func fillMonitorSize() {
         if let frame = NSScreen.main?.frame {
-            profileManager.profile.expectedMWidth = Int(frame.width)
-            profileManager.profile.expectedMHeight = Int(frame.height)
+            profile.expectedMWidth = Int(frame.width)
+            profile.expectedMHeight = Int(frame.height)
         }
     }
 }

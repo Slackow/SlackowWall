@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-
 class TrackingManager: ObservableObject {
     @Published var trackedInstances = [TrackedInstance]()
     
@@ -38,8 +37,8 @@ class TrackingManager: ObservableObject {
     
     func fetchInstances() {
         // Get the list of currently running Minecraft applications
-        let currentApps = getAllApps().filter { isMinecraftInstance(app: $0) }
-        let currentPIDs = Set(currentApps.map { $0.processIdentifier })
+        let currentApps = getAllApps().filter(isMinecraftInstance)
+        let currentPIDs = Set(currentApps.map(\.processIdentifier))
         
         // Update existing instances and remove those no longer running
         trackedInstances.removeAll { trackedInstance in
@@ -85,7 +84,7 @@ class TrackingManager: ObservableObject {
             .dropFirst("-Djava.library.path=".count)
             .dropLast("/natives".count)
         
-        if !ProfileManager.shared.profile.utilityMode,
+        if !Settings[\.behavior].utilityMode,
            let num = UInt(numString.suffix(2)) ?? UInt(numString.suffix(1)) {
             return TrackedInstance(pid: app.processIdentifier, instanceNumber: Int(num))
         }

@@ -9,11 +9,13 @@ import SwiftUI
 
 struct CapturePreviewView: View {
     @ObservedObject private var screenRecorder = ScreenRecorder.shared
-    @ObservedObject private var profileManager = ProfileManager.shared
     @ObservedObject private var instanceManager = InstanceManager.shared
     
     @ObservedObject private var gridManager = GridManager.shared
     @StateObject var previewRenderer: PreviewRenderer
+    
+    @AppSettings(\.instance)
+    private var instance
     
     init(instance: TrackedInstance) {
         _previewRenderer = StateObject(wrappedValue: PreviewRenderer(instance: instance))
@@ -21,8 +23,8 @@ struct CapturePreviewView: View {
     
     var body: some View {
         previewRenderer.instance.stream.capturePreview
-            .aspectRatio(profileManager.profile.forceAspectRatio ? previewRenderer.scaledDimensions : previewRenderer.instance.stream.captureRect, contentMode: .fit)
-            .scaleEffect(CGSize(width: profileManager.profile.forceAspectRatio ? previewRenderer.scaleFactor : 1.0, height: 1.0))
+            .aspectRatio(instance.forceAspectRatio ? previewRenderer.scaledDimensions : previewRenderer.instance.stream.captureRect, contentMode: .fit)
+            .scaleEffect(CGSize(width: instance.forceAspectRatio ? previewRenderer.scaleFactor : 1.0, height: 1.0))
             .modifier(SizeReader(size: $previewRenderer.actualSize))
             .mask {
                 RoundedRectangle(cornerRadius: 10)

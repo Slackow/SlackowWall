@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct ModeCardView: View {
-    @ObservedObject private var profileManager = ProfileManager.shared
     
     var name: String
     var description: String
@@ -39,7 +38,7 @@ struct ModeCardView: View {
     }
     
     private var hasResetDimensions: Bool {
-        return (profileManager.profile.baseWidth ?? 0) > 0 && (profileManager.profile.baseHeight ?? 0) > 0
+        return (Settings[\.mode].baseWidth ?? 0) > 0 && (Settings[\.mode].baseHeight ?? 0) > 0
     }
     
     var body: some View {
@@ -137,8 +136,9 @@ struct ModeCardView: View {
 
 #Preview {
     VStack {
-        let profileManager = ProfileManager.shared
-        ModeCardView(name: "Wide", description: "None", x: profileManager.profile.$wideX, y: profileManager.profile.$wideY, width: profileManager.profile.$wideWidth, height: profileManager.profile.$wideHeight)
+        @AppSettings(\.mode)
+        var mode
+        ModeCardView(name: "Wide", description: "None", x: $mode.wideX, y: $mode.wideY, width: $mode.wideWidth, height: $mode.wideHeight)
     }
     .padding(20)
 }
