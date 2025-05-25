@@ -11,24 +11,20 @@ struct PlaceholderInstanceView: View {
     var instance: TrackedInstance
     @State var isHovered: Bool = true
     @State var isIndicatorHovered: Bool = false
-    
+
     var instanceName: Substring {
         let result = instance.info.path.split(separator: "/").dropLast(1).last ?? "??"
         return result == "Application Support" ? "Minecraft" : result
     }
-    
+
     var body: some View {
         ZStack {
             VStack {
-                if let nsImage = NSImage(contentsOfFile: "\(instance.info.path)/icon.png") {
-                    Image(nsImage: nsImage)
-                        .resizable()
-                        .frame(width: 120, height: 120)
-                } else {
-                    Image("minecraft_logo")
-                        .resizable()
-                        .frame(width: 120, height: 120)
-                }
+                (NSImage(contentsOfFile: "\(instance.info.path)/icon.png")
+                    .map(Image.init)
+                    ?? Image("minecraft_logo"))
+                    .resizable()
+                    .frame(width: 120, height: 120)
                 Text("Instance \"\(instanceName)\"")
                     .font(.title)
                     .fontWeight(.semibold)
@@ -46,26 +42,27 @@ struct PlaceholderInstanceView: View {
                             Text("Using BoundlessWindow")
                                 .padding(6)
                         }
-                        
+
                 }
                 Spacer()
                     .frame(maxWidth: .infinity)
-                
-                Menu ("") {
+
+                Menu("") {
                     Button("Focus Instance") {
                         WindowController.focusWindow(instance.pid)
                     }
                     if !instance.info.path.isEmpty {
                         Button("Open MC Folder") {
-                            NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: instance.info.path)
+                            NSWorkspace.shared.selectFile(
+                                nil, inFileViewerRootedAtPath: instance.info.path)
                         }
                     }
-//                    Button("Check/Update Mods") {
-//                        print("Folder Not Opened")
-//                    }
-//                    Button("Package Submission Files") {
-//                        print("TODO")
-//                    }
+                    //                    Button("Check/Update Mods") {
+                    //                        print("Folder Not Opened")
+                    //                    }
+                    //                    Button("Package Submission Files") {
+                    //                        print("TODO")
+                    //                    }
                 }
                 .menuStyle(.borderlessButton)
                 .frame(width: 19, height: 19)
@@ -74,18 +71,18 @@ struct PlaceholderInstanceView: View {
                 .scaleEffect(1.5)
                 .padding(.trailing, 10)
                 .padding(.top, 10)
-                
+
             }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-            .opacity(isHovered ? 1 : 0)
-            .animation(.easeInOut.delay(0.15).speed(2), value: isHovered)
+                .opacity(isHovered ? 1 : 0)
+                .animation(.easeInOut.delay(0.15).speed(2), value: isHovered)
         }
         .frame(width: 600, height: 350)
         .background {
             RoundedRectangle(cornerRadius: 10)
                 .stroke(.gray, lineWidth: 3)
                 .background(.ultraThinMaterial)
-                
+
         }
     }
-    
+
 }
