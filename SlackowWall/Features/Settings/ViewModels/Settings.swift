@@ -8,7 +8,7 @@
 import SwiftUI
 import Combine
 
-class Settings: ObservableObject {
+final class Settings: ObservableObject {
     private let fileManager = FileManager.default
 
     nonisolated(unsafe) static let shared: Settings = .init()
