@@ -33,8 +33,8 @@ struct UtilitySettings: View {
             .padding(.bottom, -6)
             SettingsCardView {
                 SettingsToggleView(
-                    title: "Autolaunch Paceman",
-                    description: "Automatically launch and shutdown Paceman with SlackowWall.",
+                    title: "Auto-launch Paceman",
+                    description: "Automatically launch Paceman with SlackowWall.",
                     option: $settings.autoLaunchPaceman)
             }
             SettingsLabel(
@@ -71,17 +71,20 @@ struct UtilitySettings: View {
                     )
                     .disabled(pacemanManager.isRunning)
                     Divider()
-                    Button {
-                        if pacemanManager.isRunning {
-                            pacemanManager.stopPaceman()
-                        } else {
-                            pacemanManager.startPaceman()
-                        }
-                    } label: {
-                        HStack {
-                            Image(systemName: pacemanManager.isRunning ? "stop.fill" : "play.fill")
-                                .foregroundStyle(pacemanManager.isRunning ? .red : .green)
-                            Text(pacemanManager.isRunning ? "Stop Paceman" : "Start Paceman")
+                    HStack {
+                        SettingsLabel(title: "Start/Stop Paceman", description: "Paceman will close with SlackowWall.", font: .body)
+                        Button {
+                            if pacemanManager.isRunning {
+                                pacemanManager.stopPaceman()
+                            } else {
+                                pacemanManager.startPaceman()
+                            }
+                        } label: {
+                            HStack {
+                                Image(systemName: pacemanManager.isRunning ? "stop.fill" : "play.fill")
+                                    .foregroundStyle(pacemanManager.isRunning ? .red : .green)
+                                Text(pacemanManager.isRunning ? "Stop Paceman" : "Start Paceman")
+                            }
                         }
                     }
                 }
