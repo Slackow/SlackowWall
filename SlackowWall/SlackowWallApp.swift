@@ -28,32 +28,36 @@ struct SlackowWallApp: App {
     var body: some Scene {
         Window("SlackowWall", id: "slackowwall-window") {
             ContentView()
-            .frame(minWidth: 300, minHeight: 200)
-            .toolbar {
-                ToolbarItem(placement: .automatic) {
-                    HStack(spacing: 8) {
+                .frame(minWidth: 300, minHeight: 200)
+                .toolbar {
+                    ToolbarItem(placement: .automatic) {
                         HStack(spacing: 8) {
-                            if !trackingManager.trackedInstances.isEmpty && !behavior.utilityMode {
-                                ToolbarStopView()
-                            }
+                            HStack(spacing: 8) {
+                                if !trackingManager.trackedInstances.isEmpty
+                                    && !behavior.utilityMode
+                                {
+                                    ToolbarStopView()
+                                }
 
-                            if alertManager.alert != nil {
-                                ToolbarAlertView()
+                                if alertManager.alert != nil {
+                                    ToolbarAlertView()
+                                }
                             }
+                            .frame(width: 48, height: 40, alignment: .trailing)
+                            .animation(
+                                .easeInOut(duration: 0.3), value: trackingManager.trackedInstances
+                            )
+                            .animation(.easeInOut(duration: 0.3), value: alertManager.alert)
+
+                            ToolbarUtilityModeView()
+
+                            ToolbarSettingsView()
+
+                            ToolbarRefreshView()
                         }
-                        .frame(width: 48, height: 40, alignment: .trailing)
-                        .animation(.easeInOut(duration: 0.3), value: trackingManager.trackedInstances)
-                        .animation(.easeInOut(duration: 0.3), value: alertManager.alert)
-
-                        ToolbarUtilityModeView()
-
-                        ToolbarSettingsView()
-
-                        ToolbarRefreshView()
                     }
                 }
-            }
-            .navigationTitle("SlackowWall - Profile: \(profile.name)")
+                .navigationTitle("SlackowWall - Profile: \(profile.name)")
         }
         .windowResizability(.contentSize)
 
@@ -75,7 +79,7 @@ struct SlackowWallApp: App {
                             ),
                             NSApplication.AboutPanelOptionKey(
                                 rawValue: "Copyright"
-                            ): "Copyright © 2025 Slackow, Kihron."
+                            ): "Copyright © 2025 Slackow, Kihron.",
                         ]
                     )
                 }
@@ -86,11 +90,13 @@ struct SlackowWallApp: App {
                 }
                 .keyboardShortcut(",", modifiers: .command)
             }
-            CommandGroup(after: .appInfo, addition: {
-                Button("Check for updates...") {
-                    UpdateManager.shared.checkForUpdates()
-                }
-            })
+            CommandGroup(
+                after: .appInfo,
+                addition: {
+                    Button("Check for updates...") {
+                        UpdateManager.shared.checkForUpdates()
+                    }
+                })
             CommandGroup(after: .help) {
                 Divider()
 
@@ -109,7 +115,6 @@ struct SlackowWallApp: App {
     }
 }
 
-
 class AppDelegate: NSObject, NSApplicationDelegate {
     var eventMonitor: Any?
     var pacemanProcess: Process?
@@ -124,10 +129,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             ShortcutManager.shared.handleGlobalKey(event)
         }
         OBSManager.shared.writeScript()
+        if Settings[\.utility].autoLaunchPaceman { PacemanManager.shared.startPaceman() }
         // Start the instance check timer
         TrackingManager.shared.startInstanceCheckTimer()
     }
-    
+
     func startPaceman() {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
@@ -136,7 +142,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             "-Dapple.awt.UIElement=true",
             "-jar",
             "/Users/andrew/Library/Application Support/SlackowWall/paceman-tracker-0.7.0.jar",
-            "--nogui"
+            "--nogui",
         ]
         process.terminationHandler = { _ in
             LogManager.shared.appendLog("Paceman exited")

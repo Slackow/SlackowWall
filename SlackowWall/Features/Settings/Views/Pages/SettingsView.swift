@@ -10,7 +10,7 @@ import SwiftUI
 struct SettingsView: View {
     @ObservedObject private var alertManager = AlertManager.shared
     @State var selectedSettingsBarItem: SettingsBarItem = .instances
-    
+
     var body: some View {
         NavigationSplitView {
             List(SettingsBarItem.allCases, selection: $selectedSettingsBarItem) { item in
@@ -19,14 +19,14 @@ struct SettingsView: View {
                         RoundedRectangle(cornerRadius: 5)
                             .fill(item.color.gradient)
                             .frame(width: 25, height: 25)
-                        
+
                         Image(systemName: item.icon)
                             .fontWeight(.bold)
                             .foregroundColor(.white)
                             .frame(width: 20, alignment: .center)
                             .font(item == .keybindings ? .caption : .body)
                     }
-                    
+
                     Text(item.label)
                         .tint(.primary)
                 }
@@ -36,8 +36,7 @@ struct SettingsView: View {
             }
             .removeSidebar()
             .navigationSplitViewColumnWidth(200)
-        }
-        detail: {
+        } detail: {
             Group {
                 switch selectedSettingsBarItem {
                     case .instances:
@@ -46,6 +45,8 @@ struct SettingsView: View {
                         BehaviorSettings()
                     case .window_resizing:
                         ModeSettings()
+                    case .utilities:
+                        UtilitySettings()
                     case .keybindings:
                         KeybindingsSettings()
                     case .personalize:

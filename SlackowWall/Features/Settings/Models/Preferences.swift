@@ -5,8 +5,8 @@
 //  Created by Kihron on 5/3/25.
 //
 
-import SwiftUI
 import DefaultCodable
+import SwiftUI
 
 @DefaultCodable
 struct Preferences: Codable, Hashable {
@@ -16,6 +16,7 @@ struct Preferences: Codable, Hashable {
     var mode: ModeSection = .init()
     var keybinds: KeybindSection = .init()
     var personalize: PersonalizeSection = .init()
+    var utility: UtilitySection = .init()
 
     init() {}
 }

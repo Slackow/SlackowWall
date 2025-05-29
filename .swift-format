@@ -1,4 +1,5 @@
 {
   "indentation": { "spaces": 4 },
-  "indentSwitchCaseLabels": true
+  "indentSwitchCaseLabels": true,
+  "reflowMultilineStringLiterals": { "onlyLinesOverLength": {} }
 }

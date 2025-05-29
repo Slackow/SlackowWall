@@ -3,17 +3,51 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 73;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		496BFAC52DE7E9F600209079 /* PacemanWrapper in CopyFiles */ = {isa = PBXBuildFile; fileRef = 496BFAB92DE7D7B600209079 /* PacemanWrapper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		49BED0752DCEEC1B00B85B4E /* DefaultCodable in Frameworks */ = {isa = PBXBuildFile; productRef = 49BED0742DCEEC1B00B85B4E /* DefaultCodable */; };
 		B62B05652C0ADE7500EC087E /* Gzip in Frameworks */ = {isa = PBXBuildFile; productRef = B62B05642C0ADE7500EC087E /* Gzip */; };
 		B6A1FDEB2BDF5BF000EF2180 /* CachedAsyncImage in Frameworks */ = {isa = PBXBuildFile; productRef = B6A1FDEA2BDF5BF000EF2180 /* CachedAsyncImage */; };
 		B6B9FE8D2BA1698D0026C268 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = B6B9FE8C2BA1698D0026C268 /* Sparkle */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		496BFAC22DE7E9BB00209079 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 498FB3C028987F5B00405753 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 496BFAB82DE7D7B600209079;
+			remoteInfo = PacemanWrapper;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		496BFAB72DE7D7B600209079 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		496BFAC42DE7E9D500209079 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				496BFAC52DE7E9F600209079 /* PacemanWrapper in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		496BFAB92DE7D7B600209079 /* PacemanWrapper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PacemanWrapper; sourceTree = BUILT_PRODUCTS_DIR; };
 		498FB3C828987F5B00405753 /* SlackowWall.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SlackowWall.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -22,16 +56,35 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
+				"Resources/Jars/paceman-tracker-0.7.0.jar",
 			);
 			target = 498FB3C728987F5B00405753 /* SlackowWall */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		496BFAC12DE7E33100209079 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = 498FB3C628987F5B00405753 /* Resources */;
+			membershipExceptions = (
+				"Resources/Jars/paceman-tracker-0.7.0.jar",
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		B6CDDD8B2DC93246004CDEA8 /* SlackowWall */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B6CDDDF72DC93246004CDEA8 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = SlackowWall; sourceTree = "<group>"; };
+		496BFABA2DE7D7B600209079 /* PacemanWrapper */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = PacemanWrapper; sourceTree = "<group>"; };
+		B6CDDD8B2DC93246004CDEA8 /* SlackowWall */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B6CDDDF72DC93246004CDEA8 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 496BFAC12DE7E33100209079 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = SlackowWall; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		496BFAB62DE7D7B600209079 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		498FB3C528987F5B00405753 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -50,6 +103,7 @@
 			isa = PBXGroup;
 			children = (
 				B6CDDD8B2DC93246004CDEA8 /* SlackowWall */,
+				496BFABA2DE7D7B600209079 /* PacemanWrapper */,
 				498FB3C928987F5B00405753 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -58,6 +112,7 @@
 			isa = PBXGroup;
 			children = (
 				498FB3C828987F5B00405753 /* SlackowWall.app */,
+				496BFAB92DE7D7B600209079 /* PacemanWrapper */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -65,6 +120,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		496BFAB82DE7D7B600209079 /* PacemanWrapper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 496BFABD2DE7D7B600209079 /* Build configuration list for PBXNativeTarget "PacemanWrapper" */;
+			buildPhases = (
+				496BFAB52DE7D7B600209079 /* Sources */,
+				496BFAB62DE7D7B600209079 /* Frameworks */,
+				496BFAB72DE7D7B600209079 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				496BFABA2DE7D7B600209079 /* PacemanWrapper */,
+			);
+			name = PacemanWrapper;
+			packageProductDependencies = (
+			);
+			productName = PacemanWrapper;
+			productReference = 496BFAB92DE7D7B600209079 /* PacemanWrapper */;
+			productType = "com.apple.product-type.tool";
+		};
 		498FB3C728987F5B00405753 /* SlackowWall */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 498FB3D728987F5E00405753 /* Build configuration list for PBXNativeTarget "SlackowWall" */;
@@ -72,10 +149,12 @@
 				498FB3C428987F5B00405753 /* Sources */,
 				498FB3C528987F5B00405753 /* Frameworks */,
 				498FB3C628987F5B00405753 /* Resources */,
+				496BFAC42DE7E9D500209079 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				496BFAC32DE7E9BB00209079 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				B6CDDD8B2DC93246004CDEA8 /* SlackowWall */,
@@ -98,16 +177,18 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1340;
+				LastSwiftUpdateCheck = 1630;
 				LastUpgradeCheck = 1630;
 				TargetAttributes = {
+					496BFAB82DE7D7B600209079 = {
+						CreatedOnToolsVersion = 16.3;
+					};
 					498FB3C728987F5B00405753 = {
 						CreatedOnToolsVersion = 13.4.1;
 					};
 				};
 			};
 			buildConfigurationList = 498FB3C328987F5B00405753 /* Build configuration list for PBXProject "SlackowWall" */;
-			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -121,11 +202,13 @@
 				B62B05632C0ADE7500EC087E /* XCRemoteSwiftPackageReference "GzipSwift" */,
 				49BED0732DCEEC1B00B85B4E /* XCLocalSwiftPackageReference "../../../misc/DefaultCodable" */,
 			);
+			preferredProjectObjectVersion = 55;
 			productRefGroup = 498FB3C928987F5B00405753 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				498FB3C728987F5B00405753 /* SlackowWall */,
+				496BFAB82DE7D7B600209079 /* PacemanWrapper */,
 			);
 		};
 /* End PBXProject section */
@@ -141,6 +224,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		496BFAB52DE7D7B600209079 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		498FB3C428987F5B00405753 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -150,7 +240,48 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		496BFAC32DE7E9BB00209079 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 496BFAB82DE7D7B600209079 /* PacemanWrapper */;
+			targetProxy = 496BFAC22DE7E9BB00209079 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		496BFABE2DE7D7B600209079 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 94CLS492CD;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		496BFABF2DE7D7B600209079 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 94CLS492CD;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 		498FB3D528987F5E00405753 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -285,7 +416,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 250430;
+				CURRENT_PROJECT_VERSION = 250526;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Resources/Preview Content\"";
 				DEVELOPMENT_TEAM = 94CLS492CD;
@@ -303,7 +434,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.slackow.SlackowWall;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -322,7 +453,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 250430;
+				CURRENT_PROJECT_VERSION = 250526;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Resources/Preview Content\"";
 				DEVELOPMENT_TEAM = 94CLS492CD;
@@ -340,7 +471,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.slackow.SlackowWall;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -354,6 +485,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		496BFABD2DE7D7B600209079 /* Build configuration list for PBXNativeTarget "PacemanWrapper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				496BFABE2DE7D7B600209079 /* Debug */,
+				496BFABF2DE7D7B600209079 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		498FB3C328987F5B00405753 /* Build configuration list for PBXProject "SlackowWall" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
