@@ -4,7 +4,6 @@
 
 import SwiftUI
 
-
 @MainActor class InstanceManager: ObservableObject {
     @Published var hoveredInstance: TrackedInstance? = nil
     @Published var keyAction: KeyAction? = nil
@@ -19,22 +18,33 @@ import SwiftUI
     }
 
     func openFirstConfig() {
-        guard let firstInstance = TrackingManager.shared.trackedInstances.first(where: { $0.instanceNumber == 1 }) else { return }
+        guard
+            let firstInstance = TrackingManager.shared.trackedInstances.first(where: {
+                $0.instanceNumber == 1
+            })
+        else { return }
         let statePath = firstInstance.info.statePath
 
-        let path = URL(filePath: statePath).deletingLastPathComponent().appendingPathComponent("config")
+        let path = URL(filePath: statePath).deletingLastPathComponent().appendingPathComponent(
+            "config")
         NSWorkspace.shared.open(path)
     }
 
     func copyMods() {
-        guard let firstInstance = TrackingManager.shared.trackedInstances.first(where: { $0.instanceNumber == 1 }) else { return }
+        guard
+            let firstInstance = TrackingManager.shared.trackedInstances.first(where: {
+                $0.instanceNumber == 1
+            })
+        else { return }
         let statePath = firstInstance.info.statePath
 
-        let src = URL(filePath: statePath).deletingLastPathComponent().appendingPathComponent("mods")
+        let src = URL(filePath: statePath).deletingLastPathComponent().appendingPathComponent(
+            "mods")
         let fileManager = FileManager.default
 
         TrackingManager.shared.getValues(\.info).dropFirst().forEach {
-            let dst = URL(filePath: $0.statePath).deletingLastPathComponent().appendingPathComponent("mods")
+            let dst = URL(filePath: $0.statePath).deletingLastPathComponent()
+                .appendingPathComponent("mods")
 
             print("Copying all from", src.path, "to", dst.path)
 
@@ -43,7 +53,8 @@ import SwiftUI
                     try fileManager.removeItem(at: dst)
                 }
                 // Create the destination directory
-                try fileManager.createDirectory(at: dst, withIntermediateDirectories: true, attributes: nil)
+                try fileManager.createDirectory(
+                    at: dst, withIntermediateDirectories: true, attributes: nil)
 
                 // Get the list of items in the source directory
                 let items = try fileManager.contentsOfDirectory(atPath: src.path)
@@ -105,7 +116,7 @@ import SwiftUI
 
         let actions = {
             if Settings[\.behavior].shouldHideWindows {
-                let pids = TrackingManager.shared.getValues(\.pid).filter({$0 != pid})
+                let pids = TrackingManager.shared.getValues(\.pid).filter({ $0 != pid })
                 WindowController.hideWindows(pids)
             }
 
@@ -161,7 +172,8 @@ import SwiftUI
             if canReset(instance: instance) {
                 resetInstance(instance: instance)
             } else {
-                LogManager.shared.appendLog("Did not reset: \(instance.pid), State: \(instance.info.state)")
+                LogManager.shared.appendLog(
+                    "Did not reset: \(instance.pid), State: \(instance.info.state)")
             }
         }
     }

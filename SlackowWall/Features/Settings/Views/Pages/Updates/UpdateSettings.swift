@@ -10,31 +10,35 @@ import SwiftUI
 struct UpdateSettings: View {
     @ObservedObject private var updateManager = UpdateManager.shared
     @State private var showReleaseNotes: Bool = false
-    
+
     private var appInformation: String {
         return "SlackowWall \(updateManager.appVersion ?? "") (\(updateManager.appBuild ?? ""))"
     }
-    
+
     var body: some View {
         VStack {
             SettingsCardView {
                 VStack {
-                    SettingsToggleView(title: "Check Automatically", option: $updateManager.checkAutomatically)
-                    
+                    SettingsToggleView(
+                        title: "Check Automatically", option: $updateManager.checkAutomatically)
+
                     Divider()
-                    
-                    SettingsToggleView(title: "Download Automatically", option: $updateManager.downloadAutomatically)
-                        .disabled(!updateManager.checkAutomatically)
+
+                    SettingsToggleView(
+                        title: "Download Automatically",
+                        option: $updateManager.downloadAutomatically
+                    )
+                    .disabled(!updateManager.checkAutomatically)
                 }
             }
-            
+
             VStack {
                 Text(appInformation)
-                
+
                 if let lastUpdateCheck = updateManager.getLastUpdateCheckDate() {
                     HStack(spacing: 0) {
                         Text("Last Checked: ")
-                        
+
                         Text(lastUpdateCheck, formatter: updateManager.lastUpdateFormatter)
                     }
                 }
@@ -60,7 +64,7 @@ struct UpdateSettings: View {
                 }
                 .help("Show release notes")
             }
-            
+
             ToolbarItem(placement: .primaryAction) {
                 Button(action: { updateManager.checkForUpdates() }) {
                     Image(systemName: "arrow.clockwise")

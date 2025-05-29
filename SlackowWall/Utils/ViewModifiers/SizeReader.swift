@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SizeReader: ViewModifier {
     @Binding var size: CGSize
-    
+
     func body(content: Content) -> some View {
         content.overlay(
             GeometryReader { geometryProxy in

@@ -5,8 +5,8 @@
 //  Created by Kihron on 5/5/25.
 //
 
-import SwiftUI
 import DefaultCodable
+import SwiftUI
 
 extension Preferences {
     @DefaultCodable

@@ -5,8 +5,8 @@
 //  Created by Kihron on 5/3/25.
 //
 
-import SwiftUI
 import Combine
+import SwiftUI
 
 final class Settings: ObservableObject {
     private let fileManager = FileManager.default
@@ -20,8 +20,8 @@ final class Settings: ObservableObject {
     // In‑memory UUID that the rest of the app uses.
     @Published var currentProfile: UUID = .init() {
         didSet {
-            currentProfileRawID = currentProfile.uuidString      // persist change
-            preferences = loadSettings()                         // reload profile
+            currentProfileRawID = currentProfile.uuidString  // persist change
+            preferences = loadSettings()  // reload profile
         }
     }
 
@@ -62,7 +62,7 @@ final class Settings: ObservableObject {
         }
 
         guard let json = try? Data(contentsOf: url),
-              let prefs = try? JSONDecoder().decode(Preferences.self, from: json)
+            let prefs = try? JSONDecoder().decode(Preferences.self, from: json)
         else {
             return .init()
         }
@@ -101,16 +101,16 @@ final class Settings: ObservableObject {
             .appendingPathComponent(id.uuidString)
             .appendingPathExtension("json")
     }
-    
+
     func autoSwitch() {
         let preferences = Settings.shared.availableProfiles
-            .compactMap{try? loadSettings(from: $0.id)}
+            .compactMap { try? loadSettings(from: $0.id) }
         for pref in preferences {
             if let monWidth = pref.profile.expectedMWidth,
-               let monHeight = pref.profile.expectedMHeight,
-               let frame = NSScreen.main?.frame,
-               Int(frame.width) == monWidth, Int(frame.height) == monHeight,
-               self.preferences.profile.id != pref.profile.id
+                let monHeight = pref.profile.expectedMHeight,
+                let frame = NSScreen.main?.frame,
+                Int(frame.width) == monWidth, Int(frame.height) == monHeight,
+                self.preferences.profile.id != pref.profile.id
             {
                 self.preferences = pref
                 LogManager.shared.appendLog("Auto switched profiles")
@@ -125,8 +125,8 @@ extension Settings {
         return (try? fileManager.contentsOfDirectory(atPath: baseURL.path))?
             .compactMap { filename in
                 guard filename.hasSuffix(".json"),
-                      let id = UUID(uuidString: (filename as NSString).deletingPathExtension),
-                      let prefs = try? loadSettings(from: id)
+                    let id = UUID(uuidString: (filename as NSString).deletingPathExtension),
+                    let prefs = try? loadSettings(from: id)
                 else { return nil }
                 return (id, prefs.profile.name)
             } ?? []
@@ -140,7 +140,9 @@ extension Settings {
 
         do {
             let url = settingsURL(for: prefs.profile.id)
-            guard !fileManager.fileExists(atPath: url.path) else { throw ProfileError.alreadyExists }
+            guard !fileManager.fileExists(atPath: url.path) else {
+                throw ProfileError.alreadyExists
+            }
 
             try savePreferences(prefs, to: url)
             try switchProfile(to: prefs.profile.id)
@@ -164,7 +166,9 @@ extension Settings {
         do {
             let profiles = availableProfiles
             guard profiles.count > 1 else { throw ProfileError.cannotDeleteOnlyProfile }
-            guard let idx = profiles.firstIndex(where: { $0.id == currentProfile }) else { throw ProfileError.notFound }
+            guard let idx = profiles.firstIndex(where: { $0.id == currentProfile }) else {
+                throw ProfileError.notFound
+            }
 
             LogManager.shared.appendLog("Deleting:", settingsURL(for: currentProfile))
             let id = currentProfile

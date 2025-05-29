@@ -11,15 +11,15 @@ struct SettingsToggleView: View {
     let title: String
     var description: String?
     var descInteractable: Bool = true
-    
+
     @Binding var option: Bool
     @State private var textHeight: CGSize = .zero
-    
+
     var body: some View {
         HStack(alignment: description != nil && textHeight.height > 20 ? .top : .center) {
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
-                
+
                 if let description {
                     Text(.init(description))
                         .font(.caption)
@@ -30,7 +30,7 @@ struct SettingsToggleView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            
+
             Toggle("", isOn: $option)
                 .labelsHidden()
                 .toggleStyle(.switch)
@@ -42,6 +42,10 @@ struct SettingsToggleView: View {
 }
 
 #Preview {
-    SettingsToggleView(title: "Test", description: "Also just a really long test string to check for multiline support.", option: .constant(false))
-        .padding()
+    SettingsToggleView(
+        title: "Test",
+        description: "Also just a really long test string to check for multiline support.",
+        option: .constant(false)
+    )
+    .padding()
 }

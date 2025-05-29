@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-extension Dictionary where Value : Hashable {
-    
-    func swapKeyValues() -> [Value : Key] {
-        var newDict = [Value : Key]()
+extension Dictionary where Value: Hashable {
+
+    func swapKeyValues() -> [Value: Key] {
+        var newDict = [Value: Key]()
         for (key, value) in self {
             newDict[value] = key
         }

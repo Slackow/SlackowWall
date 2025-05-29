@@ -10,28 +10,38 @@ import SwiftUI
 struct PersonalizeSettings: View {
     @AppSettings(\.personalize) private var settings
     @ObservedObject private var personalizeManager = PersonalizeManager.shared
-    
+
     @State private var debounceWorkItem: DispatchWorkItem?
     @State private var showLockEditor: Bool = false
-    
+
     var body: some View {
         SettingsPageView(title: "Personalize") {
             SettingsLabel(title: "Video")
-            
+
             SettingsCardView {
-                SettingsSliderView(title: "Stream FPS (\(Int(settings.streamFPS)))", leftIcon: "figure.walk", rightIcon: "figure.walk.motion", value: $settings.streamFPS, range: 15...60, step: 5)
+                SettingsSliderView(
+                    title: "Stream FPS (\(Int(settings.streamFPS)))", leftIcon: "figure.walk",
+                    rightIcon: "figure.walk.motion", value: $settings.streamFPS, range: 15...60,
+                    step: 5)
             }
-            
-            SettingsLabel(title: "Appearance", description: "Adjust different visual effects and components throughout the app.")
-                .padding(.top, 5)
-            
+
+            SettingsLabel(
+                title: "Appearance",
+                description: "Adjust different visual effects and components throughout the app."
+            )
+            .padding(.top, 5)
+
             SettingsCardView {
                 VStack {
-                    SettingsButtonView(title: "Lock Icon", description: "Customize the lock image used throughout SlackowWall.", action: { showLockEditor.toggle() }) {
+                    SettingsButtonView(
+                        title: "Lock Icon",
+                        description: "Customize the lock image used throughout SlackowWall.",
+                        action: { showLockEditor.toggle() }
+                    ) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 5)
                                 .stroke(.gray)
-                            
+
                             LockIcon()
                                 .frame(width: 32, height: 32)
                         }
@@ -39,15 +49,17 @@ struct PersonalizeSettings: View {
                         .contentShape(.rect)
                     }
                     .buttonStyle(.plain)
-                    
+
                     Divider()
                         .padding(.bottom, 4)
-                    
-                    SettingsSliderView(title: "Lock Scale", leftIcon: "dial.low.fill", rightIcon: "dial.high.fill", value: $settings.lockScale, range: 0.5...1.5, step: 0.25)
-                    
+
+                    SettingsSliderView(
+                        title: "Lock Scale", leftIcon: "dial.low.fill", rightIcon: "dial.high.fill",
+                        value: $settings.lockScale, range: 0.5...1.5, step: 0.25)
+
                     Divider()
                         .padding(.bottom, 4)
-                    
+
                     SettingsToggleView(title: "Lock Animation", option: $settings.lockAnimation)
                 }
             }
@@ -59,17 +71,17 @@ struct PersonalizeSettings: View {
             debounceResetAndStartCapture()
         }
     }
-    
+
     private func debounceResetAndStartCapture() {
         debounceWorkItem?.cancel()
-        
+
         let workItem = DispatchWorkItem {
             Task {
                 await ScreenRecorder.shared.resetAndStartCapture()
                 GridManager.shared.showInfo = false
             }
         }
-        
+
         debounceWorkItem = workItem
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: workItem)
     }

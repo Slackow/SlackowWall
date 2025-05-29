@@ -17,14 +17,16 @@ struct ProfilesSettings: View {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Current Profile")
-                        
-                        Text("Profiles allow for switching between different sets of setting configurations.")
-                            .font(.caption)
-                            .foregroundStyle(.gray)
-                            .padding(.trailing, 2)
+
+                        Text(
+                            "Profiles allow for switching between different sets of setting configurations."
+                        )
+                        .font(.caption)
+                        .foregroundStyle(.gray)
+                        .padding(.trailing, 2)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    
+
                     Picker("", selection: $settings.currentProfile) {
                         ForEach(settings.availableProfiles, id: \.id) { profile in
                             Text(profile.name)
@@ -35,27 +37,30 @@ struct ProfilesSettings: View {
                     .labelsHidden()
                 }
             }
-            
+
             SettingsLabel(title: "Properties")
                 .padding(.top, 5)
-            
+
             SettingsCardView {
                 HStack {
                     Text("Name")
                         .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    TextField("", text: $profile.name, onCommit: {
-                        if profile.name.isEmpty {
-                            DispatchQueue.main.async {
-                                profile.name = "Default"
+
+                    TextField(
+                        "", text: $profile.name,
+                        onCommit: {
+                            if profile.name.isEmpty {
+                                DispatchQueue.main.async {
+                                    profile.name = "Default"
+                                }
                             }
                         }
-                    })
+                    )
                     .textFieldStyle(.roundedBorder)
                     .frame(width: 120)
                 }
             }
-            
+
             SettingsCardView {
                 Form {
                     VStack {
@@ -63,24 +68,34 @@ struct ProfilesSettings: View {
                             Text("Automatic Switching")
                                 .fontWeight(.semibold)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            
-                            Text(.init("Automatically switches to this profile if the current monitor matches these dimensions."))
-                                .font(.caption)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .foregroundStyle(.gray)
+
+                            Text(
+                                .init(
+                                    "Automatically switches to this profile if the current monitor matches these dimensions."
+                                )
+                            )
+                            .font(.caption)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundStyle(.gray)
                         }
-                        
+
                         HStack(spacing: 24) {
                             HStack {
-                                TextField("W", value: $profile.expectedMWidth, format: .number.grouping(.never))
-                                    .textFieldStyle(.roundedBorder)
-                                    .frame(width: 80)
-                                
-                                TextField("H", value: $profile.expectedMHeight, format: .number.grouping(.never))
-                                    .textFieldStyle(.roundedBorder)
-                                    .frame(width: 80)
+                                TextField(
+                                    "W", value: $profile.expectedMWidth,
+                                    format: .number.grouping(.never)
+                                )
+                                .textFieldStyle(.roundedBorder)
+                                .frame(width: 80)
+
+                                TextField(
+                                    "H", value: $profile.expectedMHeight,
+                                    format: .number.grouping(.never)
+                                )
+                                .textFieldStyle(.roundedBorder)
+                                .frame(width: 80)
                             }
-                            
+
                             Button(action: fillMonitorSize) {
                                 Text("Use Monitor")
                             }
@@ -102,7 +117,6 @@ struct ProfilesSettings: View {
                     .help("Create new profile")
                     .disabled(settings.availableProfiles.count >= 10)
 
-                    
                     Button(action: settings.deleteCurrentProfile) {
                         Image(systemName: "trash")
                     }
@@ -133,7 +147,7 @@ struct ProfilesSettings: View {
             LogManager.shared.appendLog("Switched Profiles:", value)
         }
     }
-    
+
     private func fillMonitorSize() {
         if let frame = NSScreen.main?.frame {
             profile.expectedMWidth = Int(frame.width)

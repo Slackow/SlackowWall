@@ -9,14 +9,14 @@ import SwiftUI
 
 struct CaptureErrorView: View {
     var error: StreamError?
-    
+
     var body: some View {
         if error != nil {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(.red)
                     .opacity(0.5)
-                
+
                 GeometryReader { geo in
                     Image(systemName: "xmark")
                         .resizable()

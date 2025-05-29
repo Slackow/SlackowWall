@@ -9,11 +9,11 @@ import SwiftUI
 
 enum WallAlert: Error, CaseIterable, Identifiable, Hashable {
     case noScreenPermission, noAccessibilityPermission
-    
+
     var id: Self {
         return self
     }
-    
+
     var description: String {
         switch self {
             case .noScreenPermission:

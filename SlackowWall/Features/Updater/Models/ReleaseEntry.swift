@@ -12,7 +12,7 @@ struct ReleaseEntry: Identifiable, Codable, Hashable {
     var tagName: String
     var publishedAt: Date
     var message: String
-    
+
     enum CodingKeys: String, CodingKey {
         case id
         case message = "body"

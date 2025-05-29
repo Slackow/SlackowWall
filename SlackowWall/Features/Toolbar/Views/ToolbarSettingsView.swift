@@ -10,7 +10,7 @@ import SwiftUI
 struct ToolbarSettingsView: View {
     @Environment(\.openWindow) private var openWindow
     @State private var isHovered: Bool = false
-    
+
     var body: some View {
         Button(action: { openWindow(id: "settings-window") }) {
             if isHovered {
@@ -19,7 +19,7 @@ struct ToolbarSettingsView: View {
             } else {
                 Image(systemName: "gear")
             }
-        }.onHover {isHovered = $0}
+        }.onHover { isHovered = $0 }
     }
 }
 

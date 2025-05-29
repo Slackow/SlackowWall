@@ -10,11 +10,11 @@ import SwiftUI
 struct LockIcon: View {
     @AppSettings(\.personalize) private var settings
     @ObservedObject private var personalizeManager = PersonalizeManager.shared
-    
+
     private var preset: LockPreset {
         return settings.selectedLockPreset
     }
-    
+
     var body: some View {
         VStack {
             if settings.lockMode == .preset {

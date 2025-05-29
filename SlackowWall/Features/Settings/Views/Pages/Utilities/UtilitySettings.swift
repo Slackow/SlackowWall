@@ -72,7 +72,9 @@ struct UtilitySettings: View {
                     .disabled(pacemanManager.isRunning)
                     Divider()
                     HStack {
-                        SettingsLabel(title: "Start/Stop Paceman", description: "Paceman will close with SlackowWall.", font: .body)
+                        SettingsLabel(
+                            title: "Start/Stop Paceman",
+                            description: "Paceman will close with SlackowWall.", font: .body)
                         Button {
                             if pacemanManager.isRunning {
                                 pacemanManager.stopPaceman()
@@ -81,8 +83,10 @@ struct UtilitySettings: View {
                             }
                         } label: {
                             HStack {
-                                Image(systemName: pacemanManager.isRunning ? "stop.fill" : "play.fill")
-                                    .foregroundStyle(pacemanManager.isRunning ? .red : .green)
+                                Image(
+                                    systemName: pacemanManager.isRunning ? "stop.fill" : "play.fill"
+                                )
+                                .foregroundStyle(pacemanManager.isRunning ? .red : .green)
                                 Text(pacemanManager.isRunning ? "Stop Paceman" : "Start Paceman")
                             }
                         }

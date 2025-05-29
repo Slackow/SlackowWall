@@ -10,7 +10,7 @@ import SwiftUI
 enum StreamError: Equatable {
     case appClosed
     case unknown(errorCode: Int)
-    
+
     init(errorCode: Int) {
         switch errorCode {
             case -3815:

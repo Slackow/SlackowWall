@@ -12,29 +12,34 @@ struct SettingsButtonView<Content: View>: View {
     var description: String?
     var descInteractable: Bool = true
     var buttonText: String?
-    var action: ()->()
-    
+    var action: () -> Void
+
     @State private var textHeight: CGSize = .zero
     @State private var contentHeight: CGSize = .zero
     @State private var labelHeight: CGSize = .zero
     private var content: (() -> Content)?
-    
+
     // Initializer for simple text button
-    init(title: String, description: String? = nil, buttonText: String, action: @escaping () -> Void) where Content == EmptyView {
+    init(
+        title: String, description: String? = nil, buttonText: String, action: @escaping () -> Void
+    ) where Content == EmptyView {
         self.title = title
         self.description = description
         self.buttonText = buttonText
         self.action = action
     }
-    
+
     // Initializer for custom label
-    init(title: String, description: String? = nil, action: @escaping () -> Void, @ViewBuilder content: @escaping () -> Content) {
+    init(
+        title: String, description: String? = nil, action: @escaping () -> Void,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.title = title
         self.description = description
         self.action = action
         self.content = content
     }
-    
+
     private var alignment: VerticalAlignment {
         if contentHeight.height > labelHeight.height {
             return .top
@@ -42,12 +47,12 @@ struct SettingsButtonView<Content: View>: View {
             return description != nil && textHeight.height > 20 ? .top : .center
         }
     }
-    
+
     var body: some View {
         HStack(alignment: alignment) {
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
-                
+
                 if let description {
                     Text(.init(description))
                         .font(.caption)
@@ -59,7 +64,7 @@ struct SettingsButtonView<Content: View>: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .modifier(SizeReader(size: $labelHeight))
-            
+
             if let content {
                 Button(action: action) {
                     content()
@@ -78,11 +83,19 @@ struct SettingsButtonView<Content: View>: View {
 
 #Preview {
     VStack {
-        SettingsButtonView(title: "Test Option", description: "This is an example setting description for this button.", buttonText: "Action", action: { print("Example.") })
-            .padding()
-        
-        SettingsButtonView(title: "Test Option", description: "This is an example setting description for this button.", action: { print("Example.") }) {
-                Image(systemName: "xmark")
+        SettingsButtonView(
+            title: "Test Option",
+            description: "This is an example setting description for this button.",
+            buttonText: "Action", action: { print("Example.") }
+        )
+        .padding()
+
+        SettingsButtonView(
+            title: "Test Option",
+            description: "This is an example setting description for this button.",
+            action: { print("Example.") }
+        ) {
+            Image(systemName: "xmark")
         }
         .padding()
     }

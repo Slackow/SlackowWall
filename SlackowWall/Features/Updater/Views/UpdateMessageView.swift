@@ -10,19 +10,19 @@ import SwiftUI
 struct UpdateMessageView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject private var updateManager = UpdateManager.shared
-    
+
     var title: String
-    
+
     private var appVersion: String {
         return updateManager.appVersion ?? ""
     }
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             Text("\(title) • v\(appVersion)")
                 .font(.title2)
                 .fontWeight(.bold)
-            
+
             SettingsCardView(padding: 0) {
                 VStack {
                     if !updateManager.releaseNotes.isEmpty {
@@ -30,7 +30,8 @@ struct UpdateMessageView: View {
                             VStack(alignment: .leading, spacing: 14) {
                                 ForEach(updateManager.releaseNotes) { entry in
                                     if entry.tagName.dropFirst() == appVersion {
-                                        UpdateReleaseEntryView(title: "Current Release", releaseEntry: entry)
+                                        UpdateReleaseEntryView(
+                                            title: "Current Release", releaseEntry: entry)
                                     } else {
                                         UpdateReleaseEntryView(releaseEntry: entry)
                                     }
@@ -45,7 +46,7 @@ struct UpdateMessageView: View {
                     }
                 }
             }
-            
+
             Button(action: { dismiss() }) {
                 Text("Close")
             }.frame(maxWidth: .infinity, alignment: .trailing)

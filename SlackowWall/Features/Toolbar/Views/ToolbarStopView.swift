@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ToolbarStopView: View {
     @ObservedObject private var instanceManager = InstanceManager.shared
-    
+
     var body: some View {
         Button(action: { instanceManager.stopAll() }) {
             if #available(macOS 14.0, *) {

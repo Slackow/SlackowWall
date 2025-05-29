@@ -10,7 +10,7 @@ import SwiftUI
 enum LockPreset: String, CaseIterable, Identifiable, Hashable, Codable {
     case apple = "lock.fill"
     case minecraft = "minecraft_lock"
-    
+
     var image: Image {
         switch self {
             case .apple:
@@ -19,7 +19,7 @@ enum LockPreset: String, CaseIterable, Identifiable, Hashable, Codable {
                 return Image(rawValue)
         }
     }
-    
+
     var id: Self {
         return self
     }

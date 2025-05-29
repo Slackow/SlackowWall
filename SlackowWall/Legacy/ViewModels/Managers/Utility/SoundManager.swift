@@ -5,8 +5,8 @@
 //  Created by Kihron on 1/18/23.
 //
 
-import SwiftUI
 import AVKit
+import SwiftUI
 
 class SoundManager {
     static let shared = SoundManager()

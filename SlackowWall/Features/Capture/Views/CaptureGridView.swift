@@ -5,25 +5,27 @@
 //  Created by Kihron on 5/8/24.
 //
 
-import SwiftUI
 import ScreenCaptureKit
+import SwiftUI
 
 struct CaptureGridView: View {
     @ObservedObject private var trackingManager = TrackingManager.shared
     @ObservedObject private var screenRecorder = ScreenRecorder.shared
     @ObservedObject private var instanceManager = InstanceManager.shared
     @ObservedObject private var gridManager = GridManager.shared
-    
+
     @Namespace private var gridSpace
-    
+
     @AppSettings(\.behavior)
     private var behavior
     @AppSettings(\.instance)
     private var instance
-    
+
     var body: some View {
         VStack {
-            if !trackingManager.isCaptureReady && (!behavior.utilityMode || trackingManager.trackedInstances.isEmpty) {
+            if !trackingManager.isCaptureReady
+                && (!behavior.utilityMode || trackingManager.trackedInstances.isEmpty)
+            {
                 if trackingManager.trackedInstances.isEmpty {
                     Text("No Minecraft\nInstances Detected")
                         .font(.largeTitle)
@@ -38,8 +40,10 @@ struct CaptureGridView: View {
                             ForEach(0..<instance.sections, id: \.self) { section in
                                 HStack(spacing: 0) {
                                     createSection(section: section)
-                                    
-                                    if gridManager.indicesForSection(section).count < gridManager.maximumItemsPerSection() {
+
+                                    if gridManager.indicesForSection(section).count
+                                        < gridManager.maximumItemsPerSection()
+                                    {
                                         Spacer()
                                             .frame(width: gridManager.sectionSize.width)
                                     }
@@ -51,8 +55,10 @@ struct CaptureGridView: View {
                             ForEach(0..<instance.sections, id: \.self) { section in
                                 VStack(spacing: 0) {
                                     createSection(section: section)
-                                    
-                                    if gridManager.indicesForSection(section).count < gridManager.maximumItemsPerSection() {
+
+                                    if gridManager.indicesForSection(section).count
+                                        < gridManager.maximumItemsPerSection()
+                                    {
                                         Spacer()
                                             .frame(height: gridManager.sectionSize.height)
                                     }
@@ -85,7 +91,7 @@ struct CaptureGridView: View {
             gridManager.showInstanceInfo()
         }
     }
-    
+
     private func createSection(section: Int) -> some View {
         ForEach(gridManager.indicesForSection(section), id: \.self) { idx in
             if idx < trackingManager.trackedInstances.count {
@@ -96,7 +102,7 @@ struct CaptureGridView: View {
             }
         }
     }
-    
+
     private func captureContentView(trackedInstance: TrackedInstance) -> some View {
         TrackedInstanceView(instance: trackedInstance)
             .id(trackedInstance)

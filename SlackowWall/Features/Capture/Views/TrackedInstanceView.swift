@@ -9,13 +9,13 @@ import SwiftUI
 
 struct TrackedInstanceView: View {
     @ObservedObject private var gridManager = GridManager.shared
-    
+
     @ObservedObject var instance: TrackedInstance
-    
+
     private var hasStreamError: Bool {
         return !Settings[\.behavior].utilityMode && instance.stream.streamError != nil
     }
-    
+
     var body: some View {
         ZStack(alignment: .topTrailing) {
             if Settings[\.behavior].utilityMode {
@@ -36,20 +36,23 @@ struct TrackedInstanceView: View {
             VStack(alignment: .trailing, spacing: 0) {
                 if instance.isLocked && !Settings[\.behavior].utilityMode {
                     LockIcon()
-                        .frame(width: 32 * Settings[\.personalize].lockScale, height: 32 * Settings[\.personalize].lockScale)
+                        .frame(
+                            width: 32 * Settings[\.personalize].lockScale,
+                            height: 32 * Settings[\.personalize].lockScale
+                        )
                         .padding(.horizontal, 4)
                         .padding(.top, 6)
                         .padding(.bottom, 3)
                         .opacity(gridManager.showInfo ? 1 : 0)
                         .animation(.easeInOut, value: gridManager.showInfo)
                 }
-                
+
                 if Settings[\.instance].showInstanceNumbers && !Settings[\.behavior].utilityMode {
                     ZStack {
                         Circle()
                             .fill(.ultraThickMaterial)
                             .frame(width: 16, height: 16)
-                        
+
                         Text("\(instance.instanceNumber)")
                             .foregroundColor(.white)
                             .monospacedDigit()
@@ -60,7 +63,8 @@ struct TrackedInstanceView: View {
             .opacity(gridManager.showInfo ? 1 : 0)
             .animation(.easeInOut, value: gridManager.showInfo)
             .animation(.easeInOut, value: Settings[\.instance].showInstanceNumbers)
-            .animation(Settings[\.personalize].lockAnimation ? .bouncy : .none, value: instance.isLocked)
+            .animation(
+                Settings[\.personalize].lockAnimation ? .bouncy : .none, value: instance.isLocked)
         }
         .disabled(instance.wasClosed || hasStreamError)
         .opacity(instance.wasClosed ? 0 : 1)

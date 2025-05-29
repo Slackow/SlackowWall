@@ -13,23 +13,29 @@ struct SettingsPageView<Content: View>: View {
     let isSubPage: Bool
     let shouldDisableFocus: Bool
     let content: () -> Content
-    
-    init(title: String, showTitle: Bool = true, isSubPage: Bool = false, shouldDisableFocus: Bool = true, @ViewBuilder content: @escaping () -> Content) {
+
+    init(
+        title: String, showTitle: Bool = true, isSubPage: Bool = false,
+        shouldDisableFocus: Bool = true, @ViewBuilder content: @escaping () -> Content
+    ) {
         self.title = title
         self.showTitle = showTitle
         self.isSubPage = isSubPage
         self.shouldDisableFocus = shouldDisableFocus
         self.content = content
     }
-    
-    init(title: String, showTitle: Bool = true, isSubPage: Bool = false, shouldDisableFocus: Bool = true, content: Content) {
+
+    init(
+        title: String, showTitle: Bool = true, isSubPage: Bool = false,
+        shouldDisableFocus: Bool = true, content: Content
+    ) {
         self.title = title
         self.showTitle = showTitle
         self.isSubPage = isSubPage
         self.shouldDisableFocus = shouldDisableFocus
         self.content = { content }
     }
-    
+
     var body: some View {
         if isSubPage {
             page
@@ -39,7 +45,7 @@ struct SettingsPageView<Content: View>: View {
             }
         }
     }
-    
+
     var page: some View {
         ScrollView {
             VStack(spacing: 12) {

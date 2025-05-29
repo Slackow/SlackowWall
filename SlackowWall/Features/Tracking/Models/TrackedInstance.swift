@@ -5,8 +5,8 @@
 //  Created by Kihron on 7/20/24.
 //
 
-import SwiftUI
 import ScreenCaptureKit
+import SwiftUI
 
 class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
     let id: UUID
@@ -54,11 +54,13 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
                 if let vanillaVersionIdx = args.firstIndex(of: "--version") {
                     version = args[safe: vanillaVersionIdx + 1] ?? ""
                     let prefix = try? /fabric-loader-\d+\.\d+(?:\.\d+)?-/.prefixMatch(in: version)
-                    version = prefix.map {String(version.dropFirst($0.count))} ?? version
+                    version = prefix.map { String(version.dropFirst($0.count)) } ?? version
                 }
-            // Prism/MultiMC etc
-            } else if let nativesArg = args.first(where: { $0.starts(with: "-Djava.library.path=") }) {
-                let arg = nativesArg.dropLast("/natives".count).dropFirst("-Djava.library.path=".count)
+                // Prism/MultiMC etc
+            } else if let nativesArg = args.first(where: { $0.starts(with: "-Djava.library.path=") }
+            ) {
+                let arg = nativesArg.dropLast("/natives".count).dropFirst(
+                    "-Djava.library.path=".count)
                 let possiblePaths = ["\(arg)/minecraft", "\(arg)/.minecraft"]
                 path = possiblePaths.first(where: FileManager.default.fileExists) ?? ""
                 let regex = #/minecraft-([\d.]+?)-client\.jar|intermediary/([\d.]+?)/intermediary/#
@@ -72,17 +74,18 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
         data.version = version
         // default to trying to use boundless if can't read these properties correctly
         if let boundlessFile = getModifiedTime("\(path)/boundless_port.txt"),
-           let logFile = getCreatedTime("\(path)/logs/latest.log"),
-           boundlessFile < logFile {
+            let logFile = getCreatedTime("\(path)/logs/latest.log"),
+            boundlessFile < logFile
+        {
             LogManager.shared.appendLog("Found old boundless_port.txt, mod not present.")
             let port = FileManager.default.contents(atPath: "\(path)/boundless_port.txt")
-                .flatMap {String(data: $0, encoding: .utf8)}
+                .flatMap { String(data: $0, encoding: .utf8) }
             LogManager.shared.appendLog("Would have used port: \(port ?? "N/A")")
             data.port = 3
         } else if let contents = FileManager.default.contents(atPath: "\(path)/boundless_port.txt"),
-           !contents.isEmpty,
-           let port = String(data: contents, encoding: .utf8),
-           let port = UInt16(port)
+            !contents.isEmpty,
+            let port = String(data: contents, encoding: .utf8),
+            let port = UInt16(port)
         {
             data.port = port
         }
@@ -95,11 +98,16 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
         return data
     }
 
-    private static func getModifiedTime(_ filePath: String, fileManager: FileManager = FileManager.default) -> Date? {
-        try? fileManager.attributesOfItem(atPath: filePath)[FileAttributeKey.modificationDate] as? Date
+    private static func getModifiedTime(
+        _ filePath: String, fileManager: FileManager = FileManager.default
+    ) -> Date? {
+        try? fileManager.attributesOfItem(atPath: filePath)[FileAttributeKey.modificationDate]
+            as? Date
     }
 
-    private static func getCreatedTime(_ filePath: String, fileManager: FileManager = FileManager.default) -> Date? {
+    private static func getCreatedTime(
+        _ filePath: String, fileManager: FileManager = FileManager.default
+    ) -> Date? {
         try? fileManager.attributesOfItem(atPath: filePath)[FileAttributeKey.creationDate] as? Date
     }
 

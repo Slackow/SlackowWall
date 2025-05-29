@@ -5,8 +5,8 @@
 //  Created by Kihron on 3/14/24.
 //
 
-import SwiftUI
 import ScreenCaptureKit
+import SwiftUI
 
 extension SCWindow {
     var displayName: String {

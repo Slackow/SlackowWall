@@ -20,7 +20,7 @@ struct KeybindListener: NSViewRepresentable {
         }
 
         override var acceptsFirstResponder: Bool { true }
-        
+
         override func keyDown(with event: NSEvent) {
             guard let action = KeyAction.from(keyCode: event.keyCode) else { return }
             key = action
@@ -29,7 +29,7 @@ struct KeybindListener: NSViewRepresentable {
 
     func makeNSView(context: Context) -> NSView {
         let view = KeyView(key: $key)
-        DispatchQueue.main.async { // wait till next event cycle
+        DispatchQueue.main.async {  // wait till next event cycle
             view.window?.makeFirstResponder(view)
         }
         return view

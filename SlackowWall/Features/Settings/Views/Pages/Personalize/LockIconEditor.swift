@@ -14,24 +14,27 @@ struct LockIconEditor: View {
     @AppSettings(\.personalize) private var settings
 
     @State private var editMode: Bool = false
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             Text("Lock Icons")
                 .font(.title2)
                 .fontWeight(.bold)
-            
+
             SettingsCardView(padding: 0) {
                 ScrollView {
-                    LazyVGrid(columns: Array(repeating: GridItem(.adaptive(minimum: 42), spacing: 0), count: 7)) {
+                    LazyVGrid(
+                        columns: Array(
+                            repeating: GridItem(.adaptive(minimum: 42), spacing: 0), count: 7)
+                    ) {
                         Button(action: { personalizeManager.selectImage() }) {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 5)
                                     .stroke(.gray, lineWidth: 1)
-                                
+
                                 RoundedRectangle(cornerRadius: 5)
                                     .fill(.gray.opacity(0.1))
-                                
+
                                 Image(systemName: "plus")
                                     .font(.title)
                             }
@@ -40,13 +43,17 @@ struct LockIconEditor: View {
                         .buttonStyle(.plain)
                         .padding(.bottom, 10)
                         .disabled(editMode)
-                        
+
                         ForEach(LockPreset.allCases) { preset in
-                            Button(action: { personalizeManager.selectLockPreset(preset: preset) }) {
+                            Button(action: { personalizeManager.selectLockPreset(preset: preset) })
+                            {
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 5)
-                                        .stroke(settings.lockMode == .preset && settings.selectedLockPreset == preset ? .white : .gray, lineWidth: 1)
-                                    
+                                        .stroke(
+                                            settings.lockMode == .preset
+                                                && settings.selectedLockPreset == preset
+                                                ? .white : .gray, lineWidth: 1)
+
                                     preset.image
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
@@ -60,14 +67,18 @@ struct LockIconEditor: View {
                             .padding(.bottom, 10)
                             .disabled(editMode)
                         }
-                        
+
                         ForEach(personalizeManager.lockIcons) { lock in
                             ZStack {
-                                Button(action: { personalizeManager.selectUserLockIcon(userLock: lock) }) {
+                                Button(action: {
+                                    personalizeManager.selectUserLockIcon(userLock: lock)
+                                }) {
                                     ZStack {
                                         RoundedRectangle(cornerRadius: 5)
-                                            .stroke(lock == settings.selectedUserLock ? .white : .gray, lineWidth: 1)
-                                        
+                                            .stroke(
+                                                lock == settings.selectedUserLock ? .white : .gray,
+                                                lineWidth: 1)
+
                                         Image(nsImage: lock.getIconImage() ?? NSImage())
                                             .resizable()
                                             .aspectRatio(contentMode: .fit)
@@ -78,21 +89,26 @@ struct LockIconEditor: View {
                                     .contentShape(.rect)
                                 }
                                 .disabled(editMode)
-                                
+
                                 if editMode {
-                                    Button(action: { personalizeManager.deleteLockIcon(userLock: lock) }) {
+                                    Button(action: {
+                                        personalizeManager.deleteLockIcon(userLock: lock)
+                                    }) {
                                         ZStack {
                                             Circle()
                                                 .fill(.red)
                                                 .frame(width: 16, height: 16)
-                                            
+
                                             Image(systemName: "xmark")
                                                 .font(.caption2)
                                                 .fontWeight(.bold)
                                         }
                                         .frame(width: 16, height: 16)
                                         .contentShape(.rect)
-                                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                                        .frame(
+                                            maxWidth: .infinity, maxHeight: .infinity,
+                                            alignment: .topTrailing
+                                        )
                                         .padding(.trailing, 4)
                                         .padding(.top, -6)
                                     }
@@ -107,12 +123,12 @@ struct LockIconEditor: View {
                     .padding(10)
                 }
             }
-            
+
             HStack {
                 Button(action: { editMode.toggle() }) {
                     Text(editMode ? "Done" : "Edit")
                 }
-                
+
                 Button(action: { dismiss() }) {
                     Text("Close")
                 }

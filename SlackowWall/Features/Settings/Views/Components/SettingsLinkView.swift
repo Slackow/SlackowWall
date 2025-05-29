@@ -11,19 +11,22 @@ struct SettingsLinkView<Destination: View>: View {
     let title: String
     var description: String?
     let destination: () -> Destination
-    
-    init(title: String, description: String? = nil, @ViewBuilder destination: @escaping () -> Destination) {
+
+    init(
+        title: String, description: String? = nil,
+        @ViewBuilder destination: @escaping () -> Destination
+    ) {
         self.title = title
         self.description = description
         self.destination = destination
     }
-    
+
     init(title: String, description: String? = nil, destination: Destination) {
         self.title = title
         self.description = description
         self.destination = { destination }
     }
-    
+
     var body: some View {
         NavigationLink {
             SettingsPageView(title: title, isSubPage: true, content: destination)
@@ -31,7 +34,7 @@ struct SettingsLinkView<Destination: View>: View {
             HStack(alignment: .center) {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(title)
-                    
+
                     if let description {
                         Text(.init(description))
                             .font(.caption)
@@ -40,7 +43,7 @@ struct SettingsLinkView<Destination: View>: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                
+
                 Image(systemName: "chevron.right")
                     .font(.caption)
                     .fontWeight(.bold)
@@ -58,7 +61,7 @@ struct SettingsLinkView<Destination: View>: View {
         SettingsLinkView(title: "Sample Title", description: "This is an example description.") {
             Text("Hi")
         }
-        
+
         SettingsLinkView(title: "Sample Title", destination: Text("Hi"))
     }
     .padding()

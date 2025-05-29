@@ -46,7 +46,8 @@ class PersonalizeManager: ObservableObject {
 
         do {
             try fileManager.copyItem(at: url, to: destinationURL)
-            try fileManager.setAttributes([.creationDate: Date.now], ofItemAtPath: destinationURL.path)
+            try fileManager.setAttributes(
+                [.creationDate: Date.now], ofItemAtPath: destinationURL.path)
         } catch {
             print("Failed to copy image: \(error.localizedDescription)")
         }
@@ -54,11 +55,15 @@ class PersonalizeManager: ObservableObject {
 
     private func loadLockIcons() {
         do {
-            let fileURLs = try fileManager.contentsOfDirectory(at: baseURL, includingPropertiesForKeys: [.creationDateKey], options: .skipsHiddenFiles)
+            let fileURLs = try fileManager.contentsOfDirectory(
+                at: baseURL, includingPropertiesForKeys: [.creationDateKey],
+                options: .skipsHiddenFiles)
 
             let sortedFileURLs = fileURLs.sorted { (url1, url2) -> Bool in
-                let creationDate1 = try? url1.resourceValues(forKeys: [.creationDateKey]).creationDate
-                let creationDate2 = try? url2.resourceValues(forKeys: [.creationDateKey]).creationDate
+                let creationDate1 = try? url1.resourceValues(forKeys: [.creationDateKey])
+                    .creationDate
+                let creationDate2 = try? url2.resourceValues(forKeys: [.creationDateKey])
+                    .creationDate
                 return (creationDate1 ?? Date.distantPast) < (creationDate2 ?? Date.distantPast)
             }
 

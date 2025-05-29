@@ -10,7 +10,7 @@ import SwiftUI
 struct ToolbarAlertView: View {
     @ObservedObject private var alertManager = AlertManager.shared
     @State private var showPopover: Bool = false
-    
+
     var body: some View {
         Button(action: { showPopover.toggle() }) {
             Image(systemName: "exclamationmark.triangle.fill")
@@ -29,14 +29,14 @@ struct ToolbarAlertView: View {
 struct PopoverView: View {
     @ObservedObject private var alertManager = AlertManager.shared
     @State var error: String
-    
+
     var body: some View {
         VStack(spacing: 12) {
             Text(error)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
                 .padding(.top)
-            
+
             if alertManager.alert == .noScreenPermission {
                 Button("Open System Settings") {
                     alertManager.requestScreenRecordingPermission()

@@ -12,7 +12,7 @@ struct KeybindingView: View {
     @FocusState var isFocused: Bool
     @State private var circleColor: Color = .gray
     var defaultValue: UInt16?
-    
+
     private var textName: String {
         KeyCode.toName(code: keybinding)
     }
@@ -22,14 +22,14 @@ struct KeybindingView: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 5)
                     .foregroundColor(.init(red: 0.25, green: 0.25, blue: 0.25))
-                
+
                 Text(isFocused ? "> \(textName) <" : textName)
                     .foregroundStyle(isFocused ? .gray : .white)
                     .frame(maxWidth: .infinity, alignment: .center)
             }
             .focusable(true)
             .focused($isFocused)
-            
+
             Button(action: {
                 keybinding = defaultValue
                 isFocused = false
@@ -38,7 +38,7 @@ struct KeybindingView: View {
                     Circle()
                         .fill(defaultValue == keybinding ? .gray.opacity(0.5) : circleColor)
                         .frame(width: 16)
-                    
+
                     Image(systemName: "xmark")
                         .font(.caption2)
                         .fontWeight(.bold)
