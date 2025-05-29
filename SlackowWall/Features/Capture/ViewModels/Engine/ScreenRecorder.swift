@@ -5,7 +5,7 @@
 //  Created by Kihron on 1/12/23.
 //
 
-import ScreenCaptureKit
+@preconcurrency import ScreenCaptureKit
 import Combine
 import OSLog
 import SwiftUI

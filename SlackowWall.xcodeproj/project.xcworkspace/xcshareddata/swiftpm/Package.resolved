@@ -1,6 +1,15 @@
 {
-  "originHash" : "010bb15673996abe365a0801460557f0c6ff45c4788960014a496a56816cc1b2",
+  "originHash" : "12132f7c2287a134332f14fbc904d456de38e3fbdefc74846ca43a2abc4b24f2",
   "pins" : [
+    {
+      "identity" : "defaultcodable",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Kihron/DefaultCodable",
+      "state" : {
+        "branch" : "main",
+        "revision" : "96286154929f5e999cd19232a2da14e3be4c99c5"
+      }
+    },
     {
       "identity" : "gzipswift",
       "kind" : "remoteSourceControl",
