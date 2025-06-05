@@ -22,6 +22,13 @@
 			remoteGlobalIDString = 496BFAB82DE7D7B600209079;
 			remoteInfo = PacemanWrapper;
 		};
+		B655208D2DF22BF900137480 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 498FB3C028987F5B00405753 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 498FB3C728987F5B00405753;
+			remoteInfo = SlackowWall;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -50,6 +57,7 @@
 /* Begin PBXFileReference section */
 		496BFAB92DE7D7B600209079 /* PacemanWrapper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PacemanWrapper; sourceTree = BUILT_PRODUCTS_DIR; };
 		498FB3C828987F5B00405753 /* SlackowWall.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SlackowWall.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B65520892DF22BF900137480 /* SlackowWallTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SlackowWallTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -75,6 +83,7 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		496BFABA2DE7D7B600209079 /* PacemanWrapper */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = PacemanWrapper; sourceTree = "<group>"; };
+		B655208A2DF22BF900137480 /* SlackowWallTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = SlackowWallTests; sourceTree = "<group>"; };
 		B6CDDD8B2DC93246004CDEA8 /* SlackowWall */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B6CDDDF72DC93246004CDEA8 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 496BFAC12DE7E33100209079 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = SlackowWall; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -97,6 +106,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B65520862DF22BF900137480 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -105,6 +121,7 @@
 			children = (
 				B6CDDD8B2DC93246004CDEA8 /* SlackowWall */,
 				496BFABA2DE7D7B600209079 /* PacemanWrapper */,
+				B655208A2DF22BF900137480 /* SlackowWallTests */,
 				498FB3C928987F5B00405753 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -114,6 +131,7 @@
 			children = (
 				498FB3C828987F5B00405753 /* SlackowWall.app */,
 				496BFAB92DE7D7B600209079 /* PacemanWrapper */,
+				B65520892DF22BF900137480 /* SlackowWallTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -171,6 +189,29 @@
 			productReference = 498FB3C828987F5B00405753 /* SlackowWall.app */;
 			productType = "com.apple.product-type.application";
 		};
+		B65520882DF22BF900137480 /* SlackowWallTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B65520912DF22BF900137480 /* Build configuration list for PBXNativeTarget "SlackowWallTests" */;
+			buildPhases = (
+				B65520852DF22BF900137480 /* Sources */,
+				B65520862DF22BF900137480 /* Frameworks */,
+				B65520872DF22BF900137480 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B655208E2DF22BF900137480 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				B655208A2DF22BF900137480 /* SlackowWallTests */,
+			);
+			name = SlackowWallTests;
+			packageProductDependencies = (
+			);
+			productName = SlackowWallTests;
+			productReference = B65520892DF22BF900137480 /* SlackowWallTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -178,7 +219,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1630;
+				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1630;
 				TargetAttributes = {
 					496BFAB82DE7D7B600209079 = {
@@ -186,6 +227,10 @@
 					};
 					498FB3C728987F5B00405753 = {
 						CreatedOnToolsVersion = 13.4.1;
+					};
+					B65520882DF22BF900137480 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 498FB3C728987F5B00405753;
 					};
 				};
 			};
@@ -210,12 +255,20 @@
 			targets = (
 				498FB3C728987F5B00405753 /* SlackowWall */,
 				496BFAB82DE7D7B600209079 /* PacemanWrapper */,
+				B65520882DF22BF900137480 /* SlackowWallTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		498FB3C628987F5B00405753 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B65520872DF22BF900137480 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -239,6 +292,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B65520852DF22BF900137480 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -246,6 +306,11 @@
 			isa = PBXTargetDependency;
 			target = 496BFAB82DE7D7B600209079 /* PacemanWrapper */;
 			targetProxy = 496BFAC22DE7E9BB00209079 /* PBXContainerItemProxy */;
+		};
+		B655208E2DF22BF900137480 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 498FB3C728987F5B00405753 /* SlackowWall */;
+			targetProxy = B655208D2DF22BF900137480 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -483,6 +548,53 @@
 			};
 			name = Release;
 		};
+		B655208F2DF22BF900137480 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = D64G2TTYWM;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.slackow.SlackowWallTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SlackowWall.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SlackowWall";
+			};
+			name = Debug;
+		};
+		B65520902DF22BF900137480 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = D64G2TTYWM;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.slackow.SlackowWallTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SlackowWall.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SlackowWall";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -509,6 +621,15 @@
 			buildConfigurations = (
 				498FB3D828987F5E00405753 /* Debug */,
 				498FB3D928987F5E00405753 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B65520912DF22BF900137480 /* Build configuration list for PBXNativeTarget "SlackowWallTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B655208F2DF22BF900137480 /* Debug */,
+				B65520902DF22BF900137480 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
