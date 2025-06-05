@@ -5,11 +5,9 @@
 //  Created by Andrew on 5/26/25.
 //
 
-import CachedAsyncImage
 import SwiftUI
 
 struct UtilitySettings: View {
-
     @Environment(\.openURL) private var openURL
     @Environment(\.openWindow) private var openWindow
 
@@ -25,38 +23,48 @@ struct UtilitySettings: View {
     @State var tallSensitivityScale: Double = Settings[\.utility].tallSensitivityScale
 
     var body: some View {
-        SettingsPageView(title: "Utilities", shouldDisableFocus: false) {
-
+        SettingsPageView(title: "Utilities", shouldDisableFocus: true) {
             SettingsLabel(
                 title: "Eye Projector",
                 description: """
                     Settings for an automated eye projector for tall eye.
                     """)
+
             SettingsCardView {
                 VStack {
                     HStack {
                         SettingsLabel(title: "Enabled", font: .body)
+
                         Button("Open") {
                             openWindow(id: "eye-projector-window")
-                        }.disabled(!settings.eyeProjectorEnabled)
+                        }
+                        .disabled(!settings.eyeProjectorEnabled)
+
                         Toggle("", isOn: $settings.eyeProjectorEnabled)
                             .labelsHidden()
                             .toggleStyle(.switch)
                             .tint(.accentColor)
                     }
+
                     Group {
                         Divider()
+
                         SettingsToggleView(
                             title: "Open/Close With Tall Mode",
-                            option: $settings.eyeProjectorOpenWithTallMode)
+                            option: $settings.eyeProjectorOpenWithTallMode
+                        )
+
                         Divider()
+
                         HStack {
                             SettingsLabel(
                                 title: "Height Scale",
                                 description: """
                                     Adjusts the "Stretch" on the y axis, \
                                     you probably want the default (0.2)
-                                    """, font: .body)
+                                    """,
+                                font: .body
+                            )
 
                             TextField(
                                 "", value: $settings.eyeProjectorHeightScale,
@@ -70,19 +78,25 @@ struct UtilitySettings: View {
                     .disabled(!settings.eyeProjectorEnabled)
                 }
             }
+
             SettingsLabel(
                 title: "Sensitivity Scaling",
                 description: """
                     Allows your sensitivity to change when in tall mode, and to use lower \
                     sensitivities without affecting your unlocked cursor movements.
-                    """)
+                    """
+            )
+
             SettingsCardView {
                 VStack {
                     SettingsToggleView(title: "Enabled", option: $settings.sensitivityScaleEnabled)
+
                     Group {
                         Divider()
+
                         HStack {
                             SettingsLabel(title: "Sensitivity Scale", font: .body)
+
                             TextField(
                                 "", value: $sensitivityScale,
                                 format: .number.grouping(.never)
@@ -93,12 +107,17 @@ struct UtilitySettings: View {
                             .onChange(of: sensitivityScale) { _, newValue in
                                 if 0.1...50 ~= newValue {
                                     Settings[\.utility].sensitivityScale = newValue
+                                    MouseSensitivityManager.shared.setSensitivityFactor(
+                                        factor: newValue)
                                 }
                             }
                         }
+
                         Divider()
+
                         HStack {
                             SettingsLabel(title: "Tall Mode Sensitivity Scale", font: .body)
+
                             TextField(
                                 "", value: $tallSensitivityScale,
                                 format: .number.grouping(.never)
@@ -126,27 +145,32 @@ struct UtilitySettings: View {
                     """
             )
             .padding(.bottom, -6)
+
             SettingsCardView {
                 SettingsToggleView(
                     title: "Auto-launch Paceman",
                     description: "Automatically launch Paceman with SlackowWall.",
                     option: $settings.autoLaunchPaceman)
             }
+
             SettingsLabel(
                 title: "Paceman Tracker",
                 description:
                     "These settings are directly tied to the Paceman tracker, and require it to be restarted in order to take effect."
             )
+
             SettingsCardView {
                 VStack {
                     HStack {
                         Text("Paceman Token")
                             .frame(maxWidth: .infinity, alignment: .leading)
+
                         Button("Test") {
                             Task {
-                                await testToken()
+                                await validateToken()
                             }
                         }
+
                         SecureField(
                             "", text: $pacemanManager.pacemanConfig.accessKey,
                             onCommit: {
@@ -159,17 +183,22 @@ struct UtilitySettings: View {
                         .frame(width: 120)
                         .disabled(pacemanManager.isRunning)
                     }
+
                     Divider()
+
                     SettingsToggleView(
                         title: "Track Reset Statistics",
                         option: $pacemanManager.pacemanConfig.resetStatsEnabled
                     )
                     .disabled(pacemanManager.isRunning)
+
                     Divider()
+
                     HStack {
                         SettingsLabel(
                             title: "Start/Stop Paceman",
                             description: "Paceman will close with SlackowWall.", font: .body)
+
                         Button {
                             if pacemanManager.isRunning {
                                 pacemanManager.stopPaceman()
@@ -208,7 +237,7 @@ struct UtilitySettings: View {
                 switch response {
                     case .empty:
                         Text("No token found, generate here: paceman.gg")
-                    case .valid(let name):
+                    case .valid:
                         Text("Token is Valid!")
                     case .invalid:
                         Text("Invalid token, check it was input correctly.")
@@ -219,13 +248,13 @@ struct UtilitySettings: View {
         }
     }
 
-    func testToken() async {
+    private func validateToken() async {
         let token = pacemanManager.pacemanConfig.accessKey
         if token.isEmpty {
             tokenResponse = .empty
         } else {
             do {
-                if let uuid = try await PacemanManager.testToken(token: token) {
+                if let uuid = try await PacemanManager.validateToken(token: token) {
                     tokenResponse = .valid(uuid)
                 } else {
                     tokenResponse = .invalid
@@ -236,11 +265,6 @@ struct UtilitySettings: View {
             }
         }
         showTokenAlert = true
-    }
-
-    enum TokenResponse {
-        case valid(String)
-        case invalid, empty, unable
     }
 
     private func getAvatarURL(_ uuid: String) -> URL? {

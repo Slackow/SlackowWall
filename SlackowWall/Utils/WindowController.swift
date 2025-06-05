@@ -13,7 +13,7 @@ class WindowController {
 
     static func focusWindow(_ pid: pid_t) {
         NSRunningApplication(processIdentifier: pid)?.activate(options: [
-            .activateAllWindows, .activateIgnoringOtherApps,
+            .activateAllWindows /*.activateIgnoringOtherApps, (For macOS 13.)*/
         ])
     }
 

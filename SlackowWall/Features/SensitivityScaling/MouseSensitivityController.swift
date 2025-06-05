@@ -5,29 +5,32 @@
 //  Created by Andrew on 6/1/25.
 //
 
+import CoreGraphics
 /// Scales raw HID deltas before the cursor moves.
 /// Call `start(factor:)` with a factor < 1 to slow the mouse,
 /// 1.0 to restore normal speed, or `stop()` to detach completely.
-import Cocoa
-import CoreGraphics
+import Foundation
 
 class MouseSensitivityManager: ObservableObject {
-
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
     @Published var isActive = false
 
     private var sensitivityFactor: Double = 1.0
 
-    @MainActor public static let shared = MouseSensitivityManager()
+    private var accumulatedDeltaX: Double = 0
+    private var accumulatedDeltaY: Double = 0
+
+    @MainActor static let shared = MouseSensitivityManager()
 
     func setSensitivityFactor(factor: Double) {
-        guard Settings.shared.preferences.utility.sensitivityScaleEnabled else {
+        guard Settings[\.utility].sensitivityScaleEnabled else {
             LogManager.shared.appendLog(
                 "Sensitivity Scale Disabled \(Settings[\.utility].sensitivityScaleEnabled), attempted to set to \(factor)"
             )
             return
         }
+
         LogManager.shared.appendLog("Changing Sensitivity Factor to", factor)
         if isActive { stopReducingSensitivity() }
         let factor = (0.1...50).clamped(value: factor)
@@ -84,9 +87,6 @@ class MouseSensitivityManager: ObservableObject {
         isActive = false
     }
 
-    private var accumulatedDeltaX: Double = 0
-    private var accumulatedDeltaY: Double = 0
-
     private func handleMouseEvent(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent)
         -> Unmanaged<CGEvent>?
     {
@@ -96,6 +96,7 @@ class MouseSensitivityManager: ObservableObject {
         guard deltaX != 0 || deltaY != 0 else {
             return Unmanaged.passUnretained(event)
         }
+
         accumulatedDeltaX += Double(deltaX) * sensitivityFactor
         accumulatedDeltaY += Double(deltaY) * sensitivityFactor
 

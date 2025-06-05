@@ -29,24 +29,14 @@ struct ToolbarUtilityModeView: View {
                 Image(systemName: "hammer\(Settings[\.behavior].utilityMode ? ".fill" : "")")
             }
         }
-        .popover(isPresented: $isHovered) {
+        .instantPopover(isPresented: $isHovered) {
             Text("Utility Mode")
-                .padding(6)
+                .padding(8)
                 .allowsHitTesting(false)
         }
         .onHover {
             isHovered = $0
             isActuallyHovered = $0
-        }
-        .onChange(of: isHovered) { _, hovered in
-            if hovered != isActuallyHovered {
-                Settings[\.behavior].utilityMode.toggle()
-                // Reset capture system when utility mode is toggled via hover
-                Task {
-                    // The notification will handle the alert state changes
-                    await ScreenRecorder.shared.resetAndStartCapture()
-                }
-            }
         }
     }
 }

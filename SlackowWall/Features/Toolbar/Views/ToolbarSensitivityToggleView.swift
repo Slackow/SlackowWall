@@ -26,19 +26,14 @@ struct ToolbarSensitivityToggleView: View {
                 Image(systemName: "computermouse\(settings.sensitivityScaleEnabled ? ".fill" : "")")
             }
         }
-        .popover(isPresented: $isHovered) {
+        .instantPopover(isPresented: $isHovered) {
             Text("Sensitivity Scaling")
-                .padding(6)
+                .padding(8)
                 .allowsHitTesting(false)
         }
         .onHover {
             isHovered = $0
             isActuallyHovered = $0
-        }
-        .onChange(of: isHovered) { _, hovered in
-            if hovered != isActuallyHovered {
-                settings.sensitivityScaleEnabled.toggle()
-            }
         }
         .onChange(of: settings.sensitivityScaleEnabled) { _, newValue in
             LogManager.shared.appendLog(

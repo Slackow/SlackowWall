@@ -31,17 +31,17 @@ struct PrismQuickLaunchView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                if !store.favourites.isEmpty {
+                if !store.favorites.isEmpty {
                     Text("Pinned")
                         .font(.headline)
                         .padding(.horizontal)
 
                     LazyVGrid(columns: grid, spacing: 16) {
-                        ForEach(store.favourites) { inst in
+                        ForEach(store.favorites) { inst in
                             PrismInstanceCell(
                                 instance: inst,
-                                isFavourite: true,
-                                toggleFavourite: store.toggleFavourite,
+                                isFavorite: true,
+                                toggleFavorite: store.toggleFavorite,
                                 launch: launchAndDismiss)
                         }
                     }
@@ -56,8 +56,8 @@ struct PrismQuickLaunchView: View {
                     ForEach(filteredInstances) { inst in
                         PrismInstanceCell(
                             instance: inst,
-                            isFavourite: store.isFavourite(inst),
-                            toggleFavourite: store.toggleFavourite,
+                            isFavorite: store.isFavorite(inst),
+                            toggleFavorite: store.toggleFavorite,
                             launch: launchAndDismiss)
                     }
                 }
@@ -65,7 +65,6 @@ struct PrismQuickLaunchView: View {
             }
             .padding(.vertical)
         }
-        .searchable(text: $searchText)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Close") {
@@ -73,6 +72,8 @@ struct PrismQuickLaunchView: View {
                 }.focusable()
             }
         }
+        .searchable(text: $searchText)
         .frame(minWidth: 550, idealWidth: 550, minHeight: 250, idealHeight: 450)
+        .removeFocusOnTap()
     }
 }

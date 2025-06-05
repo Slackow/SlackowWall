@@ -1,5 +1,5 @@
 //
-//  PrismInstance.swift
+//  PrismInstanceStore.swift
 //  SlackowWall
 //
 //  Created by Andrew on 5/30/25.
@@ -8,28 +8,20 @@
 import AppKit
 import SwiftUI
 
-struct PrismInstance: Identifiable, Hashable {
-    var id: String { name }
-    let name: String
-    let icon: NSImage
-}
-
 @MainActor
 final class PrismInstanceStore: ObservableObject {
     @Published private(set) var instances: [PrismInstance] = []
-    @Published private(set) var favourites: [PrismInstance] = []
+    @Published private(set) var favorites: [PrismInstance] = []
 
-    private let favouritesKey = "quickLaunchPinnedInstances"
+    private let favoritesKey = "quickLaunchPinnedInstances"
 
     init() {
         reload()
     }
 
-    // MARK: Discovery
-
     func reload() {
         instances = discoverInstances()
-        loadFavourites()
+        loadFavorites()
     }
 
     private func discoverInstances() -> [PrismInstance] {
@@ -61,32 +53,37 @@ final class PrismInstanceStore: ObservableObject {
         .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
     }
 
-    private func loadFavourites() {
-        let names = UserDefaults.standard.stringArray(forKey: favouritesKey) ?? []
-        favourites = names.compactMap { name in
+    private func loadFavorites() {
+        let names = UserDefaults.standard.stringArray(forKey: favoritesKey) ?? []
+        favorites = names.compactMap { name in
             instances.first { $0.name == name }
         }
     }
 
-    func isFavourite(_ instance: PrismInstance) -> Bool {
-        favourites.contains(instance)
+    func isFavorite(_ instance: PrismInstance) -> Bool {
+        favorites.contains(instance)
     }
 
-    func toggleFavourite(_ instance: PrismInstance) {
-        var names = UserDefaults.standard.stringArray(forKey: favouritesKey) ?? []
+    func toggleFavorite(_ instance: PrismInstance) {
+        var names = UserDefaults.standard.stringArray(forKey: favoritesKey) ?? []
         if let idx = names.firstIndex(of: instance.name) {
             names.remove(at: idx)
         } else {
             names.insert(instance.name, at: 0)
         }
-        UserDefaults.standard.set(names, forKey: favouritesKey)
-        loadFavourites()
+        UserDefaults.standard.set(names, forKey: favoritesKey)
+        loadFavorites()
     }
 
     func launch(_ instance: PrismInstance) {
         let task = Process()
         let openInst =
-            #"killall prismlauncher;open -a "Prism Launcher" --args --launch "\#(instance.name)""#
+            """
+            killall prismlauncher; \
+            open -a "Prism Launcher" --args --launch "\(instance.name)" || \
+            open -a "PrismLauncher" --args --launch "\(instance.name)" 
+            """
+
         task.launchPath = "/bin/sh"
         task.arguments = ["-c", openInst]
         try? task.run()

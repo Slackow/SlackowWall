@@ -7,10 +7,12 @@
 
 import Foundation
 
-@MainActor class PacemanManager: Manager, ObservableObject {
+class PacemanManager: Manager, ObservableObject {
     static let shared = PacemanManager()
+
     let configPath = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(
         ".config/PaceMan/options.json")
+
     var pacemanConfig: PacemanConfig {
         didSet {
             do {
@@ -25,7 +27,7 @@ import Foundation
     @Published private(set) var isRunning: Bool = false
 
     private init() {
-        let fm = FileManager.default
+        let fileManager = FileManager.default
         if let data = try? Data(contentsOf: configPath),
             let cfg = try? JSONDecoder().decode(PacemanConfig.self, from: data)
         {
@@ -33,7 +35,7 @@ import Foundation
         } else {
             LogManager.shared.appendLog("No Paceman config found, creating default.")
             do {
-                try fm.createDirectory(
+                try fileManager.createDirectory(
                     at: configPath.deletingLastPathComponent(), withIntermediateDirectories: true)
             } catch {
                 LogManager.shared.appendLog("Failed to create default Paceman config: \(error)")
@@ -84,10 +86,10 @@ import Foundation
     func stopPaceman() {
         guard let proc = wrapperProcess, proc.isRunning else { return }
 
-        Task.detached { [weak self] in
+        Task.detached {
             proc.terminate()
             proc.waitUntilExit()  // wait off‑main‑thread
-            await MainActor.run {
+            await MainActor.run { [weak self] in
                 // only clear if we’re still pointing at this proc
                 if self?.wrapperProcess === proc {
                     self?.wrapperProcess = nil
@@ -104,7 +106,7 @@ import Foundation
         try pretty.write(to: configPath, options: .atomic)
     }
 
-    static func testToken(token: String) async throws -> String? {
+    static func validateToken(token: String) async throws -> String? {
         guard let url = URL(string: "https://paceman.gg/api/test") else { throw URLError(.badURL) }
         var req = URLRequest(url: url)
         req.httpMethod = "POST"

@@ -9,8 +9,8 @@ import SwiftUI
 
 struct PrismInstanceCell: View {
     let instance: PrismInstance
-    let isFavourite: Bool
-    let toggleFavourite: (PrismInstance) -> Void
+    let isFavorite: Bool
+    let toggleFavorite: (PrismInstance) -> Void
     let launch: (PrismInstance) -> Void
     @State var isHovered: Bool = false
 
@@ -34,8 +34,8 @@ struct PrismInstanceCell: View {
                 .frame(height: 20)
 
             HStack(spacing: 12) {
-                Button(action: { toggleFavourite(instance) }) {
-                    Image(systemName: isFavourite ? "star.fill" : "star")
+                Button(action: { toggleFavorite(instance) }) {
+                    Image(systemName: isFavorite ? "star.fill" : "star")
                 }
                 .buttonStyle(.plain)
             }
