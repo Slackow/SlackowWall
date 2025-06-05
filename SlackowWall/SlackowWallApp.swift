@@ -16,7 +16,10 @@ struct SlackowWallApp: App {
     @ObservedObject private var instanceManager = InstanceManager.shared
     @ObservedObject private var shortcutManager = ShortcutManager.shared
     @ObservedObject private var alertManager = AlertManager.shared
-    @ObservedObject private var profileManager = ProfileManager.shared
+    @AppSettings(\.profile)
+    private var profile
+    @AppSettings(\.behavior)
+    private var behavior
 
     init() {
         NSSplitViewItem.swizzle()
@@ -25,32 +28,38 @@ struct SlackowWallApp: App {
     var body: some Scene {
         Window("SlackowWall", id: "slackowwall-window") {
             ContentView()
-            .frame(minWidth: 300, minHeight: 200)
-            .toolbar {
-                ToolbarItem(placement: .automatic) {
-                    HStack(spacing: 8) {
+                .frame(minWidth: 300, minHeight: 210)
+                .toolbar {
+                    ToolbarItem(placement: .automatic) {
                         HStack(spacing: 8) {
-                            if !trackingManager.trackedInstances.isEmpty && !profileManager.profile.utilityMode {
-                                ToolbarStopView()
-                            }
+                            HStack(spacing: 8) {
+                                if !trackingManager.trackedInstances.isEmpty
+                                    && !behavior.utilityMode
+                                {
+                                    ToolbarStopView()
+                                }
 
-                            if alertManager.alert != nil {
-                                ToolbarAlertView()
+                                if alertManager.alert != nil {
+                                    ToolbarAlertView()
+                                }
                             }
+                            .frame(width: 48, height: 40, alignment: .trailing)
+                            .animation(
+                                .easeInOut(duration: 0.3), value: trackingManager.trackedInstances
+                            )
+                            .animation(.easeInOut(duration: 0.3), value: alertManager.alert)
+
+                            ToolbarSensitivityToggleView()
+
+                            ToolbarUtilityModeView()
+
+                            ToolbarSettingsView()
+
+                            ToolbarRefreshView()
                         }
-                        .frame(width: 48, height: 40, alignment: .trailing)
-                        .animation(.easeInOut(duration: 0.3), value: trackingManager.trackedInstances)
-                        .animation(.easeInOut(duration: 0.3), value: alertManager.alert)
-
-                        ToolbarUtilityModeView()
-
-                        ToolbarSettingsView()
-
-                        ToolbarRefreshView()
                     }
                 }
-            }
-            .navigationTitle("SlackowWall - Profile: \(profileManager.profile.profileName)")
+                .navigationTitle("SlackowWall - Profile: \(profile.name)")
         }
         .windowResizability(.contentSize)
 
@@ -72,7 +81,7 @@ struct SlackowWallApp: App {
                             ),
                             NSApplication.AboutPanelOptionKey(
                                 rawValue: "Copyright"
-                            ): "Copyright © 2025 Slackow, Kihron."
+                            ): "Copyright © 2025 Slackow, Kihron.",
                         ]
                     )
                 }
@@ -83,11 +92,13 @@ struct SlackowWallApp: App {
                 }
                 .keyboardShortcut(",", modifiers: .command)
             }
-            CommandGroup(after: .appInfo, addition: {
-                Button("Check for updates...") {
-                    UpdateManager.shared.checkForUpdates()
-                }
-            })
+            CommandGroup(
+                after: .appInfo,
+                addition: {
+                    Button("Check for updates...") {
+                        UpdateManager.shared.checkForUpdates()
+                    }
+                })
             CommandGroup(after: .help) {
                 Divider()
 
@@ -103,13 +114,21 @@ struct SlackowWallApp: App {
             }
         }
         .windowResizability(.contentSize)
+        Window("Eye Projector", id: "eye-projector-window") {
+            EyeProjectorWindowView()
+                .frame(minWidth: 300, minHeight: 200)
+        }
+        .windowResizability(.contentSize)
+        .onChange(of: shortcutManager.eyeProjectorOpen) { oldValue, newValue in
+            if newValue {
+                openWindow(id: "eye-projector-window")
+            }
+        }
     }
 }
 
-
 class AppDelegate: NSObject, NSApplicationDelegate {
     var eventMonitor: Any?
-    var pacemanProcess: Process?
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         true
@@ -121,43 +140,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             ShortcutManager.shared.handleGlobalKey(event)
         }
         OBSManager.shared.writeScript()
+        if Settings[\.utility].autoLaunchPaceman { PacemanManager.shared.startPaceman() }
         // Start the instance check timer
         TrackingManager.shared.startInstanceCheckTimer()
-    }
-    
-    func startPaceman() {
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-        process.arguments = [
-            "java",
-            "-Dapple.awt.UIElement=true",
-            "-jar",
-            "/Users/andrew/Library/Application Support/SlackowWall/paceman-tracker-0.7.0.jar",
-            "--nogui"
-        ]
-        process.terminationHandler = { _ in
-            LogManager.shared.appendLog("Paceman exited")
-        }
-
-        process.standardOutput = Pipe()
-        process.standardError = Pipe()
-
-        do {
-            try process.run()
-            LogManager.shared.appendLog("Paceman started")
-            pacemanProcess = process
-
-            // Put it in its own process group
-            setpgid(process.processIdentifier, process.processIdentifier)
-
-            // Ensure the group is killed on exit
-            atexit_b {
-                kill(-process.processIdentifier, SIGTERM)
-            }
-
-        } catch {
-            print("Failed to launch: \(error)")
-        }
     }
 
     func applicationWillFinishLaunching(_ notification: Notification) {
@@ -167,6 +152,5 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationWillTerminate(_ notification: Notification) {
         // Clean up the timer when the app is about to terminate
         TrackingManager.shared.stopInstanceCheckTimer()
-        pacemanProcess?.terminate()
     }
 }

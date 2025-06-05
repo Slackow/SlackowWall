@@ -2,3 +2,4 @@
 grep
 **/.DS_Store
 SwiftAA.xcodeproj/project.xcworkspace/xcuserdata/**
+/buildServer.json

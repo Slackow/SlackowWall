@@ -1,13 +1,22 @@
 {
-  "originHash" : "2c4865e98bcf457308601c86b7167bb401d7eb0084b4f0692d409a89a276c16b",
+  "originHash" : "75b1237668cc764808222834fade8ad220b927c859d88528f06f4f1f8e2769a2",
   "pins" : [
+    {
+      "identity" : "defaultcodable",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Kihron/DefaultCodable",
+      "state" : {
+        "branch" : "main",
+        "revision" : "669d088e429dd67cea421dc5c57eac257a884491"
+      }
+    },
     {
       "identity" : "gzipswift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/1024jp/GzipSwift",
       "state" : {
-        "revision" : "731037f6cc2be2ec01562f6597c1d0aa3fe6fd05",
-        "version" : "6.0.1"
+        "revision" : "56bf51fdd2fe4b2cf254b2cf34aede3d7caccc6c",
+        "version" : "6.1.0"
       }
     },
     {
@@ -17,6 +26,15 @@
       "state" : {
         "revision" : "0ef1ee0220239b3776f433314515fd849025673f",
         "version" : "2.6.4"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax.git",
+      "state" : {
+        "revision" : "f99ae8aa18f0cf0d53481901f88a0991dc3bd4a2",
+        "version" : "601.0.1"
       }
     },
     {
