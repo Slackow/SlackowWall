@@ -16,6 +16,8 @@ struct CaptureGridView: View {
 
     @Namespace private var gridSpace
 
+    @State var quickLaunchOpen = false
+
     @AppSettings(\.behavior)
     private var behavior
     @AppSettings(\.instance)
@@ -27,11 +29,24 @@ struct CaptureGridView: View {
                 && (!behavior.utilityMode || trackingManager.trackedInstances.isEmpty)
             {
                 if trackingManager.trackedInstances.isEmpty {
+                    Spacer()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     Text("No Minecraft\nInstances Detected")
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    Button(action: { quickLaunchOpen.toggle() }) {
+                        HStack {
+                            Image(systemName: "play.fill")
+                                .foregroundStyle(.green)
+                            Text("Quick Launch")
+                        }
+                    }
+                    .sheet(isPresented: $quickLaunchOpen) {
+                        PrismQuickLaunchView()
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             } else {
                 Group {
@@ -76,15 +91,15 @@ struct CaptureGridView: View {
         }
         .padding(5)
         .task { await screenRecorder.startCapture() }
-        .onChange(of: gridManager.isActive) { value in
+        .onChange(of: gridManager.isActive) { _, value in
             gridManager.handleLostFocus(isActive: value)
         }
-        .onChange(of: gridManager.showInfo) { value in
+        .onChange(of: gridManager.showInfo) { _, value in
             if !value {
                 gridManager.showInstanceInfo()
             }
         }
-        .onChange(of: trackingManager.isCaptureReady) { _ in
+        .onChange(of: trackingManager.isCaptureReady) {
             gridManager.applyGridAnimation()
         }
         .onAppear {

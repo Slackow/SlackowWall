@@ -11,6 +11,7 @@ import SwiftUI
 struct UtilitySettings: View {
 
     @Environment(\.openURL) private var openURL
+    @Environment(\.openWindow) private var openWindow
 
     @AppSettings(\.utility) private var settings
     @AppSettings(\.keybinds) private var keybinds
@@ -20,14 +21,108 @@ struct UtilitySettings: View {
     @State private var showTokenAlert = false
     @State var tokenResponse: TokenResponse?
 
+    @State var sensitivityScale: Double = Settings[\.utility].sensitivityScale
+    @State var tallSensitivityScale: Double = Settings[\.utility].tallSensitivityScale
+
     var body: some View {
         SettingsPageView(title: "Utilities", shouldDisableFocus: false) {
+
+            SettingsLabel(
+                title: "Eye Projector",
+                description: """
+                    Settings for an automated eye projector for tall eye.
+                    """)
+            SettingsCardView {
+                VStack {
+                    HStack {
+                        SettingsLabel(title: "Enabled", font: .body)
+                        Button("Open") {
+                            openWindow(id: "eye-projector-window")
+                        }.disabled(!settings.eyeProjectorEnabled)
+                        Toggle("", isOn: $settings.eyeProjectorEnabled)
+                            .labelsHidden()
+                            .toggleStyle(.switch)
+                            .tint(.accentColor)
+                    }
+                    Group {
+                        Divider()
+                        SettingsToggleView(
+                            title: "Open/Close With Tall Mode",
+                            option: $settings.eyeProjectorOpenWithTallMode)
+                        Divider()
+                        HStack {
+                            SettingsLabel(
+                                title: "Height Scale",
+                                description: """
+                                    Adjusts the "Stretch" on the y axis, \
+                                    you probably want the default (0.2)
+                                    """, font: .body)
+
+                            TextField(
+                                "", value: $settings.eyeProjectorHeightScale,
+                                format: .number.grouping(.never)
+                            )
+                            .textFieldStyle(.roundedBorder)
+                            .foregroundStyle(.primary)
+                            .frame(width: 80)
+                        }
+                    }
+                    .disabled(!settings.eyeProjectorEnabled)
+                }
+            }
+            SettingsLabel(
+                title: "Sensitivity Scaling",
+                description: """
+                    Allows your sensitivity to change when in tall mode, and to use lower \
+                    sensitivities without affecting your unlocked cursor movements.
+                    """)
+            SettingsCardView {
+                VStack {
+                    SettingsToggleView(title: "Enabled", option: $settings.sensitivityScaleEnabled)
+                    Group {
+                        Divider()
+                        HStack {
+                            SettingsLabel(title: "Sensitivity Scale", font: .body)
+                            TextField(
+                                "", value: $sensitivityScale,
+                                format: .number.grouping(.never)
+                            )
+                            .textFieldStyle(.roundedBorder)
+                            .foregroundColor((0.1...50 ~= sensitivityScale) ? .primary : .red)
+                            .frame(width: 80)
+                            .onChange(of: sensitivityScale) { _, newValue in
+                                if 0.1...50 ~= newValue {
+                                    Settings[\.utility].sensitivityScale = newValue
+                                }
+                            }
+                        }
+                        Divider()
+                        HStack {
+                            SettingsLabel(title: "Tall Mode Sensitivity Scale", font: .body)
+                            TextField(
+                                "", value: $tallSensitivityScale,
+                                format: .number.grouping(.never)
+                            )
+                            .textFieldStyle(.roundedBorder)
+                            .foregroundColor((0.1...50 ~= tallSensitivityScale) ? .primary : .red)
+                            .frame(width: 80)
+                            .onChange(of: tallSensitivityScale) { _, newValue in
+                                if 0.1...50 ~= newValue {
+                                    Settings[\.utility].tallSensitivityScale = newValue
+                                }
+                            }
+                        }
+                    }.disabled(!settings.sensitivityScaleEnabled)
+                }
+            }
+
             SettingsLabel(
                 title: "Paceman",
                 description: """
                     Configure Settings for Paceman, a site that tracks your live statistics and/or \
                     reset statistics.
                     View statistics, and generate token here: [paceman.gg](https://paceman.gg)
+                    SpeedrunIGT 14.2+ is required.
                     """
             )
             .padding(.bottom, -6)
@@ -114,7 +209,6 @@ struct UtilitySettings: View {
                     case .empty:
                         Text("No token found, generate here: paceman.gg")
                     case .valid(let name):
-                        CachedAsyncImage(url: getAvatarURL(name))
                         Text("Token is Valid!")
                     case .invalid:
                         Text("Invalid token, check it was input correctly.")

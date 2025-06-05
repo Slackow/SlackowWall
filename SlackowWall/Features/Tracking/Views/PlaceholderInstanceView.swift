@@ -25,7 +25,7 @@ struct PlaceholderInstanceView: View {
                     ?? Image("minecraft_logo"))
                     .resizable()
                     .frame(width: 120, height: 120)
-                Text("Instance \"\(instanceName)\"")
+                Text(#"Instance "\#(instanceName)""#)
                     .font(.title)
                     .fontWeight(.semibold)
             }
@@ -63,6 +63,9 @@ struct PlaceholderInstanceView: View {
                     //                    Button("Package Submission Files") {
                     //                        print("TODO")
                     //                    }
+                    Button("Kill Instance") {
+                        TrackingManager.shared.kill(instance: instance)
+                    }
                 }
                 .menuStyle(.borderlessButton)
                 .frame(width: 19, height: 19)
@@ -75,8 +78,12 @@ struct PlaceholderInstanceView: View {
             }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
                 .opacity(isHovered ? 1 : 0)
                 .animation(.easeInOut.delay(0.15).speed(2), value: isHovered)
+            //            EyeProjectorView(instance: instance)
         }
-        .frame(width: 600, height: 350)
+        .frame(
+            minWidth: 250, idealWidth: 600, maxWidth: 600, minHeight: 165, idealHeight: 350,
+            maxHeight: 350
+        )
         .background {
             RoundedRectangle(cornerRadius: 10)
                 .stroke(.gray, lineWidth: 3)

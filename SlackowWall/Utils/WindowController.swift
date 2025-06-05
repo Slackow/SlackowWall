@@ -44,10 +44,7 @@ class WindowController {
     }
 
     static func getWindowTitle(pid: pid_t) -> String? {
-        if let titleValue = getWindowProperty(pid: pid, attribute: kAXTitleAttribute) as? String {
-            return titleValue
-        }
-        return nil
+        return getWindowProperty(pid: pid, attribute: kAXTitleAttribute) as? String
     }
 
     static func getWindowPosition(pid: pid_t) -> CGPoint? {

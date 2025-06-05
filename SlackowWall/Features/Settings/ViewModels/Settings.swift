@@ -21,6 +21,7 @@ final class Settings: ObservableObject {
     @Published var currentProfile: UUID = .init() {
         didSet {
             currentProfileRawID = currentProfile.uuidString  // persist change
+            try? switchProfile(to: currentProfile)
             preferences = loadSettings()  // reload profile
         }
     }
@@ -54,7 +55,7 @@ final class Settings: ObservableObject {
 
     private func loadSettings() -> Preferences {
         let url = settingsURL(for: currentProfile)
-        LogManager.shared.appendLog("Active Profile:", currentProfile)
+        LogManager.shared.appendLog("Active Profile:", currentProfile, preferences.profile.name)
 
         if !fileManager.fileExists(atPath: url.path) {
             try? fileManager.createDirectory(at: baseURL, withIntermediateDirectories: false)
@@ -79,7 +80,7 @@ final class Settings: ObservableObject {
     }
 
     private func savePreferences(_ prefs: Preferences) throws {
-        try savePreferences(prefs, to: settingsURL(for: currentProfile))
+        try savePreferences(prefs, to: settingsURL(for: prefs.profile.id))
     }
 
     private func savePreferences(_ prefs: Preferences, to url: URL) throws {
@@ -112,7 +113,7 @@ final class Settings: ObservableObject {
                 Int(frame.width) == monWidth, Int(frame.height) == monHeight,
                 self.preferences.profile.id != pref.profile.id
             {
-                self.preferences = pref
+                try? switchProfile(to: pref.profile.id)
                 LogManager.shared.appendLog("Auto switched profiles")
                 return
             }

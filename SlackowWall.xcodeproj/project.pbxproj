@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		496BFAC52DE7E9F600209079 /* PacemanWrapper in CopyFiles */ = {isa = PBXBuildFile; fileRef = 496BFAB92DE7D7B600209079 /* PacemanWrapper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		49BED0752DCEEC1B00B85B4E /* DefaultCodable in Frameworks */ = {isa = PBXBuildFile; productRef = 49BED0742DCEEC1B00B85B4E /* DefaultCodable */; };
+		496BFAC52DE7E9F600209079 /* PacemanWrapper in Copy Files */ = {isa = PBXBuildFile; fileRef = 496BFAB92DE7D7B600209079 /* PacemanWrapper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B62B05652C0ADE7500EC087E /* Gzip in Frameworks */ = {isa = PBXBuildFile; productRef = B62B05642C0ADE7500EC087E /* Gzip */; };
 		B6527B732DE4BC63008A1264 /* DefaultCodable in Frameworks */ = {isa = PBXBuildFile; productRef = B6527B722DE4BC63008A1264 /* DefaultCodable */; };
 		B6A1FDEB2BDF5BF000EF2180 /* CachedAsyncImage in Frameworks */ = {isa = PBXBuildFile; productRef = B6A1FDEA2BDF5BF000EF2180 /* CachedAsyncImage */; };
@@ -35,14 +34,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
-		496BFAC42DE7E9D500209079 /* CopyFiles */ = {
+		496BFAC42DE7E9D500209079 /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
-				496BFAC52DE7E9F600209079 /* PacemanWrapper in CopyFiles */,
+				496BFAC52DE7E9F600209079 /* PacemanWrapper in Copy Files */,
 			);
+			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -91,7 +91,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B6B9FE8D2BA1698D0026C268 /* Sparkle in Frameworks */,
-				49BED0752DCEEC1B00B85B4E /* DefaultCodable in Frameworks */,
 				B6527B732DE4BC63008A1264 /* DefaultCodable in Frameworks */,
 				B6A1FDEB2BDF5BF000EF2180 /* CachedAsyncImage in Frameworks */,
 				B62B05652C0ADE7500EC087E /* Gzip in Frameworks */,
@@ -151,7 +150,7 @@
 				498FB3C428987F5B00405753 /* Sources */,
 				498FB3C528987F5B00405753 /* Frameworks */,
 				498FB3C628987F5B00405753 /* Resources */,
-				496BFAC42DE7E9D500209079 /* CopyFiles */,
+				496BFAC42DE7E9D500209079 /* Copy Files */,
 			);
 			buildRules = (
 			);
@@ -166,7 +165,6 @@
 				B6B9FE8C2BA1698D0026C268 /* Sparkle */,
 				B6A1FDEA2BDF5BF000EF2180 /* CachedAsyncImage */,
 				B62B05642C0ADE7500EC087E /* Gzip */,
-				49BED0742DCEEC1B00B85B4E /* DefaultCodable */,
 				B6527B722DE4BC63008A1264 /* DefaultCodable */,
 			);
 			productName = SlackowWall;
@@ -419,7 +417,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 250526;
+				CURRENT_PROJECT_VERSION = 250605;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Resources/Preview Content\"";
 				DEVELOPMENT_TEAM = 94CLS492CD;
@@ -436,8 +434,8 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.1.3;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.slackow.SlackowWall;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -456,7 +454,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 250526;
+				CURRENT_PROJECT_VERSION = 250605;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Resources/Preview Content\"";
 				DEVELOPMENT_TEAM = 94CLS492CD;
@@ -473,8 +471,8 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.1.3;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.slackow.SlackowWall;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -553,10 +551,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		49BED0742DCEEC1B00B85B4E /* DefaultCodable */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = DefaultCodable;
-		};
 		B62B05642C0ADE7500EC087E /* Gzip */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B62B05632C0ADE7500EC087E /* XCRemoteSwiftPackageReference "GzipSwift" */;

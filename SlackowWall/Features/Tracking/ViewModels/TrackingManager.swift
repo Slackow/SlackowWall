@@ -212,6 +212,10 @@ class TrackingManager: ObservableObject {
         }
     }
 
+    func kill(instance: TrackedInstance) {
+        getAllApps().first(where: { $0.processIdentifier == instance.pid })?.terminate()
+    }
+
     func killAll() {
         let runningApps = getAllApps()
         var appsToTerminate: [NSRunningApplication] = []

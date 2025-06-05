@@ -13,7 +13,7 @@ struct TrackedInstanceView: View {
     @ObservedObject var instance: TrackedInstance
 
     private var hasStreamError: Bool {
-        return !Settings[\.behavior].utilityMode && instance.stream.streamError != nil
+        return ScreenRecorder.shared.needsRecordingPerms && instance.stream.streamError != nil
     }
 
     var body: some View {

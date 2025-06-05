@@ -14,6 +14,8 @@ struct CapturePreview: NSViewRepresentable {
 
     init() {
         contentLayer.contentsGravity = .resizeAspectFill
+        contentLayer.magnificationFilter = .nearest
+        contentLayer.allowsEdgeAntialiasing = false
     }
 
     func makeNSView(context: Context) -> CaptureVideoPreview {
@@ -26,7 +28,9 @@ struct CapturePreview: NSViewRepresentable {
     }
 
     // The view isn't updatable. Updates to the layer's content are done in outputFrame(frame:).
-    func updateNSView(_ nsView: CaptureVideoPreview, context: Context) {}
+    func updateNSView(_ nsView: CaptureVideoPreview, context: Context) {
+        nsView.layer?.magnificationFilter = .nearest
+    }
 
     class CaptureVideoPreview: NSView {
         // Create the preview with the video layer as the backing layer.

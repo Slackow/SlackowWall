@@ -38,7 +38,7 @@ struct ToolbarUtilityModeView: View {
             isHovered = $0
             isActuallyHovered = $0
         }
-        .onChange(of: isHovered) { hovered in
+        .onChange(of: isHovered) { _, hovered in
             if hovered != isActuallyHovered {
                 Settings[\.behavior].utilityMode.toggle()
                 // Reset capture system when utility mode is toggled via hover

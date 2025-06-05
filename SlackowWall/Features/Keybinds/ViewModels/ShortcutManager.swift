@@ -13,12 +13,20 @@ import SwiftUI
 class ShortcutManager: ObservableObject, Manager {
     static let shared = ShortcutManager()
 
+    @Published var eyeProjectorOpen: Bool = false {
+        didSet {
+            if !eyeProjectorOpen {
+                NSApplication.shared.windows.first(where: { $0.title == "Eye Projector" })?.close()
+            }
+        }
+    }
+
     init() {
 
     }
 
     private func closeSettingsWindow() {
-        NSApplication.shared.windows.filter({ $0.title == "Settings" }).first?.close()
+        NSApplication.shared.windows.first(where: { $0.title == "Settings" })?.close()
     }
 
     func handleGlobalKey(_ key: NSEvent) {
@@ -166,16 +174,29 @@ class ShortcutManager: ObservableObject, Manager {
         let h = convertToFloat(Settings[\.mode].tallHeight)
         let x = Settings[\.mode].tallX.map(CGFloat.init)
         let y = Settings[\.mode].tallY.map(CGFloat.init)
-        resize(pid: pid, x: x, y: y, width: w, height: h)
+        if resize(pid: pid, x: x, y: y, width: w, height: h) == true {
+            if let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid }
+            ) {
+                ScreenRecorder.shared.eyeProjectedInstance = instance
+                Task {
+                    await ScreenRecorder.shared.startEyeProjectorCapture(for: instance)
+                    if Settings[\.utility].eyeProjectorShouldOpenWithTallMode {
+                        eyeProjectorOpen = true
+                    }
+                    MouseSensitivityManager.shared.setSensitivityFactor(
+                        factor: Settings[\.utility].tallSensitivityScale)
+                }
+            }
+        }
     }
 
-    func resize(
+    @discardableResult func resize(
         pid: pid_t, x: CGFloat? = nil, y: CGFloat? = nil, width: CGFloat, height: CGFloat,
         force: Bool = false
-    ) {
+    ) -> Bool? {
         let pids = TrackingManager.shared.getValues(\.pid)
         if !(width > 0 && height > 0) || pids.isEmpty {
-            return
+            return nil
         }
 
         LogManager.shared.appendLog("Resizing Instance: \(pid)")
@@ -183,9 +204,25 @@ class ShortcutManager: ObservableObject, Manager {
         if let currentSize = WindowController.getWindowSize(pid: pid),
             let currentPosition = WindowController.getWindowPosition(pid: pid)
         {
+            // detect exiting tall mode
+            if currentSize
+                == CGSize(
+                    width: convertToFloat(Settings[\.mode].tallWidth),
+                    height: convertToFloat(Settings[\.mode].tallHeight))
+            {
+                Task {
+                    await ScreenRecorder.shared.stopEyeProjectorCapture()
+                    ScreenRecorder.shared.eyeProjectedInstance = nil
+                }
+                if Settings[\.utility].eyeProjectorShouldOpenWithTallMode {
+                    eyeProjectorOpen = false
+                }
+                MouseSensitivityManager.shared.setSensitivityFactor(
+                    factor: Settings[\.utility].sensitivityScale)
+            }
             if !force && currentSize.width == width && currentSize.height == height {
                 resizeBase(pid: pid)
-                return
+                return false
             }
 
             let newSize = CGSize(width: width, height: height)
@@ -204,7 +241,9 @@ class ShortcutManager: ObservableObject, Manager {
                     height: newSize.height)
             }
             LogManager.shared.appendLog("Finished Resizing Instance: \(pid), \(newSize)")
+            return true
         }
+        return nil
     }
 
     func resetKeybinds() {

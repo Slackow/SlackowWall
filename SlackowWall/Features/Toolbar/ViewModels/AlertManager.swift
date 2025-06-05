@@ -9,6 +9,7 @@ import Combine
 @preconcurrency import ScreenCaptureKit
 import SwiftUI
 
+@MainActor
 class AlertManager: ObservableObject {
     @Published var alert: WallAlert? = .none
 
@@ -29,9 +30,9 @@ class AlertManager: ObservableObject {
 
     @objc private func utilityModeChanged() {
         // If we're in utility mode, clear screen recording alerts
-        if Settings[\.behavior].utilityMode && alert == .noScreenPermission {
+        if !ScreenRecorder.shared.needsRecordingPerms && alert == .noScreenPermission {
             alert = nil
-        } else if !Settings[\.behavior].utilityMode {
+        } else if ScreenRecorder.shared.needsRecordingPerms {
             // If we're leaving utility mode, check for screen recording permission
             Task {
                 await checkScreenRecordingPermission()

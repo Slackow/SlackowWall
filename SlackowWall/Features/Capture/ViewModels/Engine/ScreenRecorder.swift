@@ -16,6 +16,11 @@ import SwiftUI
 
     @Published var isRunning = false
     @Published private(set) var availableWindows = [SCWindow]()
+    @Published var eyeProjectedInstance: TrackedInstance? = nil
+
+    // Dedicated eye projector capture that works regardless of utility mode
+    private var eyeProjectorCapture: CaptureEngine? = nil
+    private var eyeProjectorFilter: SCContentFilter? = nil
 
     private var availableApps = [SCRunningApplication]()
     private var windowFilters: [CGWindowID: SCContentFilter] = [:]
@@ -36,9 +41,17 @@ import SwiftUI
     @AppSettings(\.profile) private var profile
     @AppSettings(\.personalize) private var personalize
 
+    var needsRecordingPerms: Bool {
+        !behavior.utilityMode || Settings[\.utility].eyeProjectorEnabled
+    }
+
+    var needsEyeProjectorCapture: Bool {
+        Settings[\.utility].eyeProjectorEnabled
+    }
+
     func startCapture() async {
         LogManager.shared.appendLog("Attempting to start screen capture...")
-        if behavior.utilityMode {
+        guard needsRecordingPerms else {
             // Skip screen recording permission check in utility mode
             LogManager.shared.appendLog("Utility mode active - skipping screen capture")
             return
@@ -49,10 +62,19 @@ import SwiftUI
         }
     }
 
+    func startEyeProjectorCapture(for instance: TrackedInstance) async {
+        guard needsEyeProjectorCapture else { return }
+
+        // Always check permissions for eye projector capture
+        guard await AlertManager.shared.checkScreenRecordingPermission() else { return }
+
+        await setupEyeProjectorCapture(for: instance)
+    }
+
     var canRecord: Bool {
         get async {
             // Don't need to check permissions in utility mode
-            if behavior.utilityMode {
+            if !needsRecordingPerms {
                 return false
             }
 
@@ -148,7 +170,9 @@ import SwiftUI
                         for try await frame in captureEngine.startCapture(
                             configuration: streamConfiguration, filter: filter)
                         {
-                            instance.stream.capturePreview.updateFrame(frame)
+                            await MainActor.run {
+                                instance.stream.capturePreview.updateFrame(frame)
+                            }
                         }
                     } catch let error {
                         logger.error("\(error.localizedDescription)")
@@ -161,13 +185,6 @@ import SwiftUI
                             switch streamError {
                                 case .appClosed:
                                     instance.wasClosed = true
-                                //                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                //                                    Task {
-                                //                                        GridManager.shared.showInfo = false
-                                //                                        self.trackingManager.trackedInstances.removeAll(where: { $0 == instance })
-                                //                                        await self.resetAndStartCapture()
-                                //                                    }
-                                //                                }
                                 case .unknown:
                                     instance.stream.streamError = streamError
                                     GridManager.shared.showInfo = true
@@ -186,6 +203,14 @@ import SwiftUI
         }
         await captureEngine.stopCapture(removeStreams: removeStreams)
         isRunning = false
+    }
+
+    func stopEyeProjectorCapture() async {
+        if let eyeProjectorCapture = eyeProjectorCapture {
+            await eyeProjectorCapture.stopCapture(removeStreams: true)
+            self.eyeProjectorCapture = nil
+            self.eyeProjectorFilter = nil
+        }
     }
 
     func resumeCapture() async {
@@ -220,12 +245,14 @@ import SwiftUI
 
         trackingManager.fetchInstances()
         trackingManager.getValues(\.pid).forEach(ShortcutManager.shared.resizeReset)
+        MouseSensitivityManager.shared.setSensitivityFactor(
+            factor: Settings[\.utility].sensitivityScale)
 
         if Settings[\.behavior].shouldHideWindows && !Settings.shared.profileCreatedOrDeleted {
             WindowController.unhideWindows(trackingManager.getValues(\.pid))
         }
 
-        if !Settings[\.behavior].utilityMode {
+        if needsRecordingPerms {
             // Only check screen recording permission and start capture when not in utility mode
             LogManager.shared.appendLog("Normal mode - preparing screen capture")
 
@@ -277,5 +304,77 @@ import SwiftUI
             return (title.contains("Prism Launcher") || title.contains("MultiMC"))
                 && trackingManager.trackedInstances.contains(where: { $0.pid == processID })
         }
+    }
+
+    private func setupEyeProjectorCapture(for instance: TrackedInstance) async {
+        // Stop any existing eye projector capture
+        await stopEyeProjectorCapture()
+
+        // Refresh available content to find the window
+        await refreshAvailableContent()
+
+        // Find the window for this instance
+        guard
+            let window = availableWindows.first(where: {
+                $0.owningApplication?.processID == instance.pid
+            })
+        else {
+            LogManager.shared.appendLog(
+                "Could not find window for eye projector instance \(instance.pid)")
+            return
+        }
+
+        // Create filter and configuration using tall mode dimensions
+        let filter = SCContentFilter(desktopIndependentWindow: window)
+
+        // Use tall mode dimensions instead of actual window size
+        let tallWidth = CGFloat(Settings[\.mode].tallWidth ?? 60)
+        let tallHeight = CGFloat(Settings[\.mode].tallHeight ?? 60)
+
+        let streamConfig = createStreamConfiguration(
+            width: tallWidth,
+            height: tallHeight
+        )
+        streamConfig.minimumFrameInterval = CMTime(
+            value: 1, timescale: CMTimeScale(30))
+
+        // Store the filter and create dedicated capture engine
+        eyeProjectorFilter = filter
+        eyeProjectorCapture = CaptureEngine()
+
+        // Update the instance's eye projector stream capture filter and rect with tall mode dimensions
+        instance.eyeProjectorStream.captureFilter = filter
+        instance.eyeProjectorStream.captureRect = CGSize(
+            width: tallWidth,
+            height: tallHeight
+        )
+
+        // Start the dedicated capture
+        guard let eyeProjectorCapture = eyeProjectorCapture else { return }
+
+        Task {
+            do {
+                for try await frame in eyeProjectorCapture.startCapture(
+                    configuration: streamConfig, filter: filter
+                ) {
+                    await MainActor.run {
+                        instance.eyeProjectorStream.capturePreview.updateFrame(frame)
+                    }
+                }
+            } catch let error {
+                logger.error("Eye projector capture error: \(error.localizedDescription)")
+                LogManager.shared.appendLog(
+                    "Eye projector stream error (\(instance.pid)):",
+                    error.localizedDescription
+                )
+
+                if let error = error as? SCStreamError {
+                    let streamError = StreamError(errorCode: error.errorCode)
+                    instance.eyeProjectorStream.streamError = streamError
+                }
+            }
+        }
+
+        LogManager.shared.appendLog("Started eye projector capture for instance \(instance.pid)")
     }
 }
