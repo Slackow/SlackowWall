@@ -15,6 +15,7 @@ struct CapturePreview: NSViewRepresentable {
     init() {
         contentLayer.contentsGravity = .resizeAspectFill
         contentLayer.magnificationFilter = .nearest
+        contentLayer.minificationFilter = .nearest
         contentLayer.allowsEdgeAntialiasing = false
     }
 
@@ -30,6 +31,8 @@ struct CapturePreview: NSViewRepresentable {
     // The view isn't updatable. Updates to the layer's content are done in outputFrame(frame:).
     func updateNSView(_ nsView: CaptureVideoPreview, context: Context) {
         nsView.layer?.magnificationFilter = .nearest
+        nsView.layer?.minificationFilter = .nearest
+        nsView.layer?.allowsEdgeAntialiasing = false
     }
 
     class CaptureVideoPreview: NSView {

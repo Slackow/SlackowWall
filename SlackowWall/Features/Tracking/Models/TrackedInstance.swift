@@ -93,7 +93,7 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
         }
         LogManager.shared
             .appendLog("Added Instance \(pid)")
-            .appendLog("Path: \(data.path)")
+            .logPath("Path: \(data.path)")
             .appendLog("Version: \(data.version)")
             .appendLog("Port: \(data.port)")
             .appendLogNewLine()

@@ -7,6 +7,7 @@
 
 import Gzip
 import SwiftUI
+import AppKit
 
 class LogManager {
     private let logDirectory = "/tmp/SlackowWall/Logs/"
@@ -83,10 +84,10 @@ class LogManager {
         }
     }
 
-    @discardableResult func logPath(_ path: String) -> Self {
+    @discardableResult func logPath(_ path: String, showInConsole: Bool = true) -> Self {
         let homeDirectory = FileManager.default.homeDirectoryForCurrentUser.path
         let sanitizedPath = path.replacingOccurrences(of: homeDirectory, with: "~")
-        return appendLog(sanitizedPath, showInConsole: false)
+        return appendLog(sanitizedPath, showInConsole: showInConsole)
     }
 
     @discardableResult func appendLog(
@@ -214,10 +215,84 @@ class LogManager {
     }
 
     func openLatestLogInConsole() {
+        logCurrentProfile()
         let logFileURL = URL(fileURLWithPath: logPath)
 
         if FileManager.default.fileExists(atPath: logPath) {
             NSWorkspace.shared.open(logFileURL)
+        }
+    }
+    
+    func uploadLog(callback: @escaping (String, Bool) -> Void = {_,_ in }) {
+        logCurrentProfile()
+
+        // Read the full contents of the newest log file.
+        guard let logContents = try? String(contentsOfFile: logPath, encoding: .utf8) else {
+            appendLog("Failed to read log file for mclo.gs upload")
+            return
+        }
+
+        // Prepare the POST request for mclo.gs
+        let mclogsURL = URL(string: "https://api.mclo.gs/1/log")!
+        var request = URLRequest(url: mclogsURL)
+        request.httpMethod = "POST"
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+
+        // mclo.gs expects a single 'content' form field with the log text
+        let bodyString = "content=" + (logContents.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")
+        request.httpBody = bodyString.data(using: .utf8)
+
+        // Perform the upload asynchronously.
+        Task {
+            let message: String
+            var succeeded: Bool = false
+            do {
+                let (data, response) = try await URLSession.shared.data(for: request)
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    appendLog("mclo.gs response was not an HTTPURLResponse")
+                    return
+                }
+
+                // Expecting JSON: { "success": true, "url": "https://mclo.gs/XXXX", ... }
+                guard httpResponse.statusCode == 200 else {
+                    let body = String(data: data, encoding: .utf8) ?? "<no body>"
+                    appendLog("mclo.gs upload failed (\(httpResponse.statusCode)): \(body)")
+                    return
+                }
+
+                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                   let success = json["success"] as? Bool, success,
+                   let urlString = json["url"] as? String {
+
+                    // Copy the resulting URL to the clipboard.
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(urlString, forType: .string)
+                    message = ("Log uploaded to mclo.gs: \(urlString), copied to clipboard")
+                    succeeded = true
+                } else {
+                    let body = String(data: data, encoding: .utf8) ?? "<unparseable json>"
+                    message = ("mclo.gs upload returned unexpected payload: \(body)")
+                }
+            } catch {
+                message = ("Error uploading log to mclo.gs: \(error)")
+            }
+            callback(message, succeeded)
+        }
+    }
+    
+    func logCurrentProfile() {
+        appendLogNewLine()
+        appendLog("Current Settings")
+        
+        do {
+            let prefs = Settings[\.self]
+            let data = try JSONEncoder().encode(prefs)
+            let json = try JSONSerialization.jsonObject(with: data)
+            let prettyJSONData = try JSONSerialization.data(withJSONObject: json, options: [.prettyPrinted])
+            let prettyJSON = String(data: prettyJSONData, encoding: .utf8) ?? "Data could not be converted to string"
+            appendLog(prettyJSON, includeTimestamp: false)
+        } catch {
+            appendLog("Unable to encode Preferences to JSON")
         }
     }
 }
