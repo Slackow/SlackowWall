@@ -21,6 +21,9 @@ struct SlackowWallApp: App {
     @AppSettings(\.behavior)
     private var behavior
 
+    @State private var showLogUploadedAlert = false
+    @State private var logUploadedAlert: String?
+
     init() {
         NSSplitViewItem.swizzle()
     }
@@ -60,6 +63,7 @@ struct SlackowWallApp: App {
                     }
                 }
                 .navigationTitle("SlackowWall - Profile: \(profile.name)")
+                .alert("Log File Upload", isPresented: $showLogUploadedAlert, presenting: logUploadedAlert) {_ in Button("Ok"){}} message: {_ in Text(logUploadedAlert ?? "Unable to upload.")}
         }
         .windowResizability(.contentSize)
 
@@ -109,6 +113,15 @@ struct SlackowWallApp: App {
 
                     Button(action: LogManager.shared.openLatestLogInConsole) {
                         Text("View Current Log")
+                    }
+                    
+                    Button(action: {
+                        LogManager.shared.uploadLog { msg, succeeded in
+                            logUploadedAlert = msg
+                            showLogUploadedAlert = true
+                        }
+                    }) {
+                        Text("Upload Current Log")
                     }
                 }
             }

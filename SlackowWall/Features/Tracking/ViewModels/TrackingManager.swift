@@ -110,10 +110,8 @@ class TrackingManager: ObservableObject {
     }
 
     private func logStatePaths() {
-        let homeDirectory = FileManager.default.homeDirectoryForCurrentUser.path
         trackedInstances.map({ $0.info }).forEach { info in
-            let sanitizedPath = info.statePath.replacingOccurrences(of: homeDirectory, with: "~")
-            LogManager.shared.appendLog(sanitizedPath, showInConsole: false)
+            LogManager.shared.logPath(info.statePath, showInConsole: false)
         }
     }
 

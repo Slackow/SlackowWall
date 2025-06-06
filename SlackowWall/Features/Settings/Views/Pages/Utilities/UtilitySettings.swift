@@ -53,7 +53,13 @@ struct UtilitySettings: View {
                             title: "Open/Close With Tall Mode",
                             option: $settings.eyeProjectorOpenWithTallMode
                         )
-
+                        
+                        Divider()
+                        
+                        SettingsToggleView(title: "Retina/4K (Without Retino)", description: """
+                                    Enable this if you are using a 4K or Retina screen, without the Retino mod.
+                                    """, option: .init(get: { settings.eyeProjectorWidth == 30 }, set: {settings.eyeProjectorWidth = $0 ? 30 : 60}))
+                        
                         Divider()
 
                         HStack {

@@ -15,7 +15,7 @@ final class Settings: ObservableObject {
     nonisolated(unsafe) var profileCreatedOrDeleted: Bool = false
 
     // Raw UUID string persisted in UserDefaults.
-    @AppStorage("currentProfile") private var currentProfileRawID: String = ""
+    @AppStorage("currentProfileRawID") private var currentProfileRawID: String = ""
 
     // In‑memory UUID that the rest of the app uses.
     @Published var currentProfile: UUID = .init() {
@@ -32,9 +32,11 @@ final class Settings: ObservableObject {
 
     private init() {
         self.preferences = .init()
-        // Bootstrap `currentProfile` from what’s stored on disk (or make a new one).
-        currentProfile = UUID(uuidString: currentProfileRawID) ?? UUID()
+        currentProfile = UUID(uuidString: currentProfileRawID) ?? preferences.profile.id
         currentProfileRawID = currentProfile.uuidString
+        if currentProfile != preferences.profile.id {
+            LogManager.shared.appendLog("These should match, and they do not.", currentProfileRawID, preferences.profile.id)
+        }
         observePreferences()
     }
 
@@ -54,18 +56,19 @@ final class Settings: ObservableObject {
     }
 
     private func loadSettings() -> Preferences {
+        let currentProfile = self.currentProfile
         let url = settingsURL(for: currentProfile)
         LogManager.shared.appendLog("Active Profile:", currentProfile, preferences.profile.name)
-
-        if !fileManager.fileExists(atPath: url.path) {
-            try? fileManager.createDirectory(at: baseURL, withIntermediateDirectories: false)
-            return .init()
-        }
-
-        guard let json = try? Data(contentsOf: url),
+        
+        guard fileManager.fileExists(atPath: url.path),
+            let json = try? Data(contentsOf: url),
             let prefs = try? JSONDecoder().decode(Preferences.self, from: json)
         else {
-            return .init()
+            try? fileManager.createDirectory(at: baseURL, withIntermediateDirectories: false)
+            try? availableProfiles.filter {$0.name == "Main"}.map(\.id).map(settingsURL).forEach(fileManager.removeItem(at:))
+            var prefs = Preferences()
+            prefs.profile.id = currentProfile
+            return prefs
         }
         return prefs
     }
@@ -171,7 +174,7 @@ extension Settings {
                 throw ProfileError.notFound
             }
 
-            LogManager.shared.appendLog("Deleting:", settingsURL(for: currentProfile))
+            LogManager.shared.logPath("Deleting: \(settingsURL(for: currentProfile))")
             let id = currentProfile
             try switchProfile(to: profiles[max(0, idx - 1)].id)
             try fileManager.removeItem(at: settingsURL(for: id))
