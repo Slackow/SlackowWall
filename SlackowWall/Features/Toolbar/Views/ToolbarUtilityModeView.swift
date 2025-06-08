@@ -11,7 +11,6 @@ struct ToolbarUtilityModeView: View {
     @ObservedObject private var screenRecorder = ScreenRecorder.shared
 
     @State private var isHovered: Bool = false
-    @State private var isActuallyHovered: Bool = false
 
     var body: some View {
         Button(action: {
@@ -22,21 +21,14 @@ struct ToolbarUtilityModeView: View {
                 await ScreenRecorder.shared.resetAndStartCapture()
             }
         }) {
-            if isActuallyHovered {
+            if isHovered {
                 Image(systemName: "hammer\(Settings[\.behavior].utilityMode ? ".fill" : "")")
                     .foregroundStyle(Color(nsColor: .labelColor))
             } else {
                 Image(systemName: "hammer\(Settings[\.behavior].utilityMode ? ".fill" : "")")
             }
         }
-        .instantPopover(isPresented: $isHovered) {
-            Text("Utility Mode")
-                .padding(8)
-                .allowsHitTesting(false)
-        }
-        .onHover {
-            isHovered = $0
-            isActuallyHovered = $0
-        }
+        .popoverLabel("Utility Mode")
+        .onHover { isHovered = $0 }
     }
 }

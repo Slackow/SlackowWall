@@ -63,7 +63,14 @@ struct SlackowWallApp: App {
                     }
                 }
                 .navigationTitle("SlackowWall - Profile: \(profile.name)")
-                .alert("Log File Upload", isPresented: $showLogUploadedAlert, presenting: logUploadedAlert) {_ in Button("Ok"){}} message: {_ in Text(logUploadedAlert ?? "Unable to upload.")}
+                .alert(
+                    "Log File Upload", isPresented: $showLogUploadedAlert,
+                    presenting: logUploadedAlert
+                ) { _ in
+                    Button("Ok") {}
+                } message: { _ in
+                    Text(logUploadedAlert ?? "Unable to upload.")
+                }
         }
         .windowResizability(.contentSize)
 
@@ -114,7 +121,7 @@ struct SlackowWallApp: App {
                     Button(action: LogManager.shared.openLatestLogInConsole) {
                         Text("View Current Log")
                     }
-                    
+
                     Button(action: {
                         LogManager.shared.uploadLog { msg, succeeded in
                             logUploadedAlert = msg
@@ -153,7 +160,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             ShortcutManager.shared.handleGlobalKey(event)
         }
         OBSManager.shared.writeScript()
-        if Settings[\.utility].autoLaunchPaceman { PacemanManager.shared.startPaceman() }
+        if Settings[\.utility].autoLaunchPaceman {
+            #if !DEBUG
+                PacemanManager.shared.startPaceman()
+            #endif
+        }
         // Start the instance check timer
         TrackingManager.shared.startInstanceCheckTimer()
     }

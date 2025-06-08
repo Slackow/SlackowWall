@@ -114,6 +114,21 @@ struct PopoverPresenter<ContentView: View>: NSViewRepresentable {
     }
 }
 
+struct PopoverLabelModifier: ViewModifier {
+    let label: String
+    @State private var isHovered = false
+
+    func body(content: Content) -> some View {
+        content
+            .onHover { isHovered = $0 }
+            .instantPopover(isPresented: $isHovered, arrowEdge: .bottom) {
+                Text(label)
+                    .padding(8)
+                    .allowsHitTesting(false)
+            }
+    }
+}
+
 extension View {
     /// A custom view modifier that presents a popover attached to the view with no animation.
     /// - Warning: Views presented using this sheet must be dismissed by negating the `isPresented` binding. Using
@@ -135,5 +150,8 @@ extension View {
                 popoverContent: content()
             )
         )
+    }
+    func popoverLabel(_ label: String) -> some View {
+        self.modifier(PopoverLabelModifier(label: label))
     }
 }

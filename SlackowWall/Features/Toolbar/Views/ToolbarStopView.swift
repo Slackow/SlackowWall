@@ -24,6 +24,7 @@ struct ToolbarStopView: View {
             }
         }
         .disabled(instanceManager.isStopping)
+        .popoverLabel("Stop All")
     }
 }
 

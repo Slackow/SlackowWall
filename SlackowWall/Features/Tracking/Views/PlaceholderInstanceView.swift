@@ -37,11 +37,7 @@ struct PlaceholderInstanceView: View {
                         .frame(width: 30, height: 30)
                         .padding(.top, 8)
                         .padding(.leading, 8)
-                        .onHover { isIndicatorHovered = $0 }
-                        .popover(isPresented: $isIndicatorHovered) {
-                            Text("Using BoundlessWindow")
-                                .padding(6)
-                        }
+                        .popoverLabel("Using Boundless Window")
 
                 }
                 Spacer()

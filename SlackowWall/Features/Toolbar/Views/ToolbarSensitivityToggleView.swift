@@ -11,7 +11,6 @@ struct ToolbarSensitivityToggleView: View {
     @ObservedObject private var screenRecorder = ScreenRecorder.shared
 
     @State private var isHovered: Bool = false
-    @State private var isActuallyHovered: Bool = false
     @AppSettings(\.utility)
     private var settings
 
@@ -19,21 +18,16 @@ struct ToolbarSensitivityToggleView: View {
         Button(action: {
             settings.sensitivityScaleEnabled.toggle()
         }) {
-            if isActuallyHovered {
+            if isHovered {
                 Image(systemName: "computermouse\(settings.sensitivityScaleEnabled ? ".fill" : "")")
                     .foregroundStyle(Color(nsColor: .labelColor))
             } else {
                 Image(systemName: "computermouse\(settings.sensitivityScaleEnabled ? ".fill" : "")")
             }
         }
-        .instantPopover(isPresented: $isHovered) {
-            Text("Sensitivity Scaling")
-                .padding(8)
-                .allowsHitTesting(false)
-        }
+        .popoverLabel("Sensitivity Scaling")
         .onHover {
             isHovered = $0
-            isActuallyHovered = $0
         }
         .onChange(of: settings.sensitivityScaleEnabled) { _, newValue in
             LogManager.shared.appendLog(

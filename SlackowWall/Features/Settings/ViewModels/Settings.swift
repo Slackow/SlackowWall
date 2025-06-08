@@ -35,7 +35,8 @@ final class Settings: ObservableObject {
         currentProfile = UUID(uuidString: currentProfileRawID) ?? preferences.profile.id
         currentProfileRawID = currentProfile.uuidString
         if currentProfile != preferences.profile.id {
-            LogManager.shared.appendLog("These should match, and they do not.", currentProfileRawID, preferences.profile.id)
+            LogManager.shared.appendLog(
+                "These should match, and they do not.", currentProfileRawID, preferences.profile.id)
         }
         observePreferences()
     }
@@ -59,13 +60,14 @@ final class Settings: ObservableObject {
         let currentProfile = self.currentProfile
         let url = settingsURL(for: currentProfile)
         LogManager.shared.appendLog("Active Profile:", currentProfile, preferences.profile.name)
-        
+
         guard fileManager.fileExists(atPath: url.path),
             let json = try? Data(contentsOf: url),
             let prefs = try? JSONDecoder().decode(Preferences.self, from: json)
         else {
             try? fileManager.createDirectory(at: baseURL, withIntermediateDirectories: false)
-            try? availableProfiles.filter {$0.name == "Main"}.map(\.id).map(settingsURL).forEach(fileManager.removeItem(at:))
+            try? availableProfiles.filter { $0.name == "Main" }.map(\.id).map(settingsURL).forEach(
+                fileManager.removeItem(at:))
             var prefs = Preferences()
             prefs.profile.id = currentProfile
             return prefs

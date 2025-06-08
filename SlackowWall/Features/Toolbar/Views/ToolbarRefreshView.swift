@@ -25,6 +25,7 @@ struct ToolbarRefreshView: View {
                 Image(systemName: "arrow.clockwise")
             }
         }.onHover { isHovered = $0 }
+            .popoverLabel("Refresh")
     }
 }
 

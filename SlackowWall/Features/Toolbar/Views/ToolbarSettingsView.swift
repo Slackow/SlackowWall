@@ -20,6 +20,7 @@ struct ToolbarSettingsView: View {
                 Image(systemName: "gear")
             }
         }.onHover { isHovered = $0 }
+            .popoverLabel("Settings")
     }
 }
 

@@ -5,9 +5,9 @@
 //  Created by Kihron on 5/27/24.
 //
 
+import AppKit
 import Gzip
 import SwiftUI
-import AppKit
 
 class LogManager {
     private let logDirectory = "/tmp/SlackowWall/Logs/"
@@ -222,8 +222,8 @@ class LogManager {
             NSWorkspace.shared.open(logFileURL)
         }
     }
-    
-    func uploadLog(callback: @escaping (String, Bool) -> Void = {_,_ in }) {
+
+    func uploadLog(callback: @escaping (String, Bool) -> Void = { _, _ in }) {
         logCurrentProfile()
 
         // Read the full contents of the newest log file.
@@ -239,7 +239,9 @@ class LogManager {
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 
         // mclo.gs expects a single 'content' form field with the log text
-        let bodyString = "content=" + (logContents.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")
+        let bodyString =
+            "content="
+            + (logContents.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")
         request.httpBody = bodyString.data(using: .utf8)
 
         // Perform the upload asynchronously.
@@ -261,8 +263,9 @@ class LogManager {
                 }
 
                 if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                   let success = json["success"] as? Bool, success,
-                   let urlString = json["url"] as? String {
+                    let success = json["success"] as? Bool, success,
+                    let urlString = json["url"] as? String
+                {
 
                     // Copy the resulting URL to the clipboard.
                     NSPasteboard.general.clearContents()
@@ -279,17 +282,20 @@ class LogManager {
             callback(message, succeeded)
         }
     }
-    
+
     func logCurrentProfile() {
         appendLogNewLine()
         appendLog("Current Settings")
-        
+
         do {
             let prefs = Settings[\.self]
             let data = try JSONEncoder().encode(prefs)
             let json = try JSONSerialization.jsonObject(with: data)
-            let prettyJSONData = try JSONSerialization.data(withJSONObject: json, options: [.prettyPrinted])
-            let prettyJSON = String(data: prettyJSONData, encoding: .utf8) ?? "Data could not be converted to string"
+            let prettyJSONData = try JSONSerialization.data(
+                withJSONObject: json, options: [.prettyPrinted])
+            let prettyJSON =
+                String(data: prettyJSONData, encoding: .utf8)
+                ?? "Data could not be converted to string"
             appendLog(prettyJSON, includeTimestamp: false)
         } catch {
             appendLog("Unable to encode Preferences to JSON")

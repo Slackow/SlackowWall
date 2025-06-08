@@ -53,13 +53,19 @@ struct UtilitySettings: View {
                             title: "Open/Close With Tall Mode",
                             option: $settings.eyeProjectorOpenWithTallMode
                         )
-                        
+
                         Divider()
-                        
-                        SettingsToggleView(title: "Retina/4K (Without Retino)", description: """
-                                    Enable this if you are using a 4K or Retina screen, without the Retino mod.
-                                    """, option: .init(get: { settings.eyeProjectorWidth == 30 }, set: {settings.eyeProjectorWidth = $0 ? 30 : 60}))
-                        
+
+                        SettingsToggleView(
+                            title: "Retina/4K (Without Retino)",
+                            description: """
+                                Enable this if you are using a 4K or Retina screen, without the \
+                                Retino mod.
+                                """,
+                            option: .init(
+                                get: { settings.eyeProjectorWidth == 30 },
+                                set: { settings.eyeProjectorWidth = $0 ? 30 : 60 }))
+
                         Divider()
 
                         HStack {
@@ -78,7 +84,7 @@ struct UtilitySettings: View {
                             )
                             .textFieldStyle(.roundedBorder)
                             .foregroundStyle(.primary)
-                            .frame(width: 80)
+                            .frame(width: 60)
                         }
                     }
                     .disabled(!settings.eyeProjectorEnabled)
@@ -109,7 +115,7 @@ struct UtilitySettings: View {
                             )
                             .textFieldStyle(.roundedBorder)
                             .foregroundColor((0.1...50 ~= sensitivityScale) ? .primary : .red)
-                            .frame(width: 80)
+                            .frame(width: 60)
                             .onChange(of: sensitivityScale) { _, newValue in
                                 if 0.1...50 ~= newValue {
                                     Settings[\.utility].sensitivityScale = newValue
@@ -130,7 +136,7 @@ struct UtilitySettings: View {
                             )
                             .textFieldStyle(.roundedBorder)
                             .foregroundColor((0.1...50 ~= tallSensitivityScale) ? .primary : .red)
-                            .frame(width: 80)
+                            .frame(width: 60)
                             .onChange(of: tallSensitivityScale) { _, newValue in
                                 if 0.1...50 ~= newValue {
                                     Settings[\.utility].tallSensitivityScale = newValue

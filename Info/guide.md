@@ -8,6 +8,9 @@ TL-DR at the end for more experienced users.
 
 It's recommended that you use [SeedQueue](https://github.com/KingContaria/seedqueue) instead, which means you can skip most of the setup here, as your wall would be contained within a single instance and you would need no OBS script. SlackowWall would still be useful for you to resize your window and otherwise manage your instances via the Utility Mode (similar to Jingle on Windows)
 
+Here's a tutorial for setting up BoatEye with SlackowWall:
+[https://www.youtube.com/watch?v=Mj42HbnPUZ4](https://www.youtube.com/watch?v=Mj42HbnPUZ4)
+
 ## Required Software
 
 - SlackowWall requires you use [PrismLauncher](https://prismlauncher.org) (highly recommended) or [MultiMC](https://multimc.org) for it to detect your instances.
@@ -31,7 +34,7 @@ Required Mods:
 Recommended Mods:
 
 - Sodium Mac (fixes a memory leak)
-- SleepBG (Lowers framerates of unfocussed instances)
+- SleepBG (Lowers framerates of unfocused instances)
 - State Output Mod (Prevents you from reseting instances that are on a dirt screen, make sure to enable this setting too if you get it)
 
 #### Configurations
