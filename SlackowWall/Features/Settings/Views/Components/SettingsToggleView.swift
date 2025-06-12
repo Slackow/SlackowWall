@@ -10,6 +10,7 @@ import SwiftUI
 struct SettingsToggleView: View {
     let title: String
     var description: String?
+    var infoBlurb: String?
     var descInteractable: Bool = true
 
     @Binding var option: Bool
@@ -31,11 +32,17 @@ struct SettingsToggleView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            Toggle("", isOn: $option)
-                .labelsHidden()
-                .toggleStyle(.switch)
-                .padding(.leading)
-                .tint(.accentColor)
+            HStack {
+                if let infoBlurb {
+                    SettingsInfoIcon(description: infoBlurb)
+                }
+
+                Toggle("", isOn: $option)
+                    .labelsHidden()
+                    .toggleStyle(.switch)
+                    .tint(.accentColor)
+            }
+            .padding(.leading)
         }
         .animation(nil, value: textHeight)
     }

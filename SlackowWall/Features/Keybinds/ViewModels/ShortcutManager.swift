@@ -178,13 +178,13 @@ class ShortcutManager: ObservableObject, Manager {
             if let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid }
             ) {
                 ScreenRecorder.shared.eyeProjectedInstance = instance
-                Task {
+                Task(priority: .userInitiated) {
+                    MouseSensitivityManager.shared.setSensitivityFactor(
+                        factor: Settings[\.utility].tallSensitivityScale)
                     await ScreenRecorder.shared.startEyeProjectorCapture(for: instance)
                     if Settings[\.utility].eyeProjectorShouldOpenWithTallMode {
                         eyeProjectorOpen = true
                     }
-                    MouseSensitivityManager.shared.setSensitivityFactor(
-                        factor: Settings[\.utility].tallSensitivityScale)
                 }
             }
         }
@@ -210,7 +210,7 @@ class ShortcutManager: ObservableObject, Manager {
                     width: convertToFloat(Settings[\.mode].tallWidth),
                     height: convertToFloat(Settings[\.mode].tallHeight))
             {
-                Task {
+                Task(priority: .userInitiated) {
                     await ScreenRecorder.shared.stopEyeProjectorCapture()
                     ScreenRecorder.shared.eyeProjectedInstance = nil
                 }

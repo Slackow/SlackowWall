@@ -59,8 +59,8 @@ struct UtilitySettings: View {
                         SettingsToggleView(
                             title: "Retina/4K (Without Retino)",
                             description: """
-                                Enable this if you are using a 4K or Retina screen, without the \
-                                Retino mod.
+                                Enable this if you are using a 4K or Retina screen, \
+                                without the Retino mod.
                                 """,
                             option: .init(
                                 get: { settings.eyeProjectorWidth == 30 },
@@ -77,6 +77,20 @@ struct UtilitySettings: View {
                                     """,
                                 font: .body
                             )
+
+                            SettingsInfoIcon(
+                                description: """
+                                    The Height Scale option determines how "squished" the eye is \
+                                    on the projector, a lower value
+                                    gives you more leeway on how far above or below your cursor \
+                                    can be from the eye to still see it, and a higher
+                                    number makes it easier to see the divide between the two \
+                                    important pixels, the ideal value depends on how
+                                    tall you make the eye projector window, but generally it's \
+                                    recommended to keep it between 0.2-0.4,
+                                    you can experiment with it with the window open to see what \
+                                    works best.
+                                    """)
 
                             TextField(
                                 "", value: $settings.eyeProjectorHeightScale,
