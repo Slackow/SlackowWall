@@ -16,6 +16,21 @@ struct KeybindingView: View {
     private var textName: String {
         KeyCode.toName(code: keybinding)
     }
+    
+    init(keybinding: Binding<UInt16?>, defaultValue: UInt16? = nil) {
+        _keybinding = keybinding
+        self.defaultValue = defaultValue
+    }
+    
+    @AppSettings(\.keybinds) private var settings
+    init(keybinding keyPath: WritableKeyPath<Preferences.KeybindSection, UInt16?>) {
+        let binding = Binding<UInt16?>(
+            get: { Settings[\.keybinds][keyPath: keyPath] },
+            set: { Settings[\.keybinds][keyPath: keyPath] = $0 }
+        )
+        _keybinding = binding
+        defaultValue = Preferences.KeybindSection()[keyPath: keyPath]
+    }
 
     var body: some View {
         ZStack(alignment: .trailing) {
