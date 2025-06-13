@@ -57,14 +57,14 @@ enum SettingsBarItem: CaseIterable, Identifiable, Hashable {
             case .updates:
                 "Updates"
             case .credits:
-                "Credits"
+                "Credits & Help"
         }
     }
 
     var icon: String {
         switch self {
             case .instances:
-                "safari.fill"
+                "macwindow.on.rectangle"
             case .behavior:
                 "hammer.fill"
             case .window_resizing:

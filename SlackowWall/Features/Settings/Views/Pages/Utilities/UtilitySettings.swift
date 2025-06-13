@@ -80,16 +80,14 @@ struct UtilitySettings: View {
 
                             SettingsInfoIcon(
                                 description: """
-                                    The Height Scale option determines how "squished" the eye is \
-                                    on the projector, a lower value
-                                    gives you more leeway on how far above or below your cursor \
-                                    can be from the eye to still see it, and a higher
-                                    number makes it easier to see the divide between the two \
-                                    important pixels, the ideal value depends on how
-                                    tall you make the eye projector window, but generally it's \
-                                    recommended to keep it between 0.2-0.4,
-                                    you can experiment with it with the window open to see what \
-                                    works best.
+                                    The Height Scale option determines how "squished" the eye is
+                                    on the projector, a lower value gives you more leeway on how
+                                    far above or below your cursor can be from the eye to still
+                                    see it, and a higher number makes it easier to see the divide
+                                    between the two important pixels, the ideal value depends on
+                                    how tall you make the eye projector window, but generally it's
+                                    recommended to keep it between 0.2-0.4, you can experiment
+                                    with it with the window open to see what works best.
                                     """)
 
                             TextField(
@@ -109,7 +107,10 @@ struct UtilitySettings: View {
                 title: "Sensitivity Scaling",
                 description: """
                     Allows your sensitivity to change when in tall mode, and to use lower \
-                    sensitivities without affecting your unlocked cursor movements.
+                    sensitivities without affecting your unlocked cursor movements, this is used \
+                    for BoatEye.
+                    Go [here](https://slackow.github.io/ScaleFactorCalc/calc.html) to find the \
+                    correct values for your sensitivity
                     """
             )
 
@@ -192,7 +193,7 @@ struct UtilitySettings: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
 
                         Button("Test") {
-                            Task {
+                            Task(priority: .userInitiated) {
                                 await validateToken()
                             }
                         }
@@ -263,8 +264,8 @@ struct UtilitySettings: View {
                 switch response {
                     case .empty:
                         Text("No token found, generate here: paceman.gg")
-                    case .valid:
-                        Text("Token is Valid!")
+                    case .valid(let name):
+                        Text("Token is valid for \(name)!")
                     case .invalid:
                         Text("Invalid token, check it was input correctly.")
                     case .unable:
@@ -280,8 +281,8 @@ struct UtilitySettings: View {
             tokenResponse = .empty
         } else {
             do {
-                if let uuid = try await PacemanManager.validateToken(token: token) {
-                    tokenResponse = .valid(uuid)
+                if let name = try await PacemanManager.validateToken(token: token) {
+                    tokenResponse = .valid(name)
                 } else {
                     tokenResponse = .invalid
                 }
@@ -291,10 +292,6 @@ struct UtilitySettings: View {
             }
         }
         showTokenAlert = true
-    }
-
-    private func getAvatarURL(_ uuid: String) -> URL? {
-        return URL(string: "https://minotar.net/helm/\(uuid)/32")
     }
 }
 

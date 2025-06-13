@@ -56,9 +56,7 @@ struct InstancesSettings: View {
             }
 
             SettingsLabel(
-                title: "Control Panel",
-                description:
-                    "If you need help setting up SlackowWall, you can read the [setup guide](https://github.com/Slackow/SlackowWall/blob/main/Info/guide.md)."
+                title: "Control Panel"
             )
             .padding(.top, 5)
 

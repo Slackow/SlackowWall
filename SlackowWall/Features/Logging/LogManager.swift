@@ -245,7 +245,7 @@ class LogManager {
         request.httpBody = bodyString.data(using: .utf8)
 
         // Perform the upload asynchronously.
-        Task {
+        Task(priority: .userInitiated) {
             let message: String
             var succeeded: Bool = false
             do {
@@ -270,7 +270,8 @@ class LogManager {
                     // Copy the resulting URL to the clipboard.
                     NSPasteboard.general.clearContents()
                     NSPasteboard.general.setString(urlString, forType: .string)
-                    message = ("Log uploaded to mclo.gs: \(urlString), copied to clipboard")
+                    message =
+                        ("Log uploaded to mclo.gs: \(urlString), link has been copied to clipboard")
                     succeeded = true
                 } else {
                     let body = String(data: data, encoding: .utf8) ?? "<unparseable json>"
