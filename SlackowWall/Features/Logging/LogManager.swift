@@ -223,7 +223,7 @@ class LogManager {
         }
     }
 
-    func uploadLog(callback: @escaping (String, Bool) -> Void = { _, _ in }) {
+    func uploadLog(callback: @escaping (String, String?) -> Void = { _, _ in }) {
         logCurrentProfile()
 
         // Read the full contents of the newest log file.
@@ -247,7 +247,6 @@ class LogManager {
         // Perform the upload asynchronously.
         Task(priority: .userInitiated) {
             let message: String
-            var succeeded: Bool = false
             do {
                 let (data, response) = try await URLSession.shared.data(for: request)
                 guard let httpResponse = response as? HTTPURLResponse else {
@@ -266,21 +265,18 @@ class LogManager {
                     let success = json["success"] as? Bool, success,
                     let urlString = json["url"] as? String
                 {
-
-                    // Copy the resulting URL to the clipboard.
-                    NSPasteboard.general.clearContents()
-                    NSPasteboard.general.setString(urlString, forType: .string)
-                    message =
-                        ("Log uploaded to mclo.gs: \(urlString), link has been copied to clipboard")
-                    succeeded = true
+                    message = "Log uploaded to mclo.gs: \(urlString)"
+                    callback(message, urlString)
+                    return
                 } else {
                     let body = String(data: data, encoding: .utf8) ?? "<unparseable json>"
-                    message = ("mclo.gs upload returned unexpected payload: \(body)")
+                    message = "mclo.gs upload returned unexpected payload: \(body)"
                 }
+                
             } catch {
-                message = ("Error uploading log to mclo.gs: \(error)")
+                message = "Error uploading log to mclo.gs: \(error)"
             }
-            callback(message, succeeded)
+            callback(message, nil)
         }
     }
 
