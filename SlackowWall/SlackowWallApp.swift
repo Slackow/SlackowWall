@@ -23,6 +23,7 @@ struct SlackowWallApp: App {
 
     @State private var showLogUploadedAlert = false
     @State private var logUploadedAlert: String?
+    @State private var logLink: String?
 
     init() {
         NSSplitViewItem.swizzle()
@@ -67,7 +68,13 @@ struct SlackowWallApp: App {
                     "Log File Upload", isPresented: $showLogUploadedAlert,
                     presenting: logUploadedAlert
                 ) { _ in
-                    Button("Ok") {}
+                    if let logLink {
+                        Button("Copy Link") {
+                            NSPasteboard.general.clearContents()
+                            NSPasteboard.general.setString(logLink, forType: .string)
+                        }
+                    }
+                    Button("Close") {}
                 } message: { _ in
                     Text(logUploadedAlert ?? "Unable to upload.")
                 }
@@ -123,8 +130,9 @@ struct SlackowWallApp: App {
                     }
 
                     Button(action: {
-                        LogManager.shared.uploadLog { msg, succeeded in
+                        LogManager.shared.uploadLog { msg, link in
                             logUploadedAlert = msg
+                            logLink = link
                             showLogUploadedAlert = true
                         }
                     }) {
