@@ -310,22 +310,42 @@ import SwiftUI
         // Stop any existing eye projector capture
         await stopEyeProjectorCapture()
 
-        // Refresh available content to find the window
-        await refreshAvailableContent()
+        // Attempt to reuse the stored filter for this instance to avoid the
+        // expensive window enumeration that occurs when starting the eye
+        // projector.
+        var filter: SCContentFilter?
 
-        // Find the window for this instance
-        guard
-            let window = availableWindows.first(where: {
-                $0.owningApplication?.processID == instance.pid
-            })
-        else {
-            LogManager.shared.appendLog(
-                "Could not find window for eye projector instance \(instance.pid)")
-            return
+        if let windowID = instance.windowID,
+            let storedFilter = windowFilters[windowID]
+        {
+            filter = storedFilter
+        } else {
+            // Refresh available windows only if needed
+            await refreshAvailableContent()
+
+            guard
+                let window = availableWindows.first(where: {
+                    $0.owningApplication?.processID == instance.pid
+                })
+            else {
+                LogManager.shared.appendLog(
+                    "Could not find window for eye projector instance \(instance.pid)"
+                )
+                return
+            }
+
+            let newFilter = SCContentFilter(desktopIndependentWindow: window)
+            windowFilters[window.windowID] = newFilter
+            instance.windowID = window.windowID
+            filter = newFilter
         }
 
-        // Create filter and configuration using tall mode dimensions
-        let filter = SCContentFilter(desktopIndependentWindow: window)
+        guard let filter = filter else {
+            LogManager.shared.appendLog(
+                "Unable to setup filter for eye projector instance \(instance.pid)"
+            )
+            return
+        }
 
         // Use tall mode dimensions instead of actual window size
         let tallWidth = CGFloat(Settings[\.mode].tallWidth ?? 60)

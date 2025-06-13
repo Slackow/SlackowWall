@@ -81,7 +81,7 @@ final class PrismInstanceStore: ObservableObject {
             """
             killall prismlauncher; \
             open -a "Prism Launcher" --args --launch "\(instance.name)" || \
-            open -a "PrismLauncher" --args --launch "\(instance.name)" 
+            open -a "PrismLauncher" --args --launch "\(instance.name)"
             """
 
         task.launchPath = "/bin/sh"

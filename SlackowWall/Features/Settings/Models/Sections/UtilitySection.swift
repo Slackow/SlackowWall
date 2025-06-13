@@ -23,7 +23,7 @@ extension Preferences {
 
         var sensitivityScaleEnabled: Bool = false
         var sensitivityScale: Double = 1.0
-        var tallSensitivityScale: Double = 1.0
+        var tallSensitivityScale: Double = 0.25
 
         init() {}
     }

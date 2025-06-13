@@ -42,8 +42,47 @@ struct CreditsView: View {
                         .font(.title)
                         .foregroundStyle(.pink)
 
-                    Text(donationString)
-                        .tint(.pink)
+                    Text(
+                        "If you're finding SlackowWall helpful and would like to support its development, consider making a donation on our [Ko-fi](https://ko-fi.com/kscode)"
+                    )
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            SettingsLabel(title: "Need help?")
+                .padding(.top, 5)
+
+            SettingsCardView {
+                VStack {
+                    HStack {
+                        Image(systemName: "wrench.adjustable.fill")
+                            .font(.title)
+                            .foregroundStyle(.gray)
+                        Text(
+                            "For help with technical issues, join the [Mac Speedrunning Discord](https://discord.gg/sczfsdE39W)"
+                        )
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    Divider()
+                    HStack {
+                        Image(systemName: "play.rectangle.fill")
+                            .font(.title)
+                            .foregroundStyle(.red)
+                        Text(
+                            "For help setting up BoatEye, try this [tutorial](https://www.youtube.com/watch?v=Mj42HbnPUZ4) by FlaxyBRuns"
+                        )
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    Divider()
+                    HStack {
+                        Image(systemName: "text.document.fill")
+                            .font(.title)
+                            .foregroundStyle(.gray)
+                            .frame(width: 30)
+                        Text(
+                            "For setting up the wall without SeedQueue, read the [setup guide](https://github.com/Slackow/SlackowWall/blob/main/Info/guide.md)"
+                        )
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }

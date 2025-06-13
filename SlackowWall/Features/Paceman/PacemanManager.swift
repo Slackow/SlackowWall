@@ -118,10 +118,33 @@ class PacemanManager: Manager, ObservableObject {
         guard let http = resp as? HTTPURLResponse else { throw URLError(.badServerResponse) }
         guard 200..<300 ~= http.statusCode else { return nil }
         let uuid =
-            String(data: data, encoding: .utf8).map { $0.lowercased() }.flatMap { a in
-                try? /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/.firstMatch(
-                    in: a)?.output
-            } ?? ""
-        return uuid.replacingOccurrences(of: "-", with: "")
+            String(
+                String(data: data, encoding: .utf8).map { $0.lowercased() }.flatMap { a in
+                    try? /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/.firstMatch(
+                        in: a)?.output
+                } ?? "")
+        return (await nameFromUUID(uuid)) ?? uuid
+    }
+
+    static func nameFromUUID(_ uuid: String) async -> String? {
+        guard let url = URL(string: "https://playerdb.co/api/player/minecraft/\(uuid)") else {
+            return nil
+        }
+        let req = URLRequest(url: url, timeoutInterval: 2)
+        guard let (data, resp) = try? await URLSession.shared.data(for: req),
+            let http = resp as? HTTPURLResponse,
+            200..<300 ~= http.statusCode
+        else { return nil }
+        let json = try? JSONDecoder().decode(PlayerDBRepsonse.self, from: data)
+        return json?.data.player.username
+    }
+    private struct PlayerDBRepsonse: Decodable {
+        let data: PlayerDBData
+        struct PlayerDBData: Decodable {
+            let player: PlayerDBPlayer
+            struct PlayerDBPlayer: Decodable {
+                let username: String
+            }
+        }
     }
 }
