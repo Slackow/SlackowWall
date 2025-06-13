@@ -26,7 +26,7 @@ struct KeybindingsSettings: View {
                                 "You may need to change this in [OBS](https://obsproject.com) too.",
                             font: .body)
 
-                        KeybindingView(keybinding: $settings.resetGKey, defaultValue: nil)
+                        KeybindingView(keybinding: \.resetGKey)
                     }
 
                     Divider()
@@ -36,7 +36,7 @@ struct KeybindingsSettings: View {
                             title: "Switch to Gameplay Mode",
                             description: "Go back to your normal dimensions quickly.", font: .body)
 
-                        KeybindingView(keybinding: $settings.baseGKey, defaultValue: nil)
+                        KeybindingView(keybinding: \.baseGKey)
                     }
 
                     Divider()
@@ -46,7 +46,7 @@ struct KeybindingsSettings: View {
                             title: "Toggle Tall Mode",
                             description: "Toggle between two resolutions quickly.", font: .body)
 
-                        KeybindingView(keybinding: $settings.tallGKey, defaultValue: nil)
+                        KeybindingView(keybinding: \.tallGKey)
                     }
 
                     Divider()
@@ -56,7 +56,7 @@ struct KeybindingsSettings: View {
                             title: "Toggle Thin Mode",
                             description: "Toggle between another set of resolutions.", font: .body)
 
-                        KeybindingView(keybinding: $settings.thinGKey, defaultValue: nil)
+                        KeybindingView(keybinding: \.thinGKey)
                     }
 
                     Divider()
@@ -66,7 +66,7 @@ struct KeybindingsSettings: View {
                             title: "Toggle Wide Mode",
                             description: "Toggle between another set of resolutions.", font: .body)
 
-                        KeybindingView(keybinding: $settings.planarGKey, defaultValue: nil)
+                        KeybindingView(keybinding: \.planarGKey)
                     }
                 }
             }
@@ -82,7 +82,7 @@ struct KeybindingsSettings: View {
                     HStack {
                         SettingsLabel(title: "Reset All", font: .body)
 
-                        KeybindingView(keybinding: $settings.resetAllKey, defaultValue: .t)
+                        KeybindingView(keybinding: \.resetAllKey)
                     }
 
                     Divider()
@@ -90,7 +90,7 @@ struct KeybindingsSettings: View {
                     HStack {
                         SettingsLabel(title: "Reset Hovered", font: .body)
 
-                        KeybindingView(keybinding: $settings.resetOneKey, defaultValue: .e)
+                        KeybindingView(keybinding: \.resetOneKey)
                     }
 
                     Divider()
@@ -102,7 +102,7 @@ struct KeybindingsSettings: View {
                                 "You may need to change this in [OBS](https://obsproject.com) too.",
                             font: .body)
 
-                        KeybindingView(keybinding: $settings.resetOthersKey, defaultValue: .f)
+                        KeybindingView(keybinding: \.resetOthersKey)
                     }
 
                     Divider()
@@ -114,7 +114,7 @@ struct KeybindingsSettings: View {
                                 "You may need to change this in [OBS](https://obsproject.com) too.",
                             font: .body)
 
-                        KeybindingView(keybinding: $settings.runKey, defaultValue: .r)
+                        KeybindingView(keybinding: \.runKey)
                     }
 
                     Divider()
@@ -125,7 +125,7 @@ struct KeybindingsSettings: View {
                             description: "You can also shift click instances to lock/unlock them.",
                             font: .body)
 
-                        KeybindingView(keybinding: $settings.lockKey, defaultValue: .c)
+                        KeybindingView(keybinding: \.lockKey)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
