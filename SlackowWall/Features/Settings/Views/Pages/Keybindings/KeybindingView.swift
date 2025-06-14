@@ -36,10 +36,10 @@ struct KeybindingView: View {
         ZStack(alignment: .trailing) {
             ZStack {
                 RoundedRectangle(cornerRadius: 5)
-                    .foregroundColor(.init(red: 0.25, green: 0.25, blue: 0.25))
+                    .foregroundColor(.init(nsColor: .controlBackgroundColor))
 
                 Text(isFocused ? "> \(textName) <" : textName)
-                    .foregroundStyle(isFocused ? .gray : .white)
+                    .foregroundStyle(isFocused ? .gray : .primary)
                     .frame(maxWidth: .infinity, alignment: .center)
             }
             .focusable(true)
@@ -57,13 +57,13 @@ struct KeybindingView: View {
                     Image(systemName: "xmark")
                         .font(.caption2)
                         .fontWeight(.bold)
-                        .foregroundColor(.black)
+                        .foregroundColor(.init(nsColor: .windowBackgroundColor))
                 }
             }
             .buttonStyle(.plain)
             .padding(.horizontal, 4)
             .onHover(perform: { hovering in
-                circleColor = hovering ? .white : .gray
+                circleColor = hovering ? .init(nsColor: .labelColor) : .gray
             })
         }
         .frame(width: 100, height: 22)
