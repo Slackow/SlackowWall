@@ -27,7 +27,7 @@ struct UtilitySettings: View {
             SettingsLabel(
                 title: "Eye Projector",
                 description: """
-                    Settings for an automated eye projector for tall eye.
+                    Settings for an automated eye projector for BoatEye.
                     """)
 
             SettingsCardView {

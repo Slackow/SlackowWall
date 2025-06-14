@@ -35,6 +35,7 @@ struct CaptureGridView: View {
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .multilineTextAlignment(.center)
+                        .foregroundStyle(.white)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                     Button(action: { quickLaunchOpen.toggle() }) {
                         HStack {

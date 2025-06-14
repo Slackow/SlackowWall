@@ -16,12 +16,12 @@ struct KeybindingView: View {
     private var textName: String {
         KeyCode.toName(code: keybinding)
     }
-    
+
     init(keybinding: Binding<UInt16?>, defaultValue: UInt16? = nil) {
         _keybinding = keybinding
         self.defaultValue = defaultValue
     }
-    
+
     @AppSettings(\.keybinds) private var settings
     init(keybinding keyPath: WritableKeyPath<Preferences.KeybindSection, UInt16?>) {
         let binding = Binding<UInt16?>(

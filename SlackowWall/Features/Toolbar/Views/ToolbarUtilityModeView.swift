@@ -21,12 +21,8 @@ struct ToolbarUtilityModeView: View {
                 await ScreenRecorder.shared.resetAndStartCapture()
             }
         }) {
-            if isHovered {
-                Image(systemName: "hammer\(Settings[\.behavior].utilityMode ? ".fill" : "")")
-                    .foregroundStyle(Color(nsColor: .labelColor))
-            } else {
-                Image(systemName: "hammer\(Settings[\.behavior].utilityMode ? ".fill" : "")")
-            }
+            Image(systemName: "hammer\(Settings[\.behavior].utilityMode ? ".fill" : "")")
+                .foregroundStyle(Color(nsColor: isHovered ? .labelColor : .secondaryLabelColor))
         }
         .popoverLabel("Utility Mode")
         .onHover { isHovered = $0 }
