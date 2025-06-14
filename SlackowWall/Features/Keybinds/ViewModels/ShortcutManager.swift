@@ -230,7 +230,7 @@ class ShortcutManager: ObservableObject, Manager {
                 x: x ?? (currentPosition.x - (newSize.width - currentSize.width) * 0.5),
                 y: y ?? (currentPosition.y - (newSize.height - currentSize.height) * 0.5))
             if let instance = TrackingManager.shared.trackedInstances.first(where: {
-                $0.pid == pid && $0.info.port > 3
+                $0.pid == pid && $0.info.isBoundless
             }) {
                 WindowController.sendResizeCommand(
                     instance: instance, x: Int(newPosition.x), y: Int(newPosition.y),
