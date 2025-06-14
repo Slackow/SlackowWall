@@ -220,7 +220,17 @@ import SwiftUI
         }
 
         for pid in pids {
-            WindowController.modifyWindow(pid: pid, x: x, y: y, width: width, height: height)
+            if let instance = TrackingManager.shared.trackedInstances.first(where: {
+                $0.pid == pid && $0.info.isBoundless
+            }) {
+                WindowController.sendResizeCommand(
+                    instance: instance, x: Int(x), y: Int(y),
+                    width: Int(width), height: Int(height))
+            } else {
+                WindowController.modifyWindow(
+                    pid: pid, x: x, y: y, width: width,
+                    height: height)
+            }
         }
 
         if setSize {
