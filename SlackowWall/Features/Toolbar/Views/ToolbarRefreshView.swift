@@ -18,12 +18,8 @@ struct ToolbarRefreshView: View {
                 await ScreenRecorder.shared.resetAndStartCapture()
             }
         }) {
-            if isHovered {
-                Image(systemName: "arrow.clockwise")
-                    .foregroundStyle(Color(nsColor: .labelColor))
-            } else {
-                Image(systemName: "arrow.clockwise")
-            }
+            Image(systemName: "arrow.clockwise")
+                .foregroundStyle(Color(nsColor: isHovered ? .labelColor : .secondaryLabelColor))
         }.onHover { isHovered = $0 }
             .popoverLabel("Refresh")
     }

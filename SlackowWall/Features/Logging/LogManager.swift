@@ -272,7 +272,7 @@ class LogManager {
                     let body = String(data: data, encoding: .utf8) ?? "<unparseable json>"
                     message = "mclo.gs upload returned unexpected payload: \(body)"
                 }
-                
+
             } catch {
                 message = "Error uploading log to mclo.gs: \(error)"
             }

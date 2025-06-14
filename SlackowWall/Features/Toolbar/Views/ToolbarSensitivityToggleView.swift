@@ -18,17 +18,12 @@ struct ToolbarSensitivityToggleView: View {
         Button(action: {
             settings.sensitivityScaleEnabled.toggle()
         }) {
-            if isHovered {
-                Image(systemName: "computermouse\(settings.sensitivityScaleEnabled ? ".fill" : "")")
-                    .foregroundStyle(Color(nsColor: .labelColor))
-            } else {
-                Image(systemName: "computermouse\(settings.sensitivityScaleEnabled ? ".fill" : "")")
-            }
+            Image(systemName: "computermouse\(settings.sensitivityScaleEnabled ? ".fill" : "")")
+                .foregroundStyle(Color(nsColor: isHovered ? .labelColor : .secondaryLabelColor))
+
         }
         .popoverLabel("Sensitivity Scaling")
-        .onHover {
-            isHovered = $0
-        }
+        .onHover { isHovered = $0 }
         .onChange(of: settings.sensitivityScaleEnabled) { _, newValue in
             LogManager.shared.appendLog(
                 "Sensitivity Scale", newValue ? "Enabled" : "Disabled")

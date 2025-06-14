@@ -13,12 +13,8 @@ struct ToolbarSettingsView: View {
 
     var body: some View {
         Button(action: { openWindow(id: "settings-window") }) {
-            if isHovered {
-                Image(systemName: "gear")
-                    .foregroundStyle(Color(nsColor: .labelColor))
-            } else {
-                Image(systemName: "gear")
-            }
+            Image(systemName: "gear")
+                .foregroundStyle(Color(nsColor: isHovered ? .labelColor : .secondaryLabelColor))
         }.onHover { isHovered = $0 }
             .popoverLabel("Settings")
     }

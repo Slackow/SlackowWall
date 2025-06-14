@@ -11,6 +11,7 @@ struct PlaceholderInstanceView: View {
     var instance: TrackedInstance
     @State var isHovered: Bool = true
     @State var isIndicatorHovered: Bool = false
+    @StateObject private var deletionModel = WorldDeletionViewModel()
 
     var instanceName: Substring {
         let result = instance.info.path.split(separator: "/").dropLast(1).last ?? "??"
@@ -38,7 +39,6 @@ struct PlaceholderInstanceView: View {
                         .padding(.top, 8)
                         .padding(.leading, 8)
                         .popoverLabel("Using Boundless Window")
-
                 }
                 Spacer()
                     .frame(maxWidth: .infinity)
@@ -53,12 +53,15 @@ struct PlaceholderInstanceView: View {
                                 nil, inFileViewerRootedAtPath: instance.info.path)
                         }
                     }
-                    //                    Button("Check/Update Mods") {
-                    //                        print("Folder Not Opened")
-                    //                    }
-                    //                    Button("Package Submission Files") {
-                    //                        print("TODO")
-                    //                    }
+                    Button("Clear Worlds") {
+                        deletionModel.prepareDeletion(instancePath: instance.info.path)
+                    }
+                    // Button("Check/Update Mods") {
+                    //     print("Folder Not Opened")
+                    // }
+                    // Button("Package Submission Files") {
+                    //     print("TODO")
+                    // }
                     Button("Kill Instance") {
                         TrackingManager.shared.kill(instance: instance)
                     }
@@ -74,7 +77,7 @@ struct PlaceholderInstanceView: View {
             }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
                 .opacity(isHovered ? 1 : 0)
                 .animation(.easeInOut.delay(0.15).speed(2), value: isHovered)
-            //            EyeProjectorView(instance: instance)
+            DeletionProgressView(model: deletionModel)
         }
         .frame(
             minWidth: 250, idealWidth: 600, maxWidth: 600, minHeight: 165, idealHeight: 350,
@@ -84,8 +87,7 @@ struct PlaceholderInstanceView: View {
             RoundedRectangle(cornerRadius: 10)
                 .stroke(.gray, lineWidth: 3)
                 .background(.ultraThinMaterial)
-
         }
+        // Alerts and dialogs handled in DeletionProgressView
     }
-
 }
