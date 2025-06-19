@@ -348,8 +348,13 @@ import SwiftUI
         }
 
         // Use tall mode dimensions instead of actual window size
-        let tallWidth = CGFloat(Settings[\.mode].tallWidth ?? 60)
-        let tallHeight = CGFloat(Settings[\.mode].tallHeight ?? 60)
+        var tallWidth = CGFloat(Settings[\.mode].tallWidth ?? 60)
+        var tallHeight = CGFloat(Settings[\.mode].tallHeight ?? 60)
+        
+        if Settings[\.utility].eyeProjectorWidth == 30 {
+            tallWidth *= 2
+            tallHeight *= 2
+        }
 
         let streamConfig = createStreamConfiguration(
             width: tallWidth,
