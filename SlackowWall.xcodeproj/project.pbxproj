@@ -10,6 +10,7 @@
 		496BFAC52DE7E9F600209079 /* PacemanWrapper in Copy Files */ = {isa = PBXBuildFile; fileRef = 496BFAB92DE7D7B600209079 /* PacemanWrapper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B62B05652C0ADE7500EC087E /* Gzip in Frameworks */ = {isa = PBXBuildFile; productRef = B62B05642C0ADE7500EC087E /* Gzip */; };
 		B6527B732DE4BC63008A1264 /* DefaultCodable in Frameworks */ = {isa = PBXBuildFile; productRef = B6527B722DE4BC63008A1264 /* DefaultCodable */; };
+		B67CD4E42E04DB1F00FC7037 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = B67CD4E32E04DB1F00FC7037 /* ZIPFoundation */; };
 		B6A1FDEB2BDF5BF000EF2180 /* CachedAsyncImage in Frameworks */ = {isa = PBXBuildFile; productRef = B6A1FDEA2BDF5BF000EF2180 /* CachedAsyncImage */; };
 		B6B9FE8D2BA1698D0026C268 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = B6B9FE8C2BA1698D0026C268 /* Sparkle */; };
 /* End PBXBuildFile section */
@@ -103,6 +104,7 @@
 				B6527B732DE4BC63008A1264 /* DefaultCodable in Frameworks */,
 				B6A1FDEB2BDF5BF000EF2180 /* CachedAsyncImage in Frameworks */,
 				B62B05652C0ADE7500EC087E /* Gzip in Frameworks */,
+				B67CD4E42E04DB1F00FC7037 /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -184,6 +186,7 @@
 				B6A1FDEA2BDF5BF000EF2180 /* CachedAsyncImage */,
 				B62B05642C0ADE7500EC087E /* Gzip */,
 				B6527B722DE4BC63008A1264 /* DefaultCodable */,
+				B67CD4E32E04DB1F00FC7037 /* ZIPFoundation */,
 			);
 			productName = SlackowWall;
 			productReference = 498FB3C828987F5B00405753 /* SlackowWall.app */;
@@ -247,6 +250,7 @@
 				B6A1FDE92BDF5BF000EF2180 /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */,
 				B62B05632C0ADE7500EC087E /* XCRemoteSwiftPackageReference "GzipSwift" */,
 				B6527B712DE4BC63008A1264 /* XCRemoteSwiftPackageReference "DefaultCodable" */,
+				B67CD4E22E04DB1F00FC7037 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 			);
 			preferredProjectObjectVersion = 55;
 			productRefGroup = 498FB3C928987F5B00405753 /* Products */;
@@ -320,7 +324,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 94CLS492CD;
+				DEVELOPMENT_TEAM = D64G2TTYWM;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -338,7 +342,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 94CLS492CD;
+				DEVELOPMENT_TEAM = D64G2TTYWM;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -487,7 +491,7 @@
 				CURRENT_PROJECT_VERSION = 250613;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Resources/Preview Content\"";
-				DEVELOPMENT_TEAM = 94CLS492CD;
+				DEVELOPMENT_TEAM = D64G2TTYWM;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -524,7 +528,7 @@
 				CURRENT_PROJECT_VERSION = 250613;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SlackowWall/Resources/Preview Content\"";
-				DEVELOPMENT_TEAM = 94CLS492CD;
+				DEVELOPMENT_TEAM = D64G2TTYWM;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -558,7 +562,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 94CLS492CD;
+				DEVELOPMENT_TEAM = D64G2TTYWM;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -582,7 +586,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 94CLS492CD;
+				DEVELOPMENT_TEAM = D64G2TTYWM;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -655,6 +659,14 @@
 				kind = branch;
 			};
 		};
+		B67CD4E22E04DB1F00FC7037 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.19;
+			};
+		};
 		B6A1FDE92BDF5BF000EF2180 /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/lorenzofiamingo/swiftui-cached-async-image";
@@ -683,6 +695,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B6527B712DE4BC63008A1264 /* XCRemoteSwiftPackageReference "DefaultCodable" */;
 			productName = DefaultCodable;
+		};
+		B67CD4E32E04DB1F00FC7037 /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B67CD4E22E04DB1F00FC7037 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
 		};
 		B6A1FDEA2BDF5BF000EF2180 /* CachedAsyncImage */ = {
 			isa = XCSwiftPackageProductDependency;
