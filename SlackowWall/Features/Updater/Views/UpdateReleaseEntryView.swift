@@ -14,13 +14,9 @@ struct UpdateReleaseEntryView: View {
     @State var releaseEntry: ReleaseEntry
 
     private var message: String {
-        let pattern = "(^|\\n)- "
-        let regex = try! NSRegularExpression(pattern: pattern, options: [])
-        let range = NSRange(location: 0, length: releaseEntry.message.utf16.count)
-        let formattedMessage = regex.stringByReplacingMatches(
-            in: releaseEntry.message, options: [], range: range, withTemplate: "$1• ")
-
-        return formattedMessage.replacingOccurrences(of: "### ", with: "")
+        releaseEntry.message
+            .replacing(/(^|\r\n)-\s/) { $0.output.1 + "• " }
+            .replacing("### ", with: "")
     }
 
     var body: some View {

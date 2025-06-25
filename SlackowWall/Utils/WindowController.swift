@@ -133,11 +133,10 @@ class WindowController {
         // Create an NWConnection to localhost on the instance's port.
         let connection = NWConnection(host: .init("127.0.0.1"), port: nwPort, using: .tcp)
         connection.stateUpdateHandler = { state in
-            if case .failed(let error) = state {
-                LogManager.shared.appendLog("Connection state: \(state), \(error)")
-            }
-            if case .waiting(let reason) = state {
-                LogManager.shared.appendLog("Connection state: \(state), \(reason)")
+            switch state {
+                case .failed(let reason), .waiting(let reason):
+                    LogManager.shared.appendLog("Connection state: \(state), \(reason)")
+                default: break
             }
         }
 

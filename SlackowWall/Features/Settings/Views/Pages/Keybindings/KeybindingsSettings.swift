@@ -141,7 +141,7 @@ struct KeybindingsSettings: View {
 
             SettingsCardView {
                 SettingsButtonView(
-                    title: "Restore Defaults", buttonText: "Reset",
+                    title: "Restore Default Keybindings", buttonText: "Reset",
                     action: ShortcutManager.shared.resetKeybinds)
             }
         }

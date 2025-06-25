@@ -106,6 +106,23 @@ struct ProfilesSettings: View {
                     }
                 }
             }
+            SettingsCardView {
+                VStack {
+                    SettingsButtonView(
+                        title: "Restore Default Settings",
+                        description:
+                            "Restores all settings to their default values for this profile.",
+                        buttonText: "Restore Profile"
+                    ) {
+                        let name = Settings[\.profile].name
+                        let id = Settings[\.profile].id
+                        var newPrefs = Preferences()
+                        newPrefs.profile.name = name
+                        newPrefs.profile.id = id
+                        Settings.shared.preferences = newPrefs
+                    }
+                }
+            }
         }
         .toolbar {
             ToolbarItemGroup {

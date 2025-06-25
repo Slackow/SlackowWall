@@ -23,7 +23,7 @@ extension Preferences {
         var eyeProjectorHeightScale: Double = 0.2
 
         var sensitivityScaleEnabled: Bool = false
-        var sensitivityScaleToolBarIcon: Bool = true
+        var sensitivityScaleToolBarIcon: Bool = false
         var sensitivityScale: Double = 1.0
         var tallSensitivityScale: Double = 0.25
 

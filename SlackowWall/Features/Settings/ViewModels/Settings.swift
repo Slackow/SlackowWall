@@ -178,7 +178,7 @@ extension Settings {
 
             LogManager.shared.logPath("Deleting: \(settingsURL(for: currentProfile))")
             let id = currentProfile
-            try switchProfile(to: profiles[max(0, idx - 1)].id)
+            try switchProfile(to: profiles[(idx + profiles.count - 1) % profiles.count].id)
             try fileManager.removeItem(at: settingsURL(for: id))
         } catch {
             LogManager.shared.appendLog("Profile Error:", error)
@@ -189,11 +189,12 @@ extension Settings {
 
     private func generateProfileName() -> String {
         let usedNames = Set(availableProfiles.map(\.name))
-        var name = "New Profile"
-        var x = 1
-
+        let currentName = preferences.profile.name
+        let baseName = currentName.replacing(/\s\d+$/, with: "")
+        var name = baseName
+        var x = 2
         while usedNames.contains(name) {
-            name = "New Profile \(x)"
+            name = "\(baseName) \(x)"
             x += 1
         }
 

@@ -183,68 +183,73 @@ struct UtilitySettings: View {
                         option: $settings.autoLaunchPaceman)
                     Divider()
                     SettingsToggleView(title: "Toolbar Icon", option: $settings.pacemanToolBarIcon)
-                }
-            }
-
-            SettingsLabel(
-                title: "Paceman Tracker",
-                description:
-                    "These settings are directly tied to the Paceman tracker, and require it to be restarted in order to take effect."
-            )
-
-            SettingsCardView {
-                VStack {
-                    HStack {
-                        Text("Paceman Token")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-
-                        Button("Test") {
-                            Task(priority: .userInitiated) {
-                                await validateToken()
-                            }
-                        }
-
-                        SecureField(
-                            "", text: $pacemanManager.pacemanConfig.accessKey,
-                            onCommit: {
-                                pacemanManager.pacemanConfig.accessKey = pacemanManager
-                                    .pacemanConfig.accessKey.trimmingCharacters(
-                                        in: .whitespacesAndNewlines)
-                            }
-                        )
-                        .textFieldStyle(.roundedBorder)
-                        .frame(width: 120)
-                        .disabled(pacemanManager.isRunning)
-                    }
 
                     Divider()
-
-                    SettingsToggleView(
-                        title: "Track Reset Statistics",
-                        option: $pacemanManager.pacemanConfig.resetStatsEnabled
+                    SettingsLabel(
+                        title: "Paceman Tracker Settings",
+                        description:
+                            "These settings are directly tied to the Paceman tracker, and require a restart to take effect.",
+                        font: .body
                     )
-                    .disabled(pacemanManager.isRunning)
-
-                    Divider()
-
-                    HStack {
-                        SettingsLabel(
-                            title: "Start/Stop Paceman",
-                            description: "Paceman will close with SlackowWall.", font: .body)
-
-                        Button {
-                            if pacemanManager.isRunning {
-                                pacemanManager.stopPaceman()
-                            } else {
-                                pacemanManager.startPaceman()
-                            }
-                        } label: {
+                    SettingsCardView {
+                        VStack {
                             HStack {
-                                Image(
-                                    systemName: pacemanManager.isRunning ? "stop.fill" : "play.fill"
+                                Text("Paceman Token")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                                Button("Test") {
+                                    Task(priority: .userInitiated) {
+                                        await validateToken()
+                                    }
+                                }
+
+                                SecureField(
+                                    "", text: $pacemanManager.pacemanConfig.accessKey,
+                                    onCommit: {
+                                        pacemanManager.pacemanConfig.accessKey = pacemanManager
+                                            .pacemanConfig.accessKey.trimmingCharacters(
+                                                in: .whitespacesAndNewlines)
+                                    }
                                 )
-                                .foregroundStyle(pacemanManager.isRunning ? .red : .green)
-                                Text(pacemanManager.isRunning ? "Stop Paceman" : "Start Paceman")
+                                .textFieldStyle(.roundedBorder)
+                                .frame(width: 120)
+                                .disabled(pacemanManager.isRunning)
+                            }
+
+                            Divider()
+
+                            SettingsToggleView(
+                                title: "Track Reset Statistics",
+                                option: $pacemanManager.pacemanConfig.resetStatsEnabled
+                            )
+                            .disabled(pacemanManager.isRunning)
+
+                            Divider()
+
+                            HStack {
+                                SettingsLabel(
+                                    title: "Start/Stop Paceman",
+                                    description: "Paceman will close with SlackowWall.", font: .body
+                                )
+
+                                Button {
+                                    if pacemanManager.isRunning {
+                                        pacemanManager.stopPaceman()
+                                    } else {
+                                        pacemanManager.startPaceman()
+                                    }
+                                } label: {
+                                    HStack {
+                                        Image(
+                                            systemName: pacemanManager.isRunning
+                                                ? "stop.fill" : "play.fill"
+                                        )
+                                        .foregroundStyle(pacemanManager.isRunning ? .red : .green)
+                                        Text(
+                                            pacemanManager.isRunning
+                                                ? "Stop Paceman" : "Start Paceman")
+                                    }
+                                }
                             }
                         }
                     }

@@ -283,17 +283,13 @@ import SwiftUI
             guard let processID = window.owningApplication?.processID, let title = window.title
             else { return false }
 
-            let versionPattern = "1\\.(\\d+)(\\.\\d+)?"
-            let regex = try? NSRegularExpression(pattern: versionPattern)
-            let matches = regex?.matches(in: title, range: NSRange(title.startIndex..., in: title))
-
-            if let match = matches?.first,
-                let majorRange = Range(match.range(at: 1), in: title),
-                let majorVersion = Int(title[majorRange]),
+            let regex = /1\.(\d+)(\.\d+)?/
+            if let match = try? regex.firstMatch(in: title),
+                let majorVersion = Int(match.output.1),
                 majorVersion >= 6,
                 title.contains("Minecraft")
             {
-                return trackingManager.trackedInstances.contains(where: { $0.pid == processID })
+                return trackingManager.getValues(\.pid).contains(processID)
             }
 
             return (title.contains("Prism Launcher") || title.contains("MultiMC"))
