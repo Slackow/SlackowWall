@@ -39,7 +39,7 @@ struct KeybindingView: View {
                     .foregroundColor(.init(nsColor: .controlBackgroundColor))
 
                 Text(isFocused ? "> \(textName) <" : textName)
-                    .foregroundStyle(isFocused ? .gray : .primary)
+                    .foregroundStyle(isFocused ? .gray : Color(nsColor: .controlTextColor))
                     .frame(maxWidth: .infinity, alignment: .center)
             }
             .focusable(true)

@@ -177,7 +177,7 @@ import SwiftUI
     }
 
     func resetInstance(instance: TrackedInstance) {
-        var info = instance.info
+        let info = instance.info
         info.checkState = .GENNING
         KeyDispatcher.sendReset(pid: instance.pid)
         instance.unlock()

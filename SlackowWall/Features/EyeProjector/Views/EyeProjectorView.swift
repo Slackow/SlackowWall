@@ -31,7 +31,7 @@ struct EyeProjectorView: View {
                 previewRenderer.instance.eyeProjectorStream.capturePreview
                     .scaleEffect(
                         x: CGFloat(mode.tallWidth ?? 60) / CGFloat(utility.eyeProjectorWidth),
-                        y: utility.eyeProjectorHeightScale
+                        y: utility.eyeProjectorHeightScale * 60 / CGFloat(utility.eyeProjectorWidth)
                     )
                     .contentShape(Rectangle())
                     .opacity(previewRenderer.isVisible ? 1 : 0)

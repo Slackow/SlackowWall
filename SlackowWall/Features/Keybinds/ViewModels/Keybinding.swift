@@ -12,14 +12,18 @@ import Foundation
 struct Keybinding: Codable, Equatable, Hashable {
     var values: [KeyCode]
 
-    static let none = Keybinding()
-
-    init(_ values: [KeyCode] = []) {
-        self.values = values
+    var modifiers: Set<KeyCode> {
+        Set(values[1...])
     }
 
-    init(_ value: KeyCode) {
-        self.values = [value]
+    var primaryKey: KeyCode? {
+        values.first
+    }
+
+    static let none = Keybinding()
+
+    init(_ values: KeyCode...) {
+        self.values = values
     }
 
     // Decode either one KeyCode or an array of them

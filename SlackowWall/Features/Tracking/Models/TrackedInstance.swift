@@ -15,7 +15,7 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
     var windowID: CGWindowID?
     let instanceNumber: Int
 
-    var info: InstanceInfo
+    let info: InstanceInfo
     var stream: InstanceStream
     var eyeProjectorStream: InstanceStream
 
