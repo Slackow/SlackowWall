@@ -25,6 +25,7 @@ class PacemanManager: Manager, ObservableObject {
 
     private var wrapperProcess: Process? = nil
     @Published private(set) var isRunning: Bool = false
+    @Published private(set) var isShuttingDown: Bool = false
 
     private init() {
         let fileManager = FileManager.default
@@ -46,7 +47,7 @@ class PacemanManager: Manager, ObservableObject {
 
     func startPaceman() {
         guard wrapperProcess == nil else { return }  // already running
-
+        self.isShuttingDown = false
         let wrapperPath = Bundle.main.bundlePath.appending("/Contents/MacOS/PacemanWrapper")
         //        else {
         //            LogManager.shared.appendLog("PacemanWrapper missing from bundle")
@@ -54,9 +55,7 @@ class PacemanManager: Manager, ObservableObject {
         //            return
         //        }
         guard
-            let jarURL = Bundle.main.url(
-                forResource: "paceman-tracker-0.7.0",
-                withExtension: "jar")
+            let jarURL = Bundle.main.url(forResource: "paceman-tracker-0.7.0", withExtension: "jar")
         else {
             LogManager.shared.appendLog("paceman-tracker.jar missing from bundle")
             return
@@ -85,7 +84,7 @@ class PacemanManager: Manager, ObservableObject {
 
     func stopPaceman() {
         guard let proc = wrapperProcess, proc.isRunning else { return }
-
+        self.isShuttingDown = true
         Task.detached {
             proc.terminate()
             proc.waitUntilExit()  // wait off‑main‑thread
@@ -94,6 +93,7 @@ class PacemanManager: Manager, ObservableObject {
                 if self?.wrapperProcess === proc {
                     self?.wrapperProcess = nil
                     self?.isRunning = false
+                    self?.isShuttingDown = false
                 }
             }
         }
@@ -111,7 +111,7 @@ class PacemanManager: Manager, ObservableObject {
         var req = URLRequest(url: url)
         req.httpMethod = "POST"
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        req.setValue("SlackowWall/1.1.0", forHTTPHeaderField: "User-Agent")
+        req.setValue("SlackowWall/1.2.0", forHTTPHeaderField: "User-Agent")
         req.httpBody = #"{"accessKey": "\#(token)"}"#.data(using: .utf8)
 
         let (data, resp) = try await URLSession.shared.data(for: req)

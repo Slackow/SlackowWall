@@ -23,10 +23,9 @@ import SwiftUI
                 $0.instanceNumber == 1
             })
         else { return }
-        let statePath = firstInstance.info.statePath
+        let pathM = firstInstance.info.path
 
-        let path = URL(filePath: statePath).deletingLastPathComponent().appendingPathComponent(
-            "config")
+        let path = URL(filePath: pathM).appending(path: "config/")
         NSWorkspace.shared.open(path)
     }
 
@@ -36,15 +35,14 @@ import SwiftUI
                 $0.instanceNumber == 1
             })
         else { return }
-        let statePath = firstInstance.info.statePath
+        let statePath = firstInstance.info.path
 
-        let src = URL(filePath: statePath).deletingLastPathComponent().appendingPathComponent(
-            "mods")
+        let src = URL(filePath: statePath).appending(path: "mods/")
         let fileManager = FileManager.default
 
         TrackingManager.shared.getValues(\.info).dropFirst().forEach {
-            let dst = URL(filePath: $0.statePath).deletingLastPathComponent()
-                .appendingPathComponent("mods")
+            let dst = URL(filePath: $0.path)
+                .appending(path: "mods/")
 
             print("Copying all from", src.path, "to", dst.path)
 
@@ -61,8 +59,8 @@ import SwiftUI
 
                 // Copy each item from the source to the destination
                 for item in items {
-                    let srcItem = src.appendingPathComponent(item)
-                    let dstItem = dst.appendingPathComponent(item)
+                    let srcItem = src.appending(path: item)
+                    let dstItem = dst.appending(path: item)
                     try fileManager.copyItem(at: srcItem, to: dstItem)
                 }
             } catch { print(error.localizedDescription) }
@@ -160,9 +158,9 @@ import SwiftUI
 
     private func canReset(instance: TrackedInstance) -> Bool {
         if instance.isLocked { return false }
-        if !Settings[\.behavior].checkStateOutput { return true }
+        if !instance.checkStateOutput { return true }
+        instance.info.updateState(force: true)
         let info = instance.info
-        info.updateState(force: true)
         return info.state != InstanceStates.waiting && info.state != InstanceStates.generating
     }
 
@@ -179,7 +177,7 @@ import SwiftUI
     }
 
     func resetInstance(instance: TrackedInstance) {
-        let info = instance.info
+        var info = instance.info
         info.checkState = .GENNING
         KeyDispatcher.sendReset(pid: instance.pid)
         instance.unlock()

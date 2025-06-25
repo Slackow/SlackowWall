@@ -12,8 +12,26 @@ struct ModInfo: Identifiable, Codable {
     let version: String
     let name: String
     let description: String?
-    let authors: [String]
+    var authors: [Author] = []
     let license: String?
     let icon: String?
-    let filePath: URL?
+    var filePath: URL?
+}
+
+struct Author: Codable {
+    var name: String
+
+    init(name: String) {
+        self.name = name
+    }
+
+    init(from decoder: any Decoder) throws {
+        if let name = try? decoder.singleValueContainer().decode(String.self) {
+            self = Author(name: name)
+        } else {
+            let objectContainer = try decoder.container(keyedBy: CodingKeys.self)
+            let name = try objectContainer.decode(String.self, forKey: .name)
+            self = Author(name: name)
+        }
+    }
 }

@@ -150,17 +150,6 @@ class TrackingManager: ObservableObject {
         instanceCheckTimer = nil
     }
 
-    private func checkBoundless() {
-        for instance in trackedInstances where !instance.info.notCheckingBoundless {
-            let tries = instance.info.port
-            LogManager.shared.appendLog("\(tries) tries left")
-            instance.recalculateInstanceInfo()
-            if instance.info.port <= 3 {
-                instance.info.port = tries - 1
-            }
-        }
-    }
-
     /// Check for changes in Minecraft instances (added or removed)
     @objc private func checkForInstanceChanges() {
         // Get the current Minecraft apps
@@ -168,8 +157,7 @@ class TrackingManager: ObservableObject {
         let currentPIDs = Set(currentApps.map(\.processIdentifier))
 
         // If there's no change in the set of PIDs, do nothing
-        if currentPIDs == lastCheckedPIDs {
-            checkBoundless()
+        guard currentPIDs != lastCheckedPIDs else {
             return
         }
 
@@ -201,10 +189,7 @@ class TrackingManager: ObservableObject {
 
     /// Update tracked instances and refresh the capture
     private func updateInstancesAndRefresh() {
-        // Update the instances
-        fetchInstances()
-
-        // Trigger a capture refresh
+        // Refresh TrackedInstances and trigger a capture refresh
         Task {
             await ScreenRecorder.shared.resetAndStartCapture()
         }

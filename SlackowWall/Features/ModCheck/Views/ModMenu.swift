@@ -9,18 +9,20 @@ import SwiftUI
 
 struct ModMenu: View {
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var viewModel = ModListViewModel()
-    
+
+    var instance: TrackedInstance
+    @StateObject var viewModel = ModListViewModel()
+
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Mod Menu")
+            Text("Mods - \(viewModel.mods.count)")
                 .font(.title2)
                 .fontWeight(.bold)
-            
+
             SettingsCardView(padding: 0) {
                 ScrollView {
-                    VStack(alignment:. leading, spacing: 0) {
-                        ForEach(viewModel.mods) { mod in
+                    VStack(alignment: .leading, spacing: 0) {
+                        ForEach(viewModel.mods) { (mod: ModInfo) in
                             HStack {
                                 Group {
                                     if let icon = viewModel.getModIcon(for: mod) {
@@ -31,7 +33,7 @@ struct ModMenu: View {
                                         ZStack {
                                             Rectangle()
                                                 .foregroundStyle(.gray)
-                                            
+
                                             Text("N/A")
                                                 .font(.title3)
                                                 .foregroundStyle(.black)
@@ -40,10 +42,17 @@ struct ModMenu: View {
                                 }
                                 .frame(width: 32, height: 32)
                                 .clipShape(.rect(cornerRadius: 5))
-                                
+
                                 VStack(alignment: .leading) {
-                                    Text(mod.name)
-                                    
+                                    let authorLine = mod.authors.map(\.name).joined(separator: ", ")
+                                    HStack(spacing: 0) {
+                                        Text(mod.name)
+                                        if !authorLine.isEmpty {
+                                            Text(" by " + authorLine)
+                                                .foregroundStyle(.gray)
+                                        }
+                                    }
+
                                     Text(mod.version)
                                         .font(.footnote)
                                         .foregroundStyle(.gray)
@@ -51,8 +60,10 @@ struct ModMenu: View {
                             }
                             .frame(height: 32)
                             .padding(.leading, 6)
-                            
-                            if let idx = viewModel.mods.firstIndex(where: { $0.id == mod.id }), idx < viewModel.mods.count - 1 {
+
+                            if let idx = viewModel.mods.firstIndex(where: { $0.id == mod.id }),
+                                idx < viewModel.mods.count - 1
+                            {
                                 Divider()
                                     .padding(.vertical, 6)
                             }
@@ -62,8 +73,8 @@ struct ModMenu: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
-            
-            HStack {                
+
+            HStack {
                 Button(action: { dismiss() }) {
                     Text("Close")
                 }
@@ -73,7 +84,7 @@ struct ModMenu: View {
         .padding()
         .frame(width: 500, height: 300)
         .task {
-            viewModel.fetchMods()
+            viewModel.fetchMods(instance: instance)
         }
     }
 }

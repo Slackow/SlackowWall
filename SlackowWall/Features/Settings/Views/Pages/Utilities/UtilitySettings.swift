@@ -117,7 +117,9 @@ struct UtilitySettings: View {
             SettingsCardView {
                 VStack {
                     SettingsToggleView(title: "Enabled", option: $settings.sensitivityScaleEnabled)
-
+                    Divider()
+                    SettingsToggleView(
+                        title: "Toolbar Icon", option: $settings.sensitivityScaleToolBarIcon)
                     Group {
                         Divider()
 
@@ -174,10 +176,14 @@ struct UtilitySettings: View {
             .padding(.bottom, -6)
 
             SettingsCardView {
-                SettingsToggleView(
-                    title: "Auto-launch Paceman",
-                    description: "Automatically launch Paceman with SlackowWall.",
-                    option: $settings.autoLaunchPaceman)
+                VStack {
+                    SettingsToggleView(
+                        title: "Auto-launch Paceman",
+                        description: "Automatically launch Paceman with SlackowWall.",
+                        option: $settings.autoLaunchPaceman)
+                    Divider()
+                    SettingsToggleView(title: "Toolbar Icon", option: $settings.pacemanToolBarIcon)
+                }
             }
 
             SettingsLabel(

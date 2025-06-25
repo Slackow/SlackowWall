@@ -15,7 +15,6 @@ extension Preferences {
         var f1OnJoin: Bool = false
         var shouldHideWindows: Bool = true
         var onlyOnFocus: Bool = true
-        var checkStateOutput: Bool = false
 
         var resetMode: ResetMode = .wall
 

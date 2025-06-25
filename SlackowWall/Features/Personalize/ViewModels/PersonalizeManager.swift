@@ -42,7 +42,7 @@ class PersonalizeManager: ObservableObject {
         let fileExtension = url.pathExtension
         let destinationFileName = "\(uuid).\(fileExtension)"
 
-        let destinationURL = baseURL.appendingPathComponent(destinationFileName)
+        let destinationURL = baseURL.appending(path: destinationFileName)
 
         do {
             try fileManager.copyItem(at: url, to: destinationURL)
@@ -82,7 +82,7 @@ class PersonalizeManager: ObservableObject {
 
     func deleteLockIcon(userLock: UserLock) {
         do {
-            let iconPath = baseURL.appendingPathComponent(userLock.icon)
+            let iconPath = baseURL.appending(path: userLock.icon)
             try fileManager.removeItem(at: iconPath)
 
             withAnimation(.easeInOut) {
@@ -117,7 +117,7 @@ class PersonalizeManager: ObservableObject {
     private var baseURL: URL {
         fileManager
             .homeDirectoryForCurrentUser
-            .appendingPathComponent("Library/Application Support/SlackowWall", isDirectory: true)
-            .appendingPathComponent("Icons", isDirectory: true)
+            .appending(path: "Library/Application Support/SlackowWall/")
+            .appending(path: "Icons/")
     }
 }

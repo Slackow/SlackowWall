@@ -83,7 +83,7 @@ struct KeybindingView: View {
     @AppSettings(\.keybinds)
     var settings
     VStack {
-        KeybindingView(keybinding: $settings.resetGKey, defaultValue: nil)
+        KeybindingView(keybinding: $settings.planarGKey, defaultValue: nil)
             .padding()
         KeybindingView(keybinding: $settings.resetAllKey, defaultValue: .t)
             .padding()

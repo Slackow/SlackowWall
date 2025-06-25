@@ -11,7 +11,7 @@ import SwiftUI
 extension Preferences {
     @DefaultCodable
     struct KeybindSection: Codable, Hashable {
-        var resetGKey: KeyCode? = nil
+        var resetGKey: Keybinding = .none
         var tallGKey: KeyCode? = nil
         var thinGKey: KeyCode? = nil
         var planarGKey: KeyCode? = nil

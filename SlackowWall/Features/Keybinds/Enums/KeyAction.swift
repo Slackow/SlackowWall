@@ -28,7 +28,7 @@ enum KeyAction {
                 return .resetAll
             case profile.lockKey:
                 return .lock
-            case profile.resetGKey:
+            case profile.resetGKey.values.first:
                 return .resetGlobal
             default:
                 return nil

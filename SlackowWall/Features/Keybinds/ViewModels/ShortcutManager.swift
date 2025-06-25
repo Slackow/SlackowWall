@@ -32,7 +32,7 @@ class ShortcutManager: ObservableObject, Manager {
     func handleGlobalKey(_ key: NSEvent) {
         let settings = Settings[\.keybinds]
         switch (key.type, key.keyCode) {
-            case (.keyUp, settings.resetGKey): globalReset()
+            case (.keyUp, settings.resetGKey.values.first): globalReset()
             case (.keyDown, settings.planarGKey): resizePlanar()
             case (.keyDown, settings.baseGKey): resizeBase()
             case (.keyDown, settings.tallGKey): resizeTall()
@@ -103,9 +103,8 @@ class ShortcutManager: ObservableObject, Manager {
         let nextInstance = (1..<totalInstances).lazy
             .map { (currentInstanceIndex + $0) % totalInstances }
             .map { index -> TrackedInstance in
-                let candidate = trackedInstances[index]
-                candidate.info.updateState(force: true)
-                return candidate
+                trackedInstances[index].info.updateState(force: true)
+                return trackedInstances[index]
             }
             .first(where: { $0.isReady })
 
@@ -199,8 +198,6 @@ class ShortcutManager: ObservableObject, Manager {
             return nil
         }
 
-        LogManager.shared.appendLog("Resizing Instance: \(pid)")
-
         if let currentSize = WindowController.getWindowSize(pid: pid),
             let currentPosition = WindowController.getWindowPosition(pid: pid)
         {
@@ -224,6 +221,8 @@ class ShortcutManager: ObservableObject, Manager {
                 resizeBase(pid: pid)
                 return false
             }
+
+            LogManager.shared.appendLog("Resizing Instance: \(pid)")
 
             let newSize = CGSize(width: width, height: height)
             let newPosition = CGPoint(

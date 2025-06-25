@@ -29,7 +29,7 @@ func defaultJarPath() -> String {
     // Compute ../Contents/Resources/Jars/paceman-tracker-*.jar relative to this binary
     let execURL = URL(fileURLWithPath: CommandLine.arguments[0]).resolvingSymlinksInPath()
     let bundleURL = execURL.deletingLastPathComponent().deletingLastPathComponent()  // …/MacOS → …/Contents
-    return bundleURL.appendingPathComponent("Resources/Jars/paceman-tracker-0.7.0.jar").path
+    return bundleURL.appending(path: "Resources/Jars/paceman-tracker-0.7.0.jar").path
 }
 
 // MARK: – Resolve paths

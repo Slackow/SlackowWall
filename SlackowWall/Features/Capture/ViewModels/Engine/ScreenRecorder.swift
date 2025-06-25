@@ -244,13 +244,8 @@ import SwiftUI
         }
 
         trackingManager.fetchInstances()
-        trackingManager.getValues(\.pid).forEach(ShortcutManager.shared.resizeReset)
         MouseSensitivityManager.shared.setSensitivityFactor(
             factor: Settings[\.utility].sensitivityScale)
-
-        if Settings[\.behavior].shouldHideWindows && !Settings.shared.profileCreatedOrDeleted {
-            WindowController.unhideWindows(trackingManager.getValues(\.pid))
-        }
 
         if needsRecordingPerms {
             // Only check screen recording permission and start capture when not in utility mode
@@ -350,7 +345,7 @@ import SwiftUI
         // Use tall mode dimensions instead of actual window size
         var tallWidth = CGFloat(Settings[\.mode].tallWidth ?? 60)
         var tallHeight = CGFloat(Settings[\.mode].tallHeight ?? 60)
-        
+
         if Settings[\.utility].eyeProjectorWidth == 30 {
             tallWidth *= 2
             tallHeight *= 2

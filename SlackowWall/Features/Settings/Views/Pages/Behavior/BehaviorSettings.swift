@@ -62,14 +62,6 @@ struct BehaviorSettings: View {
                         option: $settings.shouldHideWindows)
                 }
             }
-
-            SettingsCardView {
-                SettingsToggleView(
-                    title: "Use State Output",
-                    description:
-                        "Turn this on if you have the state output mod, it prevents an instance from reseting if it is still generating the world.",
-                    option: $settings.checkStateOutput)
-            }
         }
         .animation(.easeInOut, value: settings.resetMode)
     }

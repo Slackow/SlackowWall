@@ -9,8 +9,9 @@ import SwiftUI
 
 struct PlaceholderInstanceView: View {
     var instance: TrackedInstance
-    @State var isHovered: Bool = true
-    @State var isIndicatorHovered: Bool = false
+    @State private var isHovered: Bool = true
+    @State private var isIndicatorHovered: Bool = false
+    @State private var isModMenuOpen: Bool = false
     @StateObject private var deletionModel = WorldDeletionViewModel()
 
     var instanceName: Substring {
@@ -31,15 +32,6 @@ struct PlaceholderInstanceView: View {
                     .fontWeight(.semibold)
             }
             HStack {
-                if instance.info.isBoundless {
-                    Image(systemName: "macwindow")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 30, height: 30)
-                        .padding(.top, 8)
-                        .padding(.leading, 8)
-                        .popoverLabel("Using Boundless Window")
-                }
                 Spacer()
                     .frame(maxWidth: .infinity)
 
@@ -56,9 +48,9 @@ struct PlaceholderInstanceView: View {
                     Button("Clear Worlds") {
                         deletionModel.prepareDeletion(instancePath: instance.info.path)
                     }
-                    // Button("Check/Update Mods") {
-                    //     print("Folder Not Opened")
-                    // }
+                    Button("Check/Update Mods") {
+                        isModMenuOpen = true
+                    }
                     // Button("Package Submission Files") {
                     //     print("TODO")
                     // }
@@ -87,6 +79,9 @@ struct PlaceholderInstanceView: View {
             RoundedRectangle(cornerRadius: 10)
                 .stroke(.gray, lineWidth: 3)
                 .background(.ultraThinMaterial)
+        }
+        .sheet(isPresented: $isModMenuOpen) {
+            ModMenu(instance: instance)
         }
         // Alerts and dialogs handled in DeletionProgressView
     }

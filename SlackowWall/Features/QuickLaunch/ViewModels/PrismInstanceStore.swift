@@ -26,8 +26,8 @@ final class PrismInstanceStore: ObservableObject {
 
     private func discoverInstances() -> [PrismInstance] {
         let home = FileManager.default.homeDirectoryForCurrentUser
-        let root = home.appendingPathComponent(
-            "Library/Application Support/PrismLauncher/instances")
+        let root = home.appending(
+            path: "Library/Application Support/PrismLauncher/instances/")
         guard
             let subdirs = try? FileManager.default.contentsOfDirectory(
                 at: root,
@@ -41,7 +41,7 @@ final class PrismInstanceStore: ObservableObject {
 
             // Look for the two possible icon paths
             let iconCandidates = [".minecraft/icon.png", "minecraft/icon.png"].map {
-                url.appendingPathComponent($0)
+                url.appending(path: $0)
             }
             let iconURL = iconCandidates.first { FileManager.default.fileExists(atPath: $0.path) }
             let iconImage =

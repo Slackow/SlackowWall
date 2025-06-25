@@ -12,6 +12,7 @@ extension Preferences {
     @DefaultCodable
     struct UtilitySection: Codable, Hashable {
         var autoLaunchPaceman: Bool = false
+        var pacemanToolBarIcon: Bool = false
 
         var eyeProjectorEnabled: Bool = false
         var eyeProjectorOpenWithTallMode: Bool = true
@@ -22,6 +23,7 @@ extension Preferences {
         var eyeProjectorHeightScale: Double = 0.2
 
         var sensitivityScaleEnabled: Bool = false
+        var sensitivityScaleToolBarIcon: Bool = true
         var sensitivityScale: Double = 1.0
         var tallSensitivityScale: Double = 0.25
 

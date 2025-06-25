@@ -20,7 +20,7 @@ struct ToolbarSensitivityToggleView: View {
         }) {
             Image(systemName: "computermouse\(settings.sensitivityScaleEnabled ? ".fill" : "")")
                 .foregroundStyle(Color(nsColor: isHovered ? .labelColor : .secondaryLabelColor))
-
+                .frame(width: 18, height: 25)
         }
         .popoverLabel("Sensitivity Scaling")
         .onHover { isHovered = $0 }

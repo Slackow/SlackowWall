@@ -27,22 +27,24 @@ enum ResetMode: String, SettingsOption {
 
                 • Your [OBS](0) "Run Instance" hotkey should include: "\(getKeyName(\.runKey))" \
                 and "\(getKeyName(\.resetOthersKey))".
-                • Your [OBS](0) "Switch to scene" hotkey should be: "\(getKeyName(\.resetGKey))".
+                • Your [OBS](0) "Switch to scene" hotkey should be: \
+                "\(getKeyName(\.resetGKey.values.first))".
                 """
             case .lock:
                 """
                 Immediately switches to the next locked instance if available.
 
                 • Your [OBS](0) "Run Instance" hotkey should include: "\(getKeyName(\.runKey))", \
-                "\(getKeyName(\.resetOthersKey))", "\(getKeyName(\.resetGKey))".
-                • Your [OBS](0) "Switch to scene" hotkey should be: "\(getKeyName(\.resetGKey))".
+                "\(getKeyName(\.resetOthersKey))", "\(getKeyName(\.resetGKey.values.first))".
+                • Your [OBS](0) "Switch to scene" hotkey should be: \
+                "\(getKeyName(\.resetGKey.values.first))".
                 """
             case .multi:
                 """
                 Bypasses the wall entirely and cycles between all tracked instances.
 
                 • Your [OBS](0) "Run Instance" hotkey should include: "\(getKeyName(\.runKey))", \
-                "\(getKeyName(\.resetOthersKey))", "\(getKeyName(\.resetGKey))".
+                "\(getKeyName(\.resetOthersKey))", "\(getKeyName(\.resetGKey.values.first))".
                 • Your [OBS](0) "Switch to scene" hotkey does not need to be set.
                 """
         }

@@ -82,7 +82,7 @@ final class WorldClearing {
         guard fileManager.fileExists(atPath: url.path)
         else { return false }
 
-        if fileManager.fileExists(atPath: url.appendingPathComponent("Reset Safe.txt").path) {
+        if fileManager.fileExists(atPath: url.appending(path: "Reset Safe.txt").path) {
             return false
         }
 
@@ -92,7 +92,7 @@ final class WorldClearing {
             return true
         }
 
-        if !fileManager.fileExists(atPath: url.appendingPathComponent("level.dat").path) {
+        if !fileManager.fileExists(atPath: url.appending(path: "level.dat").path) {
             return false
         }
 

@@ -34,19 +34,18 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
     }
 
     var isReady: Bool {
-        if Settings[\.behavior].checkStateOutput {
+        if checkStateOutput {
             return info.state == InstanceStates.paused || info.state == InstanceStates.unpaused
         } else {
             return true
         }
     }
 
-    func recalculateInstanceInfo() {
-        self.info = TrackedInstance.calculateInstanceInfo(pid: pid)
+    var checkStateOutput: Bool {
+        return info.mods.map(\.id).contains("state-output")
     }
 
     private static func calculateInstanceInfo(pid: pid_t) -> InstanceInfo {
-        let data = InstanceInfo(pid: pid)
         var path = ""
         var version = ""
         if let args = Utilities.processArguments(pid: pid) {
@@ -72,30 +71,12 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
                 }
             }
         }
-        data.path = path
-        data.version = version
-        // default to trying to use boundless if can't read these properties correctly
-        if let boundlessFile = getModifiedTime("\(path)/boundless_port.txt"),
-            let logFile = getCreatedTime("\(path)/logs/latest.log"),
-            boundlessFile < logFile
-        {
-            LogManager.shared.appendLog("Found old boundless_port.txt, mod not present.")
-            let port = FileManager.default.contents(atPath: "\(path)/boundless_port.txt")
-                .flatMap { String(data: $0, encoding: .utf8) }
-            LogManager.shared.appendLog("Would have used port: \(port ?? "N/A")")
-            data.port = 3
-        } else if let contents = FileManager.default.contents(atPath: "\(path)/boundless_port.txt"),
-            !contents.isEmpty,
-            let port = String(data: contents, encoding: .utf8),
-            let port = UInt16(port)
-        {
-            data.port = port
-        }
+        let data = InstanceInfo(pid: pid, path: path, version: version)
+
         LogManager.shared
             .appendLog("Added Instance \(pid)")
             .logPath("Path: \(data.path)")
             .appendLog("Version: \(data.version)")
-            .appendLog("Port: \(data.port)")
             .appendLogNewLine()
         return data
     }

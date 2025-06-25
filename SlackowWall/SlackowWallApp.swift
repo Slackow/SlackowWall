@@ -20,6 +20,8 @@ struct SlackowWallApp: App {
     private var profile
     @AppSettings(\.behavior)
     private var behavior
+    @AppSettings(\.utility)
+    private var utility
 
     @State private var showLogUploadedAlert = false
     @State private var logUploadedAlert: String?
@@ -35,8 +37,8 @@ struct SlackowWallApp: App {
                 .frame(minWidth: 300, minHeight: 210)
                 .toolbar {
                     ToolbarItem(placement: .automatic) {
-                        HStack(spacing: 8) {
-                            HStack(spacing: 8) {
+                        HStack(spacing: 6) {
+                            HStack(spacing: 6) {
                                 if !trackingManager.trackedInstances.isEmpty
                                     && !behavior.utilityMode
                                 {
@@ -53,13 +55,24 @@ struct SlackowWallApp: App {
                             )
                             .animation(.easeInOut(duration: 0.3), value: alertManager.alert)
 
-                            ToolbarSensitivityToggleView()
+                            if utility.sensitivityScaleToolBarIcon {
+                                ToolbarSensitivityToggleView()
+                                    .frame(width: 28, height: 25)
+                            }
+
+                            if utility.pacemanToolBarIcon {
+                                ToolbarPacemanToggleView()
+                                    .frame(width: 28, height: 25)
+                            }
 
                             ToolbarUtilityModeView()
+                                .frame(width: 28, height: 25)
 
                             ToolbarSettingsView()
+                                .frame(width: 28, height: 25)
 
                             ToolbarRefreshView()
+                                .frame(width: 28, height: 25)
                         }
                     }
                 }

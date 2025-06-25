@@ -21,8 +21,8 @@ struct UserLock: Identifiable, Codable, Hashable, Equatable {
             return nil
         }
 
-        let iconPath = appDirectory.appendingPathComponent("SlackowWall/Icons/")
-            .appendingPathComponent(icon)
+        let iconPath = appDirectory.appending(path: "SlackowWall/Icons/")
+            .appending(path: icon)
         return NSImage(contentsOf: iconPath)
     }
 

@@ -98,13 +98,13 @@ final class Settings: ObservableObject {
     private var baseURL: URL {
         fileManager
             .homeDirectoryForCurrentUser
-            .appendingPathComponent("Library/Application Support/SlackowWall", isDirectory: true)
-            .appendingPathComponent("Profiles", isDirectory: true)
+            .appending(path: "Library/Application Support/SlackowWall/")
+            .appending(path: "Profiles/")
     }
 
     private func settingsURL(for id: UUID) -> URL {
         baseURL
-            .appendingPathComponent(id.uuidString)
+            .appending(path: id.uuidString)
             .appendingPathExtension("json")
     }
 

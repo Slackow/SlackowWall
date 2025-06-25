@@ -16,6 +16,7 @@
  */
 
 import SwiftUI
+import ZIPFoundation
 
 class InstanceInfo: CustomStringConvertible {
     var state: UInt8 = "t".utf8.first!
@@ -23,21 +24,40 @@ class InstanceInfo: CustomStringConvertible {
     var statePath: String {
         return path.isEmpty ? "" : "\(path)/wpstateout.txt"
     }
-    var path: String = ""
-    var version: String = ""
-    var port: UInt16 = 0
+    let path: String
+    let version: String
+    let pid: pid_t
+    lazy var port: UInt16 = readBoundlessPort()
     var untilF3: Int = 0
     var checkState: CheckingMode = .NONE
-    var pid: pid_t
     var isBoundless: Bool {
-        return port > 3
+        mods.contains(where: { "boundlesswindow" == $0.id })
     }
-    var notCheckingBoundless: Bool {
-        return port > 3 || port == 0
+    var mods: [ModInfo] = []
+
+    init(pid: pid_t, path: String, version: String) {
+        self.pid = pid
+        self.path = path
+        self.version = version
+        Task {
+            updateModInfo()
+            DispatchQueue.main.async {
+                ShortcutManager.shared.resizeReset(pid: pid)
+            }
+        }
     }
 
-    init(pid: pid_t) {
-        self.pid = pid
+    func readBoundlessPort() -> UInt16 {
+        if let contents = FileManager.default.contents(atPath: "\(path)/boundless_port.txt"),
+            !contents.isEmpty,
+            let port = String(data: contents, encoding: .utf8),
+            let port = UInt16(port)
+        {
+            LogManager.shared.appendLog("Port: \(port) for \(pid)")
+            return port
+        } else {
+            return 0
+        }
     }
 
     // for any world preview state output, this will map it to a unique byte and store it into state.
@@ -71,6 +91,64 @@ class InstanceInfo: CustomStringConvertible {
     }
 
     var description: String {
-        "s: \(state) pstate: \(prevState), f3: \(untilF3) mode: \(checkState), p: \(statePath), pid: \(pid)"
+        "s: \(state), pstate: \(prevState), mode: \(checkState), p: \(path), pid: \(pid)"
+    }
+
+    func updateModInfo() {
+        guard !path.isEmpty else { return }
+        let fileManager = FileManager.default
+        if let contents = try? fileManager.contentsOfDirectory(atPath: path + "/mods/") {
+            self.mods = contents.map { path + "/mods/\($0)" }
+                .compactMap(URL.init(string:))
+                .filter { $0.pathExtension == "jar" }
+                .compactMap { InstanceInfo.extractModInfo(fromJarAt: $0) }
+            LogManager.shared.appendLog("mods", mods.map(\.id))
+        }
+    }
+
+    private static func extractModInfo(
+        fromJarAt url: URL, archiveAction: ((Archive, ModInfo, URL) -> Void)? = nil
+    ) -> ModInfo? {
+        do {
+            let archive = try Archive(url: url, accessMode: .read)
+            let jsonEntry = "fabric.mod.json"
+
+            guard let entry = archive[jsonEntry] else {
+                //                print("JSON file not found in JAR.")
+                return nil
+            }
+
+            var jsonData = Data()
+            _ = try archive.extract(entry) { data in
+                jsonData.append(data)
+            }
+
+            // Convert data to a string for preprocessing
+            if var jsonString = String(data: jsonData, encoding: .utf8) {
+                // Fix the description field by escaping newlines
+                if let descriptionRange = jsonString.range(
+                    of: #""description": "[^"]+""#, options: .regularExpression)
+                {
+                    var descriptionString = String(jsonString[descriptionRange])
+                    descriptionString = descriptionString.replacingOccurrences(
+                        of: "\n", with: "\\n")
+                    jsonString.replaceSubrange(descriptionRange, with: descriptionString)
+                }
+                // Convert back to data
+                jsonData = Data(jsonString.utf8)
+            }
+            let decoder = JSONDecoder()
+            decoder.allowsJSON5 = true
+            var modInfo = try decoder.decode(ModInfo.self, from: jsonData)
+            modInfo.filePath = url
+            archiveAction?(archive, modInfo, url)
+            return modInfo
+        } catch DecodingError.dataCorrupted(let context) {
+            print("Data corrupted: \(context.debugDescription)")
+            return nil
+        } catch {
+            print("Error occurred: \(error)")
+            return nil
+        }
     }
 }

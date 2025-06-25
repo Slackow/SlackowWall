@@ -50,7 +50,7 @@ class OBSManager: ObservableObject {
             let path = try FileManager.default.url(
                 for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil,
                 create: true)
-            let appPath = path.appendingPathComponent("SlackowWall")
+            let appPath = path.appending(path: "SlackowWall/")
             NSWorkspace.shared.open(appPath)
         } catch {
             print("Failed to open script path: \(error.localizedDescription)")
@@ -72,9 +72,9 @@ class OBSManager: ObservableObject {
             let appSupportURL = fileManager.urls(
                 for: .applicationSupportDirectory, in: .userDomainMask
             ).first?
-            .appendingPathComponent("SlackowWall")
+            .appending(path: "SlackowWall/")
         else { return nil }
-        return appSupportURL.appendingPathComponent("instance_selector.lua")
+        return appSupportURL.appending(path: "instance_selector.lua")
     }
 
     @discardableResult func writeWID(windowID: CGWindowID) -> CGWindowID {
