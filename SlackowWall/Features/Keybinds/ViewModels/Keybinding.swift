@@ -20,6 +20,10 @@ struct Keybinding: Codable, Equatable, Hashable {
     var primaryKey: KeyCode? {
         values.first
     }
+    
+    var isBound: Bool {
+        !values.isEmpty
+    }
 
     static let none = Keybinding()
 
@@ -33,16 +37,23 @@ struct Keybinding: Codable, Equatable, Hashable {
 
     init(event: NSEvent) {
         var vals: [KeyCode] = [event.keyCode]
-        if event.modifierFlags.contains(.command) { vals.append(.command) }
-        if event.modifierFlags.contains(.shift) { vals.append(.shift) }
-        if event.modifierFlags.contains(.option) { vals.append(.option) }
-        if event.modifierFlags.contains(.control) { vals.append(.control) }
+        func append(_ modifier: NSEvent.ModifierFlags, _ keycode: KeyCode) {
+            if event.modifierFlags.contains(modifier),
+                KeyCode.modifierFlags(code: event.keyCode) != modifier {
+                vals.append(keycode)
+            }
+        }
+        append(.command, .command)
+        append(.shift, .shift)
+        append(.option, .option)
+        append(.control, .control)
         self.init(values: vals)
     }
 
     func matches(event: NSEvent) -> Bool {
+        guard isBound else { return false }
         var other = Keybinding(event: event)
-
+        
         // Remove duplicates of the pressed key from the modifier list so
         // modifier-only shortcuts match correctly.
         if let first = other.primaryKey {
@@ -57,17 +68,16 @@ struct Keybinding: Codable, Equatable, Hashable {
         let settings = Settings[\.keybinds]
 
         func remove(_ key: KeyCode, ignore: Bool) {
-            if ignore && primaryKey != key && !modifiers.contains(key) {
+            if ignore && other.primaryKey != key && primaryKey != key && !modifiers.contains(key) {
                 other.values.removeAll { $0 == key }
             }
         }
-
+        
         remove(.shift, ignore: settings.ignoreShift)
         remove(.control, ignore: settings.ignoreControl)
         remove(.option, ignore: settings.ignoreOption)
         remove(.command, ignore: settings.ignoreCommand)
         remove(.f3, ignore: settings.ignoreF3)
-
         return other.primaryKey == primaryKey && other.modifiers == modifiers
     }
 

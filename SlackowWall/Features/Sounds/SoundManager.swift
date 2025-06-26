@@ -21,7 +21,7 @@ class SoundManager {
             player?.prepareToPlay()
             player?.play()
         } catch let error {
-            print(error.localizedDescription)
+            LogManager.shared.appendLog(error.localizedDescription)
         }
     }
 }

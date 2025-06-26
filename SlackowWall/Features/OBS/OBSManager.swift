@@ -53,7 +53,7 @@ class OBSManager: ObservableObject {
             let appPath = path.appending(path: "SlackowWall/")
             NSWorkspace.shared.open(appPath)
         } catch {
-            print("Failed to open script path: \(error.localizedDescription)")
+            LogManager.shared.appendLog("Failed to open script path: \(error.localizedDescription)")
         }
     }
 

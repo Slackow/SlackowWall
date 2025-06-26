@@ -13,6 +13,7 @@ struct KeybindingView: View {
     @FocusState var isFocused: Bool
     @State private var circleColor: Color = .gray
     var defaultValue: Keybinding = .none
+    @State private var monitor: Any?
 
     private var textName: String {
         keybinding.displayName
@@ -70,16 +71,36 @@ struct KeybindingView: View {
         .frame(width: 150, height: 22)
         .onAppear {
             // Setup local key event monitoring
-            _ = NSEvent.addLocalMonitorForEvents(matching: [.keyDown]) { event in
+            monitor = NSEvent.addLocalMonitorForEvents(
+                matching: [.keyDown, .keyUp, .flagsChanged]
+            ) { event in
                 if !isFocused { return event }
-                if event.keyCode == .escape {
-                    keybinding = defaultValue
-                } else {
-                    keybinding = Keybinding(event: event)
+
+                var type = event.type
+                if type == .flagsChanged,
+                   let code = KeyCode.modifierFlags(code: event.keyCode)
+                {
+                    type = event.modifierFlags.contains(code) ? .keyDown : .keyUp
+                    
                 }
-                isFocused = false
-                return nil
+
+                if type == .keyDown {
+                    return nil
+                } else if type == .keyUp {
+                    if event.keyCode == .escape {
+                        keybinding = .none
+                    } else {
+                        keybinding = Keybinding(event: event)
+                    }
+                    isFocused = false
+                    return nil
+                }
+
+                return event
             }
+        }
+        .onDisappear {
+            if let monitor { NSEvent.removeMonitor(monitor) }
         }
     }
 }

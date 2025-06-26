@@ -144,10 +144,10 @@ class InstanceInfo: CustomStringConvertible {
             archiveAction?(archive, modInfo, url)
             return modInfo
         } catch DecodingError.dataCorrupted(let context) {
-            print("Data corrupted: \(context.debugDescription)")
+            LogManager.shared.appendLog("Data corrupted: \(context.debugDescription)")
             return nil
         } catch {
-            print("Error occurred: \(error)")
+            LogManager.shared.appendLog("Error occurred: \(error)")
             return nil
         }
     }

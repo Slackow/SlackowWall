@@ -21,9 +21,18 @@ struct KeybindListener: NSViewRepresentable {
 
         override var acceptsFirstResponder: Bool { true }
 
-        override func keyDown(with event: NSEvent) {
-            guard let action = KeyAction.from(event: event) else { return }
+        private func handle(_ event: NSEvent, down: Bool) {
+            guard down, let action = KeyAction.from(event: event) else { return }
             key = action
+        }
+
+        override func keyDown(with event: NSEvent) {
+            handle(event, down: true)
+        }
+
+        override func flagsChanged(with event: NSEvent) {
+            guard let mod = KeyCode.modifierFlags(code: event.keyCode) else { return }
+            handle(event, down: event.modifierFlags.contains(mod))
         }
     }
 

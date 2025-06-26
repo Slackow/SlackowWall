@@ -34,7 +34,7 @@ class ModListViewModel: ObservableObject {
                 if let modInfo = extractModInfo(fromJarAt: modFile, archiveAction: archiveAction) {
                     fetchedMods.append(modInfo)
                 } else {
-                    print("Could not extract mod info from: \(modFile.lastPathComponent)")
+                    LogManager.shared.appendLog("Could not extract mod info from: \(modFile.lastPathComponent)")
                 }
             }
 
@@ -42,7 +42,7 @@ class ModListViewModel: ObservableObject {
             fetchedMods.sort { $0.name.lowercased() < $1.name.lowercased() }
             return fetchedMods
         } catch {
-            print("Error reading mods directory: \(error)")
+            LogManager.shared.appendLog("Error reading mods directory: \(error)")
             return []
         }
     }
@@ -94,10 +94,10 @@ class ModListViewModel: ObservableObject {
             archiveAction?(archive, modInfo, url)
             return modInfo
         } catch DecodingError.dataCorrupted(let context) {
-            print("Data corrupted: \(context.debugDescription)")
+            LogManager.shared.appendLog("Data corrupted: \(context.debugDescription)")
             return nil
         } catch {
-            print("Error occurred: \(error)")
+            LogManager.shared.appendLog("Error occurred: \(error)")
             return nil
         }
     }
@@ -122,7 +122,7 @@ class ModListViewModel: ObservableObject {
 
         do {
             guard let iconEntry = archive[iconPath] else {
-                print("Icon not found in JAR.")
+                LogManager.shared.appendLog("Icon not found in JAR.")
                 return
             }
 
@@ -134,10 +134,10 @@ class ModListViewModel: ObservableObject {
             if let iconImage = NSImage(data: iconData) {
                 cacheImage(iconImage, forKey: jarURL.path)
             } else {
-                print("Failed to create image from data.")
+                LogManager.shared.appendLog("Failed to create image from data.")
             }
         } catch {
-            print("Failed to extract icon: \(error)")
+            LogManager.shared.appendLog("Failed to extract icon: \(error)")
         }
     }
 }
