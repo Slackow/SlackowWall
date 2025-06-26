@@ -5,26 +5,27 @@
 //  Created by Andrew on 2/23/24.
 //
 
+import AppKit
 import SwiftUI
 
 struct KeybindingView: View {
-    @Binding var keybinding: UInt16?
+    @Binding var keybinding: Keybinding
     @FocusState var isFocused: Bool
     @State private var circleColor: Color = .gray
-    var defaultValue: UInt16?
+    var defaultValue: Keybinding = .none
 
     private var textName: String {
-        KeyCode.toName(code: keybinding)
+        keybinding.displayName
     }
 
-    init(keybinding: Binding<UInt16?>, defaultValue: UInt16? = nil) {
+    init(keybinding: Binding<Keybinding>, defaultValue: Keybinding = .none) {
         _keybinding = keybinding
         self.defaultValue = defaultValue
     }
 
     @AppSettings(\.keybinds) private var settings
-    init(keybinding keyPath: WritableKeyPath<Preferences.KeybindSection, UInt16?>) {
-        let binding = Binding<UInt16?>(
+    init(keybinding keyPath: WritableKeyPath<Preferences.KeybindSection, Keybinding>) {
+        let binding = Binding<Keybinding>(
             get: { Settings[\.keybinds][keyPath: keyPath] },
             set: { Settings[\.keybinds][keyPath: keyPath] = $0 }
         )
@@ -66,12 +67,16 @@ struct KeybindingView: View {
                 circleColor = hovering ? .init(nsColor: .labelColor) : .gray
             })
         }
-        .frame(width: 100, height: 22)
+        .frame(width: 150, height: 22)
         .onAppear {
             // Setup local key event monitoring
             _ = NSEvent.addLocalMonitorForEvents(matching: [.keyDown]) { event in
                 if !isFocused { return event }
-                keybinding = event.keyCode == .escape ? nil : event.keyCode
+                if event.keyCode == .escape {
+                    keybinding = defaultValue
+                } else {
+                    keybinding = Keybinding(event: event)
+                }
                 isFocused = false
                 return nil
             }
@@ -83,9 +88,9 @@ struct KeybindingView: View {
     @AppSettings(\.keybinds)
     var settings
     VStack {
-        KeybindingView(keybinding: $settings.planarGKey, defaultValue: nil)
+        KeybindingView(keybinding: $settings.planarGKey)
             .padding()
-        KeybindingView(keybinding: $settings.resetAllKey, defaultValue: .t)
+        KeybindingView(keybinding: $settings.resetAllKey, defaultValue: .init(.t))
             .padding()
     }
 }

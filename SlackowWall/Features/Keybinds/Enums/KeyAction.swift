@@ -15,23 +15,14 @@ enum KeyAction {
     case resetAll
     case lock
 
-    static func from(keyCode: UInt16) -> KeyAction? {
+    static func from(event: NSEvent) -> KeyAction? {
         let profile = Settings[\.keybinds]
-        switch keyCode {
-            case profile.runKey:
-                return .run
-            case profile.resetOneKey:
-                return .resetOne
-            case profile.resetOthersKey:
-                return .resetOthers
-            case profile.resetAllKey:
-                return .resetAll
-            case profile.lockKey:
-                return .lock
-            case profile.resetGKey.values.first:
-                return .resetGlobal
-            default:
-                return nil
-        }
+        if profile.runKey.matches(event: event) { return .run }
+        if profile.resetOneKey.matches(event: event) { return .resetOne }
+        if profile.resetOthersKey.matches(event: event) { return .resetOthers }
+        if profile.resetAllKey.matches(event: event) { return .resetAll }
+        if profile.lockKey.matches(event: event) { return .lock }
+        if profile.resetGKey.matches(event: event) { return .resetGlobal }
+        return nil
     }
 }

@@ -12,12 +12,13 @@ struct ModeCardView: View {
     var name: String
     var description: String
     var isGameplayMode: Bool = false
-    var keybind: Binding<KeyCode?>?
+    var keybind: Binding<Keybinding>?
 
     @Binding var x: Int?
     @Binding var y: Int?
     @Binding var width: Int?
     @Binding var height: Int?
+    @ObservedObject var trackingManager = TrackingManager.shared
 
     private var invalidDimension: Bool {
         return width == nil || height == nil
@@ -109,6 +110,10 @@ struct ModeCardView: View {
                             Text("Center")
                         }
                         .disabled(invalidDimension)
+
+                        Button(action: tryDimension) {
+                            Text("Try")
+                        }.disabled(invalidDimension || trackingManager.trackedInstances.isEmpty)
                     }
                     .frame(maxWidth: .infinity, alignment: .trailing)
                 }
@@ -116,6 +121,16 @@ struct ModeCardView: View {
             .animation(.easeInOut, value: hasResetDimensions)
             .animation(.easeInOut, value: containsDimensions)
             .animation(.easeInOut, value: boundlessWarning)
+        }
+    }
+
+    private func tryDimension() {
+        guard let width, let height else { return }
+
+        trackingManager.trackedInstances.forEach { inst in
+            ShortcutManager.shared.resize(
+                pid: inst.pid, x: x.map(CGFloat.init), y: y.map(CGFloat.init),
+                width: CGFloat(width), height: CGFloat(height))
         }
     }
 

@@ -22,7 +22,7 @@ struct KeybindListener: NSViewRepresentable {
         override var acceptsFirstResponder: Bool { true }
 
         override func keyDown(with event: NSEvent) {
-            guard let action = KeyAction.from(keyCode: event.keyCode) else { return }
+            guard let action = KeyAction.from(event: event) else { return }
             key = action
         }
     }

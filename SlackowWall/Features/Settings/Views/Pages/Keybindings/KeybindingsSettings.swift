@@ -26,15 +26,7 @@ struct KeybindingsSettings: View {
                                 "You may need to change this in [OBS](https://obsproject.com) too.",
                             font: .body)
 
-                        KeybindingView(
-                            keybinding: .init(
-                                get: { settings.resetGKey.values.first },
-                                set: {
-                                    if settings.resetGKey.values.isEmpty {
-                                        settings.resetGKey.values.append(0)
-                                    }
-                                    settings.resetGKey.values[0] = $0 ?? 0
-                                }))
+                        KeybindingView(keybinding: \.resetGKey)
                     }
 
                     Divider()

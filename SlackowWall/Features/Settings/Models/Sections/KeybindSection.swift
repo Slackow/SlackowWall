@@ -12,15 +12,15 @@ extension Preferences {
     @DefaultCodable
     struct KeybindSection: Codable, Hashable {
         var resetGKey: Keybinding = .none
-        var tallGKey: KeyCode? = nil
-        var thinGKey: KeyCode? = nil
-        var planarGKey: KeyCode? = nil
-        var baseGKey: KeyCode? = nil
-        var resetAllKey: KeyCode? = .t
-        var resetOthersKey: KeyCode? = .f
-        var runKey: KeyCode? = .r
-        var resetOneKey: KeyCode? = .e
-        var lockKey: KeyCode? = .c
+        var tallGKey: Keybinding = .none
+        var thinGKey: Keybinding = .none
+        var planarGKey: Keybinding = .none
+        var baseGKey: Keybinding = .none
+        var resetAllKey: Keybinding = .init(.t)
+        var resetOthersKey: Keybinding = .init(.f)
+        var runKey: Keybinding = .init(.r)
+        var resetOneKey: Keybinding = .init(.e)
+        var lockKey: Keybinding = .init(.c)
 
         init() {}
     }

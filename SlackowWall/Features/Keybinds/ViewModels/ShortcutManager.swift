@@ -31,13 +31,18 @@ class ShortcutManager: ObservableObject, Manager {
 
     func handleGlobalKey(_ key: NSEvent) {
         let settings = Settings[\.keybinds]
-        switch (key.type, key.keyCode) {
-            case (.keyUp, settings.resetGKey.values.first): globalReset()
-            case (.keyDown, settings.planarGKey): resizePlanar()
-            case (.keyDown, settings.baseGKey): resizeBase()
-            case (.keyDown, settings.tallGKey): resizeTall()
-            case (.keyDown, settings.thinGKey): resizeThin()
-            case _: return
+        if key.type == .keyUp && settings.resetGKey.matches(event: key) {
+            globalReset()
+        } else if key.type == .keyDown && settings.planarGKey.matches(event: key) {
+            resizePlanar()
+        } else if key.type == .keyDown && settings.baseGKey.matches(event: key) {
+            resizeBase()
+        } else if key.type == .keyDown && settings.tallGKey.matches(event: key) {
+            resizeTall()
+        } else if key.type == .keyDown && settings.thinGKey.matches(event: key) {
+            resizeThin()
+        } else {
+            return
         }
     }
 
