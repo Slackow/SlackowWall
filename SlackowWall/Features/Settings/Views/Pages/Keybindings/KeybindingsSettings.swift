@@ -131,6 +131,26 @@ struct KeybindingsSettings: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
 
+            SettingsLabel(
+                title: "Modifier Keys",
+                description: "If enabled, these keys won't block shortcuts when held."
+            )
+            .padding(.top, 5)
+
+            SettingsCardView {
+                VStack {
+                    SettingsToggleView(title: "Ignore Shift", option: $settings.ignoreShift)
+                    Divider()
+                    SettingsToggleView(title: "Ignore Control", option: $settings.ignoreControl)
+                    Divider()
+                    SettingsToggleView(title: "Ignore Option", option: $settings.ignoreOption)
+                    Divider()
+                    SettingsToggleView(title: "Ignore Command", option: $settings.ignoreCommand)
+                    Divider()
+                    SettingsToggleView(title: "Ignore F3", option: $settings.ignoreF3)
+                }
+            }
+
             SettingsCardView {
                 SettingsButtonView(
                     title: "Restore Default Keybindings", buttonText: "Reset",

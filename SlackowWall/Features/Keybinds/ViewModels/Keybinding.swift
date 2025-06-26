@@ -42,12 +42,32 @@ struct Keybinding: Codable, Equatable, Hashable {
 
     func matches(event: NSEvent) -> Bool {
         var other = Keybinding(event: event)
-        if !modifiers.contains(.shift) {
-            other.values.removeAll { .shift == $0 }
+
+        // Remove duplicates of the pressed key from the modifier list so
+        // modifier-only shortcuts match correctly.
+        if let first = other.primaryKey {
+            other.values = [first] + other.values.dropFirst().filter { $0 != first }
         }
-        if !modifiers.contains(.control) {
-            other.values.removeAll { .control == $0 }
+
+        // Add F3 as a modifier if it's currently held down
+        if ModifierKeyState.f3Pressed && other.primaryKey != .f3 {
+            other.values.append(.f3)
         }
+
+        let settings = Settings[\.keybinds]
+
+        func remove(_ key: KeyCode, ignore: Bool) {
+            if ignore && primaryKey != key && !modifiers.contains(key) {
+                other.values.removeAll { $0 == key }
+            }
+        }
+
+        remove(.shift, ignore: settings.ignoreShift)
+        remove(.control, ignore: settings.ignoreControl)
+        remove(.option, ignore: settings.ignoreOption)
+        remove(.command, ignore: settings.ignoreCommand)
+        remove(.f3, ignore: settings.ignoreF3)
+
         return other.primaryKey == primaryKey && other.modifiers == modifiers
     }
 

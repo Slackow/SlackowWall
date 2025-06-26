@@ -30,16 +30,25 @@ class ShortcutManager: ObservableObject, Manager {
     }
 
     func handleGlobalKey(_ key: NSEvent) {
+        var type = key.type
+        if type == .flagsChanged,
+           let code = KeyCode.modifierFlags(code: key.keyCode)
+        {
+            type = key.modifierFlags.contains(code) ? .keyDown : .keyUp
+        }
+        if key.keyCode == .f3 {
+            (type == .keyDown ? ModifierKeyState.registerF3Down : ModifierKeyState.registerF3Up)()
+        }
         let settings = Settings[\.keybinds]
-        if key.type == .keyUp && settings.resetGKey.matches(event: key) {
+        if type == .keyUp && settings.resetGKey.matches(event: key) {
             globalReset()
-        } else if key.type == .keyDown && settings.planarGKey.matches(event: key) {
+        } else if type == .keyDown && settings.planarGKey.matches(event: key) {
             resizePlanar()
-        } else if key.type == .keyDown && settings.baseGKey.matches(event: key) {
+        } else if type == .keyDown && settings.baseGKey.matches(event: key) {
             resizeBase()
-        } else if key.type == .keyDown && settings.tallGKey.matches(event: key) {
+        } else if type == .keyDown && settings.tallGKey.matches(event: key) {
             resizeTall()
-        } else if key.type == .keyDown && settings.thinGKey.matches(event: key) {
+        } else if type == .keyDown && settings.thinGKey.matches(event: key) {
             resizeThin()
         } else {
             return

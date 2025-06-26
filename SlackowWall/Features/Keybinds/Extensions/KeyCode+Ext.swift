@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AppKit
 
 typealias KeyCode = UInt16
 
@@ -252,5 +253,23 @@ extension KeyCode {
 
     static func toName(code: KeyCode?) -> String {
         return code.flatMap({ nameDict[$0] ?? "Unknown" }) ?? "None"
+    }
+    
+    private static let modifierDict: [KeyCode: NSEvent.ModifierFlags] = [
+        .command: .command,
+        .rightCommand: .command,
+        .shift: .shift,
+        .rightShift: .shift,
+        .control: .control,
+        .rightControl: .control,
+        .option: .option,
+        .rightOption: .option,
+        .capsLock: .capsLock,
+        .function: .function,
+        .help: .help,
+    ]
+    
+    static func modifierFlags(code: KeyCode) -> NSEvent.ModifierFlags? {
+        return modifierDict[code]
     }
 }

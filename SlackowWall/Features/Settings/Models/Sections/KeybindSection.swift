@@ -22,6 +22,12 @@ extension Preferences {
         var resetOneKey: Keybinding = .init(.e)
         var lockKey: Keybinding = .init(.c)
 
+        var ignoreCommand: Bool = false
+        var ignoreShift: Bool = true
+        var ignoreControl: Bool = true
+        var ignoreOption: Bool = true
+        var ignoreF3: Bool = true
+
         init() {}
     }
 }
