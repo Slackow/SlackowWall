@@ -8,20 +8,21 @@
 import SwiftUI
 
 struct ToolbarUtilityModeView: View {
-    @ObservedObject private var screenRecorder = ScreenRecorder.shared
-
     @State private var isHovered: Bool = false
 
+    @AppSettings(\.behavior)
+    private var settings
+    
     var body: some View {
         Button(action: {
-            Settings[\.behavior].utilityMode.toggle()
+            settings.utilityMode.toggle()
             // Reset capture system when utility mode is toggled
             Task {
                 // The notification will handle the alert state changes
                 await ScreenRecorder.shared.resetAndStartCapture()
             }
         }) {
-            Image(systemName: "hammer\(Settings[\.behavior].utilityMode ? ".fill" : "")")
+            Image(systemName: "hammer\(settings.utilityMode ? ".fill" : "")")
                 .foregroundStyle(Color(nsColor: isHovered ? .labelColor : .secondaryLabelColor))
         }
         .popoverLabel("Utility Mode")
