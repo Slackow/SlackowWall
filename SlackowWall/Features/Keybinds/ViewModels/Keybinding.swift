@@ -67,17 +67,16 @@ struct Keybinding: Codable, Equatable, Hashable {
 
         let settings = Settings[\.keybinds]
 
-        func remove(_ key: KeyCode, ignore: Bool) {
-            if ignore && other.primaryKey != key && primaryKey != key && !modifiers.contains(key) {
+        func remove(_ key: KeyCode, blocking: Bool) {
+            if !blocking && other.primaryKey != key && primaryKey != key && !modifiers.contains(key) {
                 other.values.removeAll { $0 == key }
             }
         }
-        
-        remove(.shift, ignore: settings.ignoreShift)
-        remove(.control, ignore: settings.ignoreControl)
-        remove(.option, ignore: settings.ignoreOption)
-        remove(.command, ignore: settings.ignoreCommand)
-        remove(.f3, ignore: settings.ignoreF3)
+        remove(.shift, blocking: settings.blockingShift)
+        remove(.control, blocking: settings.blockingControl)
+        remove(.option, blocking: settings.blockingOption)
+        remove(.command, blocking: settings.blockingCommand)
+        remove(.f3, blocking: settings.blockingF3)
         return other.primaryKey == primaryKey && other.modifiers == modifiers
     }
 

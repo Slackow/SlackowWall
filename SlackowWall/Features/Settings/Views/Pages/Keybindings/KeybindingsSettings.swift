@@ -132,22 +132,20 @@ struct KeybindingsSettings: View {
             }
 
             SettingsLabel(
-                title: "Modifier Keys",
-                description: "If enabled, these keys won't block shortcuts when held."
+                title: "Blocking Modifier Keys",
+                description: "If enabled, these keys will block any keybind that doesn't use them."
             )
             .padding(.top, 5)
 
             SettingsCardView {
-                VStack {
-                    SettingsToggleView(title: "Ignore Shift", option: $settings.ignoreShift)
-                    Divider()
-                    SettingsToggleView(title: "Ignore Control", option: $settings.ignoreControl)
-                    Divider()
-                    SettingsToggleView(title: "Ignore Option", option: $settings.ignoreOption)
-                    Divider()
-                    SettingsToggleView(title: "Ignore Command", option: $settings.ignoreCommand)
-                    Divider()
-                    SettingsToggleView(title: "Ignore F3", option: $settings.ignoreF3)
+                VStack (alignment: .center, spacing: 10) {
+                    HStack {
+                        Toggle("Shift", isOn: $settings.blockingShift)
+                        Toggle("Control", isOn: $settings.blockingControl)
+                        Toggle("Option", isOn: $settings.blockingOption)
+                        Toggle("Command", isOn: $settings.blockingCommand)
+                        Toggle("F3", isOn: $settings.blockingF3)
+                    }.frame(maxWidth: .infinity)
                 }
             }
 

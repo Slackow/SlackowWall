@@ -22,11 +22,11 @@ extension Preferences {
         var resetOneKey: Keybinding = .init(.e)
         var lockKey: Keybinding = .init(.c)
 
-        var ignoreShift: Bool = true
-        var ignoreControl: Bool = true
-        var ignoreOption: Bool = true
-        var ignoreCommand: Bool = false
-        var ignoreF3: Bool = false
+        var blockingShift: Bool = false
+        var blockingControl: Bool = false
+        var blockingOption: Bool = false
+        var blockingCommand: Bool = true
+        var blockingF3: Bool = true
 
         init() {}
     }
