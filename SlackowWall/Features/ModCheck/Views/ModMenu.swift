@@ -51,6 +51,10 @@ struct ModMenu: View {
                                             Text(" by " + authorLine)
                                                 .foregroundStyle(.gray)
                                         }
+                                        if mod.disabled == true {
+                                            Text(" (disabled)")
+                                                .foregroundStyle(.red)
+                                        }
                                     }
 
                                     Text(mod.version)

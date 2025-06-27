@@ -31,7 +31,8 @@ class ModListViewModel: ObservableObject {
 
             for modFile in modFiles
             where modFile.pathExtension == "jar" || modFile.pathExtension == "disabled" {
-                if let modInfo = extractModInfo(fromJarAt: modFile, archiveAction: archiveAction) {
+                if var modInfo = extractModInfo(fromJarAt: modFile, archiveAction: archiveAction) {
+                    modInfo.disabled = modFile.pathExtension == "disabled"
                     fetchedMods.append(modInfo)
                 } else {
                     LogManager.shared.appendLog("Could not extract mod info from: \(modFile.lastPathComponent)")

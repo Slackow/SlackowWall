@@ -48,7 +48,7 @@ struct PlaceholderInstanceView: View {
                     Button("Clear Worlds") {
                         deletionModel.prepareDeletion(instancePath: instance.info.path)
                     }
-                    Button("Check/Update Mods") {
+                    Button("View Mods") {
                         isModMenuOpen = true
                     }
                     // Button("Package Submission Files") {

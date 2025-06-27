@@ -16,6 +16,7 @@ struct ModInfo: Identifiable, Codable {
     let license: String?
     let icon: String?
     var filePath: URL?
+    var disabled: Bool? = false
 }
 
 struct Author: Codable {
