@@ -15,7 +15,6 @@ struct ToolbarStopView: View {
             Image(systemName: "stop.fill")
                 .foregroundColor(.red)
                 .frame(width: 20, height: 20)
-                .symbolEffect(.pulse, options: .repeating, value: instanceManager.isStopping)
         }
         .disabled(instanceManager.isStopping)
         .popoverLabel("Stop All")

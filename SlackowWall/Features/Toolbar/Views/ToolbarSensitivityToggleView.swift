@@ -24,7 +24,7 @@ struct ToolbarSensitivityToggleView: View {
         }
         .popoverLabel("Sensitivity Scaling")
         .onHover { isHovered = $0 }
-        .onChange(of: settings.sensitivityScaleEnabled) { _, newValue in
+        .onChange(of: settings.sensitivityScaleEnabled) { newValue in
             LogManager.shared.appendLog(
                 "Sensitivity Scale", newValue ? "Enabled" : "Disabled")
             if newValue {

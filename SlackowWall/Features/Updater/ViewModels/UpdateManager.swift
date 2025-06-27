@@ -10,8 +10,8 @@ import SwiftUI
 
 // This view model class manages Sparkle's updater and publishes when new updates are allowed to be checked
 final class UpdateManager: ObservableObject {
-    @AppStorage("checkAutomatically") var checkAutomatically: Bool = true
-    @AppStorage("downloadAutomatically") var downloadAutomatically: Bool = true
+    var checkAutomatically: Bool = false
+    var downloadAutomatically: Bool = false
     @AppStorage("lastAppVersion") var lastAppVersion: String = ""
 
     private let updaterController: SPUStandardUpdaterController

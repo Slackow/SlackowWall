@@ -92,15 +92,15 @@ struct CaptureGridView: View {
         }
         .padding(5)
         .task { await screenRecorder.startCapture() }
-        .onChange(of: gridManager.isActive) { _, value in
+        .onChange(of: gridManager.isActive) { value in
             gridManager.handleLostFocus(isActive: value)
         }
-        .onChange(of: gridManager.showInfo) { _, value in
+        .onChange(of: gridManager.showInfo) { value in
             if !value {
                 gridManager.showInstanceInfo()
             }
         }
-        .onChange(of: trackingManager.isCaptureReady) {
+        .onChange(of: trackingManager.isCaptureReady) { _ in
             gridManager.applyGridAnimation()
         }
         .onAppear {

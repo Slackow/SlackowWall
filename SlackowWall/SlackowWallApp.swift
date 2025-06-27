@@ -160,7 +160,7 @@ struct SlackowWallApp: App {
                 .frame(minWidth: 300, minHeight: 200)
         }
         .windowResizability(.contentSize)
-        .onChange(of: shortcutManager.eyeProjectorOpen) { oldValue, newValue in
+        .onChange(of: shortcutManager.eyeProjectorOpen) { newValue in
             if newValue {
                 openWindow(id: "eye-projector-window")
             }

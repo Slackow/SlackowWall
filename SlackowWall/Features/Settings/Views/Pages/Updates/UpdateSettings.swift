@@ -21,6 +21,7 @@ struct UpdateSettings: View {
                 VStack {
                     SettingsToggleView(
                         title: "Check Automatically", option: $updateManager.checkAutomatically)
+                    .disabled(true)
 
                     Divider()
 
@@ -28,7 +29,7 @@ struct UpdateSettings: View {
                         title: "Download Automatically",
                         option: $updateManager.downloadAutomatically
                     )
-                    .disabled(!updateManager.checkAutomatically)
+                    .disabled(true)
                 }
             }
 
@@ -48,10 +49,10 @@ struct UpdateSettings: View {
         .padding([.horizontal, .top])
         .frame(maxHeight: .infinity, alignment: .topLeading)
         .navigationTitle("Updates")
-        .onChange(of: updateManager.checkAutomatically) { _, value in
+        .onChange(of: updateManager.checkAutomatically) { value in
             updateManager.automaticallyCheckForUpdates = value
         }
-        .onChange(of: updateManager.downloadAutomatically) { _, value in
+        .onChange(of: updateManager.downloadAutomatically) { value in
             updateManager.automaticallyDownloadUpdates = value
         }
         .sheet(isPresented: $showReleaseNotes) {

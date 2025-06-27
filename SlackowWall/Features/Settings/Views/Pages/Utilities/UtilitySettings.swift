@@ -133,7 +133,7 @@ struct UtilitySettings: View {
                             .textFieldStyle(.roundedBorder)
                             .foregroundColor((0.1...50 ~= sensitivityScale) ? .primary : .red)
                             .frame(width: 60)
-                            .onChange(of: sensitivityScale) { _, newValue in
+                            .onChange(of: sensitivityScale) { newValue in
                                 if 0.1...50 ~= newValue {
                                     Settings[\.utility].sensitivityScale = newValue
                                     MouseSensitivityManager.shared.setSensitivityFactor(
@@ -154,7 +154,7 @@ struct UtilitySettings: View {
                             .textFieldStyle(.roundedBorder)
                             .foregroundColor((0.1...50 ~= tallSensitivityScale) ? .primary : .red)
                             .frame(width: 60)
-                            .onChange(of: tallSensitivityScale) { _, newValue in
+                            .onChange(of: tallSensitivityScale) { newValue in
                                 if 0.1...50 ~= newValue {
                                     Settings[\.utility].tallSensitivityScale = newValue
                                 }
