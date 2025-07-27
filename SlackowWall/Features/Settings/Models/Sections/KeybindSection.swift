@@ -26,7 +26,7 @@ extension Preferences {
         var blockingControl: Bool = false
         var blockingOption: Bool = false
         var blockingCommand: Bool = true
-        var blockingF3: Bool = true
+        var blockingF3: Bool = false
 
         init() {}
     }
