@@ -66,18 +66,18 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
-				"Resources/Jars/paceman-tracker-0.7.0.jar",
+				"Resources/Jars/paceman-tracker-0.7.1.jar",
 			);
 			target = 498FB3C728987F5B00405753 /* SlackowWall */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		496BFAC12DE7E33100209079 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
+		493DDA452E67A7BB00FEBB25 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
 			buildPhase = 498FB3C628987F5B00405753 /* Resources */;
 			membershipExceptions = (
-				"Resources/Jars/paceman-tracker-0.7.0.jar",
+				"Resources/Jars/paceman-tracker-0.7.1.jar",
 			);
 		};
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
@@ -85,7 +85,7 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		496BFABA2DE7D7B600209079 /* PacemanWrapper */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = PacemanWrapper; sourceTree = "<group>"; };
 		B655208A2DF22BF900137480 /* SlackowWallTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = SlackowWallTests; sourceTree = "<group>"; };
-		B6CDDD8B2DC93246004CDEA8 /* SlackowWall */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B6CDDDF72DC93246004CDEA8 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 496BFAC12DE7E33100209079 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = SlackowWall; sourceTree = "<group>"; };
+		B6CDDD8B2DC93246004CDEA8 /* SlackowWall */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B6CDDDF72DC93246004CDEA8 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 493DDA452E67A7BB00FEBB25 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = SlackowWall; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */

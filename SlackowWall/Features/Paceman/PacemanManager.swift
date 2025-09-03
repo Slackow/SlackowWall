@@ -55,7 +55,7 @@ class PacemanManager: Manager, ObservableObject {
         //            return
         //        }
         guard
-            let jarURL = Bundle.main.url(forResource: "paceman-tracker-0.7.0", withExtension: "jar")
+            let jarURL = Bundle.main.url(forResource: "paceman-tracker-0.7.1", withExtension: "jar")
         else {
             LogManager.shared.appendLog("paceman-tracker.jar missing from bundle")
             return
