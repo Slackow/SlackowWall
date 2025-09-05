@@ -97,6 +97,8 @@ import SwiftUI
                     instance.toggleLock()
                 case .resetGlobal:
                     ShortcutManager.shared.globalReset()
+                case .toggleSensitivityScaling:
+                    break
                 case .none:
                     return
             }

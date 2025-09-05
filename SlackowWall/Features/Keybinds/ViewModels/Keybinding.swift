@@ -20,7 +20,7 @@ struct Keybinding: Codable, Equatable, Hashable {
     var primaryKey: KeyCode? {
         values.first
     }
-    
+
     var isBound: Bool {
         !values.isEmpty
     }
@@ -39,7 +39,8 @@ struct Keybinding: Codable, Equatable, Hashable {
         var vals: [KeyCode] = [event.keyCode]
         func append(_ modifier: NSEvent.ModifierFlags, _ keycode: KeyCode) {
             if event.modifierFlags.contains(modifier),
-                KeyCode.modifierFlags(code: event.keyCode) != modifier {
+                KeyCode.modifierFlags(code: event.keyCode) != modifier
+            {
                 vals.append(keycode)
             }
         }
@@ -53,7 +54,7 @@ struct Keybinding: Codable, Equatable, Hashable {
     func matches(event: NSEvent) -> Bool {
         guard isBound else { return false }
         var other = Keybinding(event: event)
-        
+
         // Remove duplicates of the pressed key from the modifier list so
         // modifier-only shortcuts match correctly.
         if let first = other.primaryKey {
@@ -68,7 +69,8 @@ struct Keybinding: Codable, Equatable, Hashable {
         let settings = Settings[\.keybinds]
 
         func remove(_ key: KeyCode, blocking: Bool) {
-            if !blocking && other.primaryKey != key && primaryKey != key && !modifiers.contains(key) {
+            if !blocking && other.primaryKey != key && primaryKey != key && !modifiers.contains(key)
+            {
                 other.values.removeAll { $0 == key }
             }
         }
@@ -110,11 +112,9 @@ struct Keybinding: Codable, Equatable, Hashable {
         if values.count == 1 {
             try single.encode(values[0])
             return
-        } else if !values.isEmpty {
+        } else {
             try single.encode(values)
             return
         }
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(values, forKey: .values)
     }
 }

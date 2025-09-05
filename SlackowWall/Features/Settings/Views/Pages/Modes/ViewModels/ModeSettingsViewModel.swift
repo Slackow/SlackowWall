@@ -26,12 +26,12 @@ class ModeSettingsViewModel: ObservableObject {
     }
 
     var multipleOutOfBounds: Bool {
-        let p = Settings[\.mode]
+        let p = Settings.shared.preferences
         let dimensions = [
-            (p.resetWidth, p.resetHeight), (p.baseWidth, p.baseHeight), (p.tallWidth, p.tallHeight),
-            (p.thinWidth, p.thinHeight), (p.wideWidth, p.wideHeight),
+            p.baseDimensions, p.tallDimensions, p.thinDimensions, p.wideDimensions, p.resetDimensions
         ]
-        return dimensions.filter({ !WindowController.dimensionsInBounds(width: $0, height: $1) })
+        return dimensions.filter({(w, h, _, _) in
+            !WindowController.dimensionsInBounds(width: w.map(Int.init), height: h.map(Int.init)) })
             .count >= 2
     }
 

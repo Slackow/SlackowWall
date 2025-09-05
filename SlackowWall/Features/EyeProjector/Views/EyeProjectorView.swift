@@ -30,8 +30,10 @@ struct EyeProjectorView: View {
             ZStack {
                 previewRenderer.instance.eyeProjectorStream.capturePreview
                     .scaleEffect(
-                        x: CGFloat(mode.tallWidth ?? 60) / CGFloat(utility.eyeProjectorWidth),
-                        y: utility.eyeProjectorHeightScale * 60 / CGFloat(utility.eyeProjectorWidth)
+                        x: CGFloat(Settings.shared.preferences.tallDimensions.0)
+                            / CGFloat(utility.eyeProjectorWidth),
+                        y: utility.eyeProjectorHeightScale * 60
+                            / CGFloat(utility.eyeProjectorWidth)
                     )
                     .contentShape(Rectangle())
                     .opacity(previewRenderer.isVisible ? 1 : 0)
@@ -44,6 +46,5 @@ struct EyeProjectorView: View {
                     .frame(minWidth: geo.size.width, maxWidth: geo.size.width)
             }
         }
-
     }
 }

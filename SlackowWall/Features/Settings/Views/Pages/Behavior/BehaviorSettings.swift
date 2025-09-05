@@ -24,7 +24,7 @@ struct BehaviorSettings: View {
                     SettingsToggleView(
                         title: "Utility Mode",
                         description:
-                            "Allows Non-Numbered instances to be captured by SlackowWall, and enables some miscellaneous features.",
+                            "Turns off the 'wall' functionality, leaving all the miscellaneous features.",
                         descInteractable: false, option: $settings.utilityMode
                     )
                     .animation(.easeInOut, value: settings.utilityMode)

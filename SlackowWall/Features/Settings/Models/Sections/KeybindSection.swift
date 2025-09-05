@@ -16,6 +16,8 @@ extension Preferences {
         var thinGKey: Keybinding = .none
         var planarGKey: Keybinding = .none
         var baseGKey: Keybinding = .none
+        var sensitivityScalingGKey: Keybinding = .none
+
         var resetAllKey: Keybinding = .init(.t)
         var resetOthersKey: Keybinding = .init(.f)
         var runKey: Keybinding = .init(.r)

@@ -17,6 +17,7 @@ import SwiftUI
     @Published var isRunning = false
     @Published private(set) var availableWindows = [SCWindow]()
     @Published var eyeProjectedInstance: TrackedInstance? = nil
+    @Published var eyeProjectorMode: EyeProjectorMode = .tall
 
     // Dedicated eye projector capture that works regardless of utility mode
     private var eyeProjectorCapture: CaptureEngine? = nil
@@ -62,12 +63,16 @@ import SwiftUI
         }
     }
 
-    func startEyeProjectorCapture(for instance: TrackedInstance) async {
+    func startEyeProjectorCapture(
+        for instance: TrackedInstance,
+        mode: EyeProjectorMode = .tall
+    ) async {
         guard needsEyeProjectorCapture else { return }
 
         // Always check permissions for eye projector capture
         guard await AlertManager.shared.checkScreenRecordingPermission() else { return }
 
+        eyeProjectorMode = mode
         await setupEyeProjectorCapture(for: instance)
     }
 
@@ -339,10 +344,9 @@ import SwiftUI
         }
 
         // Use tall mode dimensions instead of actual window size
-        var tallWidth = CGFloat(Settings[\.mode].tallWidth ?? 60)
-        var tallHeight = CGFloat(Settings[\.mode].tallHeight ?? 60)
+        var (tallWidth, tallHeight, _, _) = Settings.shared.preferences.tallDimensions
 
-        if Settings[\.utility].eyeProjectorWidth == 30 {
+        if Settings[\.utility].adjustFor4kScaling {
             tallWidth *= 2
             tallHeight *= 2
         }

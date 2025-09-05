@@ -9,6 +9,9 @@ import CachedAsyncImage
 import SwiftUI
 
 struct CreditsView: View {
+    @State var showLogUploadedAlert = false
+    @State var logUploadedAlert: String? = nil
+    @State var logLink: String? = nil
     var body: some View {
         SettingsPageView(title: "Credits") {
             SettingsCardView {
@@ -29,6 +32,9 @@ struct CreditsView: View {
 
                     CreditsEntryView(
                         name: "mukvl", role: "Supporter", icon: "heart.fill", color: .pink)
+
+                    CreditsEntryView(
+                        name: "HavocDroid", role: "Supporter", icon: "heart.fill", color: .pink)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -83,6 +89,39 @@ struct CreditsView: View {
                         )
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    Divider()
+                    HStack {
+                        Image(systemName: "arrow.up.document.fill")
+                            .font(.title)
+                            .foregroundStyle(.gray)
+                            .frame(width: 30)
+                        HStack(spacing: 0) {
+                            Text("To upload the current log and send it to someone, click ")
+                            Text(.init("here").blue())
+                        }
+                        .onTapGesture {
+                            LogManager.shared.uploadLog { message, url in
+                                logLink = url
+                                logUploadedAlert = message
+                                showLogUploadedAlert = true
+                            }
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .alert(
+                        "Log File Upload", isPresented: $showLogUploadedAlert,
+                        presenting: logUploadedAlert
+                    ) { _ in
+                        if let logLink {
+                            Button("Copy Link") {
+                                NSPasteboard.general.clearContents()
+                                NSPasteboard.general.setString(logLink, forType: .string)
+                            }
+                        }
+                        Button("Close") {}
+                    } message: { _ in
+                        Text(logUploadedAlert ?? "Unable to upload.")
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -103,6 +142,12 @@ struct CreditsView: View {
 
     private func getAvatarURL(_ name: String) -> URL? {
         return URL(string: "https://minotar.net/helm/\(name)/32")
+    }
+}
+
+extension AttributedString {
+    fileprivate func blue() -> Self {
+        return self.settingAttributes(AttributeContainer().foregroundColor(.systemBlue))
     }
 }
 

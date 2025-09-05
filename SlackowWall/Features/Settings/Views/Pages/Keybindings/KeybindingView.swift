@@ -68,7 +68,7 @@ struct KeybindingView: View {
                 circleColor = hovering ? .init(nsColor: .labelColor) : .gray
             })
         }
-        .frame(width: 150, height: 22)
+        .frame(width: 135, height: 22)
         .onAppear {
             // Setup local key event monitoring
             monitor = NSEvent.addLocalMonitorForEvents(
@@ -78,10 +78,10 @@ struct KeybindingView: View {
 
                 var type = event.type
                 if type == .flagsChanged,
-                   let code = KeyCode.modifierFlags(code: event.keyCode)
+                    let code = KeyCode.modifierFlags(code: event.keyCode)
                 {
                     type = event.modifierFlags.contains(code) ? .keyDown : .keyUp
-                    
+
                 }
 
                 if type == .keyDown {

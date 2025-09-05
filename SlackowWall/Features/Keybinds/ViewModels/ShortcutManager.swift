@@ -32,7 +32,7 @@ class ShortcutManager: ObservableObject, Manager {
     func handleGlobalKey(_ key: NSEvent) {
         var type = key.type
         if type == .flagsChanged,
-           let code = KeyCode.modifierFlags(code: key.keyCode)
+            let code = KeyCode.modifierFlags(code: key.keyCode)
         {
             type = key.modifierFlags.contains(code) ? .keyDown : .keyUp
         }
@@ -43,13 +43,15 @@ class ShortcutManager: ObservableObject, Manager {
         if type == .keyUp && settings.resetGKey.matches(event: key) {
             globalReset()
         } else if type == .keyDown && settings.planarGKey.matches(event: key) {
-            resizePlanar()
+            resizeWide()
         } else if type == .keyDown && settings.baseGKey.matches(event: key) {
             resizeBase()
         } else if type == .keyDown && settings.tallGKey.matches(event: key) {
             resizeTall()
         } else if type == .keyDown && settings.thinGKey.matches(event: key) {
             resizeThin()
+        } else if type == .keyDown && settings.sensitivityScalingGKey.matches(event: key) {
+            Settings[\.utility].sensitivityScaleEnabled.toggle()
         } else {
             return
         }
@@ -139,54 +141,42 @@ class ShortcutManager: ObservableObject, Manager {
         }
     }
 
-    func resizePlanar() {
+    func resizeWide() {
         guard let pid = activeInstancePID() else { return }
-        let w = convertToFloat(Settings[\.mode].wideWidth)
-        let h = convertToFloat(Settings[\.mode].wideHeight)
-        let x = Settings[\.mode].wideX.map(CGFloat.init)
-        let y = Settings[\.mode].wideY.map(CGFloat.init)
+        guard case let (.some(w), h, x, y) = Settings.shared.preferences.wideDimensions else {
+            return
+        }
         resize(pid: pid, x: x, y: y, width: w, height: h)
     }
 
     func resizeBase(pid: pid_t? = nil) {
         guard let pid = pid ?? activeInstancePID() else { return }
-        let w = convertToFloat(Settings[\.mode].baseWidth)
-        let h = convertToFloat(Settings[\.mode].baseHeight)
-        let x = Settings[\.mode].baseX.map(CGFloat.init)
-        let y = Settings[\.mode].baseY.map(CGFloat.init)
+        guard
+            case let (.some(w), .some(h), .some(x), .some(y)) = Settings.shared.preferences
+                .baseDimensions
+        else { return }
         resize(pid: pid, x: x, y: y, width: w, height: h, force: true)
     }
 
     func resizeReset(pid: pid_t) {
-        var w = convertToFloat(Settings[\.mode].resetWidth)
-        var h = convertToFloat(Settings[\.mode].resetHeight)
-        var x = Settings[\.mode].resetX.map(CGFloat.init)
-        var y = Settings[\.mode].resetY.map(CGFloat.init)
-
-        if !(w > 0 && h > 0) {
-            w = convertToFloat(Settings[\.mode].baseWidth)
-            h = convertToFloat(Settings[\.mode].baseHeight)
-            x = Settings[\.mode].baseX.map(CGFloat.init)
-            y = Settings[\.mode].baseY.map(CGFloat.init)
-        }
+        guard
+            case let (.some(w), .some(h), .some(x), .some(y)) = Settings.shared.preferences
+                .resetDimensions
+        else { return }
         resize(pid: pid, x: x, y: y, width: w, height: h, force: true)
     }
 
     func resizeThin() {
         guard let pid = activeInstancePID() else { return }
-        let w = convertToFloat(Settings[\.mode].thinWidth)
-        let h = convertToFloat(Settings[\.mode].thinHeight)
-        let x = Settings[\.mode].thinX.map(CGFloat.init)
-        let y = Settings[\.mode].thinY.map(CGFloat.init)
+        guard case let (w, .some(h), x, y) = Settings.shared.preferences.thinDimensions else {
+            return
+        }
         resize(pid: pid, x: x, y: y, width: w, height: h)
     }
 
     func resizeTall() {
         guard let pid = activeInstancePID() else { return }
-        let w = convertToFloat(Settings[\.mode].tallWidth)
-        let h = convertToFloat(Settings[\.mode].tallHeight)
-        let x = Settings[\.mode].tallX.map(CGFloat.init)
-        let y = Settings[\.mode].tallY.map(CGFloat.init)
+        let (w, h, x, y) = Settings.shared.preferences.tallDimensions
         if resize(pid: pid, x: x, y: y, width: w, height: h) == true {
             if let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid }
             ) {
@@ -194,7 +184,7 @@ class ShortcutManager: ObservableObject, Manager {
                 Task(priority: .userInitiated) {
                     MouseSensitivityManager.shared.setSensitivityFactor(
                         factor: Settings[\.utility].tallSensitivityScale)
-                    await ScreenRecorder.shared.startEyeProjectorCapture(for: instance)
+                    await ScreenRecorder.shared.startEyeProjectorCapture(for: instance, mode: .tall)
                     if Settings[\.utility].eyeProjectorShouldOpenWithTallMode {
                         eyeProjectorOpen = true
                     }
@@ -216,11 +206,8 @@ class ShortcutManager: ObservableObject, Manager {
             let currentPosition = WindowController.getWindowPosition(pid: pid)
         {
             // detect exiting tall mode
-            if currentSize
-                == CGSize(
-                    width: convertToFloat(Settings[\.mode].tallWidth),
-                    height: convertToFloat(Settings[\.mode].tallHeight))
-            {
+            let (w, h, _, _) = Settings.shared.preferences.tallDimensions
+            if currentSize == CGSize(width: w, height: h) {
                 Task(priority: .userInitiated) {
                     await ScreenRecorder.shared.stopEyeProjectorCapture()
                     ScreenRecorder.shared.eyeProjectedInstance = nil
