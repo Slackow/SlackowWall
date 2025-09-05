@@ -12,6 +12,7 @@ struct ModeSettings: View {
 
     @AppSettings(\.mode) private var settings
     @AppSettings(\.keybinds) private var keybinds
+    @AppSettings(\.utility) private var utility
 
     var body: some View {
         SettingsPageView(title: "Window Resizing", shouldDisableFocus: false) {
@@ -30,7 +31,7 @@ struct ModeSettings: View {
                 if viewModel.multipleOutOfBounds {
                     Text(
                         .init(
-                            "More than one dimension out of bounds is illegal, and will invalidate your run!"
+                            "More than one dimension out of bounds is illegal, this will invalidate your run!"
                         )
                     )
                     .font(.caption)
@@ -46,37 +47,48 @@ struct ModeSettings: View {
                 name: "Gameplay",
                 description:
                     "The size of the game while you are in an instance, required for other modes to work.\nOptional Keybind goes directly to gameplay, other keybinds toggle their sizes.",
-                isGameplayMode: true, keybind: $keybinds.baseGKey, x: $settings.baseX,
-                y: $settings.baseY, width: $settings.baseWidth, height: $settings.baseHeight)
+                actualDimensions: Settings.shared.preferences.baseDimensions,
+                isGameplayMode: true, isExpanded: true, keybind: $keybinds.baseGKey,
+                posHints: ("", ""),
+                x: $settings.baseX, y: $settings.baseY,
+                width: $settings.baseWidth, height: $settings.baseHeight)
 
             ModeCardView(
                 name: "Tall",
                 description: "The size the game will be when you switch to tall mode.",
-                keybind: $keybinds.tallGKey, x: $settings.tallX, y: $settings.tallY,
+                actualDimensions: Settings.shared.preferences.tallDimensions,
+                keybind: $keybinds.tallGKey,
+                x: $settings.tallX, y: $settings.tallY,
                 width: $settings.tallWidth, height: $settings.tallHeight)
 
             ModeCardView(
                 name: "Thin",
                 description: "The size the game will be when you switch to thin mode.",
+                actualDimensions: Settings.shared.preferences.thinDimensions,
                 keybind: $keybinds.thinGKey, x: $settings.thinX, y: $settings.thinY,
                 width: $settings.thinWidth, height: $settings.thinHeight)
 
             ModeCardView(
                 name: "Wide",
                 description: "The size the game will be when you switch to wide instance mode.",
-                keybind: $keybinds.planarGKey, x: $settings.wideX, y: $settings.wideY,
+                actualDimensions: Settings.shared.preferences.wideDimensions,
+                keybind: $keybinds.planarGKey,
+                x: $settings.wideX, y: $settings.wideY,
                 width: $settings.wideWidth, height: $settings.wideHeight)
 
             ModeCardView(
                 name: "Reset",
                 description:
                     "The size the game will be while you are in SlackowWall. (For Wall Mode)",
-                x: $settings.resetX, y: $settings.resetY, width: $settings.resetWidth,
-                height: $settings.resetHeight)
+                actualDimensions: Settings.shared.preferences.resetDimensions,
+                posHints: ("", ""),
+                x: $settings.resetX, y: $settings.resetY,
+                width: $settings.resetWidth, height: $settings.resetHeight)
         }
         .animation(
             .smooth.delay(viewModel.multipleOutOfBounds ? 0 : 0.3),
-            value: viewModel.multipleOutOfBounds)
+            value: viewModel.multipleOutOfBounds
+        )
     }
 }
 

@@ -35,7 +35,8 @@ class ModListViewModel: ObservableObject {
                     modInfo.disabled = modFile.pathExtension == "disabled"
                     fetchedMods.append(modInfo)
                 } else {
-                    LogManager.shared.appendLog("Could not extract mod info from: \(modFile.lastPathComponent)")
+                    LogManager.shared.appendLog(
+                        "Could not extract mod info from: \(modFile.lastPathComponent)")
                 }
             }
 

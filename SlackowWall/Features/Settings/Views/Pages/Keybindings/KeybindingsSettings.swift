@@ -68,6 +68,16 @@ struct KeybindingsSettings: View {
 
                         KeybindingView(keybinding: \.planarGKey)
                     }
+
+                    Divider()
+
+                    HStack {
+                        SettingsLabel(
+                            title: "Toggle Sensitivity Scaling",
+                            description: "Toggle Sensitivity Scaling on/off (global only).", font: .body)
+
+                        KeybindingView(keybinding: \.sensitivityScalingGKey)
+                    }
                 }
             }
 
@@ -138,7 +148,7 @@ struct KeybindingsSettings: View {
             .padding(.top, 5)
 
             SettingsCardView {
-                VStack (alignment: .center, spacing: 10) {
+                VStack(alignment: .center, spacing: 10) {
                     HStack {
                         Toggle("Shift", isOn: $settings.blockingShift)
                         Toggle("Control", isOn: $settings.blockingControl)

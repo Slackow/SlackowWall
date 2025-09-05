@@ -22,6 +22,12 @@ struct UtilitySettings: View {
     @State var sensitivityScale: Double = Settings[\.utility].sensitivityScale
     @State var tallSensitivityScale: Double = Settings[\.utility].tallSensitivityScale
 
+    var usingRetino: Bool {
+        TrackingManager.shared.trackedInstances.first {
+            $0.info.mods.contains { $0.id == "retino" }
+        } != nil
+    }
+
     var body: some View {
         SettingsPageView(title: "Utilities", shouldDisableFocus: true) {
             SettingsLabel(
@@ -57,14 +63,20 @@ struct UtilitySettings: View {
                         Divider()
 
                         SettingsToggleView(
-                            title: "Retina/4K (Without Retino)",
-                            description: """
+                            title: "Adjust For No Retino Mod",
+                            description: usingRetino && settings.adjustFor4kScaling
+                                ? """
+                                [You are using Retino, turn this off](0)
+                                """
+                                : """
                                 Enable this if you are using a 4K or Retina screen, \
                                 without the Retino mod.
                                 """,
-                            option: .init(
-                                get: { settings.eyeProjectorWidth == 30 },
-                                set: { settings.eyeProjectorWidth = $0 ? 30 : 60 }))
+                            descInteractable: false,
+                            option: $settings.adjustFor4kScaling,
+                        )
+                        .tint(.red)
+                        .animation(.easeInOut, value: settings.adjustFor4kScaling)
 
                         Divider()
 
@@ -188,7 +200,7 @@ struct UtilitySettings: View {
                     SettingsLabel(
                         title: "Paceman Tracker Settings",
                         description:
-                            "These settings are directly tied to the Paceman tracker, and require a restart to take effect.",
+                            "These settings are directly tied to the Paceman tracker.",
                         font: .body
                     )
                     SettingsCardView {

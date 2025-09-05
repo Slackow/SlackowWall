@@ -16,10 +16,10 @@ extension Preferences {
         var resetX: Int? = nil
         var resetY: Int? = nil
 
-        var baseWidth: Int? = nil
-        var baseHeight: Int? = nil
-        var baseX: Int? = nil
-        var baseY: Int? = nil
+        var baseWidth: Int? = (NSScreen.main?.frame.width).map(Int.init)
+        var baseHeight: Int? = (NSScreen.main?.frame.height).map(Int.init)
+        var baseX: Int? = 0
+        var baseY: Int? = 0
 
         var wideWidth: Int? = nil
         var wideHeight: Int? = nil

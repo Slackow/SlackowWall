@@ -12,7 +12,7 @@ struct ToolbarUtilityModeView: View {
 
     @AppSettings(\.behavior)
     private var settings
-    
+
     var body: some View {
         Button(action: {
             settings.utilityMode.toggle()
