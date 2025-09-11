@@ -336,7 +336,7 @@ import SwiftUI
             filter = newFilter
         }
 
-        guard let filter = filter else {
+        guard let filter else {
             LogManager.shared.appendLog(
                 "Unable to setup filter for eye projector instance \(instance.pid)"
             )

@@ -109,9 +109,9 @@ struct UtilitySettings: View {
                             .textFieldStyle(.roundedBorder)
                             .foregroundStyle(.primary)
                             .frame(width: 60)
+                            .disabled(!settings.eyeProjectorEnabled)
                         }
                     }
-                    .disabled(!settings.eyeProjectorEnabled)
                 }
             }
 
@@ -293,6 +293,17 @@ struct UtilitySettings: View {
                         Text("Invalid token, check it was input correctly.")
                     case .unable:
                         Text("Error checking token, please try again later.")
+                }
+            }
+            
+            SettingsLabel(title: "Startup Applications")
+            
+            SettingsCardView {
+                VStack {
+                    SettingsToggleView(title: "Enabled", option: $settings.startupApplicationEnabled)
+                    Divider()
+                    FileListView(urls: $settings.startupApplications)
+                        .disabled(!settings.startupApplicationEnabled)
                 }
             }
         }

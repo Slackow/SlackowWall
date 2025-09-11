@@ -188,6 +188,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 PacemanManager.shared.startPaceman()
             #endif
         }
+        if Settings[\.utility].startupApplicationEnabled {
+            Settings[\.utility].startupApplications.forEach {
+                let task = Process()
+                task.launchPath = "/usr/bin/open"
+                task.arguments = [$0.path(percentEncoded: false)]
+                try? task.run()
+            }
+        }
         // Start the instance check timer
         TrackingManager.shared.startInstanceCheckTimer()
     }

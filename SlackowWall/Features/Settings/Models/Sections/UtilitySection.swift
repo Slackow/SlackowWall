@@ -21,20 +21,19 @@ extension Preferences {
         }
         var eyeProjectorWidth: Int = 60
         var adjustFor4kScaling: Bool {
-            set(value) {
-                eyeProjectorWidth = value ? 30 : 60
-            }
-            get {
-                eyeProjectorWidth == 30
-            }
+            set(value) { eyeProjectorWidth = value ? 30 : 60 }
+            get { eyeProjectorWidth == 30 }
         }
         var eyeProjectorHeightScale: Double = 0.2
 
         var sensitivityScaleEnabled: Bool = false
         var sensitivityScaleToolBarIcon: Bool = false
         var sensitivityScale: Double = 1.0
-        var boatEyeSensitivity: Float64 = 0.02291165
+        var boatEyeSensitivity: Double = 0.02291165
         var tallSensitivityScale: Double = 0.25
+        
+        var startupApplicationEnabled: Bool = false
+        var startupApplications: [URL] = []
 
         init() {}
     }
