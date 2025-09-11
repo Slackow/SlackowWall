@@ -33,7 +33,7 @@ class MouseSensitivityManager: ObservableObject {
 
         if isActive { stopReducingSensitivity() }
         LogManager.shared.appendLog("Changing Sensitivity Factor to", factor)
-        let factor = (0.1...50).clamped(value: factor)
+        let factor = (0.05...50).clamped(value: factor)
         self.sensitivityFactor = factor
         if factor == 1.0 { return }
 

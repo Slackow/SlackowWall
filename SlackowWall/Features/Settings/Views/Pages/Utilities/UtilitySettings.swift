@@ -143,10 +143,10 @@ struct UtilitySettings: View {
                                 format: .number.grouping(.never)
                             )
                             .textFieldStyle(.roundedBorder)
-                            .foregroundColor((0.1...50 ~= sensitivityScale) ? .primary : .red)
+                            .foregroundColor((0.05...50 ~= sensitivityScale) ? .primary : .red)
                             .frame(width: 60)
                             .onChange(of: sensitivityScale) { _, newValue in
-                                if 0.1...50 ~= newValue {
+                                if 0.05...50 ~= newValue {
                                     Settings[\.utility].sensitivityScale = newValue
                                     MouseSensitivityManager.shared.setSensitivityFactor(
                                         factor: newValue)
@@ -164,10 +164,10 @@ struct UtilitySettings: View {
                                 format: .number.grouping(.never)
                             )
                             .textFieldStyle(.roundedBorder)
-                            .foregroundColor((0.1...50 ~= tallSensitivityScale) ? .primary : .red)
+                            .foregroundColor((0.05...50 ~= tallSensitivityScale) ? .primary : .red)
                             .frame(width: 60)
                             .onChange(of: tallSensitivityScale) { _, newValue in
-                                if 0.1...50 ~= newValue {
+                                if 0.05...50 ~= newValue {
                                     Settings[\.utility].tallSensitivityScale = newValue
                                 }
                             }
@@ -296,12 +296,11 @@ struct UtilitySettings: View {
                 }
             }
             
-            SettingsLabel(title: "Startup Applications")
+            SettingsLabel(title: "Startup Applications", description: "Enable launching apps/jars automatically when starting SlackowWall (they will not close with it).")
             
             SettingsCardView {
                 VStack {
                     SettingsToggleView(title: "Enabled", option: $settings.startupApplicationEnabled)
-                    Divider()
                     FileListView(urls: $settings.startupApplications)
                         .disabled(!settings.startupApplicationEnabled)
                 }
