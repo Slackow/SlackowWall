@@ -13,7 +13,7 @@ struct CreditsView: View {
     @State var logUploadedAlert: String? = nil
     @State var logLink: String? = nil
     var body: some View {
-        SettingsPageView(title: "Credits") {
+        SettingsPageView(title: "Credits & Help") {
             SettingsCardView {
                 VStack {
                     CreditsEntryView(

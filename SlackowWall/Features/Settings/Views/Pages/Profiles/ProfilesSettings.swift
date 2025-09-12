@@ -126,22 +126,17 @@ struct ProfilesSettings: View {
         }
         .toolbar {
             ToolbarItemGroup {
-                HStack {
-                    Button(action: settings.createProfile) {
-                        Image(systemName: "plus")
-                    }
-                    .frame(width: 28)
-                    .help("Create new profile")
-                    .disabled(settings.availableProfiles.count >= 10)
-
-                    Button(action: settings.deleteCurrentProfile) {
-                        Image(systemName: "trash")
-                    }
-                    .frame(width: 28)
-                    .help("Remove current profile")
-                    .disabled(settings.availableProfiles.count <= 1)
+                Button(action: settings.createProfile) {
+                    Image(systemName: "plus")
                 }
-                .frame(width: 56, height: 32, alignment: .trailing)
+                .popoverLabel("Create new profile")
+                .disabled(settings.availableProfiles.count >= 10)
+
+                Button(action: settings.deleteCurrentProfile) {
+                    Image(systemName: "trash")
+                }
+                .popoverLabel("Remove current profile")
+                .disabled(settings.availableProfiles.count <= 1)
             }
         }
         .onChange(of: profile.id) { _, value in

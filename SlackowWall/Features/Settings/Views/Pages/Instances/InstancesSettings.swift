@@ -27,16 +27,18 @@ struct InstancesSettings: View {
                                 Text(type == .vertical ? "Columns" : "Rows").tag(type)
                             }
                         }
-
+                        .frame(maxWidth: .infinity)
                         Picker("", selection: $settings.sections) {
                             ForEach(1..<10) {
                                 Text("\($0)").tag($0)
                             }
                         }
+                        .frame(maxWidth: .infinity)
                     }
                     .pickerStyle(.segmented)
                     .labelsHidden()
                 }
+                .frame(maxWidth: .infinity)
             }
 
             SettingsCardView {

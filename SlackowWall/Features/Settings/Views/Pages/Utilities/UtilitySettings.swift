@@ -49,6 +49,7 @@ struct UtilitySettings: View {
                         Toggle("", isOn: $settings.eyeProjectorEnabled)
                             .labelsHidden()
                             .toggleStyle(.switch)
+                            .controlSize(.small)
                             .tint(.accentColor)
                     }
 
@@ -132,6 +133,14 @@ struct UtilitySettings: View {
                     Divider()
                     SettingsToggleView(
                         title: "Toolbar Icon", option: $settings.sensitivityScaleToolBarIcon)
+//                    Divider()
+//                    HStack {
+//                        SettingsLabel(title: "Simulated Sensitivity", font: .body)
+//                        
+//                        Text(sensitivityText(settings.boatEyeSensitivity))
+//                        Slider(value: $settings.boatEyeSensitivity, in: 0...200)
+//                            .frame(width: 200)
+//                    }
                     Group {
                         Divider()
 
@@ -325,6 +334,17 @@ struct UtilitySettings: View {
             }
         }
         showTokenAlert = true
+    }
+    
+    private func sensitivityText(_ sens: Double) -> String {
+        switch sens {
+            case 0:
+                return "*yawn*"
+            case 200:
+                return "HYPERSPEED!!!"
+            default:
+                return "\(Int(sens))%"
+        }
     }
 }
 

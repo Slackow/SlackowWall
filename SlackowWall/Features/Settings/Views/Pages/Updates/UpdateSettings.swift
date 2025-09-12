@@ -62,14 +62,14 @@ struct UpdateSettings: View {
                 Button(action: { showReleaseNotes.toggle() }) {
                     Image(systemName: "doc.plaintext")
                 }
-                .help("Show release notes")
+                .popoverLabel("Show release notes")
             }
 
             ToolbarItem(placement: .primaryAction) {
                 Button(action: { updateManager.checkForUpdates() }) {
                     Image(systemName: "arrow.clockwise")
                 }
-                .help("Check for updates")
+                .popoverLabel("Check for updates")
             }
         }
     }

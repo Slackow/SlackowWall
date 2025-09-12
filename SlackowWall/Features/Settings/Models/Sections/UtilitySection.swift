@@ -28,7 +28,7 @@ extension Preferences {
 
         var sensitivityScaleEnabled: Bool = false
         var sensitivityScaleToolBarIcon: Bool = false
-        var sensitivityScale: Double = 1.0
+        var sensitivityScale: Double = 12.8
         var boatEyeSensitivity: Double = 0.02291165
         var tallSensitivityScale: Double = 0.25
         
