@@ -44,6 +44,7 @@ struct CaptureGridView: View {
                             Text("Quick Launch")
                         }
                     }
+                    .foregroundStyle(.white)
                     .sheet(isPresented: $quickLaunchOpen) {
                         PrismQuickLaunchView()
                     }

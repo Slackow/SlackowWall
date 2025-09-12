@@ -36,44 +36,27 @@ struct SlackowWallApp: App {
             ContentView()
                 .frame(minWidth: 300, minHeight: 210)
                 .toolbar {
-                    ToolbarItem(placement: .automatic) {
-                        HStack(spacing: 6) {
-                            HStack(spacing: 6) {
-                                if !trackingManager.trackedInstances.isEmpty
-                                    && !behavior.utilityMode
-                                {
-                                    ToolbarStopView()
-                                }
-
-                                if alertManager.alert != nil {
-                                    ToolbarAlertView()
-                                }
-                            }
-                            .frame(width: 48, height: 40, alignment: .trailing)
-                            .animation(
-                                .easeInOut(duration: 0.3), value: trackingManager.trackedInstances
-                            )
-                            .animation(.easeInOut(duration: 0.3), value: alertManager.alert)
-
-                            if utility.sensitivityScaleToolBarIcon {
-                                ToolbarSensitivityToggleView()
-                                    .frame(width: 28, height: 25)
-                            }
-
-                            if utility.pacemanToolBarIcon {
-                                ToolbarPacemanToggleView()
-                                    .frame(width: 28, height: 25)
-                            }
-
-                            ToolbarUtilityModeView()
-                                .frame(width: 28, height: 25)
-
-                            ToolbarSettingsView()
-                                .frame(width: 28, height: 25)
-
-                            ToolbarRefreshView()
-                                .frame(width: 28, height: 25)
+                    ToolbarItemGroup {
+                        if !trackingManager.trackedInstances.isEmpty && !behavior.utilityMode {
+                            ToolbarStopView()
                         }
+                        if alertManager.alert != nil {
+                            ToolbarAlertView()
+                                .animation(
+                                    .easeInOut(duration: 0.3), value: trackingManager.trackedInstances
+                                )
+                                .animation(.easeInOut(duration: 0.3), value: alertManager.alert)
+                        }
+                        if utility.sensitivityScaleToolBarIcon {
+                            ToolbarSensitivityToggleView()
+                        }
+                        if utility.pacemanToolBarIcon {
+                            ToolbarPacemanToggleView()
+                        }
+                        ToolbarUtilityModeView()
+                        
+                        ToolbarSettingsView()
+                        ToolbarRefreshView()
                     }
                 }
                 .navigationTitle("SlackowWall - Profile: \(profile.name)")

@@ -40,6 +40,7 @@ struct SettingsToggleView: View {
                 Toggle("", isOn: $option)
                     .labelsHidden()
                     .toggleStyle(.switch)
+                    .controlSize(.small)
                     .tint(.accentColor)
             }
             .padding(.leading)

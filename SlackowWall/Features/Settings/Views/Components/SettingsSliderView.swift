@@ -9,8 +9,8 @@ import SwiftUI
 
 struct SettingsSliderView: View {
     var title: String
-    var leftIcon: String
-    var rightIcon: String
+    var leftIcon: String?
+    var rightIcon: String?
 
     @Binding var value: Double
     var range: ClosedRange<Double>
@@ -25,11 +25,13 @@ struct SettingsSliderView: View {
                 .animation(.smooth, value: title)
 
             HStack {
-                Image(systemName: leftIcon)
-
+                if let leftIcon {
+                    Image(systemName: leftIcon)
+                }
                 Slider(value: $value, in: range, step: step)
-
-                Image(systemName: rightIcon)
+                if let rightIcon {
+                    Image(systemName: rightIcon)
+                }
             }
         }
     }
