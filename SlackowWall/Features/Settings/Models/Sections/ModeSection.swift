@@ -11,31 +11,28 @@ import SwiftUI
 extension Preferences {
     @DefaultCodable
     struct ModeSection: Codable, Hashable {
-        var resetWidth: Int? = nil
-        var resetHeight: Int? = nil
-        var resetX: Int? = nil
-        var resetY: Int? = nil
 
-        var baseWidth: Int? = (NSScreen.main?.frame.width).map(Int.init)
-        var baseHeight: Int? = (NSScreen.main?.frame.height).map(Int.init)
-        var baseX: Int? = 0
-        var baseY: Int? = 0
+        var baseMode: SizeMode = .init(
+            width: (NSScreen.main?.frame.width).map(Int.init),
+            height: (NSScreen.main?.frame.height).map(Int.init),
+            x: 0,
+            y: 0
+        )
 
-        var wideWidth: Int? = nil
-        var wideHeight: Int? = nil
-        var wideX: Int? = nil
-        var wideY: Int? = nil
+        var wideMode: SizeMode = .init()
 
-        var thinWidth: Int? = nil
-        var thinHeight: Int? = nil
-        var thinX: Int? = nil
-        var thinY: Int? = nil
+        var thinMode: SizeMode = .init()
 
-        var tallWidth: Int? = nil
-        var tallHeight: Int? = nil
-        var tallX: Int? = nil
-        var tallY: Int? = nil
+        var tallMode: SizeMode = .init()
+        
+        var resetMode: SizeMode = .init()
 
         init() {}
+    }
+    struct SizeMode: Codable, Hashable {
+        var width: Int? = nil
+        var height: Int? = nil
+        var x: Int? = nil
+        var y: Int? = nil
     }
 }

@@ -17,10 +17,7 @@ struct ModeCardView: View {
     var keybind: Binding<Keybinding>?
 
     var posHints: (String, String) = ("--", "--")
-    @Binding var x: Int?
-    @Binding var y: Int?
-    @Binding var width: Int?
-    @Binding var height: Int?
+    @Binding var mode: Preferences.SizeMode
     @ObservedObject var trackingManager = TrackingManager.shared
 
     private var containsDimensions: Bool {
@@ -37,7 +34,7 @@ struct ModeCardView: View {
     }
 
     private var hasResetDimensions: Bool {
-        return (Settings[\.mode].baseWidth ?? 0) > 0 && (Settings[\.mode].baseHeight ?? 0) > 0
+        return (Settings[\.mode].baseMode.width ?? 0) > 0 && (Settings[\.mode].baseMode.height ?? 0) > 0
     }
     
     private var dimensionSummary: String {
@@ -90,7 +87,7 @@ struct ModeCardView: View {
                         HStack(spacing: 24) {
                             HStack {
                                 TextField(
-                                    "W", value: $width, format: .number.grouping(.never),
+                                    "W", value: $mode.width, format: .number.grouping(.never),
                                     prompt: Text(actualDimensions.0?.str ?? "")
                                 )
                                 .textFieldStyle(.roundedBorder)
@@ -98,7 +95,7 @@ struct ModeCardView: View {
                                 .frame(width: 80)
                                 
                                 TextField(
-                                    "H", value: $height, format: .number.grouping(.never),
+                                    "H", value: $mode.height, format: .number.grouping(.never),
                                     prompt: Text(actualDimensions.1?.str ?? "")
                                 )
                                 .textFieldStyle(.roundedBorder)
@@ -108,14 +105,14 @@ struct ModeCardView: View {
                             
                             HStack {
                                 TextField(
-                                    "X", value: $x, format: .number.grouping(.never),
+                                    "X", value: $mode.x, format: .number.grouping(.never),
                                     prompt: Text(actualDimensions.2?.str ?? posHints.0)
                                 )
                                 .textFieldStyle(.roundedBorder)
                                 .frame(width: 80)
                                 
                                 TextField(
-                                    "Y", value: $y, format: .number.grouping(.never),
+                                    "Y", value: $mode.y, format: .number.grouping(.never),
                                     prompt: Text(actualDimensions.3?.str ?? posHints.1)
                                 )
                                 .textFieldStyle(.roundedBorder)
@@ -164,18 +161,18 @@ struct ModeCardView: View {
 
     private func copyFrame() {
         if let s = NSScreen.main?.frame.size {
-            self.width = Int(s.width)
-            self.height = Int(s.height)
-            self.x = 0
-            self.y = 0
+            self.mode.width = Int(s.width)
+            self.mode.height = Int(s.height)
+            self.mode.x = 0
+            self.mode.y = 0
         }
     }
     private func copyVisibleFrame() {
         if let s = NSScreen.main?.visibleFrame, let fullHeight = NSScreen.main?.frame.height {
-            self.width = Int(s.size.width)
-            self.height = Int(s.size.height)
-            self.x = 0
-            self.y = Int(fullHeight - s.maxY)
+            self.mode.width = Int(s.size.width)
+            self.mode.height = Int(s.size.height)
+            self.mode.x = 0
+            self.mode.y = Int(fullHeight - s.maxY)
         }
     }
 }
@@ -184,15 +181,4 @@ private extension CGFloat {
     var str: String {
         Int(self).description
     }
-}
-
-#Preview {
-    VStack {
-        @AppSettings(\.mode)
-        var mode
-        ModeCardView(
-            name: "Wide", description: "None", x: $mode.wideX, y: $mode.wideY,
-            width: $mode.wideWidth, height: $mode.wideHeight)
-    }
-    .padding(20)
 }
