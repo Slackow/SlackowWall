@@ -7,6 +7,7 @@
 
 import CachedAsyncImage
 import SwiftUI
+import AppKit
 
 struct CreditsEntryView: View {
     let name: String
@@ -19,7 +20,11 @@ struct CreditsEntryView: View {
             CachedAsyncImage(url: getAvatarURL(name)) { image in
                 image
             } placeholder: {
-                Image(name)
+                if NSImage(named: name) != nil {
+                    Image(name)
+                } else {
+                    Image("steve_avatar")
+                }
             }
             .frame(width: 32)
             .clipShape(.rect(cornerRadius: 2))
@@ -42,3 +47,4 @@ struct CreditsEntryView: View {
 #Preview {
     CreditsEntryView(name: "Kihron", role: "Developer")
 }
+
