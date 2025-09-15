@@ -50,31 +50,32 @@ struct ModeSettings: View {
                 actualDimensions: Settings.shared.preferences.baseDimensions,
                 isGameplayMode: true, isExpanded: true, keybind: $keybinds.baseGKey,
                 posHints: ("", ""),
-                x: $settings.baseX, y: $settings.baseY,
-                width: $settings.baseWidth, height: $settings.baseHeight)
+                mode: $settings.baseMode
+            )
 
             ModeCardView(
                 name: "Tall",
                 description: "The size the game will be when you switch to tall mode.",
                 actualDimensions: Settings.shared.preferences.tallDimensions,
                 keybind: $keybinds.tallGKey,
-                x: $settings.tallX, y: $settings.tallY,
-                width: $settings.tallWidth, height: $settings.tallHeight)
+                mode: $settings.tallMode
+            )
 
             ModeCardView(
                 name: "Thin",
                 description: "The size the game will be when you switch to thin mode.",
                 actualDimensions: Settings.shared.preferences.thinDimensions,
-                keybind: $keybinds.thinGKey, x: $settings.thinX, y: $settings.thinY,
-                width: $settings.thinWidth, height: $settings.thinHeight)
+                keybind: $keybinds.thinGKey,
+                mode: $settings.thinMode
+            )
 
             ModeCardView(
                 name: "Wide",
                 description: "The size the game will be when you switch to wide instance mode.",
                 actualDimensions: Settings.shared.preferences.wideDimensions,
                 keybind: $keybinds.planarGKey,
-                x: $settings.wideX, y: $settings.wideY,
-                width: $settings.wideWidth, height: $settings.wideHeight)
+                mode: $settings.wideMode
+            )
 
             ModeCardView(
                 name: "Reset",
@@ -82,8 +83,8 @@ struct ModeSettings: View {
                     "The size the game will be while you are in SlackowWall. (For Wall Mode)",
                 actualDimensions: Settings.shared.preferences.resetDimensions,
                 posHints: ("", ""),
-                x: $settings.resetX, y: $settings.resetY,
-                width: $settings.resetWidth, height: $settings.resetHeight)
+                mode: $settings.resetMode
+            )
         }
         .animation(
             .smooth.delay(viewModel.multipleOutOfBounds ? 0 : 0.3),
