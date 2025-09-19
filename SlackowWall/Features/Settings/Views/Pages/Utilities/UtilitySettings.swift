@@ -199,11 +199,11 @@ struct UtilitySettings: View {
                                     let labels = wrongSensitivities.map{"\"\($0.name)\""}.joined(separator: ", ")
                                     Image(systemName: "xmark.circle")
                                         .foregroundStyle(.red)
-                                        .popoverLabel("Instance(s) \(labels) are not using BoatEye Sensitivity,\nClick to change the sensitivity (they will close)")
+                                        .popoverLabel("Instance(s) \(labels) are not using your BoatEye Sensitivity,\nClick to change the sensitivity (they will close)")
                                 } else {
                                     Image(systemName: "checkmark.circle")
                                         .foregroundStyle(.green)
-                                        .popoverLabel("Your instance(s) are using BoatEye sensitivity")
+                                        .popoverLabel("Your instance(s) are using your BoatEye sensitivity")
                                 }
                             }.buttonStyle(.plain)
                                 .opacity(settings.sensitivityScaleEnabled && wrongSensitivities != nil ? 1 : 0)
@@ -412,7 +412,7 @@ struct UtilitySettings: View {
         switch sens {
             case 0...0.001:
                 return "*yawn*"
-            case 200:
+            case 200...200.001:
                 return "HYPERSPEED!!!"
             default:
                 return "\(Int(sens))%"
@@ -444,29 +444,69 @@ struct UtilitySettings: View {
     }
 
     private func fixSensitivities() {
-        guard let wrongSensitivities else { return }
+        guard let wrongSensitivities, !wrongSensitivities.isEmpty else { return }
+        self.wrongSensitivities = nil
         let fm = FileManager.default
         for inst in wrongSensitivities {
             let path = inst.info.path
             let optionsPath = "\(path)/options.txt"
+            let standardSettingsTxt = "\(path)/config/standardoptions.txt"
+            let standardSettingsJson = "\(path)/config/mcsr/standardsettings.json"
             let hasStandardSettings = inst.info.mods.map(\.id).contains("standardsettings")
-            if hasStandardSettings && !(fm.fileExists(atPath: "\(path)/config/mcsr/standardsettings.json") || fm.fileExists(atPath: "\(path)/config/standardoptions.txt")) {
+            if hasStandardSettings && !(fm.fileExists(atPath: standardSettingsJson) || fm.fileExists(atPath: standardSettingsTxt)) {
                 LogManager.shared.appendLog("Cannot figure out how to fix standard settings \(inst.name), skipping.")
                 continue
             }
             trackingManager.kill(instance: inst)
             do {
-                if let contents = fm.contents(atPath: optionsPath).flatMap({String(data: $0, encoding: .utf8)}) {
+                let contents = try String(contentsOfFile: optionsPath, encoding: .utf8)
+                let replacement = contents.replacing(UtilitySettings.mouseSensTextRegex) { _ in
+                    "mouseSensitivity:\(boatEyeSensitivity)"
+                }
+                try replacement.write(to: URL(filePath: optionsPath), atomically: true, encoding: .utf8)
+                LogManager.shared.appendLog("Wrote \(boatEyeSensitivity) to options.txt \(inst.name)")
+            } catch {
+                LogManager.shared.appendLog("Failed to write to options.txt \(inst.name), skipping.")
+            }
+            if hasStandardSettings {
+                do {
+                    let rootStandardSettingsTxt = followStandardSettingsTxt(path: URL(filePath: standardSettingsTxt))
+                    let contents = try String(contentsOf: rootStandardSettingsTxt, encoding: .utf8)
                     let replacement = contents.replacing(UtilitySettings.mouseSensTextRegex) { _ in
                         "mouseSensitivity:\(boatEyeSensitivity)"
                     }
-                    try replacement.write(to: URL(filePath: optionsPath), atomically: true, encoding: .utf8)
+                    try replacement.write(to: URL(filePath: standardSettingsTxt), atomically: true, encoding: .utf8)
+                    LogManager.shared.appendLog("Wrote \(boatEyeSensitivity) to standardoptions.txt \(inst.name)")
+                } catch {
+                    LogManager.shared.appendLog("Failed to write to standardoptions.txt \(inst.name), skipping.")
                 }
-            } catch {
-                LogManager.shared.appendLog("Failed to write to options.txt \(inst.name), skipping.")
-                continue
+                do {
+                    // TODO: The logic for JSON file
+                    let contents = try Data(contentsOf: URL(filePath:standardSettingsJson))
+                    let json = (try JSONSerialization.jsonObject(with: contents, options: [])) as? [String:Any]
+                    guard var json else {
+                        LogManager.shared.appendLog("Failed to read to standardsettings.json \(inst.name), skipping.")
+                        continue
+                    }
+                    json["mouseSensitivity"] = ["value": boatEyeSensitivity, "enabled": true]
+                    let replacement = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
+                    try replacement.write(to: URL(filePath: standardSettingsJson))
+                    LogManager.shared.appendLog("Wrote \(boatEyeSensitivity) to standardsettings.json \(inst.name)")
+                } catch {
+                    LogManager.shared.appendLog("Failed to write to standardsettings.json \(inst.name), skipping.")
+                }
             }
 
+        }
+    }
+
+    private func followStandardSettingsTxt(path: URL) -> URL {
+        if let content = (try? String(contentsOf: path, encoding: .utf8))?.components(separatedBy: "\n").first,
+            FileManager.default.fileExists(atPath: content)
+        {
+            followStandardSettingsTxt(path: URL(filePath: content))
+        } else {
+            path
         }
     }
 }
