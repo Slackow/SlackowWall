@@ -13,10 +13,10 @@ struct ToolbarStopView: View {
     var body: some View {
         Button(action: { instanceManager.stopAll() }) {
             Image(systemName: "stop.fill")
-                .foregroundColor(.red)
                 .frame(width: 20, height: 20)
                 .symbolEffect(.pulse, options: .repeating, value: instanceManager.isStopping)
         }
+        .foregroundColor(.red)
         .disabled(instanceManager.isStopping)
         .popoverLabel("Stop All")
     }

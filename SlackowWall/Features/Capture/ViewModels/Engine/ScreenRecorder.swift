@@ -252,7 +252,7 @@ import SwiftUI
         MouseSensitivityManager.shared.setSensitivityFactor(
             factor: Settings[\.utility].sensitivityScale)
 
-        if needsRecordingPerms {
+        if !behavior.utilityMode {
             // Only check screen recording permission and start capture when not in utility mode
             LogManager.shared.appendLog("Normal mode - preparing screen capture")
 

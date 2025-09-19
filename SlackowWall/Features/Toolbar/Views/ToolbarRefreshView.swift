@@ -11,16 +11,14 @@ struct ToolbarRefreshView: View {
     @ObservedObject private var alertManager = AlertManager.shared
     @State private var isHovered: Bool = false
     var body: some View {
-        Button(action: {
+        Button("", systemImage: "arrow.clockwise", action: {
             Task {
                 alertManager.checkPermissions()
                 GridManager.shared.showInfo = false
                 await ScreenRecorder.shared.resetAndStartCapture()
             }
-        }) {
-            Image(systemName: "arrow.clockwise")
-                .foregroundStyle(Color(nsColor: isHovered ? .labelColor : .secondaryLabelColor))
-        }.onHover { isHovered = $0 }
+        }).onHover { isHovered = $0 }
+            .foregroundStyle(Color(nsColor: isHovered ? .labelColor : .secondaryLabelColor))
             .popoverLabel("Refresh")
     }
 }

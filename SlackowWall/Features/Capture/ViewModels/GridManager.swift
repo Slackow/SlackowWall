@@ -55,7 +55,7 @@ class GridManager: ObservableObject, Manager, RefreshObserver {
     }
 
     func showInstanceInfo() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             withAnimation(.smooth) {
                 self.showInfo = true
             }

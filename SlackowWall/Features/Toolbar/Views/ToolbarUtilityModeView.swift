@@ -14,18 +14,17 @@ struct ToolbarUtilityModeView: View {
     private var settings
 
     var body: some View {
-        Button(action: {
+        Button("", systemImage: settings.utilityMode ? "hammer.fill" : "rectangle.grid.3x2") {
             settings.utilityMode.toggle()
             // Reset capture system when utility mode is toggled
             Task {
                 // The notification will handle the alert state changes
                 await ScreenRecorder.shared.resetAndStartCapture()
             }
-        }) {
-            Image(systemName: "hammer\(settings.utilityMode ? ".fill" : "")")
-                .foregroundStyle(Color(nsColor: isHovered ? .labelColor : .secondaryLabelColor))
         }
-        .popoverLabel("Utility Mode")
+        .foregroundStyle(Color(nsColor: isHovered ? .labelColor : .secondaryLabelColor))
+        .popoverLabel(settings.utilityMode ? "Utility Mode" : "Wall Mode")
         .onHover { isHovered = $0 }
     }
 }
+

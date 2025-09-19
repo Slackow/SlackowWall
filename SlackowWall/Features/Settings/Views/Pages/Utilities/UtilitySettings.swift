@@ -15,18 +15,40 @@ struct UtilitySettings: View {
     @AppSettings(\.keybinds) private var keybinds
 
     @ObservedObject private var pacemanManager = PacemanManager.shared
+    @ObservedObject private var trackingManager = TrackingManager.shared
 
     @State private var showTokenAlert = false
     @State var tokenResponse: TokenResponse?
 
-    @State var sensitivityScale: Double = Settings[\.utility].sensitivityScale
     @State var tallSensitivityScale: Double = Settings[\.utility].tallSensitivityScale
+    @State var boatEyeSensitivity: Double = Settings[\.utility].boatEyeSensitivity
 
     var usingRetino: Bool {
-        TrackingManager.shared.trackedInstances.first {
+        trackingManager.trackedInstances.first {
             $0.info.mods.contains { $0.id == "retino" }
         } != nil
     }
+    static let mouseSensTextRegex = /^mouseSensitivity:([\d.]+)$/.anchorsMatchLineEndings()
+    @State var wrongSensitivities: [TrackedInstance]? = nil
+    func getWrongSensitivities() -> [TrackedInstance]? {
+        if trackingManager.trackedInstances.isEmpty {
+            return nil
+        }
+        return trackingManager.trackedInstances.filter { instance in
+            guard let data = FileManager.default.contents(atPath: "\(instance.info.path)/options.txt"),
+                let file = String(data: data, encoding: .utf8),
+                  let match = (try? UtilitySettings.mouseSensTextRegex.firstMatch(in: file))?.output.1,
+                let sens = Double(match)
+             else {
+                return false
+            }
+            // TODO: can't get sensitivity, what do I do?
+            return abs(sens - boatEyeSensitivity) > 0.00001
+        }
+    }
+
+    @FocusState var sensFieldInFocus
+    @State var sensFieldNum: Double? = nil
 
     var body: some View {
         SettingsPageView(title: "Utilities", shouldDisableFocus: true) {
@@ -133,34 +155,84 @@ struct UtilitySettings: View {
                     Divider()
                     SettingsToggleView(
                         title: "Toolbar Icon", option: $settings.sensitivityScaleToolBarIcon)
-//                    Divider()
-//                    HStack {
-//                        SettingsLabel(title: "Simulated Sensitivity", font: .body)
-//                        
-//                        Text(sensitivityText(settings.boatEyeSensitivity))
-//                        Slider(value: $settings.boatEyeSensitivity, in: 0...200)
-//                            .frame(width: 200)
-//                    }
+                    Divider()
+                    HStack {
+                        SettingsLabel(title: "Simulated Sensitivity", font: .body)
+                        Text(sensitivityText(scaleToSens(scale: settings.sensitivityScale)+0.001))
+                        .opacity(sensFieldInFocus ? 0.2 : 1)
+                        .overlay {
+                                TextField(
+                                    "", value: .init {sensFieldNum} set: { (n: Double?) in
+                                        sensFieldNum = n
+                                        if var n {
+                                            if n < 1 { n *= 200 }
+                                            settings.sensitivityScale = sensToScale(mcUnits: n)
+                                            MouseSensitivityManager.shared.setSensitivityFactor(
+                                                factor: settings.sensitivityScale)
+                                        }
+                                    },
+                                    format: .number.grouping(.never)
+                                )
+                                .textFieldStyle(.plain)
+                                .focused($sensFieldInFocus)
+                                .onChange(of: sensFieldInFocus) { _, newValue in
+                                    if !newValue {
+                                        sensFieldNum = nil
+                                    }
+                                }
+                        }
+                        Slider(value: .init(get: {scaleToSens(scale: settings.sensitivityScale)}, set: {
+                            settings.sensitivityScale = sensToScale(mcUnits: $0)
+                        }), in: 0...200, onEditingChanged: { _ in
+                            MouseSensitivityManager.shared.setSensitivityFactor(
+                                factor: settings.sensitivityScale)
+                        })
+                        .frame(width: 200)
+                    }
                     Group {
                         Divider()
 
                         HStack {
-                            SettingsLabel(title: "Sensitivity Scale", font: .body)
-
+                            SettingsLabel(title: "BoatEye Sensitivity", font: .body)
+                            Button(action: fixSensitivities) {
+                                if let wrongSensitivities, !wrongSensitivities.isEmpty {
+                                    let labels = wrongSensitivities.map{"\"\($0.name)\""}.joined(separator: ", ")
+                                    Image(systemName: "xmark.circle")
+                                        .foregroundStyle(.red)
+                                        .popoverLabel("Instance(s) \(labels) are not using BoatEye Sensitivity,\nClick to change the sensitivity (they will close)")
+                                } else {
+                                    Image(systemName: "checkmark.circle")
+                                        .foregroundStyle(.green)
+                                        .popoverLabel("Your instance(s) are using BoatEye sensitivity")
+                                }
+                            }.buttonStyle(.plain)
+                                .opacity(settings.sensitivityScaleEnabled && wrongSensitivities != nil ? 1 : 0)
+                                .onChange(of: settings.sensitivityScaleEnabled, { _, newValue in
+                                    if newValue {
+                                        wrongSensitivities = getWrongSensitivities()
+                                    }
+                                 })
+                                .onChange(of: trackingManager.trackedInstances, {
+                                    wrongSensitivities = getWrongSensitivities()
+                                })
+                                 .onAppear {
+                                    if settings.sensitivityScaleEnabled {
+                                        wrongSensitivities = getWrongSensitivities()
+                                    }
+                                 }
                             TextField(
-                                "", value: $sensitivityScale,
-                                format: .number.grouping(.never)
+                                "", value: .init(get: {
+                                    settings.boatEyeSensitivity
+                                }, set: {
+                                    settings.boatEyeSensitivity = $0
+
+                                    MouseSensitivityManager.shared.setSensitivityFactor(
+                                        factor: settings.sensitivityScale)
+                                }),
+                                format: .number.grouping(.never).precision(.fractionLength(0...10))
                             )
                             .textFieldStyle(.roundedBorder)
-                            .foregroundColor((0.05...50 ~= sensitivityScale) ? .primary : .red)
-                            .frame(width: 60)
-                            .onChange(of: sensitivityScale) { _, newValue in
-                                if 0.05...50 ~= newValue {
-                                    Settings[\.utility].sensitivityScale = newValue
-                                    MouseSensitivityManager.shared.setSensitivityFactor(
-                                        factor: newValue)
-                                }
-                            }
+                            .frame(width: 100)
                         }
 
                         Divider()
@@ -174,7 +246,7 @@ struct UtilitySettings: View {
                             )
                             .textFieldStyle(.roundedBorder)
                             .foregroundColor((0.05...50 ~= tallSensitivityScale) ? .primary : .red)
-                            .frame(width: 60)
+                            .frame(width: 100)
                             .onChange(of: tallSensitivityScale) { _, newValue in
                                 if 0.05...50 ~= newValue {
                                     Settings[\.utility].tallSensitivityScale = newValue
@@ -304,9 +376,9 @@ struct UtilitySettings: View {
                         Text("Error checking token, please try again later.")
                 }
             }
-            
+
             SettingsLabel(title: "Startup Applications", description: "Enable launching apps/jars automatically when starting SlackowWall (they will not close with it).")
-            
+
             SettingsCardView {
                 VStack {
                     SettingsToggleView(title: "Enabled", option: $settings.startupApplicationEnabled)
@@ -335,15 +407,66 @@ struct UtilitySettings: View {
         }
         showTokenAlert = true
     }
-    
+
     private func sensitivityText(_ sens: Double) -> String {
         switch sens {
-            case 0:
+            case 0...0.001:
                 return "*yawn*"
             case 200:
                 return "HYPERSPEED!!!"
             default:
                 return "\(Int(sens))%"
+        }
+    }
+
+    private func fractionToLinear(_ s: Double) -> Double {
+        8 * pow(0.6 * s + 0.2, 3)
+    }
+
+    private func linearToFraction(_ linear: Double) -> Double {
+        (cbrt(linear / 8.0) - 0.2) / 0.6
+    }
+
+    private func uiToFraction(_ units: Double) -> Double { units / 200.0 }
+    private func fractionToUI(_ frac: Double) -> Double { min(max(frac, 0), 1) * 200.0 }
+
+    private func sensToScale(mcUnits: Double) -> Double {
+        let sNew = uiToFraction(mcUnits)
+        let sBase = settings.boatEyeSensitivity
+        return fractionToLinear(sNew) / fractionToLinear(sBase)
+    }
+
+    private func scaleToSens(scale: Double) -> Double {
+        let baseLinear = fractionToLinear(settings.boatEyeSensitivity)
+        let newLinear  = baseLinear * scale
+        let sNew       = linearToFraction(newLinear)
+        return fractionToUI(sNew)
+    }
+
+    private func fixSensitivities() {
+        guard let wrongSensitivities else { return }
+        let fm = FileManager.default
+        for inst in wrongSensitivities {
+            let path = inst.info.path
+            let optionsPath = "\(path)/options.txt"
+            let hasStandardSettings = inst.info.mods.map(\.id).contains("standardsettings")
+            if hasStandardSettings && !(fm.fileExists(atPath: "\(path)/config/mcsr/standardsettings.json") || fm.fileExists(atPath: "\(path)/config/standardoptions.txt")) {
+                LogManager.shared.appendLog("Cannot figure out how to fix standard settings \(inst.name), skipping.")
+                continue
+            }
+            trackingManager.kill(instance: inst)
+            do {
+                if let contents = fm.contents(atPath: optionsPath).flatMap({String(data: $0, encoding: .utf8)}) {
+                    let replacement = contents.replacing(UtilitySettings.mouseSensTextRegex) { _ in
+                        "mouseSensitivity:\(boatEyeSensitivity)"
+                    }
+                    try replacement.write(to: URL(filePath: optionsPath), atomically: true, encoding: .utf8)
+                }
+            } catch {
+                LogManager.shared.appendLog("Failed to write to options.txt \(inst.name), skipping.")
+                continue
+            }
+
         }
     }
 }
@@ -354,3 +477,4 @@ struct UtilitySettings: View {
             .padding()
     }
 }
+
