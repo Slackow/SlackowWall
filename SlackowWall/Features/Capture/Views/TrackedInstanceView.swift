@@ -15,11 +15,16 @@ struct TrackedInstanceView: View {
     private var hasStreamError: Bool {
         return ScreenRecorder.shared.needsRecordingPerms && instance.stream.streamError != nil
     }
+    
+    @AppSettings(\.behavior)
+    var settings
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            if Settings[\.behavior].utilityMode {
+            if settings.utilityMode {
                 PlaceholderInstanceView(instance: instance)
+                    .opacity(gridManager.showInfo ? 1 : 0)
+                    .animation(.easeInOut, value: settings.utilityMode)
             } else {
                 CapturePreviewView(instance: instance)
                     .background {
@@ -31,7 +36,7 @@ struct TrackedInstanceView: View {
                     .overlay {
                         CaptureErrorView(error: instance.stream.streamError)
                     }
-                    .animation(.easeInOut, value: instance.stream.streamError)
+                    .animation(.easeInOut, value: gridManager.showInfo)
             }
             VStack(alignment: .trailing, spacing: 0) {
                 if instance.isLocked && !Settings[\.behavior].utilityMode {

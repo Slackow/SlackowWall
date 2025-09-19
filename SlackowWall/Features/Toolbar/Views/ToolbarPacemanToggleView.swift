@@ -31,9 +31,9 @@ struct ToolbarPacemanToggleView: View {
                 .aspectRatio(
                     contentMode: paceman.isRunning && !paceman.isShuttingDown ? .fill : .fit
                 )
-                .foregroundStyle(Color(nsColor: isHovered ? .labelColor : .secondaryLabelColor))
 
         }
+        .foregroundStyle(Color(nsColor: isHovered ? .labelColor : .secondaryLabelColor))
         .popoverLabel((paceman.isRunning ? "Stop" : "Start") + " Paceman")
         .onHover { isHovered = $0 }
     }

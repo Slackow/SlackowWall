@@ -33,6 +33,11 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
         self.wasClosed = false
     }
 
+    var name: Substring {
+        let result = self.info.path.split(separator: "/").dropLast(1).last ?? "??"
+        return result == "Application Support" ? "Minecraft" : result
+    }
+
     var isReady: Bool {
         if checkStateOutput {
             return info.state == InstanceStates.paused || info.state == InstanceStates.unpaused

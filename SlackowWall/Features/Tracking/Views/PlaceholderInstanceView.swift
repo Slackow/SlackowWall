@@ -14,11 +14,6 @@ struct PlaceholderInstanceView: View {
     @State private var isModMenuOpen: Bool = false
     @StateObject private var deletionModel = WorldDeletionViewModel()
 
-    var instanceName: Substring {
-        let result = instance.info.path.split(separator: "/").dropLast(1).last ?? "??"
-        return result == "Application Support" ? "Minecraft" : result
-    }
-
     var body: some View {
         ZStack {
             VStack {
@@ -27,7 +22,7 @@ struct PlaceholderInstanceView: View {
                     ?? Image("minecraft_logo"))
                     .resizable()
                     .frame(width: 120, height: 120)
-                Text(#"Instance "\#(instanceName)""#)
+                Text(#"Instance "\#(instance.name)""#)
                     .font(.title)
                     .fontWeight(.semibold)
             }

@@ -36,10 +36,12 @@ struct SlackowWallApp: App {
             ContentView()
                 .frame(minWidth: 300, minHeight: 210)
                 .toolbar {
-                    ToolbarItemGroup {
-                        if !trackingManager.trackedInstances.isEmpty && !behavior.utilityMode {
+                    if !trackingManager.trackedInstances.isEmpty && !behavior.utilityMode {
+                        ToolbarItem {
                             ToolbarStopView()
                         }
+                    }
+                    ToolbarItemGroup {
                         if alertManager.alert != nil {
                             ToolbarAlertView()
                                 .animation(
@@ -54,7 +56,6 @@ struct SlackowWallApp: App {
                             ToolbarPacemanToggleView()
                         }
                         ToolbarUtilityModeView()
-                        
                         ToolbarSettingsView()
                         ToolbarRefreshView()
                     }

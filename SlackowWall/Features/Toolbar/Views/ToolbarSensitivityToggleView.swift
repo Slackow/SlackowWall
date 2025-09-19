@@ -19,11 +19,11 @@ struct ToolbarSensitivityToggleView: View {
             settings.sensitivityScaleEnabled.toggle()
         }) {
             Image(systemName: "computermouse\(settings.sensitivityScaleEnabled ? ".fill" : "")")
-                .foregroundStyle(Color(nsColor: isHovered ? .labelColor : .secondaryLabelColor))
                 .frame(width: 18, height: 25)
         }
         .popoverLabel("Sensitivity Scaling")
         .onHover { isHovered = $0 }
+        .foregroundStyle(Color(nsColor: isHovered ? .labelColor : .secondaryLabelColor))
         .onChange(of: settings.sensitivityScaleEnabled) { _, newValue in
             LogManager.shared.appendLog(
                 "Sensitivity Scale", newValue ? "Enabled" : "Disabled")
