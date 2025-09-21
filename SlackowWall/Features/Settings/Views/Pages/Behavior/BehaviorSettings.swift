@@ -12,7 +12,7 @@ struct BehaviorSettings: View {
     @AppSettings(\.behavior) private var settings
 
     var body: some View {
-        SettingsPageView(title: "Behavior") {
+        SettingsPageView(title: "Wall Behavior") {
             SettingsCardView {
                 SettingsPickerView(
                     title: "Reset Mode", description: settings.resetMode.description,

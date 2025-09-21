@@ -164,7 +164,7 @@ class LogManager {
     }
 
     private func prependSystemInfo() {
-        appendLogSection("System Information")
+        appendLogSection("SlackowWall\nSystem Information")
 
         // Get macOS version
         let osVersion = ProcessInfo.processInfo.operatingSystemVersion
@@ -201,6 +201,9 @@ class LogManager {
                 includeTimestamp: false)
         } else {
             appendLog("App Version: Unknown", showInConsole: false, includeTimestamp: false)
+        }
+        if let hiDPI = NSScreen.main?.backingScaleFactor {
+            appendLog("HiDPI: \(hiDPI)", showInConsole: false, includeTimestamp: false)
         }
 
         appendLogNewLine()
