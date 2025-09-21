@@ -23,8 +23,8 @@ class MouseSensitivityManager: ObservableObject {
 
     @MainActor static let shared = MouseSensitivityManager()
 
-    func setSensitivityFactor(factor: Double) {
-        guard Settings[\.utility].sensitivityScaleEnabled else {
+    func setSensitivityFactor(factor: Double, if: Bool? = nil) {
+        guard `if` ?? Settings[\.utility].sensitivityScaleEnabled else {
             LogManager.shared.appendLog(
                 "Sensitivity Scale Disabled \(Settings[\.utility].sensitivityScaleEnabled), attempted to set to \(factor)"
             )
@@ -33,13 +33,14 @@ class MouseSensitivityManager: ObservableObject {
 
         if isActive { stopReducingSensitivity() }
         LogManager.shared.appendLog("Changing Sensitivity Factor to", factor)
-        let factor = (0.05...50).clamped(value: factor)
+        let factor = (0.05...100).clamped(value: factor)
         self.sensitivityFactor = factor
         if factor == 1.0 { return }
 
         // Create event tap for mouse moved events
-        let eventMask =
-            (1 << CGEventType.mouseMoved.rawValue) | (1 << CGEventType.leftMouseDragged.rawValue)
+        let eventMask = 0
+            | (1 << CGEventType.mouseMoved.rawValue)
+            | (1 << CGEventType.leftMouseDragged.rawValue)
             | (1 << CGEventType.rightMouseDragged.rawValue)
             | (1 << CGEventType.otherMouseDragged.rawValue)
 

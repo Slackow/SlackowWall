@@ -20,7 +20,7 @@ struct UtilitySettings: View {
     @State private var showTokenAlert = false
     @State var tokenResponse: TokenResponse?
 
-    @State var tallSensitivityScale: Double = Settings[\.utility].tallSensitivityScale
+    @State var tallSensitivityFactor: Double = Settings[\.utility].tallSensitivityFactor
     @State var boatEyeSensitivity: Double = Settings[\.utility].boatEyeSensitivity
 
     var usingRetino: Bool {
@@ -144,8 +144,6 @@ struct UtilitySettings: View {
                     Allows your sensitivity to change when in tall mode, and to use lower \
                     sensitivities without affecting your unlocked cursor movements, this is used \
                     for BoatEye.
-                    Go [here](https://slackow.github.io/ScaleFactorCalc/calc.html) to find the \
-                    correct values for your sensitivity
                     """
             )
 
@@ -156,40 +154,46 @@ struct UtilitySettings: View {
                     SettingsToggleView(
                         title: "Toolbar Icon", option: $settings.sensitivityScaleToolBarIcon)
                     Divider()
-                    HStack {
-                        SettingsLabel(title: "Simulated Sensitivity", font: .body)
-                        Text(sensitivityText(scaleToSens(scale: settings.sensitivityScale)+0.001))
-                        .opacity(sensFieldInFocus ? 0.2 : 1)
-                        .overlay {
-                                TextField(
-                                    "", value: .init {sensFieldNum} set: { (n: Double?) in
-                                        sensFieldNum = n
-                                        if var n {
-                                            if n < 1 { n *= 200 }
-                                            settings.sensitivityScale = sensToScale(mcUnits: n)
-                                            MouseSensitivityManager.shared.setSensitivityFactor(
-                                                factor: settings.sensitivityScale)
-                                        }
-                                    },
-                                    format: .number.grouping(.never)
-                                )
-                                .textFieldStyle(.plain)
-                                .focused($sensFieldInFocus)
-                                .onChange(of: sensFieldInFocus) { _, newValue in
-                                    if !newValue {
-                                        sensFieldNum = nil
-                                    }
-                                }
-                        }
-                        Slider(value: .init(get: {scaleToSens(scale: settings.sensitivityScale)}, set: {
-                            settings.sensitivityScale = sensToScale(mcUnits: $0)
-                        }), in: 0...200, onEditingChanged: { _ in
-                            MouseSensitivityManager.shared.setSensitivityFactor(
-                                factor: settings.sensitivityScale)
-                        })
-                        .frame(width: 200)
-                    }
                     Group {
+                        HStack {
+                            SettingsLabel(title: "Simulated Sensitivity", font: .body)
+                            Text(sensitivityText(scaleToSens(scale: settings.sensitivityScale)+0.001))
+                            .opacity(sensFieldInFocus ? 0.2 : 1)
+                            .foregroundStyle(Color(nsColor: settings.sensitivityScaleEnabled ? .labelColor : .tertiaryLabelColor))
+                            .overlay {
+                                    TextField(
+                                        "", value: .init {sensFieldNum} set: { (n: Double?) in
+                                            sensFieldNum = n
+                                            if var n {
+                                                if n < 1 { n *= 200 }
+                                                settings.sensitivityScale = sensToScale(mcUnits: n)
+                                                MouseSensitivityManager.shared.setSensitivityFactor(
+                                                    factor: settings.sensitivityScale)
+                                            }
+                                        },
+                                        format: .number.grouping(.never)
+                                    )
+                                    .textFieldStyle(.plain)
+                                    .focused($sensFieldInFocus)
+                                    .onChange(of: sensFieldInFocus) { _, newValue in
+                                        if !newValue {
+                                            sensFieldNum = nil
+                                        }
+                                    }
+                                    .onSubmit {
+                                        sensFieldNum = nil
+                                        sensFieldInFocus = false
+                                    }
+                            }
+                            Slider(value: .init(get: {scaleToSens(scale: settings.sensitivityScale)}, set: {
+                                settings.sensitivityScale = sensToScale(mcUnits: $0)
+                            }), in: 0...200, onEditingChanged: { _ in
+                                MouseSensitivityManager.shared.setSensitivityFactor(
+                                    factor: settings.sensitivityScale)
+                            })
+                            .frame(width: 200)
+                            .frame(minHeight: 20)
+                        }
                         Divider()
 
                         HStack {
@@ -199,7 +203,7 @@ struct UtilitySettings: View {
                                     let labels = wrongSensitivities.map{"\"\($0.name)\""}.joined(separator: ", ")
                                     Image(systemName: "xmark.circle")
                                         .foregroundStyle(.red)
-                                        .popoverLabel("Instance(s) \(labels) are not using your BoatEye Sensitivity,\nClick to change the sensitivity (they will close)")
+                                        .popoverLabel("Instance(s) \(labels) are not using your BoatEye Sensitivity,\nWith this option enabled, this may cause mouse jittering\nClick to change the sensitivity (they will close)")
                                 } else {
                                     Image(systemName: "checkmark.circle")
                                         .foregroundStyle(.green)
@@ -232,33 +236,46 @@ struct UtilitySettings: View {
                                 format: .number.grouping(.never).precision(.fractionLength(0...10))
                             )
                             .textFieldStyle(.roundedBorder)
-                            .frame(width: 100)
+                            .frame(width: 100, alignment: .trailing)
+                            .overlay {
+                                Button("", systemImage: "xmark.circle.fill") {
+                                    settings.boatEyeSensitivity = 0.02291165
+                                }
+                                .buttonStyle(.plain)
+                                .frame(maxWidth: .infinity, alignment: .trailing)
+                                .offset(x: 5, y: -1.5)
+                                .disabled(settings.boatEyeSensitivity == 0.02291165)
+                            }
                         }
 
                         Divider()
-
-                        HStack {
-                            SettingsLabel(title: "Tall Mode Sensitivity Scale", font: .body)
-
-                            TextField(
-                                "", value: $tallSensitivityScale,
-                                format: .number.grouping(.never)
-                            )
-                            .textFieldStyle(.roundedBorder)
-                            .foregroundColor((0.05...50 ~= tallSensitivityScale) ? .primary : .red)
-                            .frame(width: 100)
-                            .onChange(of: tallSensitivityScale) { _, newValue in
-                                if 0.05...50 ~= newValue {
-                                    Settings[\.utility].tallSensitivityScale = newValue
-                                }
-                            }
-                        }
                     }.disabled(!settings.sensitivityScaleEnabled)
+                    HStack {
+                        SettingsLabel(title: "Tall Mode Sensitivity Scale", description: """
+                            Lower sensitivity by \(settings.tallSensitivityFactor)x while in tall mode
+                            """, font: .body)
+                        .contentTransition(.numericText())
+                        .animation(.smooth, value: tallSensitivityFactor)
+                        Toggle("", isOn: $settings.tallSensitivityFactorEnabled)
+                            .toggleStyle(.switch)
+                            .controlSize(.mini)
+                        TextField(
+                            "", value: $tallSensitivityFactor,
+                            format: .number.grouping(.never)
+                        )
+                        .textFieldStyle(.roundedBorder)
+                        .foregroundColor((0.05...100 ~= tallSensitivityFactor) ? .primary : .red)
+                        .frame(width: 100)
+                        .onChange(of: tallSensitivityFactor) { _, newValue in
+                            Settings[\.utility].tallSensitivityFactor = (0.05...100).clamped(value: newValue)
+                        }
+                        .disabled(!settings.tallSensitivityFactorEnabled)
+                    }
                 }
             }
 
             SettingsLabel(
-                title: "Paceman",
+                title: "Paceman Tracker",
                 description: """
                     Configure Settings for Paceman, a site that tracks your live statistics and/or \
                     reset statistics.

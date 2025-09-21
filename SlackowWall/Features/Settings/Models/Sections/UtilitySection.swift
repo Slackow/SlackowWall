@@ -30,8 +30,9 @@ extension Preferences {
         var sensitivityScaleToolBarIcon: Bool = false
         var sensitivityScale: Double = 12.8
         var boatEyeSensitivity: Double = 0.02291165
-        var tallSensitivityScale: Double = 0.25
-        
+        var tallSensitivityFactorEnabled: Bool = true
+        var tallSensitivityFactor: Double = 40
+
         var startupApplicationEnabled: Bool = false
         var startupApplications: [URL] = []
 

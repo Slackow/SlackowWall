@@ -43,7 +43,7 @@ enum SettingsBarItem: CaseIterable, Identifiable, Hashable {
             case .instances:
                 "Instances"
             case .behavior:
-                "Behavior"
+                "Wall Behavior"
             case .window_resizing:
                 "Window Resizing"
             case .utilities:

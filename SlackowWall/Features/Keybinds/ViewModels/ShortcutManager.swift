@@ -183,7 +183,7 @@ class ShortcutManager: ObservableObject, Manager {
                 ScreenRecorder.shared.eyeProjectedInstance = instance
                 Task(priority: .userInitiated) {
                     MouseSensitivityManager.shared.setSensitivityFactor(
-                        factor: Settings[\.utility].tallSensitivityScale)
+                        factor: Settings[\.utility].sensitivityScale / Settings[\.utility].tallSensitivityFactor, if: Settings[\.utility].tallSensitivityFactorEnabled)
                     await ScreenRecorder.shared.startEyeProjectorCapture(for: instance, mode: .tall)
                     if Settings[\.utility].eyeProjectorShouldOpenWithTallMode {
                         eyeProjectorOpen = true
