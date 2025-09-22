@@ -172,6 +172,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 PacemanManager.shared.startPaceman()
             #endif
         }
+        MouseSensitivityManager.shared.setSensitivityFactor(
+            factor: Settings[\.utility].sensitivityScale)
         if Settings[\.utility].startupApplicationEnabled {
             Settings[\.utility].startupApplications.forEach {
                 let task = Process()

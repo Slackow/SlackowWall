@@ -24,6 +24,7 @@ class MouseSensitivityManager: ObservableObject {
     @MainActor static let shared = MouseSensitivityManager()
 
     func setSensitivityFactor(factor: Double, if: Bool? = nil) {
+        if isActive { stopReducingSensitivity() }
         guard `if` ?? Settings[\.utility].sensitivityScaleEnabled else {
             LogManager.shared.appendLog(
                 "Sensitivity Scale Disabled \(Settings[\.utility].sensitivityScaleEnabled), attempted to set to \(factor)"
@@ -31,7 +32,6 @@ class MouseSensitivityManager: ObservableObject {
             return
         }
 
-        if isActive { stopReducingSensitivity() }
         LogManager.shared.appendLog("Changing Sensitivity Factor to", factor)
         let factor = (0.05...100).clamped(value: factor)
         self.sensitivityFactor = factor

@@ -20,6 +20,8 @@ struct EyeProjectorView: View {
     private var mode
     @AppSettings(\.utility)
     private var utility
+    
+    private var scaleFactor = NSScreen.main?.backingScaleFactor ?? 1
 
     init(instance: TrackedInstance) {
         _previewRenderer = StateObject(wrappedValue: PreviewRenderer(instance: instance))
@@ -30,10 +32,9 @@ struct EyeProjectorView: View {
             ZStack {
                 previewRenderer.instance.eyeProjectorStream.capturePreview
                     .scaleEffect(
-                        x: CGFloat(Settings.shared.preferences.tallDimensions.0)
-                            / CGFloat(utility.eyeProjectorWidth),
-                        y: utility.eyeProjectorHeightScale * 60
-                            / CGFloat(utility.eyeProjectorWidth)
+                        x: CGFloat(Settings.shared.preferences.tallWidth)
+                            / 60 * scaleFactor,
+                        y: utility.eyeProjectorHeightScale * scaleFactor
                     )
                     .contentShape(Rectangle())
                     .opacity(previewRenderer.isVisible ? 1 : 0)

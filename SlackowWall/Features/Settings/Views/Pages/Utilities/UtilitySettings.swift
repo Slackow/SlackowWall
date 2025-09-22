@@ -85,24 +85,6 @@ struct UtilitySettings: View {
 
                         Divider()
 
-                        SettingsToggleView(
-                            title: "Adjust For No Retino Mod",
-                            description: usingRetino && settings.adjustFor4kScaling
-                                ? """
-                                [You are using Retino, turn this off](0)
-                                """
-                                : """
-                                Enable this if you are using a 4K or Retina screen, \
-                                without the Retino mod.
-                                """,
-                            descInteractable: false,
-                            option: $settings.adjustFor4kScaling,
-                        )
-                        .tint(.red)
-                        .animation(.easeInOut, value: settings.adjustFor4kScaling)
-
-                        Divider()
-
                         HStack {
                             SettingsLabel(
                                 title: "Height Scale",
@@ -203,7 +185,7 @@ struct UtilitySettings: View {
                                     let labels = wrongSensitivities.map{"\"\($0.name)\""}.joined(separator: ", ")
                                     Image(systemName: "xmark.circle")
                                         .foregroundStyle(.red)
-                                        .popoverLabel("Instance(s) \(labels) are not using your BoatEye Sensitivity,\nWith this option enabled, this may cause mouse jittering\nClick to change the sensitivity (they will close)")
+                                        .popoverLabel("Instance(s) \(labels) are not using your BoatEye Sensitivity,\nWith this option enabled, this may cause mouse jittering\nClick to change the sensitivity (Minecraft will close)")
                                 } else {
                                     Image(systemName: "checkmark.circle")
                                         .foregroundStyle(.green)
