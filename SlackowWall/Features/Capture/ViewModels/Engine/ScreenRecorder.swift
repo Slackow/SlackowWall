@@ -345,7 +345,8 @@ import SwiftUI
 
         // Use tall mode dimensions instead of actual window size
         var (tallWidth, tallHeight, _, _) = Settings.shared.preferences.tallDimensions(for: instance)
-        let factor = NSScreen.main?.backingScaleFactor ?? 1
+        let usingRetino = instance.info.mods.map(\.id).contains("retino")
+        let factor = usingRetino ? 1 : (NSScreen.main?.backingScaleFactor ?? 1)
         tallWidth *= factor
         tallHeight *= factor
         
@@ -397,3 +398,4 @@ import SwiftUI
         LogManager.shared.appendLog("Started eye projector capture for instance \(instance.pid)")
     }
 }
+
