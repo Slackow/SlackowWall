@@ -56,7 +56,7 @@ struct ModeSettings: View {
             ModeCardView(
                 name: "Tall",
                 description: "The size the game will be when you switch to tall mode.",
-                actualDimensions: Settings.shared.preferences.tallDimensions,
+                actualDimensions: Settings.shared.preferences.tallDimensions(),
                 keybind: $keybinds.tallGKey,
                 mode: $settings.tallMode
             )

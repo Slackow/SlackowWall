@@ -344,12 +344,11 @@ import SwiftUI
         }
 
         // Use tall mode dimensions instead of actual window size
-        var (tallWidth, tallHeight, _, _) = Settings.shared.preferences.tallDimensions
-
-        if Settings[\.utility].adjustFor4kScaling {
-            tallWidth *= 2
-            tallHeight *= 2
-        }
+        var (tallWidth, tallHeight, _, _) = Settings.shared.preferences.tallDimensions(for: instance)
+        let factor = NSScreen.main?.backingScaleFactor ?? 1
+        tallWidth *= factor
+        tallHeight *= factor
+        
 
         let streamConfig = createStreamConfiguration(
             width: tallWidth,

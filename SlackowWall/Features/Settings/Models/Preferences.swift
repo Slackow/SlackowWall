@@ -26,12 +26,15 @@ extension Preferences {
         let m = mode.baseMode
         return (m.width.cg, m.height.cg, m.x.cg, m.y.cg)
     }
+    
+    var tallWidth: CGFloat { mode.tallMode.width.cg ?? 384 }
 
-    var tallDimensions: (CGFloat, CGFloat, CGFloat?, CGFloat?) {
+    func tallDimensions(for instance: TrackedInstance? = nil) -> (CGFloat, CGFloat, CGFloat?, CGFloat?) {
+        let noDPI = (instance?.info.mods.map(\.id).contains("retino") ?? false) || NSScreen.main?.backingScaleFactor == 1
         let m = mode.tallMode
         return (
-            m.width.cg ?? 384,
-            m.height.cg ?? (utility.adjustFor4kScaling ? 8192 : 16384),
+            tallWidth,
+            m.height.cg ?? (noDPI ? 16384 : 8192),
             m.x.cg,
             m.y.cg
         )

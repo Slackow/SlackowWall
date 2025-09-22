@@ -176,7 +176,7 @@ class ShortcutManager: ObservableObject, Manager {
 
     func resizeTall() {
         guard let pid = activeInstancePID() else { return }
-        let (w, h, x, y) = Settings.shared.preferences.tallDimensions
+        let (w, h, x, y) = Settings.shared.preferences.tallDimensions(for: TrackingManager.shared.trackedInstances.first { $0.pid == pid })
         if resize(pid: pid, x: x, y: y, width: w, height: h) == true {
             if let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid }
             ) {
@@ -206,7 +206,7 @@ class ShortcutManager: ObservableObject, Manager {
             let currentPosition = WindowController.getWindowPosition(pid: pid)
         {
             // detect exiting tall mode
-            let (w, h, _, _) = Settings.shared.preferences.tallDimensions
+            let (w, h, _, _) = Settings.shared.preferences.tallDimensions(for: TrackingManager.shared.trackedInstances.first {$0.pid == pid})
             if currentSize == CGSize(width: w, height: h) {
                 Task(priority: .userInitiated) {
                     await ScreenRecorder.shared.stopEyeProjectorCapture()

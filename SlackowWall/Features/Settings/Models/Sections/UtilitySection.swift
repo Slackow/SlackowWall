@@ -19,11 +19,8 @@ extension Preferences {
         var eyeProjectorShouldOpenWithTallMode: Bool {
             eyeProjectorEnabled && eyeProjectorOpenWithTallMode
         }
-        var eyeProjectorWidth: Int = 60
-        var adjustFor4kScaling: Bool {
-            set(value) { eyeProjectorWidth = value ? 30 : 60 }
-            get { eyeProjectorWidth == 30 }
-        }
+        // this should no longer be used, but keeping in case it needs to be re-introduced
+        private var eyeProjectorWidth: Int = 60
         var eyeProjectorHeightScale: Double = 0.2
 
         var sensitivityScaleEnabled: Bool = false
