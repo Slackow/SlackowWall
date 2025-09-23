@@ -21,10 +21,11 @@ struct EyeProjectorView: View {
     @AppSettings(\.utility)
     private var utility
     
-    private var scaleFactor = NSScreen.main?.backingScaleFactor ?? 1
+    private var scaleFactor: CGFloat
 
     init(instance: TrackedInstance) {
         _previewRenderer = StateObject(wrappedValue: PreviewRenderer(instance: instance))
+        scaleFactor = instance.info.mods.map(\.id).contains("retino") ? 1 : NSScreen.main?.backingScaleFactor ?? 1
     }
 
     var body: some View {
