@@ -41,24 +41,31 @@ struct SlackowWallApp: App {
                             ToolbarStopView()
                         }
                     }
-                    ToolbarItemGroup {
-                        if alertManager.alert != nil {
+                    if alertManager.alert != nil {
+                        ToolbarItem {
                             ToolbarAlertView()
                                 .animation(
                                     .easeInOut(duration: 0.3), value: trackingManager.trackedInstances
                                 )
                                 .animation(.easeInOut(duration: 0.3), value: alertManager.alert)
                         }
-                        if utility.sensitivityScaleToolBarIcon {
+                    }
+                    if utility.sensitivityScaleToolBarIcon {
+                        ToolbarItem {
                             ToolbarSensitivityToggleView()
                         }
-                        if utility.pacemanToolBarIcon {
+                    }
+                    if utility.pacemanToolBarIcon {
+                        ToolbarItem {
                             ToolbarPacemanToggleView()
                         }
+                    }
+                    ToolbarItemGroup {
                         ToolbarUtilityModeView()
                         ToolbarSettingsView()
                         ToolbarRefreshView()
                     }
+                    
                 }
                 .navigationTitle("SlackowWall - Profile: \(profile.name)")
                 .alert(
