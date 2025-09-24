@@ -202,7 +202,7 @@ class LogManager {
         } else {
             appendLog("App Version: Unknown", showInConsole: false, includeTimestamp: false)
         }
-        if let hiDPI = NSScreen.main?.backingScaleFactor {
+        if let hiDPI = NSScreen.primary?.backingScaleFactor {
             appendLog("HiDPI: \(hiDPI)", showInConsole: false, includeTimestamp: false)
         }
 

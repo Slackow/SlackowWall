@@ -68,7 +68,7 @@ class WindowController {
     }
 
     static func dimensionsInBounds(width: Int?, height: Int?) -> Bool {
-        guard let screen = NSScreen.main?.frame else { return true }
+        guard let screen = NSScreen.primary?.frame else { return true }
         let screenWidth = Int(screen.width)
         let screenHeight = Int(screen.height)
 

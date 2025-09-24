@@ -28,3 +28,9 @@ extension SCDisplay {
         "Display: \(width) x \(height)"
     }
 }
+
+internal extension NSScreen {
+    static var primary: NSScreen? {
+        return NSScreen.screens.first
+    }
+}

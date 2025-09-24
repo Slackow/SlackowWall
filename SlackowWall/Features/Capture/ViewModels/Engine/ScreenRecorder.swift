@@ -240,7 +240,7 @@ import SwiftUI
         windowFilters.removeAll()
 
         if shouldAutoSwitch {
-            if let screen = NSScreen.main?.frame,
+            if let screen = NSScreen.primary?.frame,
                 profile.expectedMWidth != Int(screen.width)
                     || profile.expectedMHeight != Int(screen.height)
             {
@@ -346,10 +346,12 @@ import SwiftUI
         // Use tall mode dimensions instead of actual window size
         var (tallWidth, tallHeight, _, _) = Settings.shared.preferences.tallDimensions(for: instance)
         let usingRetino = instance.info.mods.map(\.id).contains("retino")
-        let factor = usingRetino ? 1 : (NSScreen.main?.backingScaleFactor ?? 1)
+//        let factor = usingRetino ? 1 : (NSScreen.primary?.backingScaleFactor ?? 1)
+        let factor = 16384.0 / tallHeight
         tallWidth *= factor
         tallHeight *= factor
         
+        LogManager.shared.appendLog("Starting Eye Projector: dim:(", tallWidth, "x", tallHeight, ") factor:", factor, "usingRetino:", usingRetino)
 
         let streamConfig = createStreamConfiguration(
             width: tallWidth,
@@ -357,6 +359,7 @@ import SwiftUI
         )
         streamConfig.minimumFrameInterval = CMTime(
             value: 1, timescale: CMTimeScale(30))
+        
 
         // Store the filter and create dedicated capture engine
         eyeProjectorFilter = filter

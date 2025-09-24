@@ -161,7 +161,7 @@ struct ProfilesSettings: View {
     }
 
     private func fillMonitorSize() {
-        if let frame = NSScreen.main?.frame {
+        if let frame = NSScreen.primary?.frame {
             profile.expectedMWidth = Int(frame.width)
             profile.expectedMHeight = Int(frame.height)
         }

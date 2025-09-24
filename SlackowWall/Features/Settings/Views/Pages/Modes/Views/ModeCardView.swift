@@ -162,7 +162,7 @@ struct ModeCardView: View {
     }
 
     private func copyFrame() {
-        if let s = NSScreen.main?.frame.size {
+        if let s = NSScreen.primary?.frame.size {
             self.mode.width = Int(s.width)
             self.mode.height = Int(s.height)
             self.mode.x = 0
@@ -170,7 +170,7 @@ struct ModeCardView: View {
         }
     }
     private func copyVisibleFrame() {
-        if let s = NSScreen.main?.visibleFrame, let fullHeight = NSScreen.main?.frame.height {
+        if let s = NSScreen.primary?.visibleFrame, let fullHeight = NSScreen.primary?.frame.height {
             self.mode.width = Int(s.size.width)
             self.mode.height = Int(s.size.height)
             self.mode.x = 0

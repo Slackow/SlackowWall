@@ -28,7 +28,7 @@ class ModeSettingsViewModel: ObservableObject {
     var multipleOutOfBounds: Bool {
         let p = Settings.shared.preferences
         let dimensions = [
-            p.baseDimensions, p.tallDimensions(), p.thinDimensions, p.wideDimensions, p.resetDimensions
+            p.baseDimensions, p.tallDimensions(for: TrackingManager.shared.trackedInstances.first), p.thinDimensions, p.wideDimensions, p.resetDimensions
         ]
         return dimensions.filter({(w, h, _, _) in
             !WindowController.dimensionsInBounds(width: w.map(Int.init), height: h.map(Int.init)) })
@@ -36,8 +36,8 @@ class ModeSettingsViewModel: ObservableObject {
     }
 
     init() {
-        self.screenDimensions = NSScreen.main?.frame.size
-        self.visibleScreenDimensions = NSScreen.main?.visibleFrame.size
+        self.screenDimensions = NSScreen.primary?.frame.size
+        self.visibleScreenDimensions = NSScreen.primary?.visibleFrame.size
         setupScreenChangeNotification()
     }
 
@@ -45,8 +45,8 @@ class ModeSettingsViewModel: ObservableObject {
         cancellable = NotificationCenter.default
             .publisher(for: NSApplication.didChangeScreenParametersNotification)
             .sink { [weak self] _ in
-                self?.screenDimensions = NSScreen.main?.frame.size
-                self?.visibleScreenDimensions = NSScreen.main?.visibleFrame.size
+                self?.screenDimensions = NSScreen.primary?.frame.size
+                self?.visibleScreenDimensions = NSScreen.primary?.visibleFrame.size
                 self?.objectWillChange.send()
             }
     }

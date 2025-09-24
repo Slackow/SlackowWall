@@ -114,7 +114,7 @@ final class Settings: ObservableObject {
         for pref in preferences {
             if let monWidth = pref.profile.expectedMWidth,
                 let monHeight = pref.profile.expectedMHeight,
-                let frame = NSScreen.main?.frame,
+                let frame = NSScreen.primary?.frame,
                 Int(frame.width) == monWidth, Int(frame.height) == monHeight,
                 self.preferences.profile.id != pref.profile.id
             {
