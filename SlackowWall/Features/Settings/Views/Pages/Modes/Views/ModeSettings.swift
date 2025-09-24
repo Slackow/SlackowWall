@@ -55,7 +55,7 @@ struct ModeSettings: View {
 
             ModeCardView(
                 name: "Tall",
-                description: "The size the game will be when you switch to tall mode.",
+                description: "Tall is generally used for eye measuring or zoom.",
                 actualDimensions: Settings.shared.preferences.tallDimensions(for: TrackingManager.shared.trackedInstances.first),
                 keybind: $keybinds.tallGKey,
                 mode: $settings.tallMode
@@ -63,7 +63,7 @@ struct ModeSettings: View {
 
             ModeCardView(
                 name: "Thin",
-                description: "The size the game will be when you switch to thin mode.",
+                description: "Thin is generally used for buried treasures, preemptive, and/or e-ray.",
                 actualDimensions: Settings.shared.preferences.thinDimensions,
                 keybind: $keybinds.thinGKey,
                 mode: $settings.thinMode
@@ -71,7 +71,7 @@ struct ModeSettings: View {
 
             ModeCardView(
                 name: "Wide",
-                description: "The size the game will be when you switch to wide instance mode.",
+                description: "Wide is generally used for seeing further with planar fog.",
                 actualDimensions: Settings.shared.preferences.wideDimensions,
                 keybind: $keybinds.planarGKey,
                 mode: $settings.wideMode
@@ -80,7 +80,7 @@ struct ModeSettings: View {
             ModeCardView(
                 name: "Reset",
                 description:
-                    "The size the game will be while you are in SlackowWall. (For Wall Mode)",
+                    "Reset is used for wall mode, and is used to make your instances wider so you can see more on the preview.",
                 actualDimensions: Settings.shared.preferences.resetDimensions,
                 posHints: ("", ""),
                 mode: $settings.resetMode

@@ -39,11 +39,11 @@ struct ModeCardView: View {
     
     private var dimensionSummary: String {
         let (w, h, x, y) = actualDimensions
-        let text = "(\(w?.str ?? "--") x \(h?.str ?? "--"))\(x != nil || y != nil ? " @ (\(x?.str ?? "--"), \(y?.str ?? "--"))" : "")"
-        if !containsDimensions {
-            return "[\(text)](0)"
-        }
-        return text
+        let width = (w?.str).map { mode.width != nil ? "\($0)*" : $0 } ?? "--"
+        let height = (h?.str).map { mode.height != nil ? "\($0)*" : $0 } ?? "--"
+        let xPos = x?.str ?? "--"
+        let yPos = y?.str ?? "--"
+        return "[(\(width) ⨉ \(height))\(x != nil || y != nil ? " @ (\(xPos), \(yPos))" : "")](0)"
     }
 
     var body: some View {
@@ -52,10 +52,10 @@ struct ModeCardView: View {
                 VStack(spacing: isExpanded ? 8 : 4) {
                     VStack(spacing: 3) {
                         HStack {
-                            Text(.init("\(name) Mode\(isGameplayMode && !containsDimensions ? " [*](0)" : "")\(isExpanded ? "" : " -> \(dimensionSummary)")"))
+                            Text(.init("\(name) Mode\(isGameplayMode && !containsDimensions ? " [*](0)" : "")\(isExpanded ? "" : " → \(dimensionSummary)")"))
                                 .fontWeight(.semibold)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .tint(.red)
+                                .tint(containsDimensions ? .orange : .red)
                                 .allowsHitTesting(false)
                             if !isGameplayMode {
                                 Button(action: { isExpanded.toggle() }) {
