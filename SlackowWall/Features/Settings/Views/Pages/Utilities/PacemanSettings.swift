@@ -17,7 +17,6 @@ struct PacemanSettings: View {
     @State var tokenResponse: TokenResponse?
     
     var body: some View {
-        SettingsPageView(title: "Paceman Tracker", isSubPage: true) {
             SettingsLabel(
                 title: "Paceman Tracker",
                 description: """
@@ -137,7 +136,7 @@ struct PacemanSettings: View {
                         Text("Error checking token, please try again later.")
                 }
             }
-        }
+        
     }
     
     

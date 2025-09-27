@@ -15,7 +15,8 @@ struct UtilitySettings: View {
     @AppSettings(\.keybinds) private var keybinds
 
     @ObservedObject private var trackingManager = TrackingManager.shared
-
+    @ObservedObject private var pacemanManager = PacemanManager.shared
+    
     @State var tallSensitivityFactor: Double = Settings[\.utility].tallSensitivityFactor
     @State var boatEyeSensitivity: Double = Settings[\.utility].boatEyeSensitivity
 
@@ -230,7 +231,7 @@ struct UtilitySettings: View {
                     }.disabled(!settings.sensitivityScaleEnabled)
                     HStack {
                         SettingsLabel(title: "Tall Mode Sensitivity Scale", description: """
-                            Lower sensitivity by \(settings.tallSensitivityFactor)x while in tall mode
+                            Lower sensitivity by \(settings.tallSensitivityFactor)x while in tall mode.
                             """, font: .body)
                         .contentTransition(.numericText())
                         .animation(.smooth, value: tallSensitivityFactor)
@@ -252,19 +253,11 @@ struct UtilitySettings: View {
                 }
             }
             SettingsCardView {
-                SettingsLinkView (title: "Paceman Tracker") {
-                    PacemanSettings()
-                }
+                SettingsLinkView(title: "Paceman Tracker\(pacemanManager.pacemanConfig.accessKey.isEmpty ? "" : pacemanManager.isRunning ? " (active)" : " (inactive)")", destination: PacemanSettings.init)
             }
-
-            SettingsLabel(title: "Startup Applications", description: "Enable launching apps/jars automatically when starting SlackowWall (they will not close with it).")
-
+            
             SettingsCardView {
-                VStack {
-                    SettingsToggleView(title: "Enabled", option: $settings.startupApplicationEnabled)
-                    FileListView(urls: $settings.startupApplications)
-                        .disabled(!settings.startupApplicationEnabled)
-                }
+                SettingsLinkView(title: "Startup Applications", destination: StartupAppSettings.init)
             }
         }
     }
