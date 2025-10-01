@@ -11,7 +11,7 @@ final class WorldClearing {
 
     static func worldsToDelete(at path: String) throws -> [URL] {
         let fileManager = FileManager.default
-        let savesURL = URL(fileURLWithPath: path)
+        let savesURL = URL(filePath: path)
 
         guard fileManager.fileExists(atPath: savesURL.path)
         else { return [] }
@@ -76,7 +76,7 @@ final class WorldClearing {
     }
 
     static func shouldRemove(path: String) -> Bool {
-        let url = URL(fileURLWithPath: path)
+        let url = URL(filePath: path)
         let fileManager = FileManager.default
 
         guard fileManager.fileExists(atPath: url.path)

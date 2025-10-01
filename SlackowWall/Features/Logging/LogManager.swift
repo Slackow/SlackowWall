@@ -27,7 +27,7 @@ class LogManager {
 
     private func createLogDirectory() {
         let fileManager = FileManager.default
-        let logDirectoryURL = URL(fileURLWithPath: logDirectory)
+        let logDirectoryURL = URL(filePath: logDirectory)
 
         do {
             try fileManager.createDirectory(
@@ -39,7 +39,7 @@ class LogManager {
 
     private func createLogFile() {
         let fileManager = FileManager.default
-        let logURL = URL(fileURLWithPath: logPath)
+        let logURL = URL(filePath: logPath)
 
         if fileManager.fileExists(atPath: logPath) {
             do {
@@ -49,7 +49,7 @@ class LogManager {
                     dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
                     let dateString = dateFormatter.string(from: creationDate)
                     let backupLogPath = logDirectory + "\(dateString).log"
-                    let backupLogURL = URL(fileURLWithPath: backupLogPath)
+                    let backupLogURL = URL(filePath: backupLogPath)
 
                     try fileManager.moveItem(at: logURL, to: backupLogURL)
 
@@ -93,7 +93,7 @@ class LogManager {
     @discardableResult func appendLog(
         _ items: Any..., showInConsole: Bool = true, includeTimestamp: Bool = true
     ) -> Self {
-        let logURL = URL(fileURLWithPath: logPath)
+        let logURL = URL(filePath: logPath)
         let message = items.map { String(describing: $0) }.joined(separator: " ")
 
         let timestamp: String
@@ -126,7 +126,7 @@ class LogManager {
     }
 
     @discardableResult func appendLogSection(_ title: String) -> Self {
-        let logURL = URL(fileURLWithPath: logPath)
+        let logURL = URL(filePath: logPath)
         let titleWithNewline = title + ":\n"
 
         do {
@@ -145,7 +145,7 @@ class LogManager {
     }
 
     @discardableResult func appendLogNewLine() -> Self {
-        let logURL = URL(fileURLWithPath: logPath)
+        let logURL = URL(filePath: logPath)
         let newLine = "\n"
 
         do {
@@ -210,7 +210,7 @@ class LogManager {
     }
 
     func openLogFolder() {
-        let logFolderURL = URL(fileURLWithPath: logDirectory)
+        let logFolderURL = URL(filePath: logDirectory)
 
         if FileManager.default.fileExists(atPath: logDirectory) {
             NSWorkspace.shared.open(logFolderURL)
@@ -219,7 +219,7 @@ class LogManager {
 
     func openLatestLogInConsole() {
         logCurrentProfile()
-        let logFileURL = URL(fileURLWithPath: logPath)
+        let logFileURL = URL(filePath: logPath)
 
         if FileManager.default.fileExists(atPath: logPath) {
             NSWorkspace.shared.open(logFileURL)

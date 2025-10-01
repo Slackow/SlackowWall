@@ -13,6 +13,9 @@ import SwiftUI
 class AlertManager: ObservableObject {
     @Published var alert: WallAlert? = .none
 
+    @Published var showErrorAlert = false
+    @Published var errorAlert: String?
+
     static let shared = AlertManager()
 
     init() {
@@ -38,6 +41,11 @@ class AlertManager: ObservableObject {
                 await checkScreenRecordingPermission()
             }
         }
+    }
+
+    func dismissableError(message: String) {
+        self.errorAlert = message
+        self.showErrorAlert = true
     }
 
     func checkPermissions() {

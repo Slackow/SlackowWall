@@ -78,6 +78,5 @@ struct PlaceholderInstanceView: View {
         .sheet(isPresented: $isModMenuOpen) {
             ModMenu(instance: instance)
         }
-        // Alerts and dialogs handled in DeletionProgressView
     }
 }

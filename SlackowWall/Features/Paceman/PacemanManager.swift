@@ -62,7 +62,7 @@ class PacemanManager: Manager, ObservableObject {
         }
 
         let proc = Process()
-        proc.executableURL = URL(fileURLWithPath: wrapperPath)
+        proc.executableURL = URL(filePath: wrapperPath)
         proc.arguments = [jarURL.path]
 
         // When helper exits (for any reason) bring state back to idle.

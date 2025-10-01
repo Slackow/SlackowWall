@@ -16,7 +16,7 @@ struct UtilitySettings: View {
 
     @ObservedObject private var trackingManager = TrackingManager.shared
     @ObservedObject private var pacemanManager = PacemanManager.shared
-    
+
     @State var tallSensitivityFactor: Double = Settings[\.utility].tallSensitivityFactor
     @State var boatEyeSensitivity: Double = Settings[\.utility].boatEyeSensitivity
 
@@ -198,11 +198,14 @@ struct UtilitySettings: View {
                                 .onChange(of: trackingManager.trackedInstances, {
                                     wrongSensitivities = getWrongSensitivities()
                                 })
-                                 .onAppear {
+                                .onChange(of: boatEyeSensitivity, {
+                                    wrongSensitivities = getWrongSensitivities()
+                                })
+                                .onAppear {
                                     if settings.sensitivityScaleEnabled {
                                         wrongSensitivities = getWrongSensitivities()
                                     }
-                                 }
+                                }
                             TextField(
                                 "", value: .init(get: {
                                     settings.boatEyeSensitivity
@@ -255,7 +258,7 @@ struct UtilitySettings: View {
             SettingsCardView {
                 SettingsLinkView(title: "Paceman Tracker\(pacemanManager.pacemanConfig.accessKey.isEmpty ? "" : pacemanManager.isRunning ? " (active)" : " (inactive)")", destination: PacemanSettings.init)
             }
-            
+
             SettingsCardView {
                 SettingsLinkView(title: "Startup Applications", destination: StartupAppSettings.init)
             }

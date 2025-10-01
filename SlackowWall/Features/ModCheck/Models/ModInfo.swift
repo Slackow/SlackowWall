@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ModInfo: Identifiable, Codable {
+struct ModInfo: Codable {
     let id: String
     let version: String
     let name: String

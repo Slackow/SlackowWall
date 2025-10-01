@@ -41,6 +41,7 @@ class InstanceInfo: CustomStringConvertible {
         self.version = version
         Task {
             updateModInfo()
+            try? await Task.sleep(for: .seconds(0.95))
             DispatchQueue.main.async {
                 ShortcutManager.shared.resizeReset(pid: pid)
             }
@@ -98,8 +99,7 @@ class InstanceInfo: CustomStringConvertible {
         guard !path.isEmpty else { return }
         let fileManager = FileManager.default
         if let contents = try? fileManager.contentsOfDirectory(atPath: path + "/mods/") {
-            self.mods = contents.map { path + "/mods/\($0)" }
-                .compactMap(URL.init(string:))
+            self.mods = contents.map { URL(filePath: path + "/mods/\($0)") }
                 .filter { $0.pathExtension == "jar" }
                 .compactMap { InstanceInfo.extractModInfo(fromJarAt: $0) }
             LogManager.shared.appendLog("mods", mods.map(\.id))

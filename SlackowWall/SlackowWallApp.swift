@@ -82,6 +82,8 @@ struct SlackowWallApp: App {
                 } message: { _ in
                     Text(logUploadedAlert ?? "Unable to upload.")
                 }
+                .alert("Error: \(alertManager.errorAlert ?? "")", isPresented: $alertManager.showErrorAlert,
+                       actions: { Button("OK", role: .cancel) {} })
         }
         .windowResizability(.contentSize)
 
@@ -174,13 +176,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             ShortcutManager.shared.handleGlobalKey(event)
         }
         OBSManager.shared.writeScript()
-        if Settings[\.utility].autoLaunchPaceman {
-            #if !DEBUG
-                PacemanManager.shared.startPaceman()
-            #endif
-        }
         MouseSensitivityManager.shared.setSensitivityFactor(
             factor: Settings[\.utility].sensitivityScale)
+#if !DEBUG
+        if Settings[\.utility].autoLaunchPaceman {
+                PacemanManager.shared.startPaceman()
+        }
         if Settings[\.utility].startupApplicationEnabled {
             Settings[\.utility].startupApplications.forEach {
                 let task = Process()
@@ -189,6 +190,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 try? task.run()
             }
         }
+#endif
         // Start the instance check timer
         TrackingManager.shared.startInstanceCheckTimer()
     }

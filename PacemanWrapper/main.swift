@@ -13,7 +13,7 @@ var childProcess: Process?
 // MARK: – Helpers
 func javaHome() -> String? {
     let proc = Process()
-    proc.executableURL = URL(fileURLWithPath: "/usr/libexec/java_home")
+    proc.executableURL = URL(filePath: "/usr/libexec/java_home")
     let pipe = Pipe()
     proc.standardOutput = pipe
     do {
@@ -27,7 +27,7 @@ func javaHome() -> String? {
 
 func defaultJarPath() -> String {
     // Compute ../Contents/Resources/Jars/paceman-tracker-*.jar relative to this binary
-    let execURL = URL(fileURLWithPath: CommandLine.arguments[0]).resolvingSymlinksInPath()
+    let execURL = URL(filePath: CommandLine.arguments[0]).resolvingSymlinksInPath()
     let bundleURL = execURL.deletingLastPathComponent().deletingLastPathComponent()  // …/MacOS → …/Contents
     return bundleURL.appending(path: "Resources/Jars/paceman-tracker-0.7.1.jar").path
 }
@@ -57,7 +57,7 @@ func installSignalHandlers() {
 let child = Process()
 childProcess = child
 installSignalHandlers()
-child.executableURL = URL(fileURLWithPath: javaBin)
+child.executableURL = URL(filePath: javaBin)
 child.arguments = ["-Dapple.awt.UIElement=true", "-jar", jarPath, "--nogui"]
 child.standardOutput = FileHandle.standardOutput
 child.standardError = FileHandle.standardError

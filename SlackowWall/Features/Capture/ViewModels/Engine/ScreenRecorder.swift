@@ -257,7 +257,7 @@ import SwiftUI
             LogManager.shared.appendLog("Normal mode - preparing screen capture")
 
             // 40ms delay so macOS can catch up, a hack yes, but lol?
-            try? await Task.sleep(nanoseconds: 40_000_000)
+            try? await Task.sleep(for: .milliseconds(40))
 
             // Start the capture process again
             await start()
