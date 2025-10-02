@@ -22,15 +22,15 @@ class OBSManager: ObservableObject {
         guard
             let appSupportURL = fileManager.urls(
                 for: .applicationSupportDirectory, in: .userDomainMask
-            ).first?.appendingPathComponent("SlackowWall")
+            ).first?.appending(path: "SlackowWall")
         else { return }
 
         // Create the directories if they don't exist
         try? fileManager.createDirectory(at: appSupportURL, withIntermediateDirectories: true)
         try? fileManager.createDirectory(
-            at: appSupportURL.appendingPathComponent("Icons"), withIntermediateDirectories: true)
+            at: appSupportURL.appending(path: "Icons"), withIntermediateDirectories: true)
 
-        let dst = appSupportURL.appendingPathComponent("instance_selector.lua")
+        let dst = appSupportURL.appending(path: "instance_selector.lua")
 
         // Remove the existing file if it exists
         try? fileManager.removeItem(at: dst)

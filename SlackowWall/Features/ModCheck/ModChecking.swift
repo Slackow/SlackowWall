@@ -91,7 +91,7 @@ final class ModChecking {
         guard let response = response as? HTTPURLResponse,
             200..<300 ~= response.statusCode else { return }
         let destination = modPath.deletingLastPathComponent()
-            .appendingPathComponent(URL(filePath: version.url).lastPathComponent)
+            .appending(path: URL(filePath: version.url).lastPathComponent)
         print("here", destination)
         try jar.write(to: destination)
         if destination.lastPathComponent != modPath.lastPathComponent {
