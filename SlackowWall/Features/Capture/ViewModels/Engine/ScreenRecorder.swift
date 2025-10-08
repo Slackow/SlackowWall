@@ -346,7 +346,7 @@ import SwiftUI
         // Use tall mode dimensions instead of actual window size
         var (tallWidth, tallHeight, _, _) = Settings.shared.preferences.tallDimensions(for: instance)
         let usingRetino = instance.info.mods.map(\.id).contains("retino")
-        let factor = (NSScreen.primary?.backingScaleFactor ?? 1)
+        let factor = min(NSScreen.primary?.backingScaleFactor ?? 1, 16384.0 / tallHeight)
 //        let factor = 16384.0 / tallHeight
         tallWidth *= factor
         tallHeight *= factor
