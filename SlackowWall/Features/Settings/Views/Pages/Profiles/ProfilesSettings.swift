@@ -119,7 +119,7 @@ struct ProfilesSettings: View {
                         var newPrefs = Preferences()
                         newPrefs.profile.name = name
                         newPrefs.profile.id = id
-                        Settings.shared.preferences = newPrefs
+                        Settings[\.self] = newPrefs
                     }
                 }
             }

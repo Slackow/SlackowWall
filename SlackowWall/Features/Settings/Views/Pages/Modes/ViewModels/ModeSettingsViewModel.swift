@@ -26,7 +26,7 @@ class ModeSettingsViewModel: ObservableObject {
     }
 
     var multipleOutOfBounds: Bool {
-        let p = Settings.shared.preferences
+        let p = Settings[\.self]
         let dimensions = [
             p.baseDimensions, p.tallDimensions(for: TrackingManager.shared.trackedInstances.first), p.thinDimensions, p.wideDimensions, p.resetDimensions
         ]

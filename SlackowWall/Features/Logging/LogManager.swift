@@ -282,8 +282,66 @@ class LogManager {
             callback(message, nil)
         }
     }
+    
+    func logNinbotSettings() {
+        appendLogNewLine()
+        appendLog("Ninjabrain Bot Settings")
+        let plistPath = ("~/Library/Preferences/com.apple.java.util.prefs.plist" as NSString).expandingTildeInPath
+        let keyPathComponents = ["/", "ninjabrainbot/"]
+        func value(at path: [String], in object: Any) -> Any? {
+            var current: Any? = object
+            for key in path {
+                guard let dict = current as? [String: Any] else { return nil }
+                current = dict[key]
+            }
+            return current
+        }
+        func prettyJSONString(from any: Any) -> String? {
+            // If it's Data, try JSON -> pretty string
+            if let data = any as? Data {
+                if let obj = try? JSONSerialization.jsonObject(with: data),
+                   JSONSerialization.isValidJSONObject(obj),
+                   let pretty = try? JSONSerialization.data(withJSONObject: obj, options: .prettyPrinted),
+                   let s = String(data: pretty, encoding: .utf8) {
+                    return s
+                }
+            }
+            // If it's String, try parse as JSON first, else return raw string
+            if let s = any as? String {
+                if let data = s.data(using: .utf8),
+                   let obj = try? JSONSerialization.jsonObject(with: data),
+                   JSONSerialization.isValidJSONObject(obj),
+                   let pretty = try? JSONSerialization.data(withJSONObject: obj, options: .prettyPrinted),
+                   let prettyStr = String(data: pretty, encoding: .utf8) {
+                    return prettyStr
+                }
+                return s
+            }
+            // If it's already a plist dictionary/array, convert via JSONSerialization for readability
+            if let dict = any as? [String: Any],
+               let data = try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted),
+               let s = String(data: data, encoding: .utf8) {
+                return s
+            }
+            if let arr = any as? [Any],
+               let data = try? JSONSerialization.data(withJSONObject: arr, options: .prettyPrinted),
+               let s = String(data: data, encoding: .utf8) {
+                return s
+            }
+            return nil
+        }
+        let plistURL = URL(filePath: plistPath)
+        guard let data = try? Data(contentsOf: plistURL),
+            let plist = try? PropertyListSerialization.propertyList(from: data, options: [], format: nil),
+            let v = value(at: keyPathComponents, in: plist),
+            let logOutput = prettyJSONString(from: v)
+            else { return }
+        appendLog(logOutput, includeTimestamp: false)
+        
+    }
 
     func logCurrentProfile() {
+        logNinbotSettings()
         appendLogNewLine()
         appendLog("Current Settings")
 
@@ -292,7 +350,7 @@ class LogManager {
             let data = try JSONEncoder().encode(prefs)
             let json = try JSONSerialization.jsonObject(with: data)
             let prettyJSONData = try JSONSerialization.data(
-                withJSONObject: json, options: [.prettyPrinted])
+                withJSONObject: json, options: .prettyPrinted)
             let prettyJSON =
                 String(data: prettyJSONData, encoding: .utf8)
                 ?? "Data could not be converted to string"

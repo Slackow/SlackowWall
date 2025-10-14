@@ -33,7 +33,7 @@ struct EyeProjectorView: View {
             ZStack {
                 previewRenderer.instance.eyeProjectorStream.capturePreview
                     .scaleEffect(
-                        x: CGFloat(Settings.shared.preferences.tallWidth)
+                        x: CGFloat(Settings[\.self].tallWidth)
                             / 60 * scaleFactor,
                         y: utility.eyeProjectorHeightScale * scaleFactor
                     )

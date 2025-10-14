@@ -143,7 +143,7 @@ class ShortcutManager: ObservableObject, Manager {
 
     func resizeWide() {
         guard let pid = activeInstancePID() else { return }
-        guard case let (.some(w), h, x, y) = Settings.shared.preferences.wideDimensions else {
+        guard case let (.some(w), h, x, y) = Settings[\.self].wideDimensions else {
             return
         }
         resize(pid: pid, x: x, y: y, width: w, height: h)
@@ -152,7 +152,7 @@ class ShortcutManager: ObservableObject, Manager {
     func resizeBase(pid: pid_t? = nil) {
         guard let pid = pid ?? activeInstancePID() else { return }
         guard
-            case let (.some(w), .some(h), .some(x), .some(y)) = Settings.shared.preferences
+            case let (.some(w), .some(h), .some(x), .some(y)) = Settings[\.self]
                 .baseDimensions
         else { return }
         resize(pid: pid, x: x, y: y, width: w, height: h, force: true)
@@ -160,7 +160,7 @@ class ShortcutManager: ObservableObject, Manager {
 
     func resizeReset(pid: pid_t) {
         guard
-            case let (.some(w), .some(h), .some(x), .some(y)) = Settings.shared.preferences
+            case let (.some(w), .some(h), .some(x), .some(y)) = Settings[\.self]
                 .resetDimensions
         else { return }
         resize(pid: pid, x: x, y: y, width: w, height: h, force: true)
@@ -168,7 +168,7 @@ class ShortcutManager: ObservableObject, Manager {
 
     func resizeThin() {
         guard let pid = activeInstancePID() else { return }
-        guard case let (w, .some(h), x, y) = Settings.shared.preferences.thinDimensions else {
+        guard case let (w, .some(h), x, y) = Settings[\.self].thinDimensions else {
             return
         }
         resize(pid: pid, x: x, y: y, width: w, height: h)
@@ -176,7 +176,7 @@ class ShortcutManager: ObservableObject, Manager {
 
     func resizeTall() {
         guard let pid = activeInstancePID() else { return }
-        let (w, h, x, y) = Settings.shared.preferences.tallDimensions(for: TrackingManager.shared.trackedInstances.first { $0.pid == pid })
+        let (w, h, x, y) = Settings[\.self].tallDimensions(for: TrackingManager.shared.trackedInstances.first { $0.pid == pid })
         if resize(pid: pid, x: x, y: y, width: w, height: h) == true {
             if let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid }
             ) {
@@ -206,7 +206,7 @@ class ShortcutManager: ObservableObject, Manager {
             let currentPosition = WindowController.getWindowPosition(pid: pid)
         {
             // detect exiting tall mode
-            let (w, h, _, _) = Settings.shared.preferences.tallDimensions(for: TrackingManager.shared.trackedInstances.first {$0.pid == pid})
+            let (w, h, _, _) = Settings[\.self].tallDimensions(for: TrackingManager.shared.trackedInstances.first {$0.pid == pid})
             if currentSize == CGSize(width: w, height: h) {
                 Task(priority: .userInitiated) {
                     await ScreenRecorder.shared.stopEyeProjectorCapture()

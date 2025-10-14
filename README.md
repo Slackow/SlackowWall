@@ -1,4 +1,5 @@
 # Download → [SlackowWall for macOS](https://github.com/Slackow/SlackowWall/releases/latest/)
+Or via HomeBrew: `brew install slackow/apps/slackowwall`
 <!-- # Tutorial → [SlackowWall Setup Guide](Info/guide.md) -->
 
 ![Main screen of SlackowWall](Info/images/main.png)
