@@ -5,11 +5,10 @@ Or via Homebrew:
 ```
 brew install slackow/apps/slackowwall
 ```
-<!-- # Tutorial → [SlackowWall Setup Guide](Info/guide.md) -->
-
-![Main screen of SlackowWall](Info/images/main.png)
 
 ![Eye Projector from SlackowWall example](Info/images/eyeProjector.png)
+
+![Main screen of SlackowWall](Info/images/main.png)
 
 # What is SlackowWall?
 SlackowWall is a multi-instance manager for macOS designed specifically for speedrunners, enabling control over multiple instances simultaneously.
