@@ -29,6 +29,10 @@ struct SettingsView: View {
 
                     Text(item.label)
                         .tint(.primary)
+                    if case .some((let icon, let color)) = item.secondIcon {
+                        Image(systemName: icon)
+                            .foregroundColor(color)
+                    }
                 }
                 .frame(height: 20)
                 .padding(.vertical, 5)

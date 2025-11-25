@@ -12,31 +12,43 @@ struct CreditsView: View {
     @State var showLogUploadedAlert = false
     @State var logUploadedAlert: String? = nil
     @State var logLink: String? = nil
+    @State var supporters: [Supporter] = []
     var body: some View {
         SettingsPageView(title: "Credits & Help") {
             SettingsCardView {
                 VStack {
-                    CreditsEntryView(
-                        name: "Slackow", role: "Developer", icon: "wrench.adjustable.fill",
-                        color: .teal)
+                    LazyVGrid(columns: [.init(.flexible()), .init(.flexible())]) {
+                        CreditsEntryView(
+                            name: "Slackow", role: "Developer", icon: "wrench.adjustable.fill",
+                            color: .teal)
 
-                    CreditsEntryView(
-                        name: "Kihron", role: "Developer", icon: "wrench.adjustable.fill",
-                        color: .orange)
+                        CreditsEntryView(
+                            name: "Kihron", role: "Developer", icon: "wrench.adjustable.fill",
+                            color: .orange)
 
-                    CreditsEntryView(
-                        name: "nealxm", role: "Beta Tester", icon: "atom", color: .green)
+                        CreditsEntryView(
+                            name: "nealxm", uuid: "9ae165d08b204c38916bee10414279e0",
+                            role: "Beta Tester", icon: "atom", color: .green)
 
-                    CreditsEntryView(
-                        name: "olock5", role: "Supporter", icon: "heart.fill", color: .pink)
-
-                    CreditsEntryView(
-                        name: "mukvl", role: "Supporter", icon: "heart.fill", color: .pink)
-
-                    CreditsEntryView(
-                        name: "HavocDroid", role: "Supporter", icon: "heart.fill", color: .pink)
+                    }
+                    Divider()
+                    LazyVGrid(columns: [.init(.flexible()), .init(.flexible())]) {
+                        ForEach(self.supporters, id: \.uuid) { supporter in
+                            CreditsEntryView(
+                                name: supporter.name, uuid: supporter.uuid, role: "Supporter",
+                                icon: "heart.fill", color: .pink)
+                        }
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .task {
+                    // preload from file system
+                    await fetchSupporters(supplier: supportersFromFile)
+                    // load from GitHub
+                    Task {
+                        await fetchSupporters(supplier: supportersFromOnline)
+                    }
+                }
             }
 
             SettingsLabel(title: "Support Us")
@@ -85,7 +97,7 @@ struct CreditsView: View {
                             .foregroundStyle(.gray)
                             .frame(width: 30)
                         Text(
-                            "For setting up the wall without SeedQueue, read the [setup guide](https://github.com/Slackow/SlackowWall/blob/main/Info/guide.md)"
+                            "For setting up the wall _without_ SeedQueue, read the [setup guide](https://github.com/Slackow/SlackowWall/blob/main/Info/guide.md)"
                         )
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -143,6 +155,49 @@ struct CreditsView: View {
     private func getAvatarURL(_ name: String) -> URL? {
         return URL(string: "https://minotar.net/helm/\(name)/32")
     }
+
+    private func fetchSupporters(supplier: () async -> String?) async {
+        var supporters: [Supporter] = []
+        // preload from file
+        // get from internet
+        if let donationsTxt = await supplier() {
+            donationsTxt.split(whereSeparator: \.isNewline).forEach { line in
+                let splitLine = line.split(separator: ",", maxSplits: 2)
+                if splitLine.count == 2 {
+                    supporters.append(Supporter(name: String(splitLine[0]), uuid: String(splitLine[1])))
+                }
+            }
+            self.supporters = supporters
+        }
+    }
+
+    private func supportersFromOnline() async -> String? {
+        guard
+            let url = URL(
+                string: "https://raw.githubusercontent.com/Slackow/SlackowWall/main/donations.txt")
+        else { return nil }
+        let request = URLRequest(
+            url: url, cachePolicy: .reloadRevalidatingCacheData, timeoutInterval: 60)
+        guard let (data, _) = try? await URLSession.shared.data(for: request),
+            let donationsTxt = String(data: data, encoding: .utf8)
+        else { return nil }
+        writeSupportersToFile(supporters: donationsTxt)
+        return donationsTxt
+    }
+    
+    private func supportersFromFile() -> String? {
+        return try? String(contentsOfFile: "~/Library/Application Support/SlackowWall/donations.txt", encoding: .utf8)
+    }
+    
+    private func writeSupportersToFile(supporters: String) {
+        guard !supporters.isEmpty else { return }
+        try? supporters.write(toFile: "~/Library/Application Support/SlackowWall/donations.txt", atomically: true, encoding: .utf8)
+    }
+}
+
+struct Supporter: Codable {
+    let name: String
+    let uuid: String
 }
 
 extension AttributedString {

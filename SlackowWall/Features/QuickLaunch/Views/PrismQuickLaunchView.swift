@@ -44,52 +44,59 @@ struct PrismQuickLaunchView: View {
                     }
                 }
         } else {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    if !store.favorites.isEmpty {
-                        Text("Pinned")
+            VStack {
+                HStack {
+                    Spacer()
+                    SearchField("Search", text: $searchText, onClear: {})
+                        .frame(maxWidth: 200, alignment: .leading)
+                }
+                .padding()
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 24) {
+                        if !store.favorites.isEmpty {
+                            Text("Pinned")
+                                .font(.headline)
+                                .padding(.horizontal)
+                            
+                            LazyVGrid(columns: grid, spacing: 16) {
+                                ForEach(store.favorites) { inst in
+                                    PrismInstanceCell(
+                                        instance: inst,
+                                        isFavorite: true,
+                                        toggleFavorite: store.toggleFavorite,
+                                        launch: launchAndDismiss)
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                        
+                        Text("All Instances")
                             .font(.headline)
                             .padding(.horizontal)
-
+                        
                         LazyVGrid(columns: grid, spacing: 16) {
-                            ForEach(store.favorites) { inst in
+                            ForEach(filteredInstances) { inst in
                                 PrismInstanceCell(
                                     instance: inst,
-                                    isFavorite: true,
+                                    isFavorite: store.isFavorite(inst),
                                     toggleFavorite: store.toggleFavorite,
                                     launch: launchAndDismiss)
                             }
                         }
                         .padding(.horizontal)
                     }
-
-                    Text("All Instances")
-                        .font(.headline)
-                        .padding(.horizontal)
-
-                    LazyVGrid(columns: grid, spacing: 16) {
-                        ForEach(filteredInstances) { inst in
-                            PrismInstanceCell(
-                                instance: inst,
-                                isFavorite: store.isFavorite(inst),
-                                toggleFavorite: store.toggleFavorite,
-                                launch: launchAndDismiss)
-                        }
+                    .padding(.vertical)
+                }
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Close") {
+                            dismiss()
+                        }.focusable()
                     }
-                    .padding(.horizontal)
                 }
-                .padding(.vertical)
+                .frame(minWidth: 550, idealWidth: 550, minHeight: 250, idealHeight: 450)
+                .removeFocusOnTap()
             }
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") {
-                        dismiss()
-                    }.focusable()
-                }
-            }
-            .searchable(text: $searchText)
-            .frame(minWidth: 550, idealWidth: 550, minHeight: 250, idealHeight: 450)
-            .removeFocusOnTap()
         }
     }
 }

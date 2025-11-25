@@ -37,7 +37,7 @@ struct CaptureGridView: View {
                         .multilineTextAlignment(.center)
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    Button(action: { quickLaunchOpen.toggle() }) {
+                    Button(action: { quickLaunchOpen = true }) {
                         HStack {
                             Image(systemName: "play.fill")
                                 .foregroundStyle(.green)

@@ -5,17 +5,18 @@
 //  Created by Andrew on 9/27/25.
 //
 
-import Foundation
 import DefaultCodable
+import Foundation
 
 final class ModChecking {
 
-    private static let schema = URL(string: "https://raw.githubusercontent.com/tildejustin/mcsr-meta/schema-6/mods.json");
+    private static let schema = URL(
+        string: "https://raw.githubusercontent.com/tildejustin/mcsr-meta/schema-6/mods.json")
 
     private static func getLegalMods() async throws -> [ModSchema] {
         if let _legalMods { return _legalMods }
         guard let schema else { return [] }
-        let req = URLRequest(url: schema, timeoutInterval: 2)
+        let req = URLRequest(url: schema, timeoutInterval: 10)
         let (data, resp) = try await URLSession.shared.data(for: req)
         guard let http = resp as? HTTPURLResponse,
             200..<300 ~= http.statusCode
@@ -30,66 +31,71 @@ final class ModChecking {
     static func modsToUpdate(info: InstanceInfo) async throws -> ([(ModInfo, ModVersion)], Int) {
         let mcVersion = info.version
         let legalMods = try await getLegalMods()
-        return (info.mods.compactMap { mod in
-            if mod.disabled == true { return nil }
-            let legalSchema = legalMods.first { $0.modid == mod.id }
-            guard let latestVersion = legalSchema?.getModVersion(for: mcVersion) else {
-                LogManager.shared.appendLog("Skipping non-legal mod:", mod.id, mod.version)
-                return nil
-            }
-            if latestVersion.version == mod.version {
-                LogManager.shared.appendLog("Up to date:", mod.id, mod.version)
-                return nil
-            }
-            LogManager.shared.appendLog("The latest version for", mod.id, "is", latestVersion.version, "and you have", mod.version)
-            return (mod, latestVersion)
-        }, info.mods.filter{legalMods.map(\.modid).contains($0.id)}.count)
+        return (
+            info.mods.compactMap { mod in
+                if mod.disabled == true { return nil }
+                let legalSchema = legalMods.first { $0.modid == mod.id }
+                guard let latestVersion = legalSchema?.getModVersion(for: mcVersion) else {
+                    LogManager.shared.appendLog("Skipping non-legal mod:", mod.id, mod.version)
+                    return nil
+                }
+                if latestVersion.version == mod.version {
+                    LogManager.shared.appendLog("Up to date:", mod.id, mod.version)
+                    return nil
+                }
+                LogManager.shared.appendLog(
+                    "The latest version for", mod.id, "is", latestVersion.version, "and you have",
+                    mod.version)
+                return (mod, latestVersion)
+            }, info.mods.filter { legalMods.map(\.modid).contains($0.id) }.count
+        )
     }
-    
+
     @discardableResult
     static func updateMods(
-      instance: TrackedInstance,
-      mods: [(ModInfo, ModVersion)]
+        instance: TrackedInstance,
+        mods: [(ModInfo, ModVersion)]
     ) async -> ([(ModInfo, ModVersion)], [(ModInfo, ModVersion)]) {
-      guard !mods.isEmpty else { return ([], mods) }
-      LogManager.shared.appendLog(
-        "is terminated:",
-        TrackingManager.shared.kill(instance: instance)?.isTerminated ?? true
-      )
+        guard !mods.isEmpty else { return ([], mods) }
+        LogManager.shared.appendLog(
+            "is terminated:",
+            TrackingManager.shared.kill(instance: instance)?.isTerminated ?? true
+        )
 
-      return await withTaskGroup(of: (ModInfo, ModVersion, Bool).self) { group in
-        for (info, version) in mods {
-          group.addTask {
-            do {
-              try await updateMod(info: info, version: version)
-              return (info, version, true)
-            } catch {
-              LogManager.shared.appendLog(
-                "Failed to update mod \"\(info.id)\", \"\(info.version)\": \(error)"
-              )
-              return (info, version, false)
+        return await withTaskGroup(of: (ModInfo, ModVersion, Bool).self) { group in
+            for (info, version) in mods {
+                group.addTask {
+                    do {
+                        try await updateMod(info: info, version: version)
+                        return (info, version, true)
+                    } catch {
+                        LogManager.shared.appendLog(
+                            "Failed to update mod \"\(info.id)\", \"\(info.version)\": \(error)"
+                        )
+                        return (info, version, false)
+                    }
+                }
             }
-          }
-        }
 
-        var succeeded: [(ModInfo, ModVersion)] = []
-        var failed: [(ModInfo, ModVersion)] = []
+            var succeeded: [(ModInfo, ModVersion)] = []
+            var failed: [(ModInfo, ModVersion)] = []
 
-        for await (info, version, ok) in group {
-          if ok { succeeded.append((info, version)) }
-          else { failed.append((info, version)) }
+            for await (info, version, ok) in group {
+                if ok { succeeded.append((info, version)) } else { failed.append((info, version)) }
+            }
+            return (succeeded, failed)
         }
-        return (succeeded, failed)
-      }
     }
 
     static func updateMod(info: ModInfo, version: ModVersion) async throws {
         guard let modPath = info.filePath,
-            let url = URL(string: version.url) else { return }
+            let url = URL(string: version.url)
+        else { return }
         let urlRequest = URLRequest(url: url, timeoutInterval: 2)
         let (jar, response) = try await URLSession.shared.data(for: urlRequest)
         guard let response = response as? HTTPURLResponse,
-            200..<300 ~= response.statusCode else { return }
+            200..<300 ~= response.statusCode
+        else { return }
         let destination = modPath.deletingLastPathComponent()
             .appending(path: URL(filePath: version.url).lastPathComponent)
         print("here", destination)
@@ -149,4 +155,3 @@ struct ModVersion: Codable {
     var recommended: Bool = true
     var obsolete: Bool = false
 }
-

@@ -5,19 +5,20 @@
 //  Created by Kihron on 2/22/24.
 //
 
+import AppKit
 import CachedAsyncImage
 import SwiftUI
-import AppKit
 
 struct CreditsEntryView: View {
     let name: String
+    var uuid: String?
     let role: String
     var icon: String?
     var color: Color?
 
     var body: some View {
         HStack {
-            CachedAsyncImage(url: getAvatarURL(name)) { image in
+            CachedAsyncImage(url: getAvatarURL(uuid ?? name)) { image in
                 image
             } placeholder: {
                 if NSImage(named: name) != nil {
@@ -47,4 +48,3 @@ struct CreditsEntryView: View {
 #Preview {
     CreditsEntryView(name: "Kihron", role: "Developer")
 }
-

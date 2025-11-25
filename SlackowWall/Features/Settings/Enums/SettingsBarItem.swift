@@ -83,4 +83,13 @@ enum SettingsBarItem: CaseIterable, Identifiable, Hashable {
                 "hands.and.sparkles.fill"
         }
     }
+
+    var secondIcon: (String, Color)? {
+        switch self {
+            case .credits:
+                ("heart.fill", .pink)
+            default:
+                nil
+        }
+    }
 }
