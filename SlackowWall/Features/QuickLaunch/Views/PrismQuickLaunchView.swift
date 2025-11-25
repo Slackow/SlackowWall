@@ -50,7 +50,7 @@ struct PrismQuickLaunchView: View {
                     SearchField("Search", text: $searchText, onClear: {})
                         .frame(maxWidth: 200, alignment: .leading)
                 }
-                .padding()
+                .padding([.top, .horizontal])
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
                         if !store.favorites.isEmpty {

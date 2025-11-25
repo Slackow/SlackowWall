@@ -67,7 +67,7 @@ struct PersonalizeSettings: View {
         .sheet(isPresented: $showLockEditor) {
             LockIconEditor()
         }
-        .onChange(of: settings.streamFPS) {
+        .onChange(of: settings.streamFPS) { _ in
             debounceResetAndStartCapture()
         }
     }

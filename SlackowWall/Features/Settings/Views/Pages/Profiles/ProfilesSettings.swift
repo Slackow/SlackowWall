@@ -139,7 +139,7 @@ struct ProfilesSettings: View {
                 .disabled(settings.availableProfiles.count <= 1)
             }
         }
-        .onChange(of: profile.id) { _, value in
+        .onChange(of: profile.id) { value in
             if profile.id != value {
                 Task {
                     try settings.switchProfile(to: value)
@@ -155,7 +155,7 @@ struct ProfilesSettings: View {
                 }
             }
         }
-        .onChange(of: settings.currentProfile) { _, value in
+        .onChange(of: settings.currentProfile) { value in
             LogManager.shared.appendLog("Switched Profiles via picker:", value)
         }
     }

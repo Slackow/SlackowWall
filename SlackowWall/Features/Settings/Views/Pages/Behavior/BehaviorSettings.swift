@@ -28,7 +28,7 @@ struct BehaviorSettings: View {
                         descInteractable: false, option: $settings.utilityMode
                     )
                     .animation(.easeInOut, value: settings.utilityMode)
-                    .onChange(of: settings.utilityMode) { _, newValue in
+                    .onChange(of: settings.utilityMode) { newValue in
                         Task {
                             // Notification will handle the alert state changes
                             await ScreenRecorder.shared.resetAndStartCapture()

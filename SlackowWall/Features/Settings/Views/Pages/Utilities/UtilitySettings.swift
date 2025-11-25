@@ -154,7 +154,7 @@ struct UtilitySettings: View {
                                     )
                                     .textFieldStyle(.plain)
                                     .focused($sensFieldInFocus)
-                                    .onChange(of: sensFieldInFocus) { _, newValue in
+                                    .onChange(of: sensFieldInFocus) { newValue in
                                         if !newValue {
                                             sensFieldNum = nil
                                         }
@@ -190,17 +190,17 @@ struct UtilitySettings: View {
                                 }
                             }.buttonStyle(.plain)
                                 .opacity(settings.sensitivityScaleEnabled && wrongSensitivities != nil ? 1 : 0)
-                                .onChange(of: settings.sensitivityScaleEnabled, { _, newValue in
+                                .onChange(of: settings.sensitivityScaleEnabled) { newValue in
                                     if newValue {
                                         wrongSensitivities = getWrongSensitivities()
                                     }
-                                 })
-                                .onChange(of: trackingManager.trackedInstances, {
+                                 }
+                                .onChange(of: trackingManager.trackedInstances) { _ in
                                     wrongSensitivities = getWrongSensitivities()
-                                })
-                                .onChange(of: boatEyeSensitivity, {
+                                }
+                                .onChange(of: boatEyeSensitivity) { _ in
                                     wrongSensitivities = getWrongSensitivities()
-                                })
+                                }
                                 .onAppear {
                                     if settings.sensitivityScaleEnabled {
                                         wrongSensitivities = getWrongSensitivities()
@@ -248,7 +248,7 @@ struct UtilitySettings: View {
                         .textFieldStyle(.roundedBorder)
                         .foregroundColor((0.05...100 ~= tallSensitivityFactor) ? .primary : .red)
                         .frame(width: 100)
-                        .onChange(of: tallSensitivityFactor) { _, newValue in
+                        .onChange(of: tallSensitivityFactor) { newValue in
                             Settings[\.utility].tallSensitivityFactor = (0.05...100).clamped(value: newValue)
                         }
                         .disabled(!settings.tallSensitivityFactorEnabled)
