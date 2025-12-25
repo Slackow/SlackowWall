@@ -46,6 +46,7 @@ struct KeybindingView: View {
             }
             .focusable(true)
             .focused($isFocused)
+//            .onTapGesture { isFocused = true }
 
             Button(action: {
                 keybinding = defaultValue
@@ -67,6 +68,7 @@ struct KeybindingView: View {
             .onHover(perform: { hovering in
                 circleColor = hovering ? .init(nsColor: .labelColor) : .gray
             })
+            .keyboardShortcut(nil)
         }
         .frame(width: 135, height: 22)
         .onAppear {
