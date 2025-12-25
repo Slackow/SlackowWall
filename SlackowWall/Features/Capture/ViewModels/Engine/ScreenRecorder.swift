@@ -385,7 +385,7 @@ import SwiftUI
                 let (W, H) = CapturePreview.surfaceSizePixels(surface)
 
                 // Desired crop size in pixels inside the captured surface
-                let factor = Int(2 / retinoFactor)
+                let factor = min(usingRetino ? 2 : 1, Int(factor))
                 let cropWPx = 340 * factor
                 let cropHPx = 340 * factor // pick what you want to display
 
