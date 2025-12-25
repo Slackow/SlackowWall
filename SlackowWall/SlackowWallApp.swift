@@ -16,6 +16,7 @@ struct SlackowWallApp: App {
     @ObservedObject private var instanceManager = InstanceManager.shared
     @ObservedObject private var shortcutManager = ShortcutManager.shared
     @ObservedObject private var alertManager = AlertManager.shared
+    @ObservedObject private var screenRecorder = ScreenRecorder.shared
     @AppSettings(\.profile)
     private var profile
     @AppSettings(\.behavior)

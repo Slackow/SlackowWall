@@ -29,6 +29,7 @@ class CaptureEngine: NSObject, @unchecked Sendable {
     private let logger = Logger()
 
     private var streams: [SCStream] = []
+    private var tasks: [Task<Void, Error>] = []
     private let videoSampleBufferQueue = DispatchQueue(label: "slackowWall.VideoSampleBufferQueue")
 
     // Store the the startCapture continuation, so that you can cancel it when you call stopCapture().
@@ -45,7 +46,7 @@ class CaptureEngine: NSObject, @unchecked Sendable {
             let streamOutput = CaptureEngineStreamOutput(continuation: continuation)
             streamOutputs.append(streamOutput)
             streamOutput.capturedFrameHandler = { continuation.yield($0) }
-
+            
             do {
                 let stream = SCStream(
                     filter: filter, configuration: configuration, delegate: streamOutput)
@@ -60,6 +61,10 @@ class CaptureEngine: NSObject, @unchecked Sendable {
             }
         }
     }
+    
+    func startTask(task: @escaping () async throws -> Void) {
+        tasks.append(Task { try await task() })
+    }
 
     func stopCapture(removeStreams: Bool = false) async {
         for stream in streams {
@@ -68,6 +73,8 @@ class CaptureEngine: NSObject, @unchecked Sendable {
 
         if removeStreams {
             streams.removeAll()
+            tasks.forEach { $0.cancel() }
+            tasks.removeAll()
         }
 
         continuation?.finish()

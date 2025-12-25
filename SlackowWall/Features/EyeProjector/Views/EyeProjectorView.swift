@@ -31,21 +31,20 @@ struct EyeProjectorView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                previewRenderer.instance.eyeProjectorStream.capturePreview
-                    .scaleEffect(
-                        x: CGFloat(Settings[\.self].tallWidth)
-                            / 60 * scaleFactor,
-                        y: utility.eyeProjectorHeightScale * scaleFactor
-                    )
-                    .contentShape(Rectangle())
-                    .opacity(previewRenderer.isVisible ? 1 : 0)
-                    .onAppear {
-                        previewRenderer.handleGridAnimation()
-                    }
-
-                Image("tall_overlay")
-                    .resizable()
-                    .frame(minWidth: geo.size.width, maxWidth: geo.size.width)
+                if screenRecorder.eyeProjectorMode == .tall {
+                    previewRenderer.instance.eyeProjectorStream.capturePreview
+                        .scaleEffect(
+                            x: 1,
+                            y: utility.eyeProjectorHeightScale * scaleFactor/(384.0/60)
+                        )
+                    Image("tall_overlay")
+                        .resizable()
+                        .frame(minWidth: geo.size.width, maxWidth: geo.size.width)
+                        .opacity(utility.eyeProjectorOverlayOpacity)
+                } else {
+                    previewRenderer.instance.eyeProjectorStream.capturePreview
+//                        .transformEffect(CGAffineTransform(translationX: 0, y: 100))
+                }
             }
         }
     }

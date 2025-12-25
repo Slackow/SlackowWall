@@ -29,10 +29,8 @@ struct SettingsCardView<Content: View>: View {
     }
 }
 
-struct SettingsCardView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsCardView {
-            Text("A")
-        }
+#Preview {
+    SettingsCardView {
+        Text("A")
     }
 }

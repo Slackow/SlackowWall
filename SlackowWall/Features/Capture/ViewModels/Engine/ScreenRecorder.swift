@@ -161,39 +161,42 @@ import SwiftUI
         LogManager.shared.appendLog("Screen capture started")
         refreshContentFilters()
 
-        if #available(macOS 14.0, *) {
-            for instance in trackingManager.trackedInstances {
-                guard let filter = instance.stream.captureFilter else { continue }
-                let streamConfiguration = createStreamConfiguration(
-                    width: filter.contentRect.width, height: filter.contentRect.height)
+        for instance in trackingManager.trackedInstances {
+            guard let filter = instance.stream.captureFilter else { continue }
+            let rect = if #available(macOS 14.0, *) {
+                filter.contentRect
+            } else {
+                CGRect(origin: .zero, size: .init(width: 1920, height: 1080))
+            }
+            let streamConfiguration = createStreamConfiguration(
+                width: rect.width, height: rect.height)
 
-                instance.stream.captureRect = CGSize(
-                    width: filter.contentRect.width, height: filter.contentRect.height)
+            instance.stream.captureRect = CGSize(
+                width: rect.width, height: rect.height)
 
-                Task {
-                    do {
-                        for try await frame in captureEngine.startCapture(
-                            configuration: streamConfiguration, filter: filter)
-                        {
-                            await MainActor.run {
-                                instance.stream.capturePreview.updateFrame(frame)
-                            }
+            captureEngine.startTask {
+                do {
+                    for try await frame in self.captureEngine.startCapture(
+                        configuration: streamConfiguration, filter: filter)
+                    {
+                        await MainActor.run {
+                            instance.stream.capturePreview.updateFrame(frame)
                         }
-                    } catch let error {
-                        logger.error("\(error.localizedDescription)")
-                        LogManager.shared.appendLog(
-                            "Stream error (\(instance.pid)):", error.localizedDescription,
-                            error.self)
+                    }
+                } catch let error {
+                    self.logger.error("\(error.localizedDescription)")
+                    LogManager.shared.appendLog(
+                        "Stream error (\(instance.pid)):", error.localizedDescription,
+                        error.self)
 
-                        if let error = error as? SCStreamError {
-                            let streamError = StreamError(errorCode: error.errorCode)
-                            switch streamError {
-                                case .appClosed:
-                                    instance.wasClosed = true
-                                case .unknown:
-                                    instance.stream.streamError = streamError
-                                    GridManager.shared.showInfo = true
-                            }
+                    if let error = error as? SCStreamError {
+                        let streamError = StreamError(errorCode: error.errorCode)
+                        switch streamError {
+                            case .appClosed:
+                                instance.wasClosed = true
+                            case .unknown:
+                                instance.stream.streamError = streamError
+                                GridManager.shared.showInfo = true
                         }
                     }
                 }
@@ -344,21 +347,76 @@ import SwiftUI
         }
 
         // Use tall mode dimensions instead of actual window size
-        var (tallWidth, tallHeight, _, _) = Settings[\.self].tallDimensions(for: instance)
+        let (tallWidthPts, tallHeightPts, _, _) = Settings[\.self].tallDimensions(for: instance)
         let usingRetino = instance.info.mods.map(\.id).contains("retino")
-        let factor = min(NSScreen.primary?.backingScaleFactor ?? 1, 16384.0 / tallHeight)
-//        let factor = 16384.0 / tallHeight
-        tallWidth *= factor
-        tallHeight *= factor
+        let factor = min(NSScreen.primary?.backingScaleFactor ?? 1, 16384.0 / tallHeightPts)
+        let retinoFactor = usingRetino ? 1.0 : factor
+        let s = if #available(macOS 14.0, *) {
+            CGFloat(filter.pointPixelScale)
+        } else {
+            factor
+        } //  [oai_citation:1‡Apple Developer](https://developer.apple.com/documentation/screencapturekit/sccontentfilter/pointpixelscale)
 
-        LogManager.shared.appendLog("Starting Eye Projector: dim:(", tallWidth, "x", tallHeight, ") factor:", factor, "usingRetino:", usingRetino)
+        // Keep the crop rect in POINTS.
+        let cropWidthPts: CGFloat = eyeProjectorMode == .tall ? 60 : tallWidthPts
+        let cropHeightPts: CGFloat = tallHeightPts
+        let cropXPt: CGFloat = tallWidthPts/2 - cropWidthPts / 2  // same intent as "-30" centering
+        let cropYPt: CGFloat = tallHeightPts/2 - cropHeightPts / 2
 
-        let streamConfig = createStreamConfiguration(
-            width: tallWidth,
-            height: tallHeight
-        )
-        streamConfig.minimumFrameInterval = CMTime(
-            value: 1, timescale: CMTimeScale(30))
+        let streamConfig = SCStreamConfiguration()
+        streamConfig.capturesAudio = false
+        streamConfig.showsCursor = false
+        streamConfig.excludesCurrentProcessAudio = false
+        streamConfig.scalesToFit = true
+        streamConfig.queueDepth = 6
+        streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: 30)
+
+        // sourceRect is in screen points (same space as contentRect).  [oai_citation:2‡Apple Developer](https://developer.apple.com/documentation/screencapturekit/sccontentfilter/contentrect?language=objc)
+        streamConfig.sourceRect = CGRect(x: cropXPt, y: cropYPt, width: cropWidthPts, height: cropHeightPts)
+
+        // output width/height should be pixels, so scale it.
+        streamConfig.width  = Int(cropWidthPts * s)
+        streamConfig.height = Int(cropHeightPts * s)
+        
+        if eyeProjectorMode == .thin {
+            instance.eyeProjectorStream.capturePreview.onNewFrame { (frame: CapturedFrame, contentLayer: CALayer) in
+                guard let surface = frame.surface else { return }
+
+                let (W, H) = CapturePreview.surfaceSizePixels(surface)
+
+                // Desired crop size in pixels inside the captured surface
+                let factor = Int(2 / retinoFactor)
+                let cropWPx = 340 * factor
+                let cropHPx = 340 * factor // pick what you want to display
+
+                // Bottom-right anchor in pixels
+                let cropXPx = max(0, W - cropWPx)
+                let cropYPx = max(0, H - cropHPx)
+
+                // Normalize for contentsRect (0..1)
+                let x = CGFloat(cropXPx) / CGFloat(W)
+                let w = CGFloat(cropWPx) / CGFloat(W)
+
+                // contentsRect Y is often bottom-based; if this looks flipped, use the alternate y below
+                let y = 1.0 - (CGFloat(cropYPx + cropHPx - 100 * factor) / CGFloat(H))
+                let h = CGFloat(cropHPx) / CGFloat(H)
+
+                contentLayer.contentsRect = CGRect(x: x, y: y, width: w, height: h)
+            }
+        } else {
+            instance.eyeProjectorStream.capturePreview.onNewFrame { (frame: CapturedFrame, contentLayer: CALayer) in
+                contentLayer.contentsRect = CGRect(x: 0, y: 0, width: 1, height: 1)
+            }
+        }
+
+        // Keep your captureRect consistent (pick points or pixels; this uses points).
+
+        if #available(macOS 14.0, *) {
+            LogManager.shared.appendLog("Starting Eye Projector: dim:(", tallWidthPts, "x", tallHeightPts, ") factor:", factor, s, "usingRetino:", usingRetino, "rects: source", streamConfig.sourceRect, "content", filter.contentRect)
+        } else {
+            // Fallback on earlier versions
+        }
+
 
 
         // Store the filter and create dedicated capture engine
@@ -367,15 +425,12 @@ import SwiftUI
 
         // Update the instance's eye projector stream capture filter and rect with tall mode dimensions
         instance.eyeProjectorStream.captureFilter = filter
-        instance.eyeProjectorStream.captureRect = CGSize(
-            width: tallWidth,
-            height: tallHeight
-        )
+        instance.eyeProjectorStream.captureRect = CGSize(width: cropWidthPts, height: cropHeightPts)
 
         // Start the dedicated capture
-        guard let eyeProjectorCapture = eyeProjectorCapture else { return }
+        guard let eyeProjectorCapture else { return }
 
-        Task {
+        eyeProjectorCapture.startTask {
             do {
                 for try await frame in eyeProjectorCapture.startCapture(
                     configuration: streamConfig, filter: filter
@@ -385,7 +440,7 @@ import SwiftUI
                     }
                 }
             } catch let error {
-                logger.error("Eye projector capture error: \(error.localizedDescription)")
+                self.logger.error("Eye projector capture error: \(error.localizedDescription)")
                 LogManager.shared.appendLog(
                     "Eye projector stream error (\(instance.pid)):",
                     error.localizedDescription

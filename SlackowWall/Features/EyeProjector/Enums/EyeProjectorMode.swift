@@ -1,6 +1,6 @@
 import Foundation
 
-enum EyeProjectorMode {
-    case tall
-    case thin
+enum EyeProjectorMode: String {
+    case tall = "Tall"
+    case thin = "Thin"
 }

@@ -16,7 +16,7 @@ class ShortcutManager: ObservableObject, Manager {
     @Published var eyeProjectorOpen: Bool = false {
         didSet {
             if !eyeProjectorOpen {
-                NSApplication.shared.windows.first(where: { $0.title == "Eye Projector" })?.close()
+                NSApplication.shared.windows.first(where: { $0.identifier?.rawValue == "eye-projector-window" })?.close()
             }
         }
     }
@@ -50,6 +50,8 @@ class ShortcutManager: ObservableObject, Manager {
             resizeTall()
         } else if type == .keyDown && settings.thinGKey.matches(event: key) {
             resizeThin()
+        } else if type == .keyDown && settings.tallNoSensGKey.matches(event: key) {
+            resizeTall(changeSens: false)
         } else if type == .keyDown && settings.sensitivityScalingGKey.matches(event: key) {
             Settings[\.utility].sensitivityScaleEnabled.toggle()
         } else {
@@ -174,20 +176,25 @@ class ShortcutManager: ObservableObject, Manager {
         resize(pid: pid, x: x, y: y, width: w, height: h)
     }
 
-    func resizeTall() {
+    func resizeTall(changeSens: Bool = true) {
         guard let pid = activeInstancePID() else { return }
         let (w, h, x, y) = Settings[\.self].tallDimensions(for: TrackingManager.shared.trackedInstances.first { $0.pid == pid })
-        if resize(pid: pid, x: x, y: y, width: w, height: h) == true {
-            if let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid }
-            ) {
-                ScreenRecorder.shared.eyeProjectedInstance = instance
-                Task(priority: .userInitiated) {
+        if resize(pid: pid, x: x, y: y, width: w, height: h) == true,
+            let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid })
+        {
+            print("Changing projected instance")
+            ScreenRecorder.shared.eyeProjectedInstance = instance
+            Task(priority: .userInitiated) {
+                if changeSens {
                     MouseSensitivityManager.shared.setSensitivityFactor(
                         factor: Settings[\.utility].sensitivityScale / Settings[\.utility].tallSensitivityFactor, if: Settings[\.utility].tallSensitivityFactorEnabled)
-                    await ScreenRecorder.shared.startEyeProjectorCapture(for: instance, mode: .tall)
-                    if Settings[\.utility].eyeProjectorShouldOpenWithTallMode {
-                        eyeProjectorOpen = true
-                    }
+                }
+                await ScreenRecorder.shared.startEyeProjectorCapture(
+                    for: instance,
+                    mode: changeSens ? .tall : .thin
+                )
+                if Settings[\.utility].eyeProjectorShouldOpenWithTallMode {
+                    eyeProjectorOpen = true
                 }
             }
         }

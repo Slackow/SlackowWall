@@ -21,6 +21,7 @@ extension Preferences {
         }
         // this should no longer be used, but keeping in case it needs to be re-introduced
         private var eyeProjectorWidth: Int = 60
+        var eyeProjectorOverlayOpacity: Double = 1.0
         var eyeProjectorHeightScale: Double = 0.2
 
         var sensitivityScaleEnabled: Bool = false

@@ -48,6 +48,16 @@ struct KeybindingsSettings: View {
 
                         KeybindingView(keybinding: \.tallGKey)
                     }
+                    
+                    Divider()
+
+                    HStack {
+                        SettingsLabel(
+                            title: "Toggle Tall Mode (No Modifiers)",
+                            description: "Enter tall mode without activating projector/lowering sens", font: .body)
+
+                        KeybindingView(keybinding: \.tallNoSensGKey)
+                    }
 
                     Divider()
 

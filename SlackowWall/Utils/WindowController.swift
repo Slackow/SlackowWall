@@ -197,8 +197,8 @@ class WindowController {
                         AXUIElementSetAttributeValue(
                             window, kAXPositionAttribute as CFString, positionRef)
                     }
-                    if let sizeRef = AXValueCreate(AXValueType.cgSize, &newSize), width != nil,
-                        height != nil, width! > 0, height! > 0
+                    if let sizeRef = AXValueCreate(AXValueType.cgSize, &newSize), let width,
+                        let height, width > 0, height > 0
                     {
                         AXUIElementSetAttributeValue(window, kAXSizeAttribute as CFString, sizeRef)
                     }

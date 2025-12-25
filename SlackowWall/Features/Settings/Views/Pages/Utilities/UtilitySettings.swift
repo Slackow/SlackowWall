@@ -113,6 +113,13 @@ struct UtilitySettings: View {
                             .frame(width: 60)
                             .disabled(!settings.eyeProjectorEnabled)
                         }
+                        Divider()
+                        HStack {
+                            SettingsLabel(title: "Overlay Opacity", font: .body)
+                            Text("\(Int(settings.eyeProjectorOverlayOpacity * 100))%")
+                            Slider(value: $settings.eyeProjectorOverlayOpacity, in: 0...1)
+                                .frame(width: 200)
+                        }
                     }
                 }
             }

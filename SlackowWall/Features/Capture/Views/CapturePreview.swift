@@ -11,12 +11,23 @@ struct CapturePreview: NSViewRepresentable {
 
     // A layer that renders the video contents.
     private let contentLayer = CALayer()
+    private var reframe: ((CapturedFrame, CALayer) -> Void)? = nil
+    
+    public mutating func onNewFrame(_ callback: @escaping (CapturedFrame, CALayer) -> Void) {
+        self.reframe = callback
+    }
 
     init() {
         contentLayer.contentsGravity = .resizeAspectFill
         contentLayer.magnificationFilter = .nearest
         contentLayer.minificationFilter = .nearest
         contentLayer.allowsEdgeAntialiasing = false
+        contentLayer.actions = [
+                "contents": NSNull(),
+                "contentsRect": NSNull(),
+                "bounds": NSNull(),
+                "position": NSNull()
+            ]
     }
 
     func makeNSView(context: Context) -> CaptureVideoPreview {
@@ -24,7 +35,16 @@ struct CapturePreview: NSViewRepresentable {
     }
 
     // Called by ScreenRecorder as it receives new video frames.
-    func updateFrame(_ frame: CapturedFrame) {
+    
+    static func surfaceSizePixels(_ surface: IOSurfaceRef) -> (w: Int, h: Int) {
+        (IOSurfaceGetWidth(surface), IOSurfaceGetHeight(surface))
+    }
+    
+    mutating func updateFrame(_ frame: CapturedFrame) {
+        if let reframe {
+            reframe(frame, contentLayer)
+            self.reframe = nil
+        }
         contentLayer.contents = frame.surface
     }
 
