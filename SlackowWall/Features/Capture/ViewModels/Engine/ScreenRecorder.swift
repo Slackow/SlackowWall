@@ -358,7 +358,7 @@ import SwiftUI
         } //  [oai_citation:1‡Apple Developer](https://developer.apple.com/documentation/screencapturekit/sccontentfilter/pointpixelscale)
 
         // Keep the crop rect in POINTS.
-        let cropWidthPts: CGFloat = eyeProjectorMode == .tall ? 60 : tallWidthPts
+        let cropWidthPts: CGFloat = eyeProjectorMode == .tall ? 60/retinoFactor : tallWidthPts
         let cropHeightPts: CGFloat = tallHeightPts
         let cropXPt: CGFloat = tallWidthPts/2 - cropWidthPts / 2  // same intent as "-30" centering
         let cropYPt: CGFloat = tallHeightPts/2 - cropHeightPts / 2
