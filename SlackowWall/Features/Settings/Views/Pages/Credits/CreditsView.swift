@@ -164,7 +164,8 @@ struct CreditsView: View {
             donationsTxt.split(whereSeparator: \.isNewline).forEach { line in
                 let splitLine = line.split(separator: ",", maxSplits: 2)
                 if splitLine.count == 2 {
-                    supporters.append(Supporter(name: String(splitLine[0]), uuid: String(splitLine[1])))
+                    supporters.append(
+                        Supporter(name: String(splitLine[0]), uuid: String(splitLine[1])))
                 }
             }
             self.supporters = supporters
@@ -184,14 +185,18 @@ struct CreditsView: View {
         writeSupportersToFile(supporters: donationsTxt)
         return donationsTxt
     }
-    
+
     private func supportersFromFile() -> String? {
-        return try? String(contentsOfFile: "~/Library/Application Support/SlackowWall/donations.txt", encoding: .utf8)
+        return try? String(
+            contentsOfFile: "~/Library/Application Support/SlackowWall/donations.txt",
+            encoding: .utf8)
     }
-    
+
     private func writeSupportersToFile(supporters: String) {
         guard !supporters.isEmpty else { return }
-        try? supporters.write(toFile: "~/Library/Application Support/SlackowWall/donations.txt", atomically: true, encoding: .utf8)
+        try? supporters.write(
+            toFile: "~/Library/Application Support/SlackowWall/donations.txt", atomically: true,
+            encoding: .utf8)
     }
 }
 

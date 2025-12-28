@@ -32,11 +32,14 @@ struct UtilitySettings: View {
             return nil
         }
         return trackingManager.trackedInstances.filter { instance in
-            guard let data = FileManager.default.contents(atPath: "\(instance.info.path)/options.txt"),
+            guard
+                let data = FileManager.default.contents(
+                    atPath: "\(instance.info.path)/options.txt"),
                 let file = String(data: data, encoding: .utf8),
-                  let match = (try? UtilitySettings.mouseSensTextRegex.firstMatch(in: file))?.output.1,
+                let match = (try? UtilitySettings.mouseSensTextRegex.firstMatch(in: file))?.output
+                    .1,
                 let sens = Double(match)
-             else {
+            else {
                 return false
             }
             // TODO: can't get sensitivity, what do I do?
@@ -135,18 +138,26 @@ struct UtilitySettings: View {
                                 }
                                 .buttonStyle(.plain)
                             }
-                            Button(settings.eyeProjectorOverlayImage.flatMap(\.lastPathComponent) ?? "Select Image") {
+                            Button(
+                                settings.eyeProjectorOverlayImage.flatMap(\.lastPathComponent)
+                                    ?? "Select Image"
+                            ) {
                                 showingOverlayFileImporter = true
                             }
-                            .fileImporter(isPresented: $showingOverlayFileImporter, allowedContentTypes: [.image], allowsMultipleSelection: false) { result in
+                            .fileImporter(
+                                isPresented: $showingOverlayFileImporter,
+                                allowedContentTypes: [.image], allowsMultipleSelection: false
+                            ) { result in
                                 switch result {
                                     case .success(let urls):
                                         settings.eyeProjectorOverlayImage = urls.first
                                     case .failure(let error):
-                                        LogManager.shared.appendLog("Failed to select overlay image", error.localizedDescription)
+                                        LogManager.shared.appendLog(
+                                            "Failed to select overlay image",
+                                            error.localizedDescription)
                                 }
                             }
-                            
+
                         }
                     }
                 }
@@ -171,40 +182,55 @@ struct UtilitySettings: View {
                     Group {
                         HStack {
                             SettingsLabel(title: "Simulated Sensitivity", font: .body)
-                            Text(sensitivityText(scaleToSens(scale: settings.sensitivityScale)+0.001))
+                            Text(
+                                sensitivityText(
+                                    scaleToSens(scale: settings.sensitivityScale) + 0.001)
+                            )
                             .opacity(sensFieldInFocus ? 0.2 : 1)
-                            .foregroundStyle(Color(nsColor: settings.sensitivityScaleEnabled ? .labelColor : .tertiaryLabelColor))
+                            .foregroundStyle(
+                                Color(
+                                    nsColor: settings.sensitivityScaleEnabled
+                                        ? .labelColor : .tertiaryLabelColor)
+                            )
                             .overlay {
-                                    TextField(
-                                        "", value: .init {sensFieldNum} set: { (n: Double?) in
-                                            sensFieldNum = n
-                                            if var n {
-                                                if n < 1 { n *= 200 }
-                                                settings.sensitivityScale = sensToScale(mcUnits: n)
-                                                MouseSensitivityManager.shared.setSensitivityFactor(
-                                                    factor: settings.sensitivityScale)
-                                            }
-                                        },
-                                        format: .number.grouping(.never)
-                                    )
-                                    .textFieldStyle(.plain)
-                                    .focused($sensFieldInFocus)
-                                    .onChange(of: sensFieldInFocus) { newValue in
-                                        if !newValue {
-                                            sensFieldNum = nil
+                                TextField(
+                                    "",
+                                    value: .init {
+                                        sensFieldNum
+                                    } set: { (n: Double?) in
+                                        sensFieldNum = n
+                                        if var n {
+                                            if n < 1 { n *= 200 }
+                                            settings.sensitivityScale = sensToScale(mcUnits: n)
+                                            MouseSensitivityManager.shared.setSensitivityFactor(
+                                                factor: settings.sensitivityScale)
                                         }
-                                    }
-                                    .onSubmit {
+                                    },
+                                    format: .number.grouping(.never)
+                                )
+                                .textFieldStyle(.plain)
+                                .focused($sensFieldInFocus)
+                                .onChange(of: sensFieldInFocus) { newValue in
+                                    if !newValue {
                                         sensFieldNum = nil
-                                        sensFieldInFocus = false
                                     }
+                                }
+                                .onSubmit {
+                                    sensFieldNum = nil
+                                    sensFieldInFocus = false
+                                }
                             }
-                            Slider(value: .init(get: {scaleToSens(scale: settings.sensitivityScale)}, set: {
-                                settings.sensitivityScale = sensToScale(mcUnits: $0)
-                            }), in: 0...200, onEditingChanged: { _ in
-                                MouseSensitivityManager.shared.setSensitivityFactor(
-                                    factor: settings.sensitivityScale)
-                            })
+                            Slider(
+                                value: .init(
+                                    get: { scaleToSens(scale: settings.sensitivityScale) },
+                                    set: {
+                                        settings.sensitivityScale = sensToScale(mcUnits: $0)
+                                    }), in: 0...200,
+                                onEditingChanged: { _ in
+                                    MouseSensitivityManager.shared.setSensitivityFactor(
+                                        factor: settings.sensitivityScale)
+                                }
+                            )
                             .frame(width: 200)
                             .frame(minHeight: 20)
                         }
@@ -214,22 +240,29 @@ struct UtilitySettings: View {
                             SettingsLabel(title: "BoatEye Sensitivity", font: .body)
                             Button(action: fixSensitivities) {
                                 if let wrongSensitivities, !wrongSensitivities.isEmpty {
-                                    let labels = wrongSensitivities.map{"\"\($0.name)\""}.joined(separator: ", ")
+                                    let labels = wrongSensitivities.map { "\"\($0.name)\"" }.joined(
+                                        separator: ", ")
                                     Image(systemName: "xmark.circle")
                                         .foregroundStyle(.red)
-                                        .popoverLabel("Instance(s) \(labels) are not using your BoatEye Sensitivity,\nWith this option enabled, this may cause mouse jittering\nClick to change the sensitivity (Minecraft will close)")
+                                        .popoverLabel(
+                                            "Instance(s) \(labels) are not using your BoatEye Sensitivity,\nWith this option enabled, this may cause mouse jittering\nClick to change the sensitivity (Minecraft will close)"
+                                        )
                                 } else {
                                     Image(systemName: "checkmark.circle")
                                         .foregroundStyle(.green)
-                                        .popoverLabel("Your instance(s) are using your BoatEye sensitivity")
+                                        .popoverLabel(
+                                            "Your instance(s) are using your BoatEye sensitivity")
                                 }
                             }.buttonStyle(.plain)
-                                .opacity(settings.sensitivityScaleEnabled && wrongSensitivities != nil ? 1 : 0)
+                                .opacity(
+                                    settings.sensitivityScaleEnabled && wrongSensitivities != nil
+                                        ? 1 : 0
+                                )
                                 .onChange(of: settings.sensitivityScaleEnabled) { newValue in
                                     if newValue {
                                         wrongSensitivities = getWrongSensitivities()
                                     }
-                                 }
+                                }
                                 .onChange(of: trackingManager.trackedInstances) { _ in
                                     wrongSensitivities = getWrongSensitivities()
                                 }
@@ -242,14 +275,17 @@ struct UtilitySettings: View {
                                     }
                                 }
                             TextField(
-                                "", value: .init(get: {
-                                    settings.boatEyeSensitivity
-                                }, set: {
-                                    settings.boatEyeSensitivity = $0
+                                "",
+                                value: .init(
+                                    get: {
+                                        settings.boatEyeSensitivity
+                                    },
+                                    set: {
+                                        settings.boatEyeSensitivity = $0
 
-                                    MouseSensitivityManager.shared.setSensitivityFactor(
-                                        factor: settings.sensitivityScale)
-                                }),
+                                        MouseSensitivityManager.shared.setSensitivityFactor(
+                                            factor: settings.sensitivityScale)
+                                    }),
                                 format: .number.grouping(.never).precision(.fractionLength(0...10))
                             )
                             .textFieldStyle(.roundedBorder)
@@ -268,9 +304,13 @@ struct UtilitySettings: View {
                         Divider()
                     }.disabled(!settings.sensitivityScaleEnabled)
                     HStack {
-                        SettingsLabel(title: "Tall Mode Sensitivity Scale", description: """
-                            Lower sensitivity by \(settings.tallSensitivityFactor)x while in tall mode.
-                            """, font: .body)
+                        SettingsLabel(
+                            title: "Tall Mode Sensitivity Scale",
+                            description: """
+                                Lower sensitivity by \(settings.tallSensitivityFactor)x while in \
+                                tall mode.
+                                """, font: .body
+                        )
                         .contentTransition(.numericText())
                         .animation(.smooth, value: tallSensitivityFactor)
                         Toggle("", isOn: $settings.tallSensitivityFactorEnabled)
@@ -284,18 +324,23 @@ struct UtilitySettings: View {
                         .foregroundColor((0.05...100 ~= tallSensitivityFactor) ? .primary : .red)
                         .frame(width: 100)
                         .onChange(of: tallSensitivityFactor) { newValue in
-                            Settings[\.utility].tallSensitivityFactor = (0.05...100).clamped(value: newValue)
+                            Settings[\.utility].tallSensitivityFactor = (0.05...100).clamped(
+                                value: newValue)
                         }
                         .disabled(!settings.tallSensitivityFactorEnabled)
                     }
                 }
             }
             SettingsCardView {
-                SettingsLinkView(title: "Paceman Tracker\(pacemanManager.pacemanConfig.accessKey.isEmpty ? "" : pacemanManager.isRunning ? " (active)" : " (inactive)")", destination: PacemanSettings.init)
+                SettingsLinkView(
+                    title:
+                        "Paceman Tracker\(pacemanManager.pacemanConfig.accessKey.isEmpty ? "" : pacemanManager.isRunning ? " (active)" : " (inactive)")",
+                    destination: PacemanSettings.init)
             }
 
             SettingsCardView {
-                SettingsLinkView(title: "Startup Applications", destination: StartupAppSettings.init)
+                SettingsLinkView(
+                    title: "Startup Applications", destination: StartupAppSettings.init)
             }
         }
     }
@@ -330,8 +375,8 @@ struct UtilitySettings: View {
 
     private func scaleToSens(scale: Double) -> Double {
         let baseLinear = fractionToLinear(settings.boatEyeSensitivity)
-        let newLinear  = baseLinear * scale
-        let sNew       = linearToFraction(newLinear)
+        let newLinear = baseLinear * scale
+        let sNew = linearToFraction(newLinear)
         return fractionToUI(sNew)
     }
 
@@ -345,8 +390,12 @@ struct UtilitySettings: View {
             let standardSettingsTxt = "\(path)/config/standardoptions.txt"
             let standardSettingsJson = "\(path)/config/mcsr/standardsettings.json"
             let hasStandardSettings = inst.info.mods.map(\.id).contains("standardsettings")
-            if hasStandardSettings && !(fm.fileExists(atPath: standardSettingsJson) || fm.fileExists(atPath: standardSettingsTxt)) {
-                LogManager.shared.appendLog("Cannot figure out how to fix standard settings \(inst.name), skipping.")
+            if hasStandardSettings
+                && !(fm.fileExists(atPath: standardSettingsJson)
+                    || fm.fileExists(atPath: standardSettingsTxt))
+            {
+                LogManager.shared.appendLog(
+                    "Cannot figure out how to fix standard settings \(inst.name), skipping.")
                 continue
             }
             trackingManager.kill(instance: inst)
@@ -355,37 +404,50 @@ struct UtilitySettings: View {
                 let replacement = contents.replacing(UtilitySettings.mouseSensTextRegex) { _ in
                     "mouseSensitivity:\(boatEyeSensitivity)"
                 }
-                try replacement.write(to: URL(filePath: optionsPath), atomically: true, encoding: .utf8)
-                LogManager.shared.appendLog("Wrote \(boatEyeSensitivity) to options.txt \(inst.name)")
+                try replacement.write(
+                    to: URL(filePath: optionsPath), atomically: true, encoding: .utf8)
+                LogManager.shared.appendLog(
+                    "Wrote \(boatEyeSensitivity) to options.txt \(inst.name)")
             } catch {
-                LogManager.shared.appendLog("Failed to write to options.txt \(inst.name), skipping.")
+                LogManager.shared.appendLog(
+                    "Failed to write to options.txt \(inst.name), skipping.")
             }
             if hasStandardSettings {
                 do {
-                    let rootStandardSettingsTxt = followStandardSettingsTxt(path: URL(filePath: standardSettingsTxt))
+                    let rootStandardSettingsTxt = followStandardSettingsTxt(
+                        path: URL(filePath: standardSettingsTxt))
                     let contents = try String(contentsOf: rootStandardSettingsTxt, encoding: .utf8)
                     let replacement = contents.replacing(UtilitySettings.mouseSensTextRegex) { _ in
                         "mouseSensitivity:\(boatEyeSensitivity)"
                     }
-                    try replacement.write(to: URL(filePath: standardSettingsTxt), atomically: true, encoding: .utf8)
-                    LogManager.shared.appendLog("Wrote \(boatEyeSensitivity) to standardoptions.txt \(inst.name)")
+                    try replacement.write(
+                        to: URL(filePath: standardSettingsTxt), atomically: true, encoding: .utf8)
+                    LogManager.shared.appendLog(
+                        "Wrote \(boatEyeSensitivity) to standardoptions.txt \(inst.name)")
                 } catch {
-                    LogManager.shared.appendLog("Failed to write to standardoptions.txt \(inst.name), skipping.")
+                    LogManager.shared.appendLog(
+                        "Failed to write to standardoptions.txt \(inst.name), skipping.")
                 }
                 do {
                     // TODO: The logic for JSON file
-                    let contents = try Data(contentsOf: URL(filePath:standardSettingsJson))
-                    let json = (try JSONSerialization.jsonObject(with: contents, options: [])) as? [String:Any]
+                    let contents = try Data(contentsOf: URL(filePath: standardSettingsJson))
+                    let json =
+                        (try JSONSerialization.jsonObject(with: contents, options: []))
+                        as? [String: Any]
                     guard var json else {
-                        LogManager.shared.appendLog("Failed to read to standardsettings.json \(inst.name), skipping.")
+                        LogManager.shared.appendLog(
+                            "Failed to read to standardsettings.json \(inst.name), skipping.")
                         continue
                     }
                     json["mouseSensitivity"] = ["value": boatEyeSensitivity, "enabled": true]
-                    let replacement = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
+                    let replacement = try JSONSerialization.data(
+                        withJSONObject: json, options: .prettyPrinted)
                     try replacement.write(to: URL(filePath: standardSettingsJson))
-                    LogManager.shared.appendLog("Wrote \(boatEyeSensitivity) to standardsettings.json \(inst.name)")
+                    LogManager.shared.appendLog(
+                        "Wrote \(boatEyeSensitivity) to standardsettings.json \(inst.name)")
                 } catch {
-                    LogManager.shared.appendLog("Failed to write to standardsettings.json \(inst.name), skipping.")
+                    LogManager.shared.appendLog(
+                        "Failed to write to standardsettings.json \(inst.name), skipping.")
                 }
             }
 
@@ -393,7 +455,9 @@ struct UtilitySettings: View {
     }
 
     private func followStandardSettingsTxt(path: URL) -> URL {
-        if let content = (try? String(contentsOf: path, encoding: .utf8))?.components(separatedBy: "\n").first,
+        if let content = (try? String(contentsOf: path, encoding: .utf8))?.components(
+            separatedBy: "\n"
+        ).first,
             FileManager.default.fileExists(atPath: content)
         {
             followStandardSettingsTxt(path: URL(filePath: content))
@@ -409,4 +473,3 @@ struct UtilitySettings: View {
             .padding()
     }
 }
-

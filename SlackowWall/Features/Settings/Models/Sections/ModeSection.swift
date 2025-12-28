@@ -24,7 +24,7 @@ extension Preferences {
         var thinMode: SizeMode = .init()
 
         var tallMode: SizeMode = .init()
-        
+
         var resetMode: SizeMode = .init()
 
         init() {}

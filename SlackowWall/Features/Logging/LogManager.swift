@@ -84,10 +84,13 @@ class LogManager {
         }
     }
 
-    @discardableResult func logPath(_ path: String, showInConsole: Bool = true, includeTimestamp: Bool = true) -> Self {
+    @discardableResult func logPath(
+        _ path: String, showInConsole: Bool = true, includeTimestamp: Bool = true
+    ) -> Self {
         let homeDirectory = FileManager.default.homeDirectoryForCurrentUser.path
         let sanitizedPath = path.replacingOccurrences(of: homeDirectory, with: "~")
-        return appendLog(sanitizedPath, showInConsole: showInConsole, includeTimestamp: includeTimestamp)
+        return appendLog(
+            sanitizedPath, showInConsole: showInConsole, includeTimestamp: includeTimestamp)
     }
 
     @discardableResult func appendLog(
@@ -135,7 +138,6 @@ class LogManager {
 
             let data = Data(titleWithNewline.utf8)
             try fileHandle.write(contentsOf: data)
-            
 
         } catch {
             print("Failed to write to log file: \(error)")
@@ -198,7 +200,9 @@ class LogManager {
             appendLog("App Version: Unknown", showInConsole: false, includeTimestamp: false)
         }
         if let hiDPI = NSScreen.primary?.backingScaleFactor {
-            appendLog("Scaling: \(hiDPI == 1 ? "LoDPI" : "HiDPI") (\(hiDPI))", showInConsole: false, includeTimestamp: false)
+            appendLog(
+                "Scaling: \(hiDPI == 1 ? "LoDPI" : "HiDPI") (\(hiDPI))", showInConsole: false,
+                includeTimestamp: false)
         }
 
         appendLogNewLine()
@@ -277,11 +281,12 @@ class LogManager {
             callback(message, nil)
         }
     }
-    
+
     func logNinbotSettings() {
         appendLogNewLine()
         appendLog("Ninjabrain Bot Settings")
-        let plistPath = ("~/Library/Preferences/com.apple.java.util.prefs.plist" as NSString).expandingTildeInPath
+        let plistPath = ("~/Library/Preferences/com.apple.java.util.prefs.plist" as NSString)
+            .expandingTildeInPath
         let keyPathComponents = ["/", "ninjabrainbot/"]
         func value(at path: [String], in object: Any) -> Any? {
             var current: Any? = object
@@ -293,44 +298,51 @@ class LogManager {
         }
         func prettyJSONString(from any: Any) -> String? {
             // If it's Data, try JSON -> pretty string
-            let options: JSONSerialization.WritingOptions = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes, .fragmentsAllowed]
+            let options: JSONSerialization.WritingOptions = [
+                .prettyPrinted, .sortedKeys, .withoutEscapingSlashes, .fragmentsAllowed,
+            ]
             if let data = any as? Data {
                 if let obj = try? JSONSerialization.jsonObject(with: data),
-                   JSONSerialization.isValidJSONObject(obj),
-                   let pretty = try? JSONSerialization.data(withJSONObject: obj, options: options),
-                   let s = String(data: pretty, encoding: .utf8) {
+                    JSONSerialization.isValidJSONObject(obj),
+                    let pretty = try? JSONSerialization.data(withJSONObject: obj, options: options),
+                    let s = String(data: pretty, encoding: .utf8)
+                {
                     return s
                 }
             }
             // If it's String, try parse as JSON first, else return raw string
             if let s = any as? String {
                 if let obj = try? JSONSerialization.jsonObject(with: Data(s.utf8)),
-                   JSONSerialization.isValidJSONObject(obj),
-                   let pretty = try? JSONSerialization.data(withJSONObject: obj, options: options),
-                   let prettyStr = String(data: pretty, encoding: .utf8) {
+                    JSONSerialization.isValidJSONObject(obj),
+                    let pretty = try? JSONSerialization.data(withJSONObject: obj, options: options),
+                    let prettyStr = String(data: pretty, encoding: .utf8)
+                {
                     return prettyStr
                 }
                 return s
             }
             // If it's already a plist dictionary/array, convert via JSONSerialization for readability
             if let dict = any as? [String: Any],
-               let data = try? JSONSerialization.data(withJSONObject: dict, options: options),
-               let s = String(data: data, encoding: .utf8) {
+                let data = try? JSONSerialization.data(withJSONObject: dict, options: options),
+                let s = String(data: data, encoding: .utf8)
+            {
                 return s
             }
             if let arr = any as? [Any],
-               let data = try? JSONSerialization.data(withJSONObject: arr, options: options),
-               let s = String(data: data, encoding: .utf8) {
+                let data = try? JSONSerialization.data(withJSONObject: arr, options: options),
+                let s = String(data: data, encoding: .utf8)
+            {
                 return s
             }
             return nil
         }
         let plistURL = URL(filePath: plistPath)
         guard let data = try? Data(contentsOf: plistURL),
-            let plist = try? PropertyListSerialization.propertyList(from: data, options: [], format: nil),
+            let plist = try? PropertyListSerialization.propertyList(
+                from: data, options: [], format: nil),
             let v = value(at: keyPathComponents, in: plist),
             let logOutput = prettyJSONString(from: v)
-            else { return }
+        else { return }
         logPath(logOutput, includeTimestamp: false)
     }
 
@@ -344,7 +356,8 @@ class LogManager {
             let data = try JSONEncoder().encode(prefs)
             let json = try JSONSerialization.jsonObject(with: data)
             let prettyJSONData = try JSONSerialization.data(
-                withJSONObject: json, options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes, .fragmentsAllowed])
+                withJSONObject: json,
+                options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes, .fragmentsAllowed])
             let prettyJSON =
                 String(data: prettyJSONData, encoding: .utf8)
                 ?? "Data could not be converted to string"

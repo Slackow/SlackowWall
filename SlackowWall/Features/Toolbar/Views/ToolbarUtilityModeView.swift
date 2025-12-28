@@ -27,4 +27,3 @@ struct ToolbarUtilityModeView: View {
         .onHover { isHovered = $0 }
     }
 }
-

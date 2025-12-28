@@ -5,14 +5,14 @@
 //  Created by Andrew on 9/7/25.
 //
 
-import SwiftUI
 import AppKit
+import SwiftUI
 
 /// macOS-only URL manager using NSOpenPanel for adding files/folders.
 struct FileListView: View {
     @Binding var urls: [URL]
 
-    @State private var selection = Set<URL>()   // multi-select of items in the list
+    @State private var selection = Set<URL>()  // multi-select of items in the list
 
     var body: some View {
         VStack(spacing: 12) {
@@ -60,7 +60,7 @@ struct FileListView: View {
                 } label: {
                     Label("Add", systemImage: "plus")
                 }
-                .keyboardShortcut(.init("n"), modifiers: [.command]) // ⌘N to add
+                .keyboardShortcut(.init("n"), modifiers: [.command])  // ⌘N to add
 
                 Button(role: .destructive) {
                     removeSelected()
@@ -68,7 +68,7 @@ struct FileListView: View {
                     Label("Remove", systemImage: "minus")
                 }
                 .disabled(selection.isEmpty)
-                .keyboardShortcut(.delete, modifiers: []) // ⌫ to remove
+                .keyboardShortcut(.delete, modifiers: [])  // ⌫ to remove
 
                 Spacer()
                 Text("\(urls.count) item\(urls.count == 1 ? "" : "s")")
@@ -85,7 +85,7 @@ struct FileListView: View {
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = true
         panel.canChooseFiles = true
-        panel.canChooseDirectories = true     // toggle off if you only want files
+        panel.canChooseDirectories = true  // toggle off if you only want files
         panel.canCreateDirectories = false
         panel.resolvesAliases = true
         panel.treatsFilePackagesAsDirectories = false

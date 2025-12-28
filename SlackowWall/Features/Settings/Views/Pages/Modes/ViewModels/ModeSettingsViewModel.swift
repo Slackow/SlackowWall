@@ -28,11 +28,13 @@ class ModeSettingsViewModel: ObservableObject {
     var multipleOutOfBounds: Bool {
         let p = Settings[\.self]
         let dimensions = [
-            p.baseDimensions, p.tallDimensions(for: TrackingManager.shared.trackedInstances.first), p.thinDimensions, p.wideDimensions, p.resetDimensions
+            p.baseDimensions, p.tallDimensions(for: TrackingManager.shared.trackedInstances.first),
+            p.thinDimensions, p.wideDimensions, p.resetDimensions,
         ]
-        return dimensions.filter({(w, h, _, _) in
-            !WindowController.dimensionsInBounds(width: w.map(Int.init), height: h.map(Int.init)) })
-            .count >= 2
+        return dimensions.filter({ (w, h, _, _) in
+            !WindowController.dimensionsInBounds(width: w.map(Int.init), height: h.map(Int.init))
+        })
+        .count >= 2
     }
 
     init() {

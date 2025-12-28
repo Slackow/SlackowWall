@@ -29,7 +29,7 @@ extension SCDisplay {
     }
 }
 
-internal extension NSScreen {
+extension NSScreen {
     static var primary: NSScreen? {
         return NSScreen.screens.first
     }

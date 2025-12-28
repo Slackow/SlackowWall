@@ -12,7 +12,7 @@ struct ModMenu: View {
 
     var instance: TrackedInstance
     @StateObject var viewModel = ModListViewModel()
-    
+
     @State var modsToUpdate: [(ModInfo, ModVersion)]?
     @State var legalModCount: Int?
     @State var isChecking: Bool = false
@@ -108,13 +108,19 @@ struct ModMenu: View {
             isPresented: $isConfirmationOpen,
             titleVisibility: .visible
         ) {
-            Button("Update") { Task {
-                (succeededToUpdate, failedToUpdate) = await ModChecking.updateMods(instance: instance, mods: modsToUpdate ?? [])
-                if let failedToUpdate, !failedToUpdate.isEmpty {
-                    let successCount = succeededToUpdate?.count ?? 0
-                    AlertManager.shared.dismissableError(message:  "Updated \(successCount) mods. Failed to update \(failedToUpdate.map(\.0.id).sorted().joined(separator: ", "))")
+            Button("Update") {
+                Task {
+                    (succeededToUpdate, failedToUpdate) = await ModChecking.updateMods(
+                        instance: instance, mods: modsToUpdate ?? [])
+                    if let failedToUpdate, !failedToUpdate.isEmpty {
+                        let successCount = succeededToUpdate?.count ?? 0
+                        AlertManager.shared.dismissableError(
+                            message:
+                                "Updated \(successCount) mods. Failed to update \(failedToUpdate.map(\.0.id).sorted().joined(separator: ", "))"
+                        )
+                    }
                 }
-            } }
+            }
             Button("Cancel", role: .cancel) { modsToUpdate = nil }
         } message: {
             Text("Update \(modsToUpdate?.map {$0.0.id}.sorted().joined(separator: ", ") ?? "")?")
@@ -129,15 +135,16 @@ struct ModMenu: View {
             isPresented: $isFailedModListErrorOpen,
             actions: { Button("OK", role: .cancel) {} }
         )
-        
+
     }
-    
+
     func updateCheck() {
         isChecking = true
         Task {
             defer { isChecking = false }
             do {
-                (modsToUpdate, legalModCount) = try await ModChecking.modsToUpdate(info: instance.info)
+                (modsToUpdate, legalModCount) = try await ModChecking.modsToUpdate(
+                    info: instance.info)
                 if modsToUpdate?.isEmpty == true {
                     try? await Task.sleep(for: .seconds(0.5))
                     isUpToDateOpen = true

@@ -46,7 +46,7 @@ class CaptureEngine: NSObject, @unchecked Sendable {
             let streamOutput = CaptureEngineStreamOutput(continuation: continuation)
             streamOutputs.append(streamOutput)
             streamOutput.capturedFrameHandler = { continuation.yield($0) }
-            
+
             do {
                 let stream = SCStream(
                     filter: filter, configuration: configuration, delegate: streamOutput)
@@ -61,7 +61,7 @@ class CaptureEngine: NSObject, @unchecked Sendable {
             }
         }
     }
-    
+
     func startTask(task: @escaping () async throws -> Void) {
         tasks.append(Task { try await task() })
     }

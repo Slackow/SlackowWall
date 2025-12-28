@@ -57,7 +57,7 @@ struct PrismQuickLaunchView: View {
                             Text("Pinned")
                                 .font(.headline)
                                 .padding(.horizontal)
-                            
+
                             LazyVGrid(columns: grid, spacing: 16) {
                                 ForEach(store.favorites) { inst in
                                     PrismInstanceCell(
@@ -69,11 +69,11 @@ struct PrismQuickLaunchView: View {
                             }
                             .padding(.horizontal)
                         }
-                        
+
                         Text("All Instances")
                             .font(.headline)
                             .padding(.horizontal)
-                        
+
                         LazyVGrid(columns: grid, spacing: 16) {
                             ForEach(filteredInstances) { inst in
                                 PrismInstanceCell(

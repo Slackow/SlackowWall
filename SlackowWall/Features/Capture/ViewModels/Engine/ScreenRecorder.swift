@@ -163,11 +163,12 @@ import SwiftUI
 
         for instance in trackingManager.trackedInstances {
             guard let filter = instance.stream.captureFilter else { continue }
-            let rect = if #available(macOS 14.0, *) {
-                filter.contentRect
-            } else {
-                CGRect(origin: .zero, size: .init(width: 1920, height: 1080))
-            }
+            let rect =
+                if #available(macOS 14.0, *) {
+                    filter.contentRect
+                } else {
+                    CGRect(origin: .zero, size: .init(width: 1920, height: 1080))
+                }
             let streamConfiguration = createStreamConfiguration(
                 width: rect.width, height: rect.height)
 
@@ -351,17 +352,18 @@ import SwiftUI
         let usingRetino = instance.info.mods.map(\.id).contains("retino")
         let factor = min(NSScreen.primary?.backingScaleFactor ?? 1, 16384.0 / tallHeightPts)
         let retinoFactor = usingRetino ? 1.0 : factor
-        let s = if #available(macOS 14.0, *) {
-            CGFloat(filter.pointPixelScale)
-        } else {
-            factor
-        } //  [oai_citation:1‡Apple Developer](https://developer.apple.com/documentation/screencapturekit/sccontentfilter/pointpixelscale)
+        let s =
+            if #available(macOS 14.0, *) {
+                CGFloat(filter.pointPixelScale)
+            } else {
+                factor
+            }  //  [oai_citation:1‡Apple Developer](https://developer.apple.com/documentation/screencapturekit/sccontentfilter/pointpixelscale)
 
         // Keep the crop rect in POINTS.
-        let cropWidthPts: CGFloat = eyeProjectorMode == .tall ? 60/retinoFactor : tallWidthPts
+        let cropWidthPts: CGFloat = eyeProjectorMode == .tall ? 60 / retinoFactor : tallWidthPts
         let cropHeightPts: CGFloat = tallHeightPts
-        let cropXPt: CGFloat = tallWidthPts/2 - cropWidthPts / 2  // same intent as "-30" centering
-        let cropYPt: CGFloat = tallHeightPts/2 - cropHeightPts / 2
+        let cropXPt: CGFloat = tallWidthPts / 2 - cropWidthPts / 2  // same intent as "-30" centering
+        let cropYPt: CGFloat = tallHeightPts / 2 - cropHeightPts / 2
 
         let streamConfig = SCStreamConfiguration()
         streamConfig.capturesAudio = false
@@ -372,14 +374,16 @@ import SwiftUI
         streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: 30)
 
         // sourceRect is in screen points (same space as contentRect).  [oai_citation:2‡Apple Developer](https://developer.apple.com/documentation/screencapturekit/sccontentfilter/contentrect?language=objc)
-        streamConfig.sourceRect = CGRect(x: cropXPt, y: cropYPt, width: cropWidthPts, height: cropHeightPts)
+        streamConfig.sourceRect = CGRect(
+            x: cropXPt, y: cropYPt, width: cropWidthPts, height: cropHeightPts)
 
         // output width/height should be pixels, so scale it.
-        streamConfig.width  = Int(cropWidthPts * s)
+        streamConfig.width = Int(cropWidthPts * s)
         streamConfig.height = Int(cropHeightPts * s)
-        
+
         if eyeProjectorMode == .thin {
-            instance.eyeProjectorStream.capturePreview.onNewFrame { (frame: CapturedFrame, contentLayer: CALayer) in
+            instance.eyeProjectorStream.capturePreview.onNewFrame {
+                (frame: CapturedFrame, contentLayer: CALayer) in
                 guard let surface = frame.surface else { return }
 
                 let (W, H) = CapturePreview.surfaceSizePixels(surface)
@@ -387,7 +391,7 @@ import SwiftUI
                 // Desired crop size in pixels inside the captured surface
                 let factor = min(usingRetino ? 2 : 1, Int(factor))
                 let cropWPx = 340 * factor
-                let cropHPx = 340 * factor // pick what you want to display
+                let cropHPx = 340 * factor  // pick what you want to display
 
                 // Bottom-right anchor in pixels
                 let cropXPx = max(0, W - cropWPx)
@@ -404,7 +408,8 @@ import SwiftUI
                 contentLayer.contentsRect = CGRect(x: x, y: y, width: w, height: h)
             }
         } else {
-            instance.eyeProjectorStream.capturePreview.onNewFrame { (frame: CapturedFrame, contentLayer: CALayer) in
+            instance.eyeProjectorStream.capturePreview.onNewFrame {
+                (frame: CapturedFrame, contentLayer: CALayer) in
                 contentLayer.contentsRect = CGRect(x: 0, y: 0, width: 1, height: 1)
             }
         }
@@ -412,12 +417,13 @@ import SwiftUI
         // Keep your captureRect consistent (pick points or pixels; this uses points).
 
         if #available(macOS 14.0, *) {
-            LogManager.shared.appendLog("Starting Eye Projector: dim:(", tallWidthPts, "x", tallHeightPts, ") factor:", factor, s, "usingRetino:", usingRetino, "rects: source", streamConfig.sourceRect, "content", filter.contentRect)
+            LogManager.shared.appendLog(
+                "Starting Eye Projector: dim:(", tallWidthPts, "x", tallHeightPts, ") factor:",
+                factor, s, "usingRetino:", usingRetino, "rects: source", streamConfig.sourceRect,
+                "content", filter.contentRect)
         } else {
             // Fallback on earlier versions
         }
-
-
 
         // Store the filter and create dedicated capture engine
         eyeProjectorFilter = filter
@@ -456,4 +462,3 @@ import SwiftUI
         LogManager.shared.appendLog("Started eye projector capture for instance \(instance.pid)")
     }
 }
-

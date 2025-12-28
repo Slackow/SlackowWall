@@ -25,7 +25,8 @@ struct ModeCardView: View {
     }
 
     private var insideWindowFrame: Bool {
-        WindowController.dimensionsInBounds(width: Int(actualDimensions.0 ?? 0), height: Int(actualDimensions.1 ?? 0))
+        WindowController.dimensionsInBounds(
+            width: Int(actualDimensions.0 ?? 0), height: Int(actualDimensions.1 ?? 0))
     }
 
     private var boundlessWarning: Bool {
@@ -34,9 +35,10 @@ struct ModeCardView: View {
     }
 
     private var hasResetDimensions: Bool {
-        return (Settings[\.mode].baseMode.width ?? 0) > 0 && (Settings[\.mode].baseMode.height ?? 0) > 0
+        return (Settings[\.mode].baseMode.width ?? 0) > 0
+            && (Settings[\.mode].baseMode.height ?? 0) > 0
     }
-    
+
     private var dimensionSummary: String {
         let (w, h, x, y) = actualDimensions
         let width = (w?.str).map { mode.width != nil ? "\($0)*" : $0 } ?? "--"
@@ -52,11 +54,15 @@ struct ModeCardView: View {
                 VStack(spacing: isExpanded ? 8 : 4) {
                     VStack(spacing: 3) {
                         HStack {
-                            Text(.init("\(name) Mode\(isGameplayMode && !containsDimensions ? " [*](0)" : "")\(isExpanded ? "" : " → \(dimensionSummary)")"))
-                                .fontWeight(.semibold)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .tint(containsDimensions ? .orange : .red)
-                                .allowsHitTesting(false)
+                            Text(
+                                .init(
+                                    "\(name) Mode\(isGameplayMode && !containsDimensions ? " [*](0)" : "")\(isExpanded ? "" : " → \(dimensionSummary)")"
+                                )
+                            )
+                            .fontWeight(.semibold)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .tint(containsDimensions ? .orange : .red)
+                            .allowsHitTesting(false)
                             if !isGameplayMode {
                                 Button(action: { isExpanded.toggle() }) {
                                     Image(systemName: isExpanded ? "chevron.down" : "chevron.left")
@@ -93,7 +99,7 @@ struct ModeCardView: View {
                                 .textFieldStyle(.roundedBorder)
                                 .foregroundStyle(.primary)
                                 .frame(width: 80)
-                                
+
                                 TextField(
                                     "H", value: $mode.height, format: .number.grouping(.never),
                                     prompt: Text(actualDimensions.1?.str ?? "")
@@ -102,7 +108,7 @@ struct ModeCardView: View {
                                 .foregroundStyle(.primary)
                                 .frame(width: 80)
                             }
-                            
+
                             HStack {
                                 TextField(
                                     "X", value: $mode.x, format: .number.grouping(.never),
@@ -110,7 +116,7 @@ struct ModeCardView: View {
                                 )
                                 .textFieldStyle(.roundedBorder)
                                 .frame(width: 80)
-                                
+
                                 TextField(
                                     "Y", value: $mode.y, format: .number.grouping(.never),
                                     prompt: Text(actualDimensions.3?.str ?? posHints.1)
@@ -132,20 +138,22 @@ struct ModeCardView: View {
             .animation(.easeInOut, value: boundlessWarning)
         }
     }
-    
+
     var actionRow: some View {
         HStack {
             if isGameplayMode {
                 Button("Full Monitor", systemImage: "document.on.document", action: copyFrame)
                     .popoverLabel("Set Gameplay to take up the entire monitor")
-                Button("Visible Frame", systemImage: "document.on.document", action: copyVisibleFrame)
-                    .popoverLabel("Uses current screen, accounting for the Dock and Menu Bar")
+                Button(
+                    "Visible Frame", systemImage: "document.on.document", action: copyVisibleFrame
+                )
+                .popoverLabel("Uses current screen, accounting for the Dock and Menu Bar")
             }
-            
+
             if let keybind {
                 KeybindingView(keybinding: keybind)
             }
-            
+
             Button(action: tryDimension) {
                 Text("Try")
             }.disabled(!containsDimensions)
@@ -154,7 +162,7 @@ struct ModeCardView: View {
     }
 
     private func tryDimension() {
-        guard case let (.some(w), .some(h), x, y) = actualDimensions else { return }
+        guard case (.some(let w), .some(let h), let x, let y) = actualDimensions else { return }
         trackingManager.trackedInstances.forEach { inst in
             ShortcutManager.shared.resize(
                 pid: inst.pid, x: x, y: y, width: w, height: h, force: true)
@@ -179,8 +187,8 @@ struct ModeCardView: View {
     }
 }
 
-private extension CGFloat {
-    var str: String {
+extension CGFloat {
+    fileprivate var str: String {
         Int(self).description
     }
 }

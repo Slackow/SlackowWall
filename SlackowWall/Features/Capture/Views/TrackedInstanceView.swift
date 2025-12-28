@@ -15,7 +15,7 @@ struct TrackedInstanceView: View {
     private var hasStreamError: Bool {
         return ScreenRecorder.shared.needsRecordingPerms && instance.stream.streamError != nil
     }
-    
+
     @AppSettings(\.behavior)
     var settings
 

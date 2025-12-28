@@ -26,11 +26,15 @@ extension Preferences {
         let m = mode.baseMode
         return (m.width.cg, m.height.cg, m.x.cg, m.y.cg)
     }
-    
+
     var tallWidth: CGFloat { mode.tallMode.width.cg ?? 384 }
 
-    func tallDimensions(for instance: TrackedInstance? = nil) -> (CGFloat, CGFloat, CGFloat?, CGFloat?) {
-        let noDPI = (instance?.info.mods.map(\.id).contains("retino") ?? false) || NSScreen.primary?.backingScaleFactor == 1
+    func tallDimensions(for instance: TrackedInstance? = nil) -> (
+        CGFloat, CGFloat, CGFloat?, CGFloat?
+    ) {
+        let noDPI =
+            (instance?.info.mods.map(\.id).contains("retino") ?? false)
+            || NSScreen.primary?.backingScaleFactor == 1
         let m = mode.tallMode
         return (
             tallWidth,

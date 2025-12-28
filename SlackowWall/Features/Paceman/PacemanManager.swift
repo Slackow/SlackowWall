@@ -10,7 +10,8 @@ import Foundation
 class PacemanManager: Manager, ObservableObject {
     static let shared = PacemanManager()
 
-    let configPath = FileManager.default.homeDirectoryForCurrentUser.appending(path: ".config/PaceMan/options.json")
+    let configPath = FileManager.default.homeDirectoryForCurrentUser.appending(
+        path: ".config/PaceMan/options.json")
 
     var pacemanConfig: PacemanConfig {
         didSet {

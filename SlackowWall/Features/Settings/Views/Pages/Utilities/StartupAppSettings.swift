@@ -8,16 +8,21 @@
 import SwiftUI
 
 struct StartupAppSettings: View {
-    
+
     @AppSettings(\.utility) var settings
-    
+
     var body: some View {
         VStack {
-            SettingsLabel(title: "Startup Applications", description: "Enable launching apps/jars automatically when starting SlackowWall (they will not close with it).")
-            
+            SettingsLabel(
+                title: "Startup Applications",
+                description:
+                    "Enable launching apps/jars automatically when starting SlackowWall (they will not close with it)."
+            )
+
             SettingsCardView {
                 VStack {
-                    SettingsToggleView(title: "Enabled", option: $settings.startupApplicationEnabled)
+                    SettingsToggleView(
+                        title: "Enabled", option: $settings.startupApplicationEnabled)
                     FileListView(urls: $settings.startupApplications)
                         .disabled(!settings.startupApplicationEnabled)
                 }

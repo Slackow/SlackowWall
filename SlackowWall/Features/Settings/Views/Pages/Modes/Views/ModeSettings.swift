@@ -56,14 +56,16 @@ struct ModeSettings: View {
             ModeCardView(
                 name: "Tall",
                 description: "Tall is generally used for eye measuring or zoom.",
-                actualDimensions: Settings[\.self].tallDimensions(for: TrackingManager.shared.trackedInstances.first),
+                actualDimensions: Settings[\.self].tallDimensions(
+                    for: TrackingManager.shared.trackedInstances.first),
                 keybind: $keybinds.tallGKey,
                 mode: $settings.tallMode
             )
 
             ModeCardView(
                 name: "Thin",
-                description: "Thin is generally used for buried treasures, preemptive, and/or e-ray.",
+                description:
+                    "Thin is generally used for buried treasures, preemptive, and/or e-ray.",
                 actualDimensions: Settings[\.self].thinDimensions,
                 keybind: $keybinds.thinGKey,
                 mode: $settings.thinMode

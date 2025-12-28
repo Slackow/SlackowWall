@@ -46,7 +46,8 @@ struct SlackowWallApp: App {
                         ToolbarItem {
                             ToolbarAlertView()
                                 .animation(
-                                    .easeInOut(duration: 0.3), value: trackingManager.trackedInstances
+                                    .easeInOut(duration: 0.3),
+                                    value: trackingManager.trackedInstances
                                 )
                                 .animation(.easeInOut(duration: 0.3), value: alertManager.alert)
                         }
@@ -66,7 +67,7 @@ struct SlackowWallApp: App {
                         ToolbarSettingsView()
                         ToolbarRefreshView()
                     }
-                    
+
                 }
                 .navigationTitle("SlackowWall - Profile: \(profile.name)")
                 .alert(
@@ -83,8 +84,10 @@ struct SlackowWallApp: App {
                 } message: { _ in
                     Text(logUploadedAlert ?? "Unable to upload.")
                 }
-                .alert("Error: \(alertManager.errorAlert ?? "")", isPresented: $alertManager.showErrorAlert,
-                       actions: { Button("OK", role: .cancel) {} })
+                .alert(
+                    "Error: \(alertManager.errorAlert ?? "")",
+                    isPresented: $alertManager.showErrorAlert,
+                    actions: { Button("OK", role: .cancel) {} })
         }
         .windowResizability(.contentSize)
 
@@ -179,19 +182,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         OBSManager.shared.writeScript()
         MouseSensitivityManager.shared.setSensitivityFactor(
             factor: Settings[\.utility].sensitivityScale)
-#if !DEBUG
-        if Settings[\.utility].autoLaunchPaceman {
+        #if !DEBUG
+            if Settings[\.utility].autoLaunchPaceman {
                 PacemanManager.shared.startPaceman()
-        }
-        if Settings[\.utility].startupApplicationEnabled {
-            Settings[\.utility].startupApplications.forEach {
-                let task = Process()
-                task.launchPath = "/usr/bin/open"
-                task.arguments = [$0.path(percentEncoded: false)]
-                try? task.run()
             }
-        }
-#endif
+            if Settings[\.utility].startupApplicationEnabled {
+                Settings[\.utility].startupApplications.forEach {
+                    let task = Process()
+                    task.launchPath = "/usr/bin/open"
+                    task.arguments = [$0.path(percentEncoded: false)]
+                    try? task.run()
+                }
+            }
+        #endif
         // Start the instance check timer
         TrackingManager.shared.startInstanceCheckTimer()
     }

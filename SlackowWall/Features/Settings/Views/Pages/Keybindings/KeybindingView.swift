@@ -46,7 +46,7 @@ struct KeybindingView: View {
             }
             .focusable(true)
             .focused($isFocused)
-//            .onTapGesture { isFocused = true }
+            //            .onTapGesture { isFocused = true }
 
             Button(action: {
                 keybinding = defaultValue

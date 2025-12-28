@@ -38,7 +38,8 @@ class MouseSensitivityManager: ObservableObject {
         if factor == 1.0 { return }
 
         // Create event tap for mouse moved events
-        let eventMask = 0
+        let eventMask =
+            0
             | (1 << CGEventType.mouseMoved.rawValue)
             | (1 << CGEventType.leftMouseDragged.rawValue)
             | (1 << CGEventType.rightMouseDragged.rawValue)

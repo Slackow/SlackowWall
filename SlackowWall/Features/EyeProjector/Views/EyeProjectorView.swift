@@ -20,19 +20,21 @@ struct EyeProjectorView: View {
     private var mode
     @AppSettings(\.utility)
     private var utility
-    
+
     private var scaleFactor: CGFloat
 
     init(instance: TrackedInstance) {
         _previewRenderer = StateObject(wrappedValue: PreviewRenderer(instance: instance))
-        scaleFactor = instance.info.mods.map(\.id).contains("retino") ? 1 : NSScreen.primary?.backingScaleFactor ?? 1
+        scaleFactor =
+            instance.info.mods.map(\.id).contains("retino")
+            ? 1 : NSScreen.primary?.backingScaleFactor ?? 1
     }
-    
+
     var overlayImage: Image {
         (utility.eyeProjectorOverlayImage
-            .flatMap{NSImage(contentsOf: $0)}
-            .flatMap{Image(nsImage: $0)}
-         ?? Image("tall_overlay"))
+            .flatMap { NSImage(contentsOf: $0) }
+            .flatMap { Image(nsImage: $0) }
+            ?? Image("tall_overlay"))
     }
 
     var body: some View {
@@ -42,7 +44,7 @@ struct EyeProjectorView: View {
                     previewRenderer.instance.eyeProjectorStream.capturePreview
                         .scaleEffect(
                             x: 1,
-                            y: utility.eyeProjectorHeightScale * scaleFactor/(384.0/60)
+                            y: utility.eyeProjectorHeightScale * scaleFactor / (384.0 / 60)
                         )
                     overlayImage
                         .resizable()
