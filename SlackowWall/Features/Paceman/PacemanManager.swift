@@ -111,7 +111,7 @@ class PacemanManager: Manager, ObservableObject {
         req.httpMethod = "POST"
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
         req.setValue("SlackowWall/1.2.0", forHTTPHeaderField: "User-Agent")
-        req.httpBody = #"{"accessKey": "\#(token)"}"#.data(using: .utf8)
+        req.httpBody = Data(#"{"accessKey": "\#(token)"}"#.utf8)
 
         let (data, resp) = try await URLSession.shared.data(for: req)
         guard let http = resp as? HTTPURLResponse else { throw URLError(.badServerResponse) }

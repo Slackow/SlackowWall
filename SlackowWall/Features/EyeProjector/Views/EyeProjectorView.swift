@@ -27,6 +27,13 @@ struct EyeProjectorView: View {
         _previewRenderer = StateObject(wrappedValue: PreviewRenderer(instance: instance))
         scaleFactor = instance.info.mods.map(\.id).contains("retino") ? 1 : NSScreen.primary?.backingScaleFactor ?? 1
     }
+    
+    var overlayImage: Image {
+        (utility.eyeProjectorOverlayImage
+            .flatMap{NSImage(contentsOf: $0)}
+            .flatMap{Image(nsImage: $0)}
+         ?? Image("tall_overlay"))
+    }
 
     var body: some View {
         GeometryReader { geo in
@@ -37,13 +44,12 @@ struct EyeProjectorView: View {
                             x: 1,
                             y: utility.eyeProjectorHeightScale * scaleFactor/(384.0/60)
                         )
-                    Image("tall_overlay")
+                    overlayImage
                         .resizable()
-                        .frame(minWidth: geo.size.width, maxWidth: geo.size.width)
+                        .frame(width: geo.size.width)
                         .opacity(utility.eyeProjectorOverlayOpacity)
                 } else {
                     previewRenderer.instance.eyeProjectorStream.capturePreview
-//                        .transformEffect(CGAffineTransform(translationX: 0, y: 100))
                 }
             }
         }

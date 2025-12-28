@@ -18,8 +18,8 @@ extension Optional: @retroactive RawRepresentable where Wrapped: Codable {
     }
 
     public init?(rawValue: String) {
-        guard let data = rawValue.data(using: .utf8),
-            let value = try? JSONDecoder().decode(Self.self, from: data)
+        let data = Data(rawValue.utf8)
+        guard let value = try? JSONDecoder().decode(Self.self, from: data)
         else {
             return nil
         }
@@ -43,8 +43,8 @@ extension Array: @retroactive RawRepresentable where Element: Codable {
     }
 
     public init?(rawValue: String) {
-        guard let data = rawValue.data(using: .utf8),
-            let array = try? JSONDecoder().decode([Element].self, from: data)
+        let data = Data(rawValue.utf8)
+        guard let array = try? JSONDecoder().decode([Element].self, from: data)
         else {
             return nil
         }

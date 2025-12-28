@@ -142,7 +142,7 @@ class WindowController {
 
         connection.start(queue: DispatchQueue.global())
         connection.send(
-            content: command.data(using: .utf8),
+            content: Data(command.utf8),
             completion: .contentProcessed({ error in
                 if let error {
                     LogManager.shared.appendLog("Error sending resize command: \(error)")

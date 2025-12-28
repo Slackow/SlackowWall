@@ -46,6 +46,7 @@ struct UtilitySettings: View {
 
     @FocusState var sensFieldInFocus
     @State var sensFieldNum: Double? = nil
+    @State var showingOverlayFileImporter = false
 
     var body: some View {
         SettingsPageView(title: "Utilities", shouldDisableFocus: true) {
@@ -118,7 +119,34 @@ struct UtilitySettings: View {
                             SettingsLabel(title: "Overlay Opacity", font: .body)
                             Text("\(Int(settings.eyeProjectorOverlayOpacity * 100))%")
                             Slider(value: $settings.eyeProjectorOverlayOpacity, in: 0...1)
-                                .frame(width: 200)
+                                .frame(width: 200, height: 25)
+                        }
+                        Divider()
+                        HStack {
+                            SettingsLabel(title: "Overlay Custom Image", font: .body)
+                            if settings.eyeProjectorOverlayImage != nil {
+                                Button {
+                                    settings.eyeProjectorOverlayImage = nil
+                                } label: {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .symbolRenderingMode(.hierarchical)
+                                        .resizable()
+                                        .frame(width: 18, height: 18)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                            Button(settings.eyeProjectorOverlayImage.flatMap(\.lastPathComponent) ?? "Select Image") {
+                                showingOverlayFileImporter = true
+                            }
+                            .fileImporter(isPresented: $showingOverlayFileImporter, allowedContentTypes: [.image], allowsMultipleSelection: false) { result in
+                                switch result {
+                                    case .success(let urls):
+                                        settings.eyeProjectorOverlayImage = urls.first
+                                    case .failure(let error):
+                                        LogManager.shared.appendLog("Failed to select overlay image", error.localizedDescription)
+                                }
+                            }
+                            
                         }
                     }
                 }

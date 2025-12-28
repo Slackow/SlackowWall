@@ -84,10 +84,10 @@ class LogManager {
         }
     }
 
-    @discardableResult func logPath(_ path: String, showInConsole: Bool = true) -> Self {
+    @discardableResult func logPath(_ path: String, showInConsole: Bool = true, includeTimestamp: Bool = true) -> Self {
         let homeDirectory = FileManager.default.homeDirectoryForCurrentUser.path
         let sanitizedPath = path.replacingOccurrences(of: homeDirectory, with: "~")
-        return appendLog(sanitizedPath, showInConsole: showInConsole)
+        return appendLog(sanitizedPath, showInConsole: showInConsole, includeTimestamp: includeTimestamp)
     }
 
     @discardableResult func appendLog(
@@ -112,9 +112,8 @@ class LogManager {
             defer { try? fileHandle.close() }
             try fileHandle.seekToEnd()
 
-            if let data = messageWithNewline.data(using: .utf8) {
-                try fileHandle.write(contentsOf: data)
-            }
+            let data = Data(messageWithNewline.utf8)
+            try fileHandle.write(contentsOf: data)
 
             if showInConsole {
                 print(message)
@@ -134,9 +133,9 @@ class LogManager {
             defer { try? fileHandle.close() }
             try fileHandle.seekToEnd()
 
-            if let data = titleWithNewline.data(using: .utf8) {
-                try fileHandle.write(contentsOf: data)
-            }
+            let data = Data(titleWithNewline.utf8)
+            try fileHandle.write(contentsOf: data)
+            
 
         } catch {
             print("Failed to write to log file: \(error)")
@@ -152,11 +151,7 @@ class LogManager {
             let fileHandle = try FileHandle(forWritingTo: logURL)
             defer { try? fileHandle.close() }
             try fileHandle.seekToEnd()
-
-            if let data = newLine.data(using: .utf8) {
-                try fileHandle.write(contentsOf: data)
-            }
-
+            try fileHandle.write(contentsOf: Data(newLine.utf8))
         } catch {
             print("Failed to write to log file: \(error)")
         }
@@ -203,7 +198,7 @@ class LogManager {
             appendLog("App Version: Unknown", showInConsole: false, includeTimestamp: false)
         }
         if let hiDPI = NSScreen.primary?.backingScaleFactor {
-            appendLog("HiDPI: \(hiDPI)", showInConsole: false, includeTimestamp: false)
+            appendLog("Scaling: \(hiDPI == 1 ? "LoDPI" : "HiDPI") (\(hiDPI))", showInConsole: false, includeTimestamp: false)
         }
 
         appendLogNewLine()
@@ -245,7 +240,7 @@ class LogManager {
         let bodyString =
             "content="
             + (logContents.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")
-        request.httpBody = bodyString.data(using: .utf8)
+        request.httpBody = Data(bodyString.utf8)
 
         // Perform the upload asynchronously.
         Task(priority: .userInitiated) {
@@ -298,20 +293,20 @@ class LogManager {
         }
         func prettyJSONString(from any: Any) -> String? {
             // If it's Data, try JSON -> pretty string
+            let options: JSONSerialization.WritingOptions = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes, .fragmentsAllowed]
             if let data = any as? Data {
                 if let obj = try? JSONSerialization.jsonObject(with: data),
                    JSONSerialization.isValidJSONObject(obj),
-                   let pretty = try? JSONSerialization.data(withJSONObject: obj, options: .prettyPrinted),
+                   let pretty = try? JSONSerialization.data(withJSONObject: obj, options: options),
                    let s = String(data: pretty, encoding: .utf8) {
                     return s
                 }
             }
             // If it's String, try parse as JSON first, else return raw string
             if let s = any as? String {
-                if let data = s.data(using: .utf8),
-                   let obj = try? JSONSerialization.jsonObject(with: data),
+                if let obj = try? JSONSerialization.jsonObject(with: Data(s.utf8)),
                    JSONSerialization.isValidJSONObject(obj),
-                   let pretty = try? JSONSerialization.data(withJSONObject: obj, options: .prettyPrinted),
+                   let pretty = try? JSONSerialization.data(withJSONObject: obj, options: options),
                    let prettyStr = String(data: pretty, encoding: .utf8) {
                     return prettyStr
                 }
@@ -319,12 +314,12 @@ class LogManager {
             }
             // If it's already a plist dictionary/array, convert via JSONSerialization for readability
             if let dict = any as? [String: Any],
-               let data = try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted),
+               let data = try? JSONSerialization.data(withJSONObject: dict, options: options),
                let s = String(data: data, encoding: .utf8) {
                 return s
             }
             if let arr = any as? [Any],
-               let data = try? JSONSerialization.data(withJSONObject: arr, options: .prettyPrinted),
+               let data = try? JSONSerialization.data(withJSONObject: arr, options: options),
                let s = String(data: data, encoding: .utf8) {
                 return s
             }
@@ -336,8 +331,7 @@ class LogManager {
             let v = value(at: keyPathComponents, in: plist),
             let logOutput = prettyJSONString(from: v)
             else { return }
-        appendLog(logOutput, includeTimestamp: false)
-        
+        logPath(logOutput, includeTimestamp: false)
     }
 
     func logCurrentProfile() {
@@ -350,11 +344,11 @@ class LogManager {
             let data = try JSONEncoder().encode(prefs)
             let json = try JSONSerialization.jsonObject(with: data)
             let prettyJSONData = try JSONSerialization.data(
-                withJSONObject: json, options: .prettyPrinted)
+                withJSONObject: json, options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes, .fragmentsAllowed])
             let prettyJSON =
                 String(data: prettyJSONData, encoding: .utf8)
                 ?? "Data could not be converted to string"
-            appendLog(prettyJSON, includeTimestamp: false)
+            logPath(prettyJSON, includeTimestamp: false)
         } catch {
             appendLog("Unable to encode Preferences to JSON")
         }
