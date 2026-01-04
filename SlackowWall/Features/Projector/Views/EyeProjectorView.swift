@@ -40,7 +40,7 @@ struct EyeProjectorView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                if screenRecorder.eyeProjectorMode == .tall {
+                if screenRecorder.projectorMode == .eye {
                     previewRenderer.instance.eyeProjectorStream.capturePreview
                         .scaleEffect(
                             x: 1,

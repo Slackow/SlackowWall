@@ -175,7 +175,19 @@ class ShortcutManager: ObservableObject, Manager {
         guard case (let w, .some(let h), let x, let y) = Settings[\.self].thinDimensions else {
             return
         }
-        resize(pid: pid, x: x, y: y, width: w, height: h)
+        if resize(pid: pid, x: x, y: y, width: w, height: h) == true,
+           let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid })
+        {
+            // print("Changing projected instance (thin)")
+            // ScreenRecorder.shared.eyeProjectedInstance = instance
+            // Task(priority: .userInitiated) {
+            //     await ScreenRecorder.shared.startEyeProjectorCapture(
+            //         for: instance,
+            //         mode: .pie
+            //     )
+            //     eyeProjectorOpen = true
+            // }
+        }
     }
 
     func resizeTall(changeSens: Bool = true) {
@@ -196,7 +208,7 @@ class ShortcutManager: ObservableObject, Manager {
                 }
                 await ScreenRecorder.shared.startEyeProjectorCapture(
                     for: instance,
-                    mode: changeSens ? .tall : .thin
+                    mode: changeSens ? .eye : .pie
                 )
                 if Settings[\.utility].eyeProjectorShouldOpenWithTallMode {
                     eyeProjectorOpen = true

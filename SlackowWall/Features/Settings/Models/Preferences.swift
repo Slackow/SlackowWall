@@ -74,7 +74,7 @@ extension Preferences {
             m.width.cg ?? bm.width.cg,
             m.height.cg ?? bm.height.cg,
             m.x.cg ?? bm.x.cg,
-            m.x.cg ?? bm.y.cg
+            m.y.cg ?? bm.y.cg
         )
     }
 }

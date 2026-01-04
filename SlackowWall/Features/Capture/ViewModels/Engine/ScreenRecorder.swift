@@ -17,7 +17,7 @@ import SwiftUI
     @Published var isRunning = false
     @Published private(set) var availableWindows = [SCWindow]()
     @Published var eyeProjectedInstance: TrackedInstance? = nil
-    @Published var eyeProjectorMode: EyeProjectorMode = .tall
+    @Published var projectorMode: ProjectorMode = .eye
 
     // Dedicated eye projector capture that works regardless of utility mode
     private var eyeProjectorCapture: CaptureEngine? = nil
@@ -65,14 +65,14 @@ import SwiftUI
 
     func startEyeProjectorCapture(
         for instance: TrackedInstance,
-        mode: EyeProjectorMode = .tall
+        mode: ProjectorMode = .eye
     ) async {
         guard needsEyeProjectorCapture else { return }
 
         // Always check permissions for eye projector capture
         guard await AlertManager.shared.checkScreenRecordingPermission() else { return }
 
-        eyeProjectorMode = mode
+        projectorMode = mode
         await setupEyeProjectorCapture(for: instance)
     }
 
@@ -360,7 +360,7 @@ import SwiftUI
             }  //  [oai_citation:1‡Apple Developer](https://developer.apple.com/documentation/screencapturekit/sccontentfilter/pointpixelscale)
 
         // Keep the crop rect in POINTS.
-        let cropWidthPts: CGFloat = eyeProjectorMode == .tall ? 60 / retinoFactor : tallWidthPts
+        let cropWidthPts: CGFloat = projectorMode == .eye ? 60 / retinoFactor : tallWidthPts
         let cropHeightPts: CGFloat = tallHeightPts
         let cropXPt: CGFloat = tallWidthPts / 2 - cropWidthPts / 2  // same intent as "-30" centering
         let cropYPt: CGFloat = tallHeightPts / 2 - cropHeightPts / 2
@@ -381,13 +381,14 @@ import SwiftUI
         streamConfig.width = Int(cropWidthPts * s)
         streamConfig.height = Int(cropHeightPts * s)
 
-        if eyeProjectorMode == .thin {
+        if projectorMode == .pie {
             instance.eyeProjectorStream.capturePreview.onNewFrame {
                 (frame: CapturedFrame, contentLayer: CALayer) in
                 guard let surface = frame.surface else { return }
 
                 let (W, H) = CapturePreview.surfaceSizePixels(surface)
-
+                LogManager.shared.appendLog("size of surface: \(W)x\(H)")
+                // Show Pie Chart
                 // Desired crop size in pixels inside the captured surface
                 let factor = min(usingRetino ? 2 : 1, Int(factor))
                 let cropWPx = 340 * factor
@@ -401,7 +402,7 @@ import SwiftUI
                 let x = CGFloat(cropXPx) / CGFloat(W)
                 let w = CGFloat(cropWPx) / CGFloat(W)
 
-                // contentsRect Y is often bottom-based; if this looks flipped, use the alternate y below
+                // contentsRect Y is bottom-based
                 let y = 1.0 - (CGFloat(cropYPx + cropHPx - 100 * factor) / CGFloat(H))
                 let h = CGFloat(cropHPx) / CGFloat(H)
 
