@@ -19,8 +19,8 @@ import SwiftUI
 import ZIPFoundation
 
 class InstanceInfo: CustomStringConvertible {
-    var state: UInt8 = "t".utf8.first!
-    var prevState: UInt8 = "t".utf8.first!
+    var state: InstanceState = .title
+    var prevState: InstanceState = .title
     var statePath: String {
         return path.isEmpty ? "" : "\(path)/wpstateout.txt"
     }
@@ -43,7 +43,11 @@ class InstanceInfo: CustomStringConvertible {
             updateModInfo()
             try? await Task.sleep(for: .seconds(0.95))
             DispatchQueue.main.async {
-                ShortcutManager.shared.resizeReset(pid: pid)
+                if Settings[\.behavior].utilityMode {
+                    ShortcutManager.shared.resizeBase(pid: pid)
+                } else {
+                    ShortcutManager.shared.resizeReset(pid: pid)
+                }
             }
         }
     }
@@ -76,18 +80,22 @@ class InstanceInfo: CustomStringConvertible {
         // Attempt to read file data
         guard let fileData = FileManager.default.contents(atPath: statePath), !fileData.isEmpty
         else {
-            print("Error: Failed to read file \(statePath)")
+            LogManager.shared.logPath("Error: Failed to read file \(statePath)")
             return false
         }
 
         // Update state based on file data
-        var newState = fileData[safe: 0]
-        if newState == 0x69 && fileData.count >= 12 {
-            newState = fileData[11]
+        var newState = fileData[safe: 0] ?? 0
+        // is one of the "inworld" variants
+        if newState == 0x69 {
+            newState = fileData[safe: 11] ?? newState
         }
-
-        state = newState ?? 0
-        LogManager.shared.appendLog("Updated State:", state)
+        if let newState = InstanceState(rawValue: newState) {
+            state = newState
+            LogManager.shared.appendLog("Updated State:", state)
+        } else {
+            LogManager.shared.appendLog("Failed to update state:", newState)
+        }
         return prevState != state
     }
 

@@ -163,7 +163,7 @@ import SwiftUI
         if !instance.checkStateOutput { return true }
         instance.info.updateState(force: true)
         let info = instance.info
-        return info.state != InstanceStates.waiting && info.state != InstanceStates.generating
+        return info.state != .waiting && info.state != .generating
     }
 
     private func resetAllUnlocked() {

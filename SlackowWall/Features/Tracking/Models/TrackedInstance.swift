@@ -40,7 +40,7 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
 
     var isReady: Bool {
         if checkStateOutput {
-            return info.state == InstanceStates.paused || info.state == InstanceStates.unpaused
+            return info.state == .paused || info.state == .unpaused
         } else {
             return true
         }

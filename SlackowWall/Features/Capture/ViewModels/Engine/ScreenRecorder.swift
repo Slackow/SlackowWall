@@ -378,8 +378,8 @@ import SwiftUI
             x: cropXPt, y: cropYPt, width: cropWidthPts, height: cropHeightPts)
 
         // output width/height should be pixels, so scale it.
-        streamConfig.width = Int(cropWidthPts * s)
-        streamConfig.height = Int(cropHeightPts * s)
+        streamConfig.width = Int(cropWidthPts * factor)
+        streamConfig.height = Int(cropHeightPts * factor)
 
         if projectorMode == .pie {
             instance.eyeProjectorStream.capturePreview.onNewFrame {
