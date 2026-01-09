@@ -152,6 +152,7 @@ struct SlackowWallApp: App {
             }
         }
         .windowResizability(.contentSize)
+        
         Window("Eye Projector", id: "eye-projector-window") {
             EyeProjectorWindowView()
                 .frame(minWidth: 300, minHeight: 200)
@@ -162,6 +163,19 @@ struct SlackowWallApp: App {
         .onChange(of: shortcutManager.eyeProjectorOpen) { newValue in
             if newValue {
                 openWindow(id: "eye-projector-window")
+            }
+        }
+        
+        Window("Pie Projector", id: "pie-projector-window") {
+            PieProjectorWindowView()
+                .frame(minWidth: 400, minHeight: 400)
+        }
+        .windowResizability(.contentSize)
+        .defaultPosition(.trailing)
+        .defaultSize(width: 400, height: 400)
+        .onChange(of: shortcutManager.pieProjectorOpen) { newValue in
+            if newValue {
+                openWindow(id: "pie-projector-window")
             }
         }
     }

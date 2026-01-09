@@ -24,6 +24,7 @@ extension Preferences {
         var eyeProjectorHeightScale: Double = 0.2
         var eyeProjectorOverlayOpacity: Double = 1.0
         var eyeProjectorOverlayImage: URL? = nil
+        var pieProjectorEnabled: Bool = false
 
         var sensitivityScaleEnabled: Bool = false
         var sensitivityScaleToolBarIcon: Bool = false

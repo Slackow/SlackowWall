@@ -458,6 +458,7 @@ import SwiftUI
                     instance.eyeProjectorStream.streamError = streamError
                 }
             }
+            LogManager.shared.appendLog("Finished eye projector capture for instance \(instance.pid)")
         }
 
         LogManager.shared.appendLog("Started eye projector capture for instance \(instance.pid)")

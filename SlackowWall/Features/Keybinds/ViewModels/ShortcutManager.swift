@@ -22,6 +22,16 @@ class ShortcutManager: ObservableObject, Manager {
             }
         }
     }
+    
+    @Published var pieProjectorOpen: Bool = false {
+        didSet {
+            if !pieProjectorOpen {
+                NSApplication.shared.windows.first(where: {
+                    $0.identifier?.rawValue == "pie-projector-window"
+                })?.close()
+            }
+        }
+    }
 
     init() {
 
@@ -209,8 +219,12 @@ class ShortcutManager: ObservableObject, Manager {
                     for: instance,
                     mode: changeSens ? .eye : .pie
                 )
-                if Settings[\.utility].eyeProjectorShouldOpenWithTallMode {
-                    eyeProjectorOpen = true
+                if changeSens ? Settings[\.utility].eyeProjectorShouldOpenWithTallMode : Settings[\.utility].pieProjectorEnabled {
+                    if changeSens {
+                        eyeProjectorOpen = true
+                    } else {
+                        pieProjectorOpen = true
+                    }
                 }
             }
         }
@@ -237,6 +251,7 @@ class ShortcutManager: ObservableObject, Manager {
                     ScreenRecorder.shared.eyeProjectedInstance = nil
                 }
                 if Settings[\.utility].eyeProjectorShouldOpenWithTallMode {
+                    pieProjectorOpen = false
                     eyeProjectorOpen = false
                 }
                 MouseSensitivityManager.shared.setSensitivityFactor(
