@@ -27,6 +27,8 @@ extension Preferences {
 
         var resetMode: SizeMode = .init()
 
+        var blockResizeInGUI: Bool = true
+
         init() {}
     }
     struct SizeMode: Codable, Hashable {

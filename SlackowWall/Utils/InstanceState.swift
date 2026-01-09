@@ -1,5 +1,5 @@
 //
-//  InstanceStates.swift
+//  InstanceState.swift
 //  SlackowWall
 //
 //  Created by Kihron on 5/7/24.

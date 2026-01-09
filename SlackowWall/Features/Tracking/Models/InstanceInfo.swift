@@ -31,7 +31,10 @@ class InstanceInfo: CustomStringConvertible {
     var untilF3: Int = 0
     var checkState: CheckingMode = .NONE
     var isBoundless: Bool {
-        mods.contains(where: { "boundlesswindow" == $0.id })
+        mods.contains { "boundlesswindow" == $0.id }
+    }
+    var hasStateOutput: Bool {
+        mods.contains { "state-output" == $0.id }
     }
     var mods: [ModInfo] = []
 
@@ -110,7 +113,7 @@ class InstanceInfo: CustomStringConvertible {
             self.mods = contents.map { URL(filePath: path + "/mods/\($0)") }
                 .filter { $0.pathExtension == "jar" }
                 .compactMap { InstanceInfo.extractModInfo(fromJarAt: $0) }
-            LogManager.shared.appendLog("mods", mods.map(\.id))
+            LogManager.shared.appendLog("mods", mods.map(\.id).sorted())
         }
     }
 

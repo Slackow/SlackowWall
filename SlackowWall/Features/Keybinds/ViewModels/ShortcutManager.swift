@@ -154,8 +154,7 @@ class ShortcutManager: ObservableObject, Manager {
     }
 
     func resizeBase(pid: pid_t? = nil) {
-        guard let pid = pid ?? activeInstancePID() else { return }
-        guard
+        guard let pid = pid ?? activeInstancePID(),
             case (.some(let w), .some(let h), .some(let x), .some(let y)) = Settings[\.self]
                 .baseDimensions
         else { return }
@@ -216,7 +215,7 @@ class ShortcutManager: ObservableObject, Manager {
             }
         }
     }
-
+    // True means resized to dimension, False means resized but not to your dimension, nil means did not resize.
     @discardableResult func resize(
         pid: pid_t, x: CGFloat? = nil, y: CGFloat? = nil, width: CGFloat, height: CGFloat,
         force: Bool = false
@@ -247,16 +246,25 @@ class ShortcutManager: ObservableObject, Manager {
                 resizeBase(pid: pid)
                 return false
             }
-
+            guard let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid }) else {
+                LogManager.shared.appendLog("Instance with pid: \(pid) not found")
+                return nil
+            }
+            if !force && Settings[\.mode].blockResizeInGUI && instance.info.hasStateOutput {
+                instance.info.updateState(force: true)
+                print("Instance state:", instance.info.state)
+                
+                if instance.info.state == .inGameScreen {
+                    return nil
+                }
+            }
             LogManager.shared.appendLog("Resizing Instance: \(pid)")
 
             let newSize = CGSize(width: width, height: height)
             let newPosition = CGPoint(
                 x: x ?? (currentPosition.x - (newSize.width - currentSize.width) * 0.5),
                 y: y ?? (currentPosition.y - (newSize.height - currentSize.height) * 0.5))
-            if let instance = TrackingManager.shared.trackedInstances.first(where: {
-                $0.pid == pid && $0.info.isBoundless
-            }) {
+            if instance.info.isBoundless {
                 WindowController.sendResizeCommand(
                     instance: instance, x: Int(newPosition.x), y: Int(newPosition.y),
                     width: Int(newSize.width), height: Int(newSize.height))

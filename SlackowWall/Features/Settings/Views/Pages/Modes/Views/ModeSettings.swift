@@ -87,6 +87,16 @@ struct ModeSettings: View {
                 posHints: ("", ""),
                 mode: $settings.resetMode
             )
+
+            SettingsCardView {
+                VStack {
+                    SettingsToggleView(
+                        title: "Don't resize while in a GUI (requires StateOutput mod)",
+                        description: "Disables resizing hotkeys while in chat or inventory.",
+                        option: $settings.blockResizeInGUI
+                    )
+                }
+            }
         }
         .animation(
             .smooth.delay(viewModel.multipleOutOfBounds ? 0 : 0.3),
