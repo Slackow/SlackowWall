@@ -65,7 +65,8 @@ import SwiftUI
 
     func startEyeProjectorCapture(
         for instance: TrackedInstance,
-        mode: ProjectorMode = .eye
+        mode: ProjectorMode = .eye,
+        size: (CGFloat, CGFloat)? = nil
     ) async {
         guard needsEyeProjectorCapture else { return }
 
@@ -73,7 +74,7 @@ import SwiftUI
         guard await AlertManager.shared.checkScreenRecordingPermission() else { return }
 
         projectorMode = mode
-        await setupEyeProjectorCapture(for: instance)
+        await setupEyeProjectorCapture(for: instance, size: size)
     }
 
     var canRecord: Bool {
@@ -306,7 +307,7 @@ import SwiftUI
         }
     }
 
-    private func setupEyeProjectorCapture(for instance: TrackedInstance) async {
+    private func setupEyeProjectorCapture(for instance: TrackedInstance, size: (CGFloat, CGFloat)? = nil) async {
         // Stop any existing eye projector capture
         await stopEyeProjectorCapture()
 
@@ -341,7 +342,11 @@ import SwiftUI
         }
 
         // Use tall mode dimensions instead of actual window size
-        let (tallWidthPts, tallHeightPts, _, _) = Settings[\.self].tallDimensions(for: instance)
+        var (tallWidthPts, tallHeightPts, _, _) = Settings[\.self].tallDimensions(for: instance)
+        if let (w, h) = size {
+            tallWidthPts = w
+            tallHeightPts = h
+        }
         let usingRetino = instance.info.mods.map(\.id).contains("retino")
         let factor = min(NSScreen.primary?.backingScaleFactor ?? 1, 16384.0 / tallHeightPts)
         let retinoFactor = usingRetino ? 1.0 : factor

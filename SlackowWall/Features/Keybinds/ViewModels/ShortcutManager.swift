@@ -184,18 +184,29 @@ class ShortcutManager: ObservableObject, Manager {
         guard case (let w, .some(let h), let x, let y) = Settings[\.self].thinDimensions else {
             return
         }
-        if resize(pid: pid, x: x, y: y, width: w, height: h) == true,
-           let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid })
-        {
-            // print("Changing projected instance (thin)")
-            // ScreenRecorder.shared.eyeProjectedInstance = instance
-            // Task(priority: .userInitiated) {
-            //     await ScreenRecorder.shared.startEyeProjectorCapture(
-            //         for: instance,
-            //         mode: .pie
-            //     )
-            //     eyeProjectorOpen = true
-            // }
+        guard let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid }) else { return }
+        switch resize(pid: pid, x: x, y: y, width: w, height: h) {
+        case true:
+             print("Changing projected instance (thin)")
+             ScreenRecorder.shared.eyeProjectedInstance = instance
+             Task(priority: .userInitiated) {
+                 await ScreenRecorder.shared.startEyeProjectorCapture(
+                     for: instance,
+                     mode: .pie_and_e,
+                     size: (w, h)
+                 )
+                 pieProjectorOpen = true
+             }
+            // TODO: change this so direct exit not required
+        case false:
+            ScreenRecorder.shared.eyeProjectedInstance = nil
+            pieProjectorOpen = false
+            Task(priority: .userInitiated) {
+                await ScreenRecorder.shared.stopEyeProjectorCapture()
+                ScreenRecorder.shared.eyeProjectedInstance = nil
+            }
+        default:
+            break
         }
     }
 
@@ -267,7 +278,7 @@ class ShortcutManager: ObservableObject, Manager {
             }
             if !force && Settings[\.mode].blockResizeInGUI && instance.info.hasStateOutput {
                 instance.info.updateState(force: true)
-                print("Instance state:", instance.info.state)
+                LogManager.shared.appendLog("Instance state:", instance.info.state)
                 
                 if instance.info.state == .inGameScreen {
                     return nil
