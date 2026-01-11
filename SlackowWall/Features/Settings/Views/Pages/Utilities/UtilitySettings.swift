@@ -160,6 +160,8 @@ struct UtilitySettings: View {
 
                         }
                     }
+                    Divider()
+                    SettingsToggleView(title: "Pie Projector Enabled", option: $settings.pieProjectorEnabled)
                 }
             }
 

@@ -175,6 +175,7 @@ struct SlackowWallApp: App {
         .defaultSize(width: 400, height: 400)
         .onChange(of: shortcutManager.pieProjectorOpen) { newValue in
             if newValue {
+                NSApp.windows.first{$0.identifier?.rawValue == "pie-projector-window"}?.level = .floating
                 openWindow(id: "pie-projector-window")
             }
         }

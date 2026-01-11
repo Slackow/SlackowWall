@@ -22,12 +22,14 @@ struct EyeProjectorView: View {
     private var utility
 
     private var scaleFactor: CGFloat
+    private var f: CGFloat
 
     init(instance: TrackedInstance) {
         _previewRenderer = StateObject(wrappedValue: PreviewRenderer(instance: instance))
         scaleFactor =
             instance.info.mods.map(\.id).contains("retino")
             ? 1 : NSScreen.primary?.backingScaleFactor ?? 1
+        f = NSScreen.primary?.backingScaleFactor ?? 1
     }
 
     var overlayImage: Image {
@@ -50,6 +52,10 @@ struct EyeProjectorView: View {
                         .resizable()
                         .frame(width: geo.size.width)
                         .opacity(utility.eyeProjectorOverlayOpacity)
+                } else if screenRecorder.projectorMode == .pie_and_e {
+                    previewRenderer.instance.eyeProjectorStream.capturePreview
+                    previewRenderer.instance.eCountProjectorStream.capturePreview
+                        .scaleEffect(4/f)
                 } else {
                     previewRenderer.instance.eyeProjectorStream.capturePreview
                 }

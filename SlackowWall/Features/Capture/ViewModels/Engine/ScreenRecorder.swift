@@ -313,7 +313,7 @@ import SwiftUI
         // Attempt to reuse the stored filter for this instance to avoid the
         // expensive window enumeration that occurs when starting the eye
         // projector.
-        var filter: SCContentFilter?
+        var filter: SCContentFilter
 
         if let windowID = instance.windowID,
             let storedFilter = windowFilters[windowID]
@@ -338,13 +338,6 @@ import SwiftUI
             windowFilters[window.windowID] = newFilter
             instance.windowID = window.windowID
             filter = newFilter
-        }
-
-        guard let filter else {
-            LogManager.shared.appendLog(
-                "Unable to setup filter for eye projector instance \(instance.pid)"
-            )
-            return
         }
 
         // Use tall mode dimensions instead of actual window size
@@ -381,7 +374,7 @@ import SwiftUI
         streamConfig.width = Int(cropWidthPts * factor)
         streamConfig.height = Int(cropHeightPts * factor)
 
-        if projectorMode == .pie {
+        if projectorMode == .pie || projectorMode == .pie_and_e {
             instance.eyeProjectorStream.capturePreview.onNewFrame {
                 (frame: CapturedFrame, contentLayer: CALayer) in
                 guard let surface = frame.surface else { return }
@@ -408,6 +401,32 @@ import SwiftUI
 
                 contentLayer.contentsRect = CGRect(x: x, y: y, width: w, height: h)
             }
+            instance.eCountProjectorStream.capturePreview.onNewFrame {
+                (frame: CapturedFrame, contentLayer: CALayer) in
+                guard let surface = frame.surface else { return }
+                contentLayer.contentsGravity = .center
+
+                let (W, H) = CapturePreview.surfaceSizePixels(surface)
+                LogManager.shared.appendLog("size of surface: \(W)x\(H)")
+                // Show Pie Chart
+                // Desired crop size in pixels inside the captured surface
+                let f = Int(s)
+                let cropWPx = 67 * f
+                let cropHPx = 9 * f  // pick what you want to display
+                // Bottom-right anchor in pixels
+                let cropXPx = 2
+                let cropYPx = 37 * f
+
+                // Normalize for contentsRect (0..1)
+                let x = CGFloat(cropXPx) / CGFloat(W)
+                let w = CGFloat(cropWPx) / CGFloat(W)
+
+                // contentsRect Y is bottom-based
+                let y = 1.0 - (CGFloat(cropYPx + cropHPx) / CGFloat(H))
+                let h = CGFloat(cropHPx) / CGFloat(H)
+
+                contentLayer.contentsRect = CGRect(x: x, y: y, width: w, height: h)
+            }
         } else {
             instance.eyeProjectorStream.capturePreview.onNewFrame {
                 (frame: CapturedFrame, contentLayer: CALayer) in
@@ -415,24 +434,16 @@ import SwiftUI
             }
         }
 
-        // Keep your captureRect consistent (pick points or pixels; this uses points).
-
         if #available(macOS 14.0, *) {
             LogManager.shared.appendLog(
                 "Starting Eye Projector: dim:(", tallWidthPts, "x", tallHeightPts, ") factor:",
                 factor, s, "usingRetino:", usingRetino, "rects: source", streamConfig.sourceRect,
                 "content", filter.contentRect)
-        } else {
-            // Fallback on earlier versions
         }
 
         // Store the filter and create dedicated capture engine
         eyeProjectorFilter = filter
         eyeProjectorCapture = CaptureEngine()
-
-        // Update the instance's eye projector stream capture filter and rect with tall mode dimensions
-        instance.eyeProjectorStream.captureFilter = filter
-        instance.eyeProjectorStream.captureRect = CGSize(width: cropWidthPts, height: cropHeightPts)
 
         // Start the dedicated capture
         guard let eyeProjectorCapture else { return }
@@ -444,6 +455,9 @@ import SwiftUI
                 ) {
                     await MainActor.run {
                         instance.eyeProjectorStream.capturePreview.updateFrame(frame)
+                        if self.projectorMode == .pie_and_e {
+                            instance.eCountProjectorStream.capturePreview.updateFrame(frame)
+                        }
                     }
                 }
             } catch let error {

@@ -10,6 +10,8 @@ import SwiftUI
 struct PieProjectorWindowView: View {
     @ObservedObject
     var screenRecorder = ScreenRecorder.shared
+    @ObservedObject
+    var shortcutManager = ShortcutManager.shared
 
     @AppSettings(\.utility) var settings
     var body: some View {
@@ -17,7 +19,8 @@ struct PieProjectorWindowView: View {
             Text("Pie Projector is disabled")
                 .font(.largeTitle.weight(.bold))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if let instance = screenRecorder.eyeProjectedInstance {
+        } else if shortcutManager.pieProjectorOpen,
+                  let instance = screenRecorder.eyeProjectedInstance {
             EyeProjectorView(instance: instance)
         } else {
             Text("No Instance to Project")

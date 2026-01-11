@@ -217,7 +217,7 @@ class ShortcutManager: ObservableObject, Manager {
                 }
                 await ScreenRecorder.shared.startEyeProjectorCapture(
                     for: instance,
-                    mode: changeSens ? .eye : .pie
+                    mode: changeSens ? .eye : .pie_and_e
                 )
                 if changeSens ? Settings[\.utility].eyeProjectorShouldOpenWithTallMode : Settings[\.utility].pieProjectorEnabled {
                     if changeSens {

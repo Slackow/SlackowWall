@@ -11,6 +11,8 @@ struct EyeProjectorWindowView: View {
 
     @ObservedObject
     var screenRecorder = ScreenRecorder.shared
+    @ObservedObject
+    var shortcutManager = ShortcutManager.shared
 
     @AppSettings(\.utility) var settings
     var body: some View {
@@ -18,7 +20,8 @@ struct EyeProjectorWindowView: View {
             Text("Projector is disabled")
                 .font(.largeTitle.weight(.bold))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if let instance = screenRecorder.eyeProjectedInstance {
+        } else if shortcutManager.eyeProjectorOpen,
+                  let instance = screenRecorder.eyeProjectedInstance {
             EyeProjectorView(instance: instance)
         } else {
             Text("No Tall Instance to Project")
