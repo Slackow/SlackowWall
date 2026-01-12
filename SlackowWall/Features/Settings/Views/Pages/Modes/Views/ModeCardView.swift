@@ -142,10 +142,10 @@ struct ModeCardView: View {
     var actionRow: some View {
         HStack {
             if isGameplayMode {
-                Button("Full Monitor", systemImage: "document.on.document", action: copyFrame)
+                Button("Full Monitor", systemImage: "doc.on.doc", action: copyFrame)
                     .popoverLabel("Set Gameplay to take up the entire monitor")
                 Button(
-                    "Visible Frame", systemImage: "document.on.document", action: copyVisibleFrame
+                    "Visible Frame", systemImage: "doc.on.doc", action: copyVisibleFrame
                 )
                 .popoverLabel("Uses current screen, accounting for the Dock and Menu Bar")
             }

@@ -8,12 +8,24 @@
 import SwiftUI
 
 enum SettingsBarItem: CaseIterable, Identifiable, Hashable {
-    case instances, behavior, window_resizing, utilities, keybindings, personalize, profiles,
-        updates, credits
+    case window_resizing, utilities, keybindings, profiles, updates, credits
+    case instances, behavior, personalize
 
     var id: Self {
         return self
     }
+
+    var isWallCategory: Bool {
+        switch self {
+        case .instances, .behavior, .personalize:
+            return true
+        default:
+            return false
+        }
+    }
+
+    static let wallCases = Self.allCases.filter { $0.isWallCategory }
+    static let generalCases = Self.allCases.filter { !$0.isWallCategory }
 
     var color: Color {
         switch self {
@@ -51,7 +63,7 @@ enum SettingsBarItem: CaseIterable, Identifiable, Hashable {
             case .keybindings:
                 "Keybindings"
             case .personalize:
-                "Personalize"
+                "Personalize Wall"
             case .profiles:
                 "Profiles"
             case .updates:
@@ -61,33 +73,33 @@ enum SettingsBarItem: CaseIterable, Identifiable, Hashable {
         }
     }
 
-    var icon: String {
+    var icon: ImageType {
         switch self {
             case .instances:
-                "macwindow.on.rectangle"
+                .system("macwindow.on.rectangle")
             case .behavior:
-                "hammer.fill"
+                .system("hammer.fill")
             case .window_resizing:
-                "macwindow.and.cursorarrow"
+                .system("macwindow.and.cursorarrow")
             case .utilities:
-                "wrench.and.screwdriver.fill"
+                .system("wrench.and.screwdriver.fill")
             case .keybindings:
-                "arrowkeys.fill"
+                .asset("arrowkeys.fill")
             case .personalize:
-                "screwdriver.fill"
+                .system("screwdriver.fill")
             case .profiles:
-                "folder.fill"
+                .system("folder.fill")
             case .updates:
-                "gear.badge"
+                .system("gear.badge")
             case .credits:
-                "hands.and.sparkles.fill"
+                .system("hands.sparkles.fill")
         }
     }
 
-    var secondIcon: (String, Color)? {
+    var secondIcon: (ImageType, Color)? {
         switch self {
             case .credits:
-                ("heart.fill", .pink)
+                (.system("heart.fill"), .pink)
             default:
                 nil
         }

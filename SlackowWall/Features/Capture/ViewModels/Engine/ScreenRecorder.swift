@@ -72,7 +72,6 @@ import SwiftUI
 
         // Always check permissions for eye projector capture
         guard await AlertManager.shared.checkScreenRecordingPermission() else { return }
-
         projectorMode = mode
         await setupEyeProjectorCapture(for: instance, size: size)
     }
@@ -310,6 +309,7 @@ import SwiftUI
     private func setupEyeProjectorCapture(for instance: TrackedInstance, size: (CGFloat, CGFloat)? = nil) async {
         // Stop any existing eye projector capture
         await stopEyeProjectorCapture()
+        eyeProjectorCapture = CaptureEngine()
 
         // Attempt to reuse the stored filter for this instance to avoid the
         // expensive window enumeration that occurs when starting the eye
@@ -340,6 +340,9 @@ import SwiftUI
             instance.windowID = window.windowID
             filter = newFilter
         }
+        
+        // Store the filter and create dedicated capture engine
+        eyeProjectorFilter = filter
 
         // Use tall mode dimensions instead of actual window size
         var (tallWidthPts, tallHeightPts, _, _) = Settings[\.self].tallDimensions(for: instance)
@@ -445,10 +448,6 @@ import SwiftUI
                 factor, s, "usingRetino:", usingRetino, "rects: source", streamConfig.sourceRect,
                 "content", filter.contentRect)
         }
-
-        // Store the filter and create dedicated capture engine
-        eyeProjectorFilter = filter
-        eyeProjectorCapture = CaptureEngine()
 
         // Start the dedicated capture
         guard let eyeProjectorCapture else { return }

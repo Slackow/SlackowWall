@@ -185,28 +185,17 @@ class ShortcutManager: ObservableObject, Manager {
             return
         }
         guard let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid }) else { return }
-        switch resize(pid: pid, x: x, y: y, width: w, height: h) {
-        case true:
-             print("Changing projected instance (thin)")
-             ScreenRecorder.shared.eyeProjectedInstance = instance
-             Task(priority: .userInitiated) {
-                 await ScreenRecorder.shared.startEyeProjectorCapture(
-                     for: instance,
-                     mode: .pie_and_e,
-                     size: (w, h)
-                 )
-                 pieProjectorOpen = true
-             }
-            // TODO: change this so direct exit not required
-        case false:
-            ScreenRecorder.shared.eyeProjectedInstance = nil
-            pieProjectorOpen = false
+        if resize(pid: pid, x: x, y: y, width: w, height: h) == true {
+            print("Changing projected instance (thin)")
+            ScreenRecorder.shared.eyeProjectedInstance = instance
             Task(priority: .userInitiated) {
-                await ScreenRecorder.shared.stopEyeProjectorCapture()
-                ScreenRecorder.shared.eyeProjectedInstance = nil
+                await ScreenRecorder.shared.startEyeProjectorCapture(
+                    for: instance,
+                    mode: .pie_and_e,
+                    size: (w, h)
+                )
+                pieProjectorOpen = true
             }
-        default:
-            break
         }
     }
 
@@ -256,7 +245,7 @@ class ShortcutManager: ObservableObject, Manager {
             // detect exiting tall mode
             let (w, h, _, _) = Settings[\.self].tallDimensions(
                 for: TrackingManager.shared.trackedInstances.first { $0.pid == pid })
-            if currentSize == CGSize(width: w, height: h) {
+            if !force && currentSize == CGSize(width: w, height: h) {
                 Task(priority: .userInitiated) {
                     await ScreenRecorder.shared.stopEyeProjectorCapture()
                     ScreenRecorder.shared.eyeProjectedInstance = nil
@@ -267,6 +256,16 @@ class ShortcutManager: ObservableObject, Manager {
                 }
                 MouseSensitivityManager.shared.setSensitivityFactor(
                     factor: Settings[\.utility].sensitivityScale)
+                // detect exiting thin
+            } else if !force,
+               case let (w, .some(h), _, _) = Settings[\.self].thinDimensions,
+               currentSize == CGSize(width: w, height: h)
+            {
+                pieProjectorOpen = false
+                Task(priority: .userInitiated) {
+                    await ScreenRecorder.shared.stopEyeProjectorCapture()
+                    ScreenRecorder.shared.eyeProjectedInstance = nil
+                }
             }
             if !force && currentSize.width == width && currentSize.height == height {
                 resizeBase(pid: pid)

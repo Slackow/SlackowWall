@@ -33,10 +33,10 @@ struct EyeProjectorView: View {
     }
 
     var overlayImage: Image {
-        (utility.eyeProjectorOverlayImage
+        Image(utility.eyeProjectorOverlayImage
             .flatMap { NSImage(contentsOf: $0) }
-            .flatMap { Image(nsImage: $0) }
-            ?? Image("tall_overlay"))
+            .flatMap { .nsImage($0) }
+              ?? .asset("tall_overlay"))
     }
 
     var body: some View {

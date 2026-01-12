@@ -19,11 +19,11 @@ struct CreditsView: View {
                 VStack {
                     LazyVGrid(columns: [.init(.flexible()), .init(.flexible())]) {
                         CreditsEntryView(
-                            name: "Slackow", role: "Developer", icon: "wrench.adjustable.fill",
+                            name: "Slackow", role: "Developer", icon: "wrench.fill",
                             color: .teal)
 
                         CreditsEntryView(
-                            name: "Kihron", role: "Developer", icon: "wrench.adjustable.fill",
+                            name: "Kihron", role: "Developer", icon: "wrench.fill",
                             color: .orange)
 
                         CreditsEntryView(
@@ -72,7 +72,7 @@ struct CreditsView: View {
             SettingsCardView {
                 VStack {
                     HStack {
-                        Image(systemName: "wrench.adjustable.fill")
+                        Image(systemName: "wrench.fill")
                             .font(.title)
                             .foregroundStyle(.gray)
                         Text(
@@ -92,7 +92,7 @@ struct CreditsView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     Divider()
                     HStack {
-                        Image(systemName: "text.document.fill")
+                        Image(systemName: "doc.text.fill")
                             .font(.title)
                             .foregroundStyle(.gray)
                             .frame(width: 30)
@@ -103,7 +103,7 @@ struct CreditsView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     Divider()
                     HStack {
-                        Image(systemName: "arrow.up.document.fill")
+                        Image(systemName: "arrow.up.doc.fill")
                             .font(.title)
                             .foregroundStyle(.gray)
                             .frame(width: 30)

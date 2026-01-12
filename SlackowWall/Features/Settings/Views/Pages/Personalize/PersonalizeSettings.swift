@@ -15,7 +15,7 @@ struct PersonalizeSettings: View {
     @State private var showLockEditor: Bool = false
 
     var body: some View {
-        SettingsPageView(title: "Personalize") {
+        SettingsPageView(title: "Personalize Wall") {
             SettingsLabel(title: "Video")
 
             SettingsCardView {

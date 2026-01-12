@@ -90,6 +90,15 @@ struct ModeSettings: View {
 
             SettingsCardView {
                 VStack {
+                    HStack {
+                        SettingsLabel(
+                            title: "Toggle Tall Mode (No Modifiers)",
+                            description:
+                                "Enter tall mode without activating projector/lowering sens, useful for eye zoom preemptive.",
+                            font: .body)
+                        KeybindingView(keybinding: \.tallNoSensGKey)
+                    }
+                    Divider()
                     SettingsToggleView(
                         title: "Don't resize while in a GUI (requires StateOutput mod)",
                         description: "Disables resizing hotkeys while in chat or inventory.",
