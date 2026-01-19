@@ -298,7 +298,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ngit config core.hooksPath .githooks\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ngit config core.hooksPath .githooks\n\ngit ls-files -z -m -o --exclude-standard | grep -zE \"\\.swift$\" | xargs -0 --no-run-if-empty swift format -i\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
