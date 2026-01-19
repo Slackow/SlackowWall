@@ -52,14 +52,20 @@ class InstanceInfo: CustomStringConvertible {
                     ShortcutManager.shared.resizeReset(pid: pid)
                 }
             }
+            try? await Task.sleep(for: .seconds(0.95))
+            DispatchQueue.main.async {
+                if Settings[\.behavior].utilityMode {
+                    ShortcutManager.shared.resizeBase(pid: pid)
+                } else {
+                    ShortcutManager.shared.resizeReset(pid: pid)
+                }
+            }
         }
     }
 
     func readBoundlessPort() -> UInt16 {
-        if let contents = FileManager.default.contents(atPath: "\(path)/boundless_port.txt"),
-            !contents.isEmpty,
-            let port = String(data: contents, encoding: .utf8),
-            let port = UInt16(port)
+        if let port = try? String(contentsOfFile: "\(path)/boundless_port.txt", encoding: .utf8),
+            let port = UInt16(port.trimmingCharacters(in: .whitespacesAndNewlines))
         {
             LogManager.shared.appendLog("Port: \(port) for \(pid)")
             return port

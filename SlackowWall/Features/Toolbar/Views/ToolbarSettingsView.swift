@@ -12,7 +12,7 @@ struct ToolbarSettingsView: View {
     @State private var isHovered: Bool = false
 
     var body: some View {
-        Button(action: { openWindow(id: "settings-window") }) {
+        Button(action: { openWindow(id: SWWindowID.settings.rawValue) }) {
             Image(systemName: "gear")
         }
         .onHover { isHovered = $0 }

@@ -2,16 +2,16 @@
 //  KeybindingsSettings.swift
 //  SlackowWall
 //
-//  Created by Andrew on 9/29/23.
+//  Created by Andrew on 1/12/26.
 //
 
 import SwiftUI
 
-struct KeybindingsSettings: View {
+struct WallKeybindingsSettings: View {
     @AppSettings(\.keybinds) private var settings
 
     var body: some View {
-        SettingsPageView(title: "Keybinds", shouldDisableFocus: false) {
+        SettingsPageView(title: "Wall Keybinds", shouldDisableFocus: false) {
             SettingsLabel(
                 title: "Global Bindings",
                 description:
@@ -21,65 +21,74 @@ struct KeybindingsSettings: View {
                 VStack {
                     HStack {
                         SettingsLabel(
-                            title: "Switch to Gameplay Mode",
-                            description: "Go back to your normal dimensions quickly.", font: .body)
-
-                        KeybindingView(keybinding: \.baseGKey)
-                    }
-
-                    Divider()
-
-                    HStack {
-                        SettingsLabel(
-                            title: "Toggle Tall Mode",
-                            description: "Toggle between two resolutions quickly.", font: .body)
-
-                        KeybindingView(keybinding: \.tallGKey)
-                    }
-
-                    Divider()
-
-                    HStack {
-                        SettingsLabel(
-                            title: "Toggle Tall Mode (No Modifiers)",
+                            title: "Reset",
                             description:
-                                "Enter tall mode without activating projector/lowering sens",
+                                "You may need to change this in [OBS](https://obsproject.com) too.",
                             font: .body)
 
-                        KeybindingView(keybinding: \.tallNoSensGKey)
-                    }
-
-                    Divider()
-
-                    HStack {
-                        SettingsLabel(
-                            title: "Toggle Thin Mode",
-                            description: "Toggle between another set of resolutions.", font: .body)
-
-                        KeybindingView(keybinding: \.thinGKey)
-                    }
-
-                    Divider()
-
-                    HStack {
-                        SettingsLabel(
-                            title: "Toggle Wide Mode",
-                            description: "Toggle between another set of resolutions.", font: .body)
-
-                        KeybindingView(keybinding: \.planarGKey)
-                    }
-
-                    Divider()
-
-                    HStack {
-                        SettingsLabel(
-                            title: "Toggle Sensitivity Scaling",
-                            description: "Toggle Sensitivity Scaling on/off (global only).",
-                            font: .body)
-
-                        KeybindingView(keybinding: \.sensitivityScalingGKey)
+                        KeybindingView(keybinding: \.resetGKey)
                     }
                 }
+            }
+
+            SettingsLabel(
+                title: "In-App Bindings",
+                description: "These keybinds work only within SlackowWall itself."
+            )
+            .padding(.top, 5)
+
+            SettingsCardView {
+                VStack {
+                    HStack {
+                        SettingsLabel(title: "Reset All", font: .body)
+
+                        KeybindingView(keybinding: \.resetAllKey)
+                    }
+
+                    Divider()
+
+                    HStack {
+                        SettingsLabel(title: "Reset Hovered", font: .body)
+
+                        KeybindingView(keybinding: \.resetOneKey)
+                    }
+
+                    Divider()
+
+                    HStack {
+                        SettingsLabel(
+                            title: "Run Hovered and Reset Others",
+                            description:
+                                "You may need to change this in [OBS](https://obsproject.com) too.",
+                            font: .body)
+
+                        KeybindingView(keybinding: \.resetOthersKey)
+                    }
+
+                    Divider()
+
+                    HStack {
+                        SettingsLabel(
+                            title: "Run Hovered",
+                            description:
+                                "You may need to change this in [OBS](https://obsproject.com) too.",
+                            font: .body)
+
+                        KeybindingView(keybinding: \.runKey)
+                    }
+
+                    Divider()
+
+                    HStack {
+                        SettingsLabel(
+                            title: "Lock Hovered",
+                            description: "You can also shift click instances to lock/unlock them.",
+                            font: .body)
+
+                        KeybindingView(keybinding: \.lockKey)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
 
             SettingsLabel(

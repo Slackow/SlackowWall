@@ -92,6 +92,9 @@ struct ModMenu: View {
                     Text("Check for Updates (beta)")
                 }
                 .disabled(isChecking)
+                Button("Open folder") {
+                    NSWorkspace.shared.open(URL(filePath: instance.info.path.appending("/mods")))
+                }
                 Button(action: { dismiss() }) {
                     Text("Close")
                 }
@@ -99,7 +102,7 @@ struct ModMenu: View {
             .frame(maxWidth: .infinity, alignment: .trailing)
         }
         .padding()
-        .frame(width: 500, height: 300)
+        .frame(minWidth: 500, minHeight: 300, maxHeight: 650)
         .task {
             viewModel.fetchMods(instance: instance)
         }

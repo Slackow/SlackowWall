@@ -17,11 +17,14 @@ struct PlaceholderInstanceView: View {
     var body: some View {
         ZStack {
             VStack {
-                (NSImage(contentsOfFile: "\(instance.info.path)/icon.png")
-                    .map(Image.init)
-                    ?? Image("minecraft_logo"))
-                    .resizable()
-                    .frame(width: 120, height: 120)
+                Image(
+                    NSImage(contentsOfFile: "\(instance.info.path)/icon.png").flatMap {
+                        .nsImage($0)
+                    } ?? .asset("minecraft_logo")
+                )
+                .resizable()
+                .frame(width: 120, height: 120)
+
                 Text(#"Instance "\#(instance.name)""#)
                     .font(.title)
                     .fontWeight(.semibold)
@@ -46,9 +49,6 @@ struct PlaceholderInstanceView: View {
                     Button("View Mods") {
                         isModMenuOpen = true
                     }
-                    // Button("Package Submission Files") {
-                    //     print("TODO")
-                    // }
                     Button("Kill Instance") {
                         TrackingManager.shared.kill(instance: instance)
                     }
@@ -64,10 +64,19 @@ struct PlaceholderInstanceView: View {
             }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
                 .opacity(isHovered ? 1 : 0)
                 .animation(.easeInOut.delay(0.15).speed(2), value: isHovered)
+
+            HStack {
+                Button("View Mods") {
+                    isModMenuOpen = true
+                }
+            }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+                .padding(.bottom, 5)
+                .padding(.leading, 5)
+
             DeletionProgressView(model: deletionModel)
         }
         .frame(
-            minWidth: 250, idealWidth: 600, maxWidth: 600, minHeight: 165, idealHeight: 350,
+            minWidth: 250, idealWidth: 600, maxWidth: 600, minHeight: 205, idealHeight: 350,
             maxHeight: 350
         )
         .background {

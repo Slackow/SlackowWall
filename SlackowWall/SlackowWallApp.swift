@@ -33,7 +33,7 @@ struct SlackowWallApp: App {
     }
 
     var body: some Scene {
-        Window("SlackowWall", id: "slackowwall-window") {
+        Window("SlackowWall", id: SWWindowID.slackowwall.rawValue) {
             ContentView()
                 .frame(minWidth: 300, minHeight: 210)
                 .toolbar {
@@ -91,7 +91,7 @@ struct SlackowWallApp: App {
         }
         .windowResizability(.contentSize)
 
-        Window("Settings", id: "settings-window") {
+        Window("Settings", id: SWWindowID.settings.rawValue) {
             SettingsView()
                 .frame(minWidth: 700, maxWidth: 700, minHeight: 455, alignment: .center)
         }
@@ -115,7 +115,7 @@ struct SlackowWallApp: App {
                 }
             }
             CommandGroup(replacing: .appSettings) {
-                Button(action: { openWindow(id: "settings-window") }) {
+                Button(action: { openWindow(id: SWWindowID.settings.rawValue) }) {
                     Text("Settings...")
                 }
                 .keyboardShortcut(",", modifiers: .command)
@@ -152,8 +152,8 @@ struct SlackowWallApp: App {
             }
         }
         .windowResizability(.contentSize)
-        
-        Window("Eye Projector", id: "eye-projector-window") {
+
+        Window("Eye Projector", id: SWWindowID.eyeProjector.rawValue) {
             EyeProjectorWindowView()
                 .frame(minWidth: 300, minHeight: 200)
         }
@@ -162,21 +162,24 @@ struct SlackowWallApp: App {
         .defaultSize(width: 600, height: 400)
         .onChange(of: shortcutManager.eyeProjectorOpen) { newValue in
             if newValue {
-                openWindow(id: "eye-projector-window")
+                NSApp.getWindow(.eyeProjector)?.level =
+                    utility.eyeProjectorAlwaysOnTop ? .floating : .normal
+                openWindow(id: SWWindowID.eyeProjector.rawValue)
             }
         }
-        
-        Window("Pie Projector", id: "pie-projector-window") {
+
+        Window("Pie Projector", id: SWWindowID.pieProjector.rawValue) {
             PieProjectorWindowView()
-                .frame(minWidth: 400, minHeight: 400)
+                .frame(minWidth: 384, minHeight: 384)
         }
         .windowResizability(.contentSize)
         .defaultPosition(.trailing)
-        .defaultSize(width: 400, height: 400)
+        .defaultSize(width: 384, height: 384)
         .onChange(of: shortcutManager.pieProjectorOpen) { newValue in
             if newValue {
-                NSApp.windows.first{$0.identifier?.rawValue == "pie-projector-window"}?.level = .floating
-                openWindow(id: "pie-projector-window")
+                NSApp.getWindow(.pieProjector)?.level =
+                    utility.pieProjectorAlwaysOnTop ? .floating : .normal
+                openWindow(id: SWWindowID.pieProjector.rawValue)
             }
         }
     }

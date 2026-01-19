@@ -5,6 +5,7 @@
 //  Created by Andrew on 2/23/24.
 //
 
+// FocusableBridge.swift
 import AppKit
 import SwiftUI
 
@@ -125,10 +126,6 @@ struct KeybindingView: View {
             .padding()
     }
 }
-
-// FocusableBridge.swift
-import AppKit
-import SwiftUI
 
 final class FocusableBridgeNSView: NSView {
     // We’ll ask to become first responder so key events route predictably.

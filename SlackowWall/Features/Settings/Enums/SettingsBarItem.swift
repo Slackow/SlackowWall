@@ -9,7 +9,7 @@ import SwiftUI
 
 enum SettingsBarItem: CaseIterable, Identifiable, Hashable {
     case window_resizing, utilities, keybindings, profiles, updates, credits
-    case instances, behavior, personalize
+    case instances, behavior, personalize, wall_keybindings
 
     var id: Self {
         return self
@@ -17,10 +17,10 @@ enum SettingsBarItem: CaseIterable, Identifiable, Hashable {
 
     var isWallCategory: Bool {
         switch self {
-        case .instances, .behavior, .personalize:
-            return true
-        default:
-            return false
+            case .instances, .behavior, .personalize, .wall_keybindings:
+                return true
+            default:
+                return false
         }
     }
 
@@ -37,7 +37,7 @@ enum SettingsBarItem: CaseIterable, Identifiable, Hashable {
                 .orange
             case .utilities:
                 .teal
-            case .keybindings:
+            case .keybindings, .wall_keybindings:
                 .blue
             case .personalize:
                 .red
@@ -62,6 +62,8 @@ enum SettingsBarItem: CaseIterable, Identifiable, Hashable {
                 "Utilities"
             case .keybindings:
                 "Keybindings"
+            case .wall_keybindings:
+                "Wall Keybindings"
             case .personalize:
                 "Personalize Wall"
             case .profiles:
@@ -83,7 +85,7 @@ enum SettingsBarItem: CaseIterable, Identifiable, Hashable {
                 .system("macwindow.and.cursorarrow")
             case .utilities:
                 .system("wrench.and.screwdriver.fill")
-            case .keybindings:
+            case .keybindings, .wall_keybindings:
                 .asset("arrowkeys.fill")
             case .personalize:
                 .system("screwdriver.fill")

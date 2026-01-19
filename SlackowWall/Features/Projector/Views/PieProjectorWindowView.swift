@@ -20,7 +20,8 @@ struct PieProjectorWindowView: View {
                 .font(.largeTitle.weight(.bold))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if shortcutManager.pieProjectorOpen,
-                  let instance = screenRecorder.eyeProjectedInstance {
+            let instance = screenRecorder.eyeProjectedInstance
+        {
             EyeProjectorView(instance: instance)
         } else {
             Text("No Instance to Project")

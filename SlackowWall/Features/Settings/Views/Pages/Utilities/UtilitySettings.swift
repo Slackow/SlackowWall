@@ -33,16 +33,15 @@ struct UtilitySettings: View {
         }
         return trackingManager.trackedInstances.filter { instance in
             guard
-                let data = FileManager.default.contents(
-                    atPath: "\(instance.info.path)/options.txt"),
-                let file = String(data: data, encoding: .utf8),
+                let file = try? String(
+                    contentsOfFile: "\(instance.info.path)/options.txt", encoding: .utf8),
                 let match = (try? UtilitySettings.mouseSensTextRegex.firstMatch(in: file))?.output
                     .1,
                 let sens = Double(match)
             else {
+                // TODO: can't get sensitivity, what do I do?
                 return false
             }
-            // TODO: can't get sensitivity, what do I do?
             return abs(sens - boatEyeSensitivity) > 0.00001
         }
     }
@@ -50,118 +49,199 @@ struct UtilitySettings: View {
     @FocusState var sensFieldInFocus
     @State var sensFieldNum: Double? = nil
     @State var showingOverlayFileImporter = false
+    @State var configuringEyeProjector: Bool = true
 
     var body: some View {
         SettingsPageView(title: "Utilities", shouldDisableFocus: true) {
-            SettingsLabel(
-                title: "Eye Projector",
-                description: """
-                    Settings for an automated eye projector for BoatEye.
-                    """)
 
-            SettingsCardView {
-                VStack {
-                    HStack {
-                        SettingsLabel(title: "Enabled", font: .body)
+            Picker("", selection: $configuringEyeProjector) {
+                Text("Eye Projector").tag(true)
+                Text("Pie Projector").tag(false)
+            }
+            .pickerStyle(.segmented)
+            if configuringEyeProjector {
+                SettingsLabel(
+                    title: "Eye Projector",
+                    description: """
+                        Settings for an automated eye projector for BoatEye.
+                        """)
 
-                        Button("Open") {
-                            openWindow(id: "eye-projector-window")
+                SettingsCardView {
+                    VStack {
+                        HStack {
+                            SettingsLabel(title: "Enabled", font: .body)
+
+                            Button("Open") {
+                                openWindow(id: SWWindowID.eyeProjector.rawValue)
+                            }
+                            .disabled(!settings.eyeProjectorEnabled)
+
+                            Toggle("", isOn: $settings.eyeProjectorEnabled)
+                                .labelsHidden()
+                                .toggleStyle(.switch)
+                                .controlSize(.small)
+                                .tint(.accentColor)
+                        }
+
+                        Group {
+                            Divider()
+
+                            SettingsToggleView(
+                                title: "Open/Close With Tall Mode",
+                                option: $settings.eyeProjectorOpenWithTallMode
+                            )
+
+                            Divider()
+
+                            HStack {
+                                SettingsLabel(
+                                    title: "Height Scale",
+                                    description: """
+                                        Adjusts the "Stretch" on the y axis, \
+                                        you probably want the default (0.2)
+                                        """,
+                                    font: .body
+                                )
+
+                                SettingsInfoIcon(
+                                    description: """
+                                        The Height Scale option determines how "squished" the eye is
+                                        on the projector, a lower value gives you more leeway on how
+                                        far above or below your cursor can be from the eye to still
+                                        see it, and a higher number makes it easier to see the \
+                                        divide
+                                        between the two important pixels, the ideal value depends on
+                                        how tall you make the eye projector window, but generally \
+                                        it's
+                                        recommended to keep it between 0.2-0.4, you can experiment
+                                        with it with the window open to see what works best.
+                                        """)
+
+                                TextField(
+                                    "", value: $settings.eyeProjectorHeightScale,
+                                    format: .number.grouping(.never)
+                                )
+                                .textFieldStyle(.roundedBorder)
+                                .foregroundStyle(.primary)
+                                .frame(width: 60)
+                                .disabled(!settings.eyeProjectorEnabled)
+                            }
+                            Divider()
+                            HStack {
+                                SettingsLabel(title: "Overlay Opacity", font: .body)
+                                Text("\(Int(settings.eyeProjectorOverlayOpacity * 100))%")
+                                Slider(value: $settings.eyeProjectorOverlayOpacity, in: 0...1)
+                                    .frame(width: 200, height: 25)
+                            }
+                            Divider()
+                            HStack {
+                                SettingsLabel(title: "Overlay Custom Image", font: .body)
+                                if settings.eyeProjectorOverlayImage != nil {
+                                    Button {
+                                        settings.eyeProjectorOverlayImage = nil
+                                    } label: {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .symbolRenderingMode(.hierarchical)
+                                            .resizable()
+                                            .frame(width: 18, height: 18)
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                                Button(
+                                    settings.eyeProjectorOverlayImage.flatMap(\.lastPathComponent)
+                                        ?? "Select Image"
+                                ) {
+                                    showingOverlayFileImporter = true
+                                }
+                                .fileImporter(
+                                    isPresented: $showingOverlayFileImporter,
+                                    allowedContentTypes: [.image], allowsMultipleSelection: false
+                                ) { result in
+                                    switch result {
+                                        case .success(let urls):
+                                            settings.eyeProjectorOverlayImage = urls.first
+                                        case .failure(let error):
+                                            LogManager.shared.appendLog(
+                                                "Failed to select overlay image",
+                                                error.localizedDescription)
+                                    }
+                                }
+
+                            }
+                            Divider()
+                            SettingsToggleView(
+                                title: "Always On Top", option: $settings.eyeProjectorAlwaysOnTop
+                            )
+                            .onChange(of: settings.eyeProjectorAlwaysOnTop) { newValue in
+                                NSApp.setWindowFloating(.eyeProjector, isFloating: newValue)
+                            }
                         }
                         .disabled(!settings.eyeProjectorEnabled)
-
-                        Toggle("", isOn: $settings.eyeProjectorEnabled)
-                            .labelsHidden()
-                            .toggleStyle(.switch)
-                            .controlSize(.small)
-                            .tint(.accentColor)
                     }
+                }
+            } else {
 
-                    Group {
-                        Divider()
-
-                        SettingsToggleView(
-                            title: "Open/Close With Tall Mode",
-                            option: $settings.eyeProjectorOpenWithTallMode
-                        )
-
-                        Divider()
-
+                SettingsLabel(
+                    title: "Pie Projector",
+                    description: """
+                        Settings for an automated pie chart projector for Tall/Thin.
+                        """)
+                SettingsCardView {
+                    VStack {
                         HStack {
-                            SettingsLabel(
-                                title: "Height Scale",
-                                description: """
-                                    Adjusts the "Stretch" on the y axis, \
-                                    you probably want the default (0.2)
-                                    """,
-                                font: .body
+                            SettingsLabel(title: "Enabled", font: .body)
+
+                            Button("Open") {
+                                openWindow(id: SWWindowID.pieProjector.rawValue)
+                            }
+                            .disabled(!settings.pieProjectorEnabled)
+
+                            Toggle("", isOn: $settings.pieProjectorEnabled)
+                                .labelsHidden()
+                                .toggleStyle(.switch)
+                                .controlSize(.small)
+                                .tint(.accentColor)
+                        }
+                        Group {
+                            Divider()
+                            SettingsToggleView(
+                                title: "Open With Tall Mode (no modifiers)",
+                                option: $settings.pieProjectorOpenWithTallMode)
+                            Divider()
+                            SettingsToggleView(
+                                title: "Open With Thin Mode",
+                                option: $settings.pieProjectorOpenWithThinMode)
+                            Divider()
+                            SettingsToggleView(
+                                title: "Show E-Count", option: $settings.pieProjectorECountVisible)
+                            Divider()
+                            HStack {
+                                SettingsLabel(
+                                    title: "E-Count Scale",
+                                    description: """
+                                        Determines the scaling of the e-count on the pie chart
+                                        """,
+                                    font: .body
+                                )
+
+                                TextField(
+                                    "", value: $settings.pieProjectorECountScale,
+                                    format: .number.grouping(.never)
+                                )
+                                .textFieldStyle(.roundedBorder)
+                                .foregroundStyle(.primary)
+                                .frame(width: 60)
+                            }
+                            Divider()
+                            SettingsToggleView(
+                                title: "Always On Top", option: $settings.pieProjectorAlwaysOnTop
                             )
-
-                            SettingsInfoIcon(
-                                description: """
-                                    The Height Scale option determines how "squished" the eye is
-                                    on the projector, a lower value gives you more leeway on how
-                                    far above or below your cursor can be from the eye to still
-                                    see it, and a higher number makes it easier to see the divide
-                                    between the two important pixels, the ideal value depends on
-                                    how tall you make the eye projector window, but generally it's
-                                    recommended to keep it between 0.2-0.4, you can experiment
-                                    with it with the window open to see what works best.
-                                    """)
-
-                            TextField(
-                                "", value: $settings.eyeProjectorHeightScale,
-                                format: .number.grouping(.never)
-                            )
-                            .textFieldStyle(.roundedBorder)
-                            .foregroundStyle(.primary)
-                            .frame(width: 60)
-                            .disabled(!settings.eyeProjectorEnabled)
-                        }
-                        Divider()
-                        HStack {
-                            SettingsLabel(title: "Overlay Opacity", font: .body)
-                            Text("\(Int(settings.eyeProjectorOverlayOpacity * 100))%")
-                            Slider(value: $settings.eyeProjectorOverlayOpacity, in: 0...1)
-                                .frame(width: 200, height: 25)
-                        }
-                        Divider()
-                        HStack {
-                            SettingsLabel(title: "Overlay Custom Image", font: .body)
-                            if settings.eyeProjectorOverlayImage != nil {
-                                Button {
-                                    settings.eyeProjectorOverlayImage = nil
-                                } label: {
-                                    Image(systemName: "xmark.circle.fill")
-                                        .symbolRenderingMode(.hierarchical)
-                                        .resizable()
-                                        .frame(width: 18, height: 18)
-                                }
-                                .buttonStyle(.plain)
+                            .onChange(of: settings.pieProjectorAlwaysOnTop) { newValue in
+                                NSApp.setWindowFloating(.pieProjector, isFloating: newValue)
                             }
-                            Button(
-                                settings.eyeProjectorOverlayImage.flatMap(\.lastPathComponent)
-                                    ?? "Select Image"
-                            ) {
-                                showingOverlayFileImporter = true
-                            }
-                            .fileImporter(
-                                isPresented: $showingOverlayFileImporter,
-                                allowedContentTypes: [.image], allowsMultipleSelection: false
-                            ) { result in
-                                switch result {
-                                    case .success(let urls):
-                                        settings.eyeProjectorOverlayImage = urls.first
-                                    case .failure(let error):
-                                        LogManager.shared.appendLog(
-                                            "Failed to select overlay image",
-                                            error.localizedDescription)
-                                }
-                            }
-
                         }
+                        .disabled(!settings.pieProjectorEnabled)
                     }
-                    Divider()
-                    SettingsToggleView(title: "Pie Projector Enabled", option: $settings.pieProjectorEnabled)
                 }
             }
 

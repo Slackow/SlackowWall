@@ -33,10 +33,11 @@ struct EyeProjectorView: View {
     }
 
     var overlayImage: Image {
-        Image(utility.eyeProjectorOverlayImage
-            .flatMap { NSImage(contentsOf: $0) }
-            .flatMap { .nsImage($0) }
-              ?? .asset("tall_overlay"))
+        Image(
+            utility.eyeProjectorOverlayImage
+                .flatMap { NSImage(contentsOf: $0) }
+                .flatMap { .nsImage($0) }
+                ?? .asset("tall_overlay"))
     }
 
     var body: some View {
@@ -46,7 +47,7 @@ struct EyeProjectorView: View {
                     previewRenderer.instance.eyeProjectorStream.capturePreview
                         .scaleEffect(
                             x: 1,
-                            y: utility.eyeProjectorHeightScale * scaleFactor / (384.0 / 60)
+                            y: utility.eyeProjectorHeightScale * f / 6
                         )
                     overlayImage
                         .resizable()
@@ -55,7 +56,7 @@ struct EyeProjectorView: View {
                 } else if screenRecorder.projectorMode == .pie_and_e {
                     previewRenderer.instance.eyeProjectorStream.capturePreview
                     previewRenderer.instance.eCountProjectorStream.capturePreview
-                        .scaleEffect(4/f)
+                        .scaleEffect(4 * utility.pieProjectorECountScale / f)
                 } else {
                     previewRenderer.instance.eyeProjectorStream.capturePreview
                 }

@@ -33,6 +33,6 @@ import AppKit
 
 extension NSWindow {
     var isSettingsWindow: Bool {
-        self.identifier?.rawValue == "settings-window"
+        self.identifier?.rawValue == SWWindowID.settings.rawValue
     }
 }

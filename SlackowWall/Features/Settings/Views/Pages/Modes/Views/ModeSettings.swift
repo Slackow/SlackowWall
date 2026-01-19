@@ -100,8 +100,9 @@ struct ModeSettings: View {
                     }
                     Divider()
                     SettingsToggleView(
-                        title: "Don't resize while in a GUI (requires StateOutput mod)",
+                        title: "Don't resize while in a GUI",
                         description: "Disables resizing hotkeys while in chat or inventory.",
+                        infoBlurb: "Requires State Output Mod",
                         option: $settings.blockResizeInGUI
                     )
                 }

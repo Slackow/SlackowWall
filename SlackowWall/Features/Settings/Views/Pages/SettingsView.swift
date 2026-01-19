@@ -14,12 +14,12 @@ struct SettingsView: View {
     var body: some View {
         NavigationSplitView {
             List(selection: $selectedSettingsBarItem) {
-                Section ("General") {
+                Section("General") {
                     ForEach(SettingsBarItem.generalCases) { item in
                         createSidebarItem(item: item)
                     }
                 }
-                Section ("Wall") {
+                Section("Wall") {
                     ForEach(SettingsBarItem.wallCases) { item in
                         createSidebarItem(item: item)
                     }
@@ -40,6 +40,8 @@ struct SettingsView: View {
                         UtilitySettings()
                     case .keybindings:
                         KeybindingsSettings()
+                    case .wall_keybindings:
+                        WallKeybindingsSettings()
                     case .personalize:
                         PersonalizeSettings()
                     case .profiles:
@@ -60,7 +62,7 @@ struct SettingsView: View {
             }
         }
     }
-    
+
     @ViewBuilder func createSidebarItem(item: SettingsBarItem) -> some View {
         HStack(alignment: .center, spacing: 10) {
             ZStack {
@@ -82,7 +84,7 @@ struct SettingsView: View {
             if case .some((let icon, let color)) = item.secondIcon {
                 Image(icon)
                     .foregroundColor(color)
-                    
+
             }
         }
         .frame(height: 20)

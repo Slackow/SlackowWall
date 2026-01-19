@@ -19,12 +19,23 @@ extension Preferences {
         var eyeProjectorShouldOpenWithTallMode: Bool {
             eyeProjectorEnabled && eyeProjectorOpenWithTallMode
         }
-        // this should no longer be used, but keeping in case it needs to be re-introduced
-        private var eyeProjectorWidth: Int = 60
         var eyeProjectorHeightScale: Double = 0.2
         var eyeProjectorOverlayOpacity: Double = 1.0
         var eyeProjectorOverlayImage: URL? = nil
+        var eyeProjectorAlwaysOnTop: Bool = false
+
         var pieProjectorEnabled: Bool = false
+        var pieProjectorOpenWithTallMode: Bool = true
+        var pieProjectorOpenWithThinMode: Bool = true
+        var pieProjectorECountScale: Double = 1.0
+        var pieProjectorECountVisible: Bool = true
+        var pieProjectorAlwaysOnTop: Bool = false
+        var pieProjectorShouldOpenWithTallMode: Bool {
+            pieProjectorEnabled && pieProjectorOpenWithTallMode
+        }
+        var pieProjectorShouldOpenWithThinMode: Bool {
+            pieProjectorEnabled && pieProjectorOpenWithThinMode
+        }
 
         var sensitivityScaleEnabled: Bool = false
         var sensitivityScaleToolBarIcon: Bool = false

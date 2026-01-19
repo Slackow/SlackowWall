@@ -306,7 +306,9 @@ import SwiftUI
         }
     }
 
-    private func setupEyeProjectorCapture(for instance: TrackedInstance, size: (CGFloat, CGFloat)? = nil) async {
+    private func setupEyeProjectorCapture(
+        for instance: TrackedInstance, size: (CGFloat, CGFloat)? = nil
+    ) async {
         // Stop any existing eye projector capture
         await stopEyeProjectorCapture()
         eyeProjectorCapture = CaptureEngine()
@@ -340,7 +342,7 @@ import SwiftUI
             instance.windowID = window.windowID
             filter = newFilter
         }
-        
+
         // Store the filter and create dedicated capture engine
         eyeProjectorFilter = filter
 
@@ -361,10 +363,6 @@ import SwiftUI
             }  //  [oai_citation:1‡Apple Developer](https://developer.apple.com/documentation/screencapturekit/sccontentfilter/pointpixelscale)
 
         // Keep the crop rect in POINTS.
-        let cropWidthPts: CGFloat = projectorMode == .eye ? 60 / retinoFactor : tallWidthPts
-        let cropHeightPts: CGFloat = tallHeightPts
-        let cropXPt: CGFloat = tallWidthPts / 2 - cropWidthPts / 2  // same intent as "-30" centering
-        let cropYPt: CGFloat = tallHeightPts / 2 - cropHeightPts / 2
 
         let streamConfig = SCStreamConfiguration()
         streamConfig.capturesAudio = false
@@ -374,15 +372,12 @@ import SwiftUI
         streamConfig.queueDepth = 6
         streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: 30)
 
-        // sourceRect is in screen points (same space as contentRect).  [oai_citation:2‡Apple Developer](https://developer.apple.com/documentation/screencapturekit/sccontentfilter/contentrect?language=objc)
-        streamConfig.sourceRect = CGRect(
-            x: cropXPt, y: cropYPt, width: cropWidthPts, height: cropHeightPts)
-
         // output width/height should be pixels, so scale it.
-        streamConfig.width = Int(cropWidthPts * factor)
-        streamConfig.height = Int(cropHeightPts * factor)
+        streamConfig.width = Int(tallWidthPts * factor)
+        streamConfig.height = Int(tallHeightPts * factor)
 
         if projectorMode == .pie || projectorMode == .pie_and_e {
+            // pie chart
             instance.eyeProjectorStream.capturePreview.onNewFrame {
                 (frame: CapturedFrame, contentLayer: CALayer) in
                 guard let surface = frame.surface else { return }
@@ -409,6 +404,7 @@ import SwiftUI
 
                 contentLayer.contentsRect = CGRect(x: x, y: y, width: w, height: h)
             }
+            // e counter
             instance.eCountProjectorStream.capturePreview.onNewFrame {
                 (frame: CapturedFrame, contentLayer: CALayer) in
                 guard let surface = frame.surface else { return }
@@ -421,9 +417,9 @@ import SwiftUI
                 let f = Int(s)
                 let cropWPx = 67 * f
                 let cropHPx = 9 * f  // pick what you want to display
-                // Bottom-right anchor in pixels
-                let cropXPx = 2
-                let cropYPx = 37 * f
+                // Top left anchor in pixels
+                let cropXPx = 1 * f
+                let cropYPx = 37 * f + (instance.info.isBoundless ? 0 : 22 * f)
 
                 // Normalize for contentsRect (0..1)
                 let x = CGFloat(cropXPx) / CGFloat(W)
@@ -436,9 +432,32 @@ import SwiftUI
                 contentLayer.contentsRect = CGRect(x: x, y: y, width: w, height: h)
             }
         } else {
+            // eye projector
             instance.eyeProjectorStream.capturePreview.onNewFrame {
                 (frame: CapturedFrame, contentLayer: CALayer) in
-                contentLayer.contentsRect = CGRect(x: 0, y: 0, width: 1, height: 1)
+                guard let surface = frame.surface else { return }
+
+                let (W, H) = CapturePreview.surfaceSizePixels(surface)
+                LogManager.shared.appendLog("size of surface: \(W)x\(H)")
+                // Desired crop size in pixels inside the captured surface
+                let factor = Int(factor)
+                let cropWPx = Int(60 * factor / Int(retinoFactor))
+                let cropHPx = min(1200 * factor, H)
+                LogManager.shared.appendLog("Cropping", cropWPx, cropHPx)
+
+                // middle anchor in pixels
+                let cropXPx = max(0, W / 2 - cropWPx / 2)
+                let cropYPx = max(0, H / 2 - cropHPx / 2)
+
+                // Normalize for contentsRect (0..1)
+                let x = CGFloat(cropXPx) / CGFloat(W)
+                let w = CGFloat(cropWPx) / CGFloat(W)
+
+                // contentsRect Y is bottom-based
+                let y = 1.0 - (CGFloat(cropYPx + cropHPx) / CGFloat(H))
+                let h = CGFloat(cropHPx) / CGFloat(H)
+
+                contentLayer.contentsRect = CGRect(x: x, y: y, width: w, height: h)
             }
         }
 
@@ -476,7 +495,8 @@ import SwiftUI
                     instance.eyeProjectorStream.streamError = streamError
                 }
             }
-            LogManager.shared.appendLog("Finished eye projector capture for instance \(instance.pid)")
+            LogManager.shared.appendLog(
+                "Finished eye projector capture for instance \(instance.pid)")
         }
 
         LogManager.shared.appendLog("Started eye projector capture for instance \(instance.pid)")
