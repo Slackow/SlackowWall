@@ -171,6 +171,7 @@
 				498FB3C528987F5B00405753 /* Frameworks */,
 				498FB3C628987F5B00405753 /* Resources */,
 				496BFAC42DE7E9D500209079 /* Copy Files */,
+				4996A9612F1E05DD00778C95 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -280,6 +281,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		4996A9612F1E05DD00778C95 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ngit config core.hooksPath .githooks\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		496BFAB52DE7D7B600209079 /* Sources */ = {

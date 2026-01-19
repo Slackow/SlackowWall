@@ -1,0 +1,5 @@
+#!/bin/sh
+set -euo pipefail
+
+# Format all swift files
+git diff --staged --name-only --diff-filter=ACM -z | (grep -z "\.swift$" || true) | xargs -0 -I '{}' sh -c 'swift format -i "$1" && git add "$1"' sh '{}'
