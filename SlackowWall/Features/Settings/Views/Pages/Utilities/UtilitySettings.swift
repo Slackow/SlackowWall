@@ -175,6 +175,14 @@ struct UtilitySettings: View {
                             .onChange(of: settings.eyeProjectorAlwaysOnTop) { newValue in
                                 NSApp.setWindowFloating(.eyeProjector, isFloating: newValue)
                             }
+                            Divider()
+                            SettingsToggleView(
+                                title: "Hide Titlebar",
+                                option: $settings.eyeProjectorTitleBarHidden
+                            )
+                            .onChange(of: settings.eyeProjectorTitleBarHidden) { newValue in
+                                NSApp.setTitleBarVisibility(.eyeProjector, isHidden: newValue)
+                            }
                         }
                         .disabled(!settings.eyeProjectorEnabled)
                     }
@@ -238,6 +246,14 @@ struct UtilitySettings: View {
                             )
                             .onChange(of: settings.pieProjectorAlwaysOnTop) { newValue in
                                 NSApp.setWindowFloating(.pieProjector, isFloating: newValue)
+                            }
+                            Divider()
+                            SettingsToggleView(
+                                title: "Hide Titlebar",
+                                option: $settings.pieProjectorTitleBarHidden
+                            )
+                            .onChange(of: settings.pieProjectorTitleBarHidden) { newValue in
+                                NSApp.setTitleBarVisibility(.pieProjector, isHidden: newValue)
                             }
                         }
                         .disabled(!settings.pieProjectorEnabled)

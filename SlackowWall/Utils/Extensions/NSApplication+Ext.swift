@@ -15,6 +15,30 @@ extension NSApplication {
     func setWindowFloating(_ id: SWWindowID, isFloating: Bool) {
         self.getWindow(id)?.level = isFloating ? .floating : .normal
     }
+
+    func setTitleBarVisibility(_ id: SWWindowID, isHidden: Bool) {
+        guard let window = self.getWindow(id) else { return }
+        //hide titlebar
+        var frame = window.frame
+        if isHidden == window.styleMask.contains(.titled) {
+            frame.size.height -= isHidden ? 30 : -30
+        }
+
+        if isHidden {
+            window.styleMask.remove(.titled)
+        } else {
+            window.styleMask.insert(.titled)
+        }
+
+        window.setFrame(frame, display: true)
+        //        window.standardWindowButton(.closeButton)?.isHidden = isHidden
+        //        window.standardWindowButton(.miniaturizeButton)?.isHidden = isHidden
+        //        window.standardWindowButton(.zoomButton)?.isHidden = isHidden
+
+        //hide title and bar
+        //        window.titleVisibility = isHidden ? .hidden : .visible
+
+    }
 }
 
 enum SWWindowID: String {

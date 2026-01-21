@@ -16,13 +16,14 @@ extension Preferences {
 
         var eyeProjectorEnabled: Bool = false
         var eyeProjectorOpenWithTallMode: Bool = true
-        var eyeProjectorShouldOpenWithTallMode: Bool {
-            eyeProjectorEnabled && eyeProjectorOpenWithTallMode
-        }
         var eyeProjectorHeightScale: Double = 0.2
         var eyeProjectorOverlayOpacity: Double = 1.0
         var eyeProjectorOverlayImage: URL? = nil
         var eyeProjectorAlwaysOnTop: Bool = false
+        var eyeProjectorTitleBarHidden: Bool = true
+        var eyeProjectorShouldOpenWithTallMode: Bool {
+            eyeProjectorEnabled && eyeProjectorOpenWithTallMode
+        }
 
         var pieProjectorEnabled: Bool = false
         var pieProjectorOpenWithTallMode: Bool = true
@@ -30,6 +31,7 @@ extension Preferences {
         var pieProjectorECountScale: Double = 1.0
         var pieProjectorECountVisible: Bool = true
         var pieProjectorAlwaysOnTop: Bool = false
+        var pieProjectorTitleBarHidden: Bool = true
         var pieProjectorShouldOpenWithTallMode: Bool {
             pieProjectorEnabled && pieProjectorOpenWithTallMode
         }

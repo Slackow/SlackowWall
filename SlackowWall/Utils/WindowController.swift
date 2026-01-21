@@ -17,6 +17,20 @@ class WindowController {
         ])
     }
 
+    @MainActor
+    static func startup() {
+
+        if Settings[\.utility].eyeProjectorShouldOpenWithTallMode {
+            ShortcutManager.shared.eyeProjectorOpen = false
+            ShortcutManager.shared.pieProjectorOpen = false
+
+        } else if Settings[\.utility].pieProjectorOpenWithTallMode
+            || Settings[\.utility].pieProjectorShouldOpenWithThinMode
+        {
+            ShortcutManager.shared.pieProjectorOpen = false
+        }
+    }
+
     static func hideWindows(_ pids: [pid_t]) {
         for pid in pids {
             let app = AXUIElementCreateApplication(pid)

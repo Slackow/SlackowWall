@@ -419,7 +419,7 @@ import SwiftUI
                 let cropHPx = 9 * f  // pick what you want to display
                 // Top left anchor in pixels
                 let cropXPx = 1 * f
-                let cropYPx = 37 * f + (instance.info.isBoundless ? 0 : 22 * f)
+                let cropYPx = 37 * f + (instance.info.isBoundless ? 0 : 30 * f)
 
                 // Normalize for contentsRect (0..1)
                 let x = CGFloat(cropXPx) / CGFloat(W)

@@ -162,9 +162,10 @@ struct SlackowWallApp: App {
         .defaultSize(width: 600, height: 400)
         .onChange(of: shortcutManager.eyeProjectorOpen) { newValue in
             if newValue {
-                NSApp.getWindow(.eyeProjector)?.level =
-                    utility.eyeProjectorAlwaysOnTop ? .floating : .normal
                 openWindow(id: SWWindowID.eyeProjector.rawValue)
+                NSApp.setWindowFloating(.eyeProjector, isFloating: utility.eyeProjectorAlwaysOnTop)
+                NSApp.setTitleBarVisibility(
+                    .eyeProjector, isHidden: Settings[\.utility].eyeProjectorTitleBarHidden)
             }
         }
 
@@ -173,13 +174,14 @@ struct SlackowWallApp: App {
                 .frame(minWidth: 384, minHeight: 384)
         }
         .windowResizability(.contentSize)
-        .defaultPosition(.trailing)
+        .defaultPosition(.bottom)
         .defaultSize(width: 384, height: 384)
         .onChange(of: shortcutManager.pieProjectorOpen) { newValue in
             if newValue {
-                NSApp.getWindow(.pieProjector)?.level =
-                    utility.pieProjectorAlwaysOnTop ? .floating : .normal
                 openWindow(id: SWWindowID.pieProjector.rawValue)
+                NSApp.setWindowFloating(.pieProjector, isFloating: utility.pieProjectorAlwaysOnTop)
+                NSApp.setTitleBarVisibility(
+                    .pieProjector, isHidden: Settings[\.utility].pieProjectorTitleBarHidden)
             }
         }
     }
@@ -215,6 +217,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 }
             }
         #endif
+        WindowController.startup()
         // Start the instance check timer
         TrackingManager.shared.startInstanceCheckTimer()
     }
