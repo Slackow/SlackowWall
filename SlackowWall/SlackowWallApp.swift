@@ -210,9 +210,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
             if Settings[\.utility].startupApplicationEnabled {
                 Settings[\.utility].startupApplications.forEach {
+                    let path = $0.path(percentEncoded: false)
                     let task = Process()
-                    task.launchPath = "/usr/bin/open"
-                    task.arguments = [$0.path(percentEncoded: false)]
+                    if path.hasSuffix(".jar") {
+                        task.executableURL = URL(filePath: "/usr/bin/env")
+                        task.arguments = ["java", "-jar", path]
+                    } else {
+                        task.executableURL = URL(filePath: "/usr/bin/open")
+                        task.arguments = [path]
+                    }
                     try? task.run()
                 }
             }

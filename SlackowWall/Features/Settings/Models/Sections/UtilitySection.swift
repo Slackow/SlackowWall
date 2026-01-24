@@ -20,7 +20,7 @@ extension Preferences {
         var eyeProjectorOverlayOpacity: Double = 1.0
         var eyeProjectorOverlayImage: URL? = nil
         var eyeProjectorAlwaysOnTop: Bool = false
-        var eyeProjectorTitleBarHidden: Bool = true
+        var eyeProjectorTitleBarHidden: Bool = false
         var eyeProjectorShouldOpenWithTallMode: Bool {
             eyeProjectorEnabled && eyeProjectorOpenWithTallMode
         }
