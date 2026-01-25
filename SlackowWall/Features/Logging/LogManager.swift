@@ -282,6 +282,34 @@ class LogManager {
         }
     }
 
+    func logSensitivityDetection() {
+        let trackingManager = TrackingManager.shared
+        let boatEyeSens = Settings[\.utility].boatEyeSensitivity
+        appendLogNewLine()
+        if trackingManager.trackedInstances.isEmpty {
+            appendLog("No Instance open")
+        }
+        for instance in trackingManager.trackedInstances {
+            guard
+                let file = try? String(
+                    contentsOfFile: "\(instance.info.path)/options.txt", encoding: .utf8),
+                let match = (try? UtilitySettings.mouseSensTextRegex.firstMatch(in: file))?.output
+                    .1,
+                let sens = Double(match)
+            else {
+                appendLog("Could not find sensitivity in options.txt for \(instance.name)")
+                continue
+            }
+            if abs(sens - boatEyeSens) > 0.00001 {
+                appendLog(
+                    "\(instance.name) has a sensitivity of '\(sens)' but the app thinks it's '\(boatEyeSens)'"
+                )
+            } else {
+                appendLog("Boateye Sens verified for \(instance.name)")
+            }
+        }
+    }
+
     func logNinbotSettings() {
         appendLogNewLine()
         appendLog("Ninjabrain Bot Settings")
@@ -347,6 +375,7 @@ class LogManager {
     }
 
     func logCurrentProfile() {
+        logSensitivityDetection()
         logNinbotSettings()
         appendLogNewLine()
         appendLog("Current Settings")

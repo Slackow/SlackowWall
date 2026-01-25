@@ -414,7 +414,10 @@ import SwiftUI
                 LogManager.shared.appendLog("size of surface: \(W)x\(H)")
                 // Show Pie Chart
                 // Desired crop size in pixels inside the captured surface
-                let f = Int(s)
+                var f = Int(s)
+                if tallWidthPts < 320 {
+                    f = 1
+                }
                 let cropWPx = 67 * f
                 let cropHPx = 9 * f  // pick what you want to display
                 // Top left anchor in pixels

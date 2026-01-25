@@ -187,7 +187,7 @@ class ShortcutManager: ObservableObject, Manager {
                 ScreenRecorder.shared.eyeProjectedInstance = instance
                 await ScreenRecorder.shared.startEyeProjectorCapture(
                     for: instance,
-                    mode: .pie_and_e,
+                    mode: Settings[\.utility].pieProjectorECountVisible ? .pie_and_e : .pie,
                     size: (w, h)
                 )
                 if Settings[\.utility].pieProjectorShouldOpenWithThinMode {

@@ -241,6 +241,29 @@ struct UtilitySettings: View {
                                 .frame(width: 60)
                             }
                             Divider()
+                            HStack {
+                                SettingsLabel(
+                                    title: "E-Count Translation",
+                                    description: """
+                                        Determines the height offset of the e-count on the pie chart
+                                        """,
+                                    font: .body
+                                )
+
+                                TextField(
+                                    "",
+                                    value: .init {
+                                        Double(settings.pieProjectorECountTranslation.height)
+                                    } set: {
+                                        settings.pieProjectorECountTranslation.height = CGFloat($0)
+                                    },
+                                    format: .number.grouping(.never)
+                                )
+                                .textFieldStyle(.roundedBorder)
+                                .foregroundStyle(.primary)
+                                .frame(width: 60)
+                            }
+                            Divider()
                             SettingsToggleView(
                                 title: "Always On Top", option: $settings.pieProjectorAlwaysOnTop
                             )

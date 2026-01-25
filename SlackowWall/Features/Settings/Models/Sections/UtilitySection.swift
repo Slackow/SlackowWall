@@ -29,8 +29,9 @@ extension Preferences {
         var pieProjectorOpenWithTallMode: Bool = true
         var pieProjectorOpenWithThinMode: Bool = true
         var pieProjectorECountScale: Double = 1.0
+        var pieProjectorECountTranslation: CGSize = .zero
         var pieProjectorECountVisible: Bool = true
-        var pieProjectorAlwaysOnTop: Bool = false
+        var pieProjectorAlwaysOnTop: Bool = true
         var pieProjectorTitleBarHidden: Bool = true
         var pieProjectorShouldOpenWithTallMode: Bool {
             pieProjectorEnabled && pieProjectorOpenWithTallMode

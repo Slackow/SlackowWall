@@ -89,7 +89,7 @@ struct ModMenu: View {
 
             HStack {
                 Button(action: updateCheck) {
-                    Text("Check for Updates (beta)")
+                    Text("Check for Updates")
                 }
                 .disabled(isChecking)
                 Button("Open folder") {

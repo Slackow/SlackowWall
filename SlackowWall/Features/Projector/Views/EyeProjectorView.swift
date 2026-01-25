@@ -57,6 +57,8 @@ struct EyeProjectorView: View {
                     previewRenderer.instance.eyeProjectorStream.capturePreview
                     previewRenderer.instance.eCountProjectorStream.capturePreview
                         .scaleEffect(4 * utility.pieProjectorECountScale / f)
+                        .offset(utility.pieProjectorECountTranslation)
+                        .opacity(utility.pieProjectorECountVisible ? 1 : 0)
                 } else {
                     previewRenderer.instance.eyeProjectorStream.capturePreview
                 }
