@@ -213,6 +213,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     let path = $0.path(percentEncoded: false)
                     let task = Process()
                     if path.hasSuffix(".jar") {
+                        guard !self.isJarAlreadyRunning(at: path) else { return }
                         task.executableURL = URL(filePath: "/usr/bin/env")
                         task.arguments = ["java", "-jar", path]
                     } else {
@@ -226,6 +227,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         WindowController.startup()
         // Start the instance check timer
         TrackingManager.shared.startInstanceCheckTimer()
+    }
+
+    private func isJarAlreadyRunning(at path: String) -> Bool {
+        let task = Process()
+        task.executableURL = URL(filePath: "/usr/bin/pgrep")
+        task.arguments = ["-f", path]
+        let pipe = Pipe()
+        task.standardOutput = pipe
+        task.standardError = pipe
+        do {
+            try task.run()
+        } catch {
+            return false
+        }
+        task.waitUntilExit()
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        return !data.isEmpty
     }
 
     func applicationWillFinishLaunching(_ notification: Notification) {
