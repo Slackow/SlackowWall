@@ -24,14 +24,15 @@ struct UpdateMessageView: View {
                 .fontWeight(.bold)
 
             SettingsCardView(padding: 0) {
-                VStack {
+                Group {
                     if !updateManager.releaseNotes.isEmpty {
                         ScrollView {
                             VStack(alignment: .leading, spacing: 14) {
                                 ForEach(updateManager.releaseNotes) { entry in
                                     if entry.tagName.dropFirst() == appVersion {
                                         UpdateReleaseEntryView(
-                                            title: "Current Release", releaseEntry: entry)
+                                            title: "\(entry.tagName.dropFirst()) (Current)",
+                                            releaseEntry: entry)
                                     } else {
                                         UpdateReleaseEntryView(releaseEntry: entry)
                                     }

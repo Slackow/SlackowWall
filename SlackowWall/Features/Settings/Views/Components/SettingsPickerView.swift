@@ -18,11 +18,7 @@ struct SettingsPickerView<T: SettingsOption>: View {
 
     var filter: [T]?
     var options: [T] {
-        if let filter {
-            return filter
-        } else {
-            return Array(T.allCases)
-        }
+        filter ?? Array(T.allCases)
     }
 
     var body: some View {
@@ -44,6 +40,7 @@ struct SettingsPickerView<T: SettingsOption>: View {
             Picker("", selection: $selection) {
                 ForEach(options, id: \.id) { item in
                     Text(item.label)
+                        .tag(item)
                 }
             }
             .frame(maxWidth: width)

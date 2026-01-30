@@ -82,7 +82,7 @@ enum SettingsBarItem: CaseIterable, Identifiable, Hashable {
             case .behavior:
                 .system("hammer.fill")
             case .window_resizing:
-                .system("macwindow.and.cursorarrow")
+                .asset("macwindow.and.pointer.arrow")
             case .utilities:
                 .system("wrench.and.screwdriver.fill")
             case .keybindings, .wall_keybindings:

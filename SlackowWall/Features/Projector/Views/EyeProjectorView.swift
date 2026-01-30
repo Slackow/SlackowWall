@@ -37,7 +37,8 @@ struct EyeProjectorView: View {
             utility.eyeProjectorOverlayImage
                 .flatMap { NSImage(contentsOf: $0) }
                 .flatMap { .nsImage($0) }
-                ?? .asset("tall_overlay"))
+                ?? .asset(
+                    utility.eyeProjectorStretchedOverlay ? "stretched_overlay" : "tall_overlay"))
     }
 
     var body: some View {
@@ -47,7 +48,8 @@ struct EyeProjectorView: View {
                     previewRenderer.instance.eyeProjectorStream.capturePreview
                         .scaleEffect(
                             x: 1,
-                            y: utility.eyeProjectorHeightScale * f / 6
+                            y: utility.eyeProjectorHeightScale * f
+                                * (Double(utility.eyeProjectorOverlayWidth) / 384)
                         )
                     overlayImage
                         .resizable()

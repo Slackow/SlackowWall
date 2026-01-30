@@ -9,12 +9,16 @@ import Sparkle
 import SwiftUI
 
 // This view model class manages Sparkle's updater and publishes when new updates are allowed to be checked
-final class UpdateManager: ObservableObject {
+final class UpdateManager: NSObject, ObservableObject, SPUUpdaterDelegate {
     @AppStorage("checkAutomatically") var checkAutomatically: Bool = true
     @AppStorage("downloadAutomatically") var downloadAutomatically: Bool = true
-    @AppStorage("lastAppVersion") var lastAppVersion: String = ""
+    @AppStorage("lastAppBuild") var lastAppBuild: String = ""
+    @AppStorage("updateChannel") var updateChannel: UpdateChannel = .release
 
-    private let updaterController: SPUStandardUpdaterController
+    private lazy var updaterController: SPUStandardUpdaterController = {
+        SPUStandardUpdaterController(
+            startingUpdater: true, updaterDelegate: self, userDriverDelegate: nil)
+    }()
 
     static let shared = UpdateManager()
 
@@ -63,11 +67,8 @@ final class UpdateManager: ObservableObject {
         return formatter
     }()
 
-    init() {
-        // If you want to start the updater manually, pass false to startingUpdater and call .startUpdater() later
-        // This is where you can also pass an updater delegate if you need one
-        updaterController = SPUStandardUpdaterController(
-            startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
+    override init() {
+        super.init()
 
         updaterController.updater.publisher(for: \.canCheckForUpdates)
             .assign(to: &$canCheckForUpdates)
@@ -92,15 +93,19 @@ final class UpdateManager: ObservableObject {
     }
 
     @MainActor private func checkForAppUpdated() {
-        guard let currentVersion = appVersion else {
-            return
-        }
+        guard let currentBuild = appBuild else { return }
 
-        if lastAppVersion.isEmpty {
-            lastAppVersion = currentVersion
-        } else if lastAppVersion != currentVersion {
-            appWasUpdated = true
-            lastAppVersion = currentVersion
+        if lastAppBuild.isEmpty {
+            lastAppBuild = currentBuild
+        } else {
+            if let lastBuildNumber = Int(lastAppBuild), let currentBuildNumber = Int(currentBuild),
+                lastBuildNumber < currentBuildNumber
+            {
+                appWasUpdated = true
+            }
+            if lastAppBuild != currentBuild {
+                lastAppBuild = currentBuild
+            }
         }
     }
 
@@ -120,15 +125,13 @@ final class UpdateManager: ObservableObject {
             guard let appVersionComponents = appVersion?.split(separator: ".").map(String.init),
                 appVersionComponents.count >= 2
             else { return }
-            let minorVersion = appVersionComponents[1]
 
             // Filter releases with the same minor version
             let filteredReleaseNotes = allReleaseNotes.filter { releaseEntry in
-                let versionComponents = releaseEntry.tagName.split(separator: ".").map(String.init)
-                return versionComponents.count >= 2 && versionComponents[1] == minorVersion
-            }
+                updateChannel == .beta || releaseEntry.prerelease != true
+            }.prefix(5)
 
-            self.releaseNotes = filteredReleaseNotes
+            self.releaseNotes = Array(filteredReleaseNotes)
         } catch {
             print(error.localizedDescription)
         }

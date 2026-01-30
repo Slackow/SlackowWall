@@ -15,6 +15,8 @@
 	</array>
 	<key>SUFeedURL</key>
 	<string>https://github.com/Slackow/SlackowWall/releases/latest/download/appcast.xml</string>
+	<key>SUBetaFeedURL</key>
+	<string>https://github.com/Slackow/SlackowWall/releases/latest/download/appcast.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>v7ltoQo9SDAfN4t4a/Z4Ng4VE5+JfFkHiAGmvYRKM0M=</string>
 </dict>

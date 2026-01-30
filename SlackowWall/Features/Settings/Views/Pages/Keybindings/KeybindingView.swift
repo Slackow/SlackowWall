@@ -11,7 +11,8 @@ import SwiftUI
 
 struct KeybindingView: View {
     @Binding var keybinding: Keybinding
-    @FocusState var isFocused: Bool
+    @FocusState var isActuallyFocused: Bool
+    @State var isFocused: Bool = false
     @State private var circleColor: Color = .gray
     var defaultValue: Keybinding = .none
     @State private var monitor: Any?
@@ -47,29 +48,42 @@ struct KeybindingView: View {
             }
         }
         .frame(width: 135, height: 22)
-        .overlay {
-            if isFocused {
-                FocusableBridge()
-                    .allowsHitTesting(false)
-                    .frame(width: 0, height: 0)
-            }
-        }
         .focusable(true)
-        .focused($isFocused)
+        .focused($isActuallyFocused)
         .overlay {
             Button(action: {
-                keybinding = defaultValue
-                isFocused = false
+                if #available(macOS 14.0, *) {
+                    keybinding = defaultValue
+                    isFocused = false
+                    isActuallyFocused = false
+                } else {
+                    if isFocused {
+                        keybinding = defaultValue
+                        isFocused = false
+                    } else {
+                        isFocused = true
+                    }
+
+                }
             }) {
                 ZStack {
-                    Circle()
-                        .fill(defaultValue == keybinding ? .gray.opacity(0.5) : circleColor)
-                        .frame(width: 16)
-
-                    Image(systemName: "xmark")
-                        .font(.caption2)
-                        .fontWeight(.bold)
-                        .foregroundColor(.init(nsColor: .windowBackgroundColor))
+                    if #available(macOS 14.0, *) {
+                        Circle()
+                            .fill(defaultValue == keybinding ? .gray.opacity(0.5) : circleColor)
+                            .frame(width: 16)
+                        Image(systemName: "xmark")
+                            .font(.caption2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.init(nsColor: .windowBackgroundColor))
+                    } else {
+                        Circle()
+                            .fill(circleColor)
+                            .frame(width: 16)
+                        Image(systemName: isFocused ? "xmark" : "pencil")
+                            .font(.caption2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.init(nsColor: .windowBackgroundColor))
+                    }
                 }
             }
             .buttonStyle(.plain)
@@ -104,6 +118,7 @@ struct KeybindingView: View {
                         keybinding = Keybinding(event: event)
                     }
                     isFocused = false
+                    isActuallyFocused = false
                     return nil
                 }
 
@@ -112,6 +127,9 @@ struct KeybindingView: View {
         }
         .onDisappear {
             if let monitor { NSEvent.removeMonitor(monitor) }
+        }
+        .onChange(of: isActuallyFocused) { newValue in
+            isFocused = isActuallyFocused
         }
     }
 }
@@ -124,37 +142,5 @@ struct KeybindingView: View {
             .padding()
         KeybindingView(keybinding: $settings.resetAllKey, defaultValue: .init(.t))
             .padding()
-    }
-}
-
-final class FocusableBridgeNSView: NSView {
-    // We’ll ask to become first responder so key events route predictably.
-    override var acceptsFirstResponder: Bool { true }
-    var onBecameFirstResponder: (() -> Void)?
-
-    override func viewDidMoveToWindow() {
-        super.viewDidMoveToWindow()
-        // If already requested, try to become first responder now.
-        DispatchQueue.main.async { [weak self] in
-            guard let self, let wnd = self.window else { return }
-            wnd.makeFirstResponder(self)
-            self.onBecameFirstResponder?()
-        }
-    }
-}
-
-struct FocusableBridge: NSViewRepresentable {
-    var onReady: ((NSView) -> Void)? = nil
-
-    func makeNSView(context: Context) -> FocusableBridgeNSView {
-        let v = FocusableBridgeNSView()
-        v.onBecameFirstResponder = {
-            // no-op; we just ensure first responder is acquired
-        }
-        return v
-    }
-
-    func updateNSView(_ nsView: FocusableBridgeNSView, context: Context) {
-        // no-op
     }
 }

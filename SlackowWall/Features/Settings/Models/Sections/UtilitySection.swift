@@ -18,7 +18,11 @@ extension Preferences {
         var eyeProjectorOpenWithTallMode: Bool = true
         var eyeProjectorHeightScale: Double = 0.2
         var eyeProjectorOverlayOpacity: Double = 1.0
+        var eyeProjectorStretchedOverlay: Bool = false
         var eyeProjectorOverlayImage: URL? = nil
+        var eyeProjectorOverlayWidth: Int {
+            eyeProjectorStretchedOverlay ? 30 : 60
+        }
         var eyeProjectorAlwaysOnTop: Bool = false
         var eyeProjectorTitleBarHidden: Bool = false
         var eyeProjectorShouldOpenWithTallMode: Bool {

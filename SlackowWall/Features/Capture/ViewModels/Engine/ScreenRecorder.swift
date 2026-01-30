@@ -415,7 +415,7 @@ import SwiftUI
                 // Show Pie Chart
                 // Desired crop size in pixels inside the captured surface
                 var f = Int(s)
-                if tallWidthPts < 320 {
+                if tallWidthPts < 320 || (tallHeightPts > 12000 && usingRetino) {
                     f = 1
                 }
                 let cropWPx = 67 * f
@@ -444,7 +444,8 @@ import SwiftUI
                 LogManager.shared.appendLog("size of surface: \(W)x\(H)")
                 // Desired crop size in pixels inside the captured surface
                 let factor = Int(factor)
-                let cropWPx = Int(60 * factor / Int(retinoFactor))
+                let cropWPx = Int(
+                    Settings[\.utility].eyeProjectorOverlayWidth * factor / Int(retinoFactor))
                 let cropHPx = min(1200 * factor, H)
                 LogManager.shared.appendLog("Cropping", cropWPx, cropHPx)
 

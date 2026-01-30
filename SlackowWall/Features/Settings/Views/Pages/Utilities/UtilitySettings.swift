@@ -105,16 +105,15 @@ struct UtilitySettings: View {
 
                                 SettingsInfoIcon(
                                     description: """
-                                        The Height Scale option determines how "squished" the eye is
-                                        on the projector, a lower value gives you more leeway on how
-                                        far above or below your cursor can be from the eye to still
-                                        see it, and a higher number makes it easier to see the \
-                                        divide
-                                        between the two important pixels, the ideal value depends on
-                                        how tall you make the eye projector window, but generally \
-                                        it's
-                                        recommended to keep it between 0.2-0.4, you can experiment
-                                        with it with the window open to see what works best.
+                                        The Height Scale option determines how "squished" the eye
+                                        is on the projector, a lower value gives you more leeway
+                                        on how far above or below your cursor can be from the eye
+                                        to still see it, and a higher number makes it easier to
+                                        see the divide between the two important pixels, the ideal
+                                        value depends on how tall you make the eye projector
+                                        window, but generally it's recommended to keep it either
+                                        between 0.2-0.4, or 1. You can experiment with it with the
+                                        window open to see what works best.
                                         """)
 
                                 TextField(
@@ -132,6 +131,21 @@ struct UtilitySettings: View {
                                 Text("\(Int(settings.eyeProjectorOverlayOpacity * 100))%")
                                 Slider(value: $settings.eyeProjectorOverlayOpacity, in: 0...1)
                                     .frame(width: 200, height: 25)
+                            }
+                            Divider()
+                            SettingsToggleView(
+                                title: "Stretched Overlay",
+                                option: $settings.eyeProjectorStretchedOverlay
+                            )
+                            .onChange(of: settings.eyeProjectorStretchedOverlay) { newValue in
+                                if ShortcutManager.shared.eyeProjectorOpen,
+                                    let instance = ScreenRecorder.shared.eyeProjectedInstance
+                                {
+                                    Task {
+                                        await ScreenRecorder.shared.startEyeProjectorCapture(
+                                            for: instance)
+                                    }
+                                }
                             }
                             Divider()
                             HStack {
@@ -178,6 +192,7 @@ struct UtilitySettings: View {
                             Divider()
                             SettingsToggleView(
                                 title: "Hide Titlebar",
+                                description: "Disable this setting if you need to move the window.",
                                 option: $settings.eyeProjectorTitleBarHidden
                             )
                             .onChange(of: settings.eyeProjectorTitleBarHidden) { newValue in
@@ -273,6 +288,7 @@ struct UtilitySettings: View {
                             Divider()
                             SettingsToggleView(
                                 title: "Hide Titlebar",
+                                description: "Disable this setting if you need to move the window.",
                                 option: $settings.pieProjectorTitleBarHidden
                             )
                             .onChange(of: settings.pieProjectorTitleBarHidden) { newValue in
@@ -531,7 +547,7 @@ struct UtilitySettings: View {
                     "Wrote \(boatEyeSensitivity) to options.txt \(inst.name)")
             } catch {
                 LogManager.shared.appendLog(
-                    "Failed to write to options.txt \(inst.name), skipping.")
+                    "Failed to write to options.txt \(inst.name), skipping.", error)
             }
             if hasStandardSettings {
                 do {
@@ -547,7 +563,7 @@ struct UtilitySettings: View {
                         "Wrote \(boatEyeSensitivity) to standardoptions.txt \(inst.name)")
                 } catch {
                     LogManager.shared.appendLog(
-                        "Failed to write to standardoptions.txt \(inst.name), skipping.")
+                        "Failed to write to standardoptions.txt \(inst.name), skipping.", error)
                 }
                 do {
                     // TODO: The logic for JSON file
@@ -568,7 +584,7 @@ struct UtilitySettings: View {
                         "Wrote \(boatEyeSensitivity) to standardsettings.json \(inst.name)")
                 } catch {
                     LogManager.shared.appendLog(
-                        "Failed to write to standardsettings.json \(inst.name), skipping.")
+                        "Failed to write to standardsettings.json \(inst.name), skipping.", error)
                 }
             }
 
