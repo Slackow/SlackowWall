@@ -30,15 +30,15 @@ struct UpdateSettings: View {
                     )
                     .disabled(!updateManager.checkAutomatically)
 
-                    Divider()
-
-                    SettingsPickerView(
-                        title: "Update Channel",
-                        description:
-                            "Beta updates may be less stable than the main release channel.",
-                        width: 100,
-                        selection: $updateManager.updateChannel
-                    )
+                    //                    Divider()
+                    //
+                    //                    SettingsPickerView(
+                    //                        title: "Update Channel",
+                    //                        description:
+                    //                            "Beta updates may be less stable than the main release channel.",
+                    //                        width: 100,
+                    //                        selection: $updateManager.updateChannel
+                    //                    )
                 }
             }
 
