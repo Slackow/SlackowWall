@@ -300,7 +300,7 @@ class LogManager {
                 appendLog("Could not find sensitivity in options.txt for \(instance.name)")
                 continue
             }
-            if abs(sens - boatEyeSens) > 0.00001 {
+            if abs(sens - boatEyeSens) > 0.0000001 {
                 appendLog(
                     "\(instance.name) has a sensitivity of '\(sens)' but the app thinks it's '\(boatEyeSens)'"
                 )

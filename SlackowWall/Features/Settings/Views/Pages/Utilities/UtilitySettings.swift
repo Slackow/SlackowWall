@@ -42,7 +42,7 @@ struct UtilitySettings: View {
                 // TODO: can't get sensitivity, what do I do?
                 return false
             }
-            return abs(sens - boatEyeSensitivity) > 0.00001
+            return abs(sens - boatEyeSensitivity) > 0.0000001
         }
     }
 
@@ -375,7 +375,15 @@ struct UtilitySettings: View {
 
                         HStack {
                             SettingsLabel(title: "BoatEye Sensitivity", font: .body)
-                            Button(action: fixSensitivities) {
+                            Button(action: {
+                                guard let wrongSensitivities, !wrongSensitivities.isEmpty else {
+                                    return
+                                }
+                                self.wrongSensitivities = nil
+                                Task {
+                                    await fixSensitivities(wrongSensitivities)
+                                }
+                            }) {
                                 if let wrongSensitivities, !wrongSensitivities.isEmpty {
                                     let labels = wrongSensitivities.map { "\"\($0.name)\"" }.joined(
                                         separator: ", ")
@@ -517,9 +525,7 @@ struct UtilitySettings: View {
         return fractionToUI(sNew)
     }
 
-    private func fixSensitivities() {
-        guard let wrongSensitivities, !wrongSensitivities.isEmpty else { return }
-        self.wrongSensitivities = nil
+    private func fixSensitivities(_ wrongSensitivities: [TrackedInstance]) async {
         let fm = FileManager.default
         for inst in wrongSensitivities {
             let path = inst.info.path
@@ -535,7 +541,7 @@ struct UtilitySettings: View {
                     "Cannot figure out how to fix standard settings \(inst.name), skipping.")
                 continue
             }
-            trackingManager.kill(instance: inst)
+            await trackingManager.killAndWait(instance: inst)
             do {
                 let contents = try String(contentsOfFile: optionsPath, encoding: .utf8)
                 let replacement = contents.replacing(UtilitySettings.mouseSensTextRegex) { _ in

@@ -202,6 +202,19 @@ class TrackingManager: ObservableObject {
         return killed
     }
 
+    @discardableResult
+    func killAndWait(instance: TrackedInstance) async -> Bool {
+        guard let killed = getAllApps().first(where: { $0.processIdentifier == instance.pid })
+        else { return false }
+        guard killed.terminate() else { return false }
+        for i in 0..<25 {
+            LogManager.shared.appendLog("Termination check \(i + 1)/25")
+            if killed.isTerminated { return true }
+            try? await Task.sleep(nanoseconds: 100_000_000)
+        }
+        return false
+    }
+
     func killAll() {
         let runningApps = getAllApps()
         var appsToTerminate: [NSRunningApplication] = []
