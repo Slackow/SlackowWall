@@ -28,6 +28,10 @@ struct SlackowWallApp: App {
     @State private var logUploadedAlert: String?
     @State private var logLink: String?
 
+    static var appPath = FileManager.default
+        .homeDirectoryForCurrentUser
+        .appending(path: "Library/Application Support/SlackowWall/")
+
     init() {
         NSSplitViewItem.swizzle()
     }

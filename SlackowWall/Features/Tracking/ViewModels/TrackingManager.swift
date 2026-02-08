@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import ZIPFoundation
 
 class TrackingManager: ObservableObject {
     @Published var trackedInstances = [TrackedInstance]()
@@ -103,6 +104,38 @@ class TrackingManager: ObservableObject {
 
         let minecraftArgs = ["net.minecraft.client.main.Main", "-Djava.library.path="]
         return minecraftArgs.contains { arg in args.contains(where: { $0.contains(arg) }) }
+    }
+
+    private func isNinjabrainBot(app: NSRunningApplication) -> Bool {
+        guard let args = Utilities.processArguments(pid: app.processIdentifier) else {
+            return false
+        }
+
+        if let jarIdx = args.firstIndex(of: "-jar"), let jarName = args[safe: jarIdx + 1],
+            jarName.hasPrefix("/"), jarName.contains("Ninjabrain"), jarName.hasSuffix(".jar"),
+            let archive = try? Archive(
+                url: URL(filePath: jarName), accessMode: .read, pathEncoding: nil),
+            let entry = archive["META-INF/MANIFEST.MF"]
+        {
+            var manifestData = Data()
+            guard
+                (try? archive.extract(entry) { data in
+                    manifestData.append(data)
+                }) != nil
+            else {
+                return false
+            }
+
+            return manifestData.contains(Data("Main-Class: ninjabrainbot.Main".utf8))
+        }
+        return false
+    }
+
+    @discardableResult
+    func killNinjabrainBot() -> NSRunningApplication? {
+        let ninBot = getAllApps().filter(isNinjabrainBot).first
+        ninBot?.terminate()
+        return ninBot
     }
 
     private func getAllApps() -> [NSRunningApplication] {
@@ -203,8 +236,8 @@ class TrackingManager: ObservableObject {
     }
 
     @discardableResult
-    func killAndWait(instance: TrackedInstance) async -> Bool {
-        guard let killed = getAllApps().first(where: { $0.processIdentifier == instance.pid })
+    func killAndWait(pid: pid_t) async -> Bool {
+        guard let killed = getAllApps().first(where: { $0.processIdentifier == pid })
         else { return false }
         guard killed.terminate() else { return false }
         for i in 0..<25 {

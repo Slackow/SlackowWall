@@ -541,7 +541,7 @@ struct UtilitySettings: View {
                     "Cannot figure out how to fix standard settings \(inst.name), skipping.")
                 continue
             }
-            await trackingManager.killAndWait(instance: inst)
+            await trackingManager.killAndWait(pid: inst.pid)
             do {
                 let contents = try String(contentsOfFile: optionsPath, encoding: .utf8)
                 let replacement = contents.replacing(UtilitySettings.mouseSensTextRegex) { _ in

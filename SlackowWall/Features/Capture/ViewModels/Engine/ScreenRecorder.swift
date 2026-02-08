@@ -292,8 +292,8 @@ import SwiftUI
             guard let processID = window.owningApplication?.processID, let title = window.title
             else { return false }
 
-            // This WILL break in 2040 if the versioning system stays the same, if you're seeing this because that happened, that's cool honestly.
-            let regex = /(1|2[6-9]|3\d)\.(\d+)(\.\d+)?/
+            // This WILL break in 2050 if the versioning system stays the same, if you're seeing this because that happened, that's cool honestly.
+            let regex = /(1|2[6-9]|[34]\d)\.(\d+)(\.\d+)?/
             if let match = try? regex.firstMatch(in: title),
                 max(Int(match.output.1) ?? 0, Int(match.output.2) ?? 0) >= 6,
                 title.contains("Minecraft")

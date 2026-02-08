@@ -69,6 +69,21 @@ struct PlaceholderInstanceView: View {
                 Button("View Mods") {
                     isModMenuOpen = true
                 }
+                Button("Fix NinjabrainBot") {
+                    do {
+                        let results = try NinjabrainAdjuster.get(instance: instance)
+                        LogManager.shared.appendLog(results)
+                        // imagine a sheet or something to determine which options the user wants enabled (especially for recommended)
+                        // so this fix call won't be right below in the final thing
+                        var fixFilter = [NinjabrainAdjuster.NinBotSetting]()
+                        fixFilter += results.breaking
+                        fixFilter += results.recommend
+                        try NinjabrainAdjuster.fix(instance: instance, fixFilter: fixFilter)
+                        LogManager.shared.appendLog("Successfully fixed instance!")
+                    } catch {
+                        LogManager.shared.appendLog(error)
+                    }
+                }
             }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
                 .padding(.bottom, 5)
                 .padding(.leading, 5)

@@ -36,7 +36,8 @@ struct CreditsView: View {
                         ForEach(self.supporters, id: \.uuid) { supporter in
                             CreditsEntryView(
                                 name: supporter.name, uuid: supporter.uuid, role: "Supporter",
-                                icon: "heart.fill", color: .pink)
+                                icon: "heart.fill",
+                                color: supporter.heartColor == "purple" ? .purple : .pink)
                         }
                     }
                 }
@@ -166,6 +167,8 @@ struct CreditsView: View {
                 if splitLine.count == 2 {
                     supporters.append(
                         Supporter(name: String(splitLine[0]), uuid: String(splitLine[1])))
+                } else if line == "+purple", !supporters.isEmpty {
+                    supporters[supporters.count - 1].heartColor = "purple"
                 }
             }
             self.supporters = supporters
@@ -187,15 +190,17 @@ struct CreditsView: View {
     }
 
     private func supportersFromFile() -> String? {
+        let fileURL = SlackowWallApp.appPath.appending(path: "donations.txt")
         return try? String(
-            contentsOfFile: "~/Library/Application Support/SlackowWall/donations.txt",
+            contentsOf: fileURL,
             encoding: .utf8)
     }
 
     private func writeSupportersToFile(supporters: String) {
         guard !supporters.isEmpty else { return }
+        let fileURL = SlackowWallApp.appPath.appending(path: "donations.txt")
         try? supporters.write(
-            toFile: "~/Library/Application Support/SlackowWall/donations.txt", atomically: true,
+            to: fileURL, atomically: true,
             encoding: .utf8)
     }
 }
@@ -203,6 +208,7 @@ struct CreditsView: View {
 struct Supporter: Codable {
     let name: String
     let uuid: String
+    var heartColor: String?
 }
 
 extension AttributedString {

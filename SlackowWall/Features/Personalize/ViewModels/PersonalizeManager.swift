@@ -115,9 +115,7 @@ class PersonalizeManager: ObservableObject {
     }
 
     private var baseURL: URL {
-        fileManager
-            .homeDirectoryForCurrentUser
-            .appending(path: "Library/Application Support/SlackowWall/")
+        SlackowWallApp.appPath
             .appending(path: "Icons/")
     }
 }

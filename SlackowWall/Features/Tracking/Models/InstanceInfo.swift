@@ -26,6 +26,13 @@ class InstanceInfo: CustomStringConvertible {
     }
     let path: String
     let version: String
+    var majorVersion: Int {
+        var major = version.starts(with: "1.") ? version.dropFirst(2) : version.dropFirst(0)
+        if let idx = major.firstIndex(of: ".") {
+            major = major[..<idx]
+        }
+        return Int(major) ?? 16
+    }
     let pid: pid_t
     lazy var port: UInt16 = readBoundlessPort()
     var untilF3: Int = 0

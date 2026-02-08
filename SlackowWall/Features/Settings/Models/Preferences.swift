@@ -32,13 +32,19 @@ extension Preferences {
     func tallDimensions(for instance: TrackedInstance? = nil) -> (
         CGFloat, CGFloat, CGFloat?, CGFloat?
     ) {
-        let noDPI =
-            (instance?.info.mods.map(\.id).contains("retino") ?? false)
-            || NSScreen.primary?.backingScaleFactor == 1
+        let loDPI =
+            if #available(macOS 26.0, *) {
+                NSScreen.primary?.backingScaleFactor == 1
+            } else if #available(macOS 15.5, *) {
+                (instance?.info.mods.map(\.id).contains("retino") ?? false)
+                    || NSScreen.primary?.backingScaleFactor == 1
+            } else {
+                NSScreen.primary?.backingScaleFactor == 1
+            }
         let m = mode.tallMode
         return (
             tallWidth,
-            m.height.cg ?? (noDPI ? 16384 : 8192),
+            m.height.cg ?? (loDPI ? 16384 : 8192),
             m.x.cg,
             m.y.cg
         )

@@ -39,6 +39,7 @@ class ShortcutManager: ObservableObject, Manager {
 
     func handleGlobalKey(_ key: NSEvent) {
         var type = key.type
+        guard type != .keyDown || !key.isARepeat else { return }
         if type == .flagsChanged,
             let code = KeyCode.modifierFlags(code: key.keyCode)
         {
