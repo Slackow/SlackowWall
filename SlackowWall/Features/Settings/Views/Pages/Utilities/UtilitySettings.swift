@@ -22,7 +22,7 @@ struct UtilitySettings: View {
 
     var usingRetino: Bool {
         trackingManager.trackedInstances.first {
-            $0.info.mods.contains { $0.id == "retino" }
+            $0.hasMod(.retino)
         } != nil
     }
     static let mouseSensTextRegex = /^mouseSensitivity:([\d.]+)$/.anchorsMatchLineEndings()
@@ -97,8 +97,7 @@ struct UtilitySettings: View {
                                 SettingsLabel(
                                     title: "Height Scale",
                                     description: """
-                                        Adjusts the "Stretch" on the y axis, \
-                                        you probably want the default (0.2)
+                                        Adjusts the "Stretch/Squish" of the eye on the y axis
                                         """,
                                     font: .body
                                 )
@@ -532,7 +531,7 @@ struct UtilitySettings: View {
             let optionsPath = "\(path)/options.txt"
             let standardSettingsTxt = "\(path)/config/standardoptions.txt"
             let standardSettingsJson = "\(path)/config/mcsr/standardsettings.json"
-            let hasStandardSettings = inst.info.mods.map(\.id).contains("standardsettings")
+            let hasStandardSettings = inst.hasMod(.standardSettings)
             if hasStandardSettings
                 && !(fm.fileExists(atPath: standardSettingsJson)
                     || fm.fileExists(atPath: standardSettingsTxt))

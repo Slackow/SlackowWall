@@ -8,7 +8,7 @@
 import ScreenCaptureKit
 import SwiftUI
 
-class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
+class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable, @unchecked Sendable {
     let id: UUID
 
     let pid: pid_t
@@ -22,6 +22,9 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
 
     @Published var isLocked: Bool
     @Published var wasClosed: Bool
+    @Published var ninbotResults: NinjabrainAdjuster.Results?
+    @Published var ninbotIsChecking: Bool
+    @Published var ninbotCheckError: String?
 
     init(pid: pid_t, instanceNumber: Int) {
         self.id = UUID()
@@ -33,23 +36,41 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
         self.eCountProjectorStream = InstanceStream()
         self.isLocked = false
         self.wasClosed = false
+        self.ninbotResults = nil
+        self.ninbotIsChecking = false
+        self.ninbotCheckError = nil
     }
 
     var name: Substring {
-        let result = self.info.path.split(separator: "/").dropLast(1).last ?? "??"
+        let path = self.info.path
+        var result = path.split(separator: "/").last ?? "??"
+        if result == "minecraft" || result == ".minecraft" {
+            result = path.split(separator: "/").dropLast(1).last ?? "??"
+        }
         return result == "Application Support" ? "Minecraft" : result
     }
 
     var isReady: Bool {
-        if checkStateOutput {
+        if hasMod(.stateOutput) {
             return info.state == .paused || info.state == .unpaused
         } else {
             return true
         }
     }
 
-    var checkStateOutput: Bool {
-        return info.mods.map(\.id).contains("state-output")
+    var settings: InstanceSettings {
+        info.settings
+    }
+
+    func hasMod(_ knownMod: KnownMod) -> Bool {
+        return info.hasMod(knownMod)
+    }
+
+    enum KnownMod: String {
+        case retino = "retino"
+        case standardSettings = "standardsettings"
+        case stateOutput = "state-output"
+        case boundless = "boundlesswindow"
     }
 
     private static func calculateInstanceInfo(pid: pid_t) -> InstanceInfo {
@@ -103,6 +124,38 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable {
 
     func updateInstanceInfo() {
         self.info.updateState(force: true)
+    }
+
+    func scheduleNinbotCheck(delay: TimeInterval = 1.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+            if self?.ninbotResults == nil {
+                self?.refreshNinbotStatus()
+            }
+        }
+    }
+
+    func refreshNinbotStatus() {
+        guard !ninbotIsChecking else { return }
+        ninbotIsChecking = true
+        ninbotCheckError = nil
+
+        Task.detached(priority: .utility) { [weak self] in
+            guard let self else { return }
+            do {
+                let results = try NinjabrainAdjuster.get(instance: self)
+                await MainActor.run {
+                    self.ninbotResults = results
+                    self.ninbotIsChecking = false
+                }
+            } catch {
+                await MainActor.run {
+                    self.ninbotResults = nil
+                    self.ninbotCheckError = error.localizedDescription
+                    self.ninbotIsChecking = false
+                }
+                LogManager.shared.appendLog("Failed to check NinjabrainBot settings:", error)
+            }
+        }
     }
 
     func toggleLock() {

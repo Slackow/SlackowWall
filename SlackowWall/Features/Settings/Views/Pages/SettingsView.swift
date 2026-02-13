@@ -31,7 +31,7 @@ struct SettingsView: View {
             Group {
                 switch selectedSettingsBarItem {
                     case .instances:
-                        InstancesSettings()
+                        WallInstancesSettings()
                     case .behavior:
                         BehaviorSettings()
                     case .window_resizing:

@@ -16,7 +16,7 @@ class PreviewRenderer: ObservableObject, Manager {
 
     init(instance: TrackedInstance) {
         self.instance = instance
-        self.titleBarHeight = instance.info.isBoundless ? 0 : 30
+        self.titleBarHeight = instance.hasMod(.boundless) ? 0 : 30
     }
 
     var capturePreview: some View {

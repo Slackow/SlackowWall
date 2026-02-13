@@ -27,7 +27,7 @@ struct EyeProjectorView: View {
     init(instance: TrackedInstance) {
         _previewRenderer = StateObject(wrappedValue: PreviewRenderer(instance: instance))
         scaleFactor =
-            instance.info.mods.map(\.id).contains("retino")
+            instance.hasMod(.retino)
             ? 1 : NSScreen.primary?.backingScaleFactor ?? 1
         f = NSScreen.primary?.backingScaleFactor ?? 1
     }

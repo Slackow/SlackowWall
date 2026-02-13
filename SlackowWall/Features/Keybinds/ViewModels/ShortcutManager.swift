@@ -286,7 +286,7 @@ class ShortcutManager: ObservableObject, Manager {
                 LogManager.shared.appendLog("Instance with pid: \(pid) not found")
                 return ResizeResult(type: .noResize)
             }
-            if !force && Settings[\.mode].blockResizeInGUI && instance.info.hasStateOutput {
+            if !force && Settings[\.mode].blockResizeInGUI && instance.hasMod(.stateOutput) {
                 instance.info.updateState(force: true)
                 LogManager.shared.appendLog("Instance state:", instance.info.state)
 
@@ -300,7 +300,7 @@ class ShortcutManager: ObservableObject, Manager {
             let newPosition = CGPoint(
                 x: x ?? (currentPosition.x - (newSize.width - currentSize.width) * 0.5),
                 y: y ?? (currentPosition.y - (newSize.height - currentSize.height) * 0.5))
-            if instance.info.isBoundless {
+            if instance.hasMod(.boundless) {
                 WindowController.sendResizeCommand(
                     instance: instance, x: Int(newPosition.x), y: Int(newPosition.y),
                     width: Int(newSize.width), height: Int(newSize.height))

@@ -30,7 +30,8 @@ class TrackingManager: ObservableObject {
     }
 
     deinit {
-        stopInstanceCheckTimer()
+        instanceCheckTimer?.invalidate()
+        instanceCheckTimer = nil
     }
 
     func getValues<T>(_ path: KeyPath<TrackedInstance, T>) -> [T] {
@@ -243,7 +244,7 @@ class TrackingManager: ObservableObject {
         for i in 0..<25 {
             LogManager.shared.appendLog("Termination check \(i + 1)/25")
             if killed.isTerminated { return true }
-            try? await Task.sleep(nanoseconds: 100_000_000)
+            try? await Task.sleep(for: .seconds(0.1))
         }
         return false
     }

@@ -118,8 +118,7 @@ import SwiftUI
         }
     }
 
-    private func createStreamConfiguration(width: CGFloat, height: CGFloat) -> SCStreamConfiguration
-    {
+    private func createStreamConfiguration(width: CGFloat, height: CGFloat) -> SCStreamConfiguration {
         let streamConfig = SCStreamConfiguration()
 
         // Configure audio capture.
@@ -252,6 +251,7 @@ import SwiftUI
             }
         }
 
+        trackingManager.trackedInstances.removeAll()
         trackingManager.fetchInstances()
         MouseSensitivityManager.shared.setSensitivityFactor(
             factor: Settings[\.utility].sensitivityScale)
@@ -352,7 +352,7 @@ import SwiftUI
             tallWidthPts = w
             tallHeightPts = h
         }
-        let usingRetino = instance.info.mods.map(\.id).contains("retino")
+        let usingRetino = instance.hasMod(.retino)
         let factor = min(NSScreen.primary?.backingScaleFactor ?? 1, 16384.0 / tallHeightPts)
         let retinoFactor = usingRetino ? 1.0 : factor
         let s =
@@ -422,7 +422,7 @@ import SwiftUI
                 let cropHPx = 9 * f  // pick what you want to display
                 // Top left anchor in pixels
                 let cropXPx = 1 * f
-                let cropYPx = 37 * f + (instance.info.isBoundless ? 0 : 30 * f)
+                let cropYPx = 37 * f + (instance.hasMod(.boundless) ? 0 : 30 * f)
 
                 // Normalize for contentsRect (0..1)
                 let x = CGFloat(cropXPx) / CGFloat(W)

@@ -37,18 +37,18 @@ class InstanceInfo: CustomStringConvertible {
     lazy var port: UInt16 = readBoundlessPort()
     var untilF3: Int = 0
     var checkState: CheckingMode = .NONE
-    var isBoundless: Bool {
-        mods.contains { "boundlesswindow" == $0.id }
-    }
-    var hasStateOutput: Bool {
-        mods.contains { "state-output" == $0.id }
-    }
+
+    var settings: InstanceSettings
+
     var mods: [ModInfo] = []
+    var areModsLoading: Bool? = nil
 
     init(pid: pid_t, path: String, version: String) {
         self.pid = pid
         self.path = path
         self.version = version
+        self.areModsLoading = true
+        self.settings = .init()
         Task {
             updateModInfo()
             try? await Task.sleep(for: .seconds(0.95))
@@ -68,6 +68,20 @@ class InstanceInfo: CustomStringConvertible {
                 }
             }
         }
+    }
+
+    func waitForModsToFinishLoading() async {
+        if areModsLoading == nil {
+            updateModInfo()
+            return
+        }
+        while areModsLoading == true {
+            try? await Task.sleep(for: .milliseconds(50))
+        }
+    }
+
+    func hasMod(_ knownMod: TrackedInstance.KnownMod) -> Bool {
+        return self.mods.map(\.id).contains(knownMod.rawValue)
     }
 
     func readBoundlessPort() -> UInt16 {
@@ -120,6 +134,7 @@ class InstanceInfo: CustomStringConvertible {
     }
 
     func updateModInfo() {
+        areModsLoading = true
         guard !path.isEmpty else { return }
         let fileManager = FileManager.default
         if let contents = try? fileManager.contentsOfDirectory(atPath: path + "/mods/") {
@@ -128,6 +143,7 @@ class InstanceInfo: CustomStringConvertible {
                 .compactMap { InstanceInfo.extractModInfo(fromJarAt: $0) }
             LogManager.shared.appendLog("mods", mods.map(\.id).sorted())
         }
+        areModsLoading = false
     }
 
     private static func extractModInfo(

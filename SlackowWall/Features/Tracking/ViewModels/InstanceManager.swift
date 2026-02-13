@@ -160,7 +160,7 @@ import SwiftUI
 
     private func canReset(instance: TrackedInstance) -> Bool {
         if instance.isLocked { return false }
-        if !instance.checkStateOutput { return true }
+        if !instance.hasMod(.stateOutput) { return true }
         instance.info.updateState(force: true)
         let info = instance.info
         return info.state != .waiting && info.state != .generating
@@ -221,7 +221,7 @@ import SwiftUI
 
         for pid in pids {
             if let instance = TrackingManager.shared.trackedInstances.first(where: {
-                $0.pid == pid && $0.info.isBoundless
+                $0.pid == pid && $0.hasMod(.boundless)
             }) {
                 WindowController.sendResizeCommand(
                     instance: instance, x: Int(x), y: Int(y),

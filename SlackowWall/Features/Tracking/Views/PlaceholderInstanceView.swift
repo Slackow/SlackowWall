@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct PlaceholderInstanceView: View {
-    var instance: TrackedInstance
+    @ObservedObject var instance: TrackedInstance
     @State private var isHovered: Bool = true
     @State private var isIndicatorHovered: Bool = false
     @State private var isModMenuOpen: Bool = false
+    @State private var isNinbotFixOpen: Bool = false
     @StateObject private var deletionModel = WorldDeletionViewModel()
 
     var body: some View {
@@ -65,28 +66,50 @@ struct PlaceholderInstanceView: View {
                 .opacity(isHovered ? 1 : 0)
                 .animation(.easeInOut.delay(0.15).speed(2), value: isHovered)
 
-            HStack {
+            HStack(spacing: 10) {
                 Button("View Mods") {
                     isModMenuOpen = true
                 }
-                Button("Fix NinjabrainBot") {
-                    do {
-                        let results = try NinjabrainAdjuster.get(instance: instance)
-                        LogManager.shared.appendLog(results)
-                        // imagine a sheet or something to determine which options the user wants enabled (especially for recommended)
-                        // so this fix call won't be right below in the final thing
-                        var fixFilter = [NinjabrainAdjuster.NinBotSetting]()
-                        fixFilter += results.breaking
-                        fixFilter += results.recommend
-                        try NinjabrainAdjuster.fix(instance: instance, fixFilter: fixFilter)
-                        LogManager.shared.appendLog("Successfully fixed instance!")
-                    } catch {
-                        LogManager.shared.appendLog(error)
+                .popover(isPresented: $isModMenuOpen) {
+                    ModMenu(instance: instance)
+                }
+
+                if instance.ninbotIsChecking {
+                    Image(systemName: "circle")
+                        .foregroundStyle(.gray)
+                        .popoverLabel("Checking NinjabrainBot settings")
+                } else if let results = instance.ninbotResults {
+                    if results.breaking.isEmpty {
+                        Image(systemName: "checkmark.circle")
+                            .foregroundStyle(.green)
+                            .popoverLabel("NinjabrainBot settings look good, refresh to recheck")
+                    } else {
+                        Button("Fix NinjabrainBot") {
+                            isNinbotFixOpen = true
+                        }
+                        .foregroundStyle(.red)
+                        .onAppear {
+                            Task {
+                                try? await Task.sleep(for: .seconds(1))
+                                NSApp.requestUserAttention(.criticalRequest)
+                            }
+                        }
+                        .popover(isPresented: $isNinbotFixOpen) {
+                            if let results = instance.ninbotResults {
+                                NinbotFixSheet(instance: instance, results: results)
+                                    .background(Color(nsColor: .windowBackgroundColor).opacity(0.6))
+
+                            } else {
+                                Text("No NinjabrainBot issues found.")
+                                    .padding()
+                            }
+                        }
                     }
                 }
-            }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
-                .padding(.bottom, 5)
-                .padding(.leading, 5)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+            .padding(.bottom, 5)
+            .padding(.leading, 5)
 
             DeletionProgressView(model: deletionModel)
         }
@@ -99,8 +122,12 @@ struct PlaceholderInstanceView: View {
                 .stroke(.gray, lineWidth: 3)
                 .background(.ultraThinMaterial)
         }
-        .sheet(isPresented: $isModMenuOpen) {
-            ModMenu(instance: instance)
+        .task {
+            await Task.yield()
+            await instance.info.waitForModsToFinishLoading()
+            if instance.ninbotResults == nil && instance.hasMod(.boundless) {
+                instance.refreshNinbotStatus()
+            }
         }
     }
 }

@@ -8,6 +8,7 @@
 import Combine
 import SwiftUI
 
+@MainActor
 class ModeSettingsViewModel: ObservableObject {
     private var screenDimensions: CGSize?
 

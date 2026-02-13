@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct InstancesSettings: View {
+struct WallInstancesSettings: View {
     @AppSettings(\.instance) private var settings
 
     @ObservedObject private var trackingManager = TrackingManager.shared
@@ -169,6 +169,6 @@ struct InstancesSettings: View {
 }
 
 #Preview {
-    InstancesSettings()
+    WallInstancesSettings()
         .frame(width: 600, height: 500)
 }

@@ -216,6 +216,7 @@ class LogManager {
         }
     }
 
+    @MainActor
     func openLatestLogInConsole() {
         logCurrentProfile()
         let logFileURL = URL(filePath: logPath)
@@ -225,6 +226,7 @@ class LogManager {
         }
     }
 
+    @MainActor
     func uploadLog(callback: @escaping (String, String?) -> Void = { _, _ in }) {
         logCurrentProfile()
 
@@ -282,6 +284,7 @@ class LogManager {
         }
     }
 
+    @MainActor
     func logSensitivityDetection() {
         let trackingManager = TrackingManager.shared
         let boatEyeSens = Settings[\.utility].boatEyeSensitivity
@@ -374,6 +377,7 @@ class LogManager {
         logPath(logOutput, includeTimestamp: false)
     }
 
+    @MainActor
     func logCurrentProfile() {
         logSensitivityDetection()
         logNinbotSettings()
