@@ -95,7 +95,7 @@ class MinecraftAdjuster {
         if contents.contains("fullscreen:true") {
             breaking.append(.fullscreen)
         }
-        guard let match = try UtilitySettings.mouseSensTextRegex.firstMatch(in: contents),
+        guard let match = try MinecraftAdjuster.mouseSensTextRegex.firstMatch(in: contents),
             let sens = Double(match.output.1)
         else {
             // TODO: can't get sensitivity, what do I do?
@@ -125,6 +125,29 @@ class MinecraftAdjuster {
 
     enum MinecraftSetting: String {
         case mouseSensitivity, fullscreen
+
+        var name: String {
+            switch self {
+                case .mouseSensitivity: "Mouse Sensitivity"
+                case .fullscreen: "Fullscreen"
+            }
+        }
+
+        var description: String? {
+            switch self {
+                case .mouseSensitivity:
+                    let sensitivity = Settings[\.utility].boatEyeSensitivity
+                    return """
+                        Your Minecraft sensitivity must be the same as in SlackowWall and Ninjabrain Bot.
+
+                        [This will change your sensitivity to ~\(Int(sensitivity * 200))%, you should configure your \
+                        sensitivity
+                        scaling settings to compensate](0)
+                        """
+                case .fullscreen:
+                    return "Fullscreen should be off for BoatEye."
+            }
+        }
     }
 
     enum AdjustmentError: LocalizedError {

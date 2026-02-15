@@ -5,6 +5,7 @@
 //  Created by Kihron on 7/20/24.
 //
 
+import Combine
 import ScreenCaptureKit
 import SwiftUI
 
@@ -25,12 +26,19 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable, @unc
     @Published var ninbotResults: NinjabrainAdjuster.Results?
     @Published var ninbotIsChecking: Bool
     @Published var ninbotCheckError: String?
+    @Published var minecraftResults: MinecraftAdjuster.Results?
+    @Published var minecraftIsChecking: Bool
+    @Published var minecraftCheckError: String?
+    @Published var settings: InstanceSettings
+
+    private var storeTask: AnyCancellable!
 
     init(pid: pid_t, instanceNumber: Int) {
         self.id = UUID()
         self.pid = pid
         self.instanceNumber = instanceNumber
         self.info = TrackedInstance.calculateInstanceInfo(pid: pid)
+        self.settings = (try? InstanceSettings.load(for: info)) ?? InstanceSettings()
         self.stream = InstanceStream()
         self.eyeProjectorStream = InstanceStream()
         self.eCountProjectorStream = InstanceStream()
@@ -39,6 +47,16 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable, @unc
         self.ninbotResults = nil
         self.ninbotIsChecking = false
         self.ninbotCheckError = nil
+        self.minecraftResults = nil
+        self.minecraftIsChecking = false
+        self.minecraftCheckError = nil
+        self.storeTask = $settings.sink {
+            do {
+                try $0.save(for: self.info)
+            } catch {
+                LogManager.shared.appendLog("Failed to save instance settings: \(error)")
+            }
+        }
     }
 
     var name: Substring {
@@ -56,10 +74,6 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable, @unc
         } else {
             return true
         }
-    }
-
-    var settings: InstanceSettings {
-        info.settings
     }
 
     func hasMod(_ knownMod: KnownMod) -> Bool {
@@ -126,15 +140,14 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable, @unc
         self.info.updateState(force: true)
     }
 
-    func scheduleNinbotCheck(delay: TimeInterval = 1.0) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
-            if self?.ninbotResults == nil {
-                self?.refreshNinbotStatus()
-            }
+    func refreshBoatEyeStatus() {
+        if hasMod(.boundless) {
+            refreshNinbotStatus()
+            refreshMinecraftStatus()
         }
     }
 
-    func refreshNinbotStatus() {
+    private func refreshNinbotStatus() {
         guard !ninbotIsChecking else { return }
         ninbotIsChecking = true
         ninbotCheckError = nil
@@ -154,6 +167,30 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable, @unc
                     self.ninbotIsChecking = false
                 }
                 LogManager.shared.appendLog("Failed to check NinjabrainBot settings:", error)
+            }
+        }
+    }
+
+    private func refreshMinecraftStatus() {
+        guard !minecraftIsChecking else { return }
+        minecraftIsChecking = true
+        minecraftCheckError = nil
+
+        Task.detached(priority: .utility) { [weak self] in
+            guard let self else { return }
+            do {
+                let results = try MinecraftAdjuster().get(instance: self)
+                await MainActor.run {
+                    self.minecraftResults = results
+                    self.minecraftIsChecking = false
+                }
+            } catch {
+                await MainActor.run {
+                    self.minecraftResults = nil
+                    self.minecraftCheckError = error.localizedDescription
+                    self.minecraftIsChecking = false
+                }
+                LogManager.shared.appendLog("Failed to check Minecraft settings:", error)
             }
         }
     }

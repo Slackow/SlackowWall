@@ -38,8 +38,6 @@ class InstanceInfo: CustomStringConvertible {
     var untilF3: Int = 0
     var checkState: CheckingMode = .NONE
 
-    var settings: InstanceSettings
-
     var mods: [ModInfo] = []
     var areModsLoading: Bool? = nil
 
@@ -48,7 +46,6 @@ class InstanceInfo: CustomStringConvertible {
         self.path = path
         self.version = version
         self.areModsLoading = true
-        self.settings = .init()
         Task {
             updateModInfo()
             try? await Task.sleep(for: .seconds(0.95))

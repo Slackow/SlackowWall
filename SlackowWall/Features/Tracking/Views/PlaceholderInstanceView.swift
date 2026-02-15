@@ -13,6 +13,7 @@ struct PlaceholderInstanceView: View {
     @State private var isIndicatorHovered: Bool = false
     @State private var isModMenuOpen: Bool = false
     @State private var isNinbotFixOpen: Bool = false
+    @State private var isMinecraftFixOpen: Bool = false
     @StateObject private var deletionModel = WorldDeletionViewModel()
 
     var body: some View {
@@ -67,6 +68,13 @@ struct PlaceholderInstanceView: View {
                 .animation(.easeInOut.delay(0.15).speed(2), value: isHovered)
 
             HStack(spacing: 10) {
+                let isChecking = instance.ninbotIsChecking || instance.minecraftIsChecking
+                let ninbotNeedsFix = instance.ninbotResults?.breaking.isEmpty == false
+                let minecraftNeedsFix = instance.minecraftResults?.breaking.isEmpty == false
+                let allGood =
+                    instance.ninbotResults?.breaking.isEmpty == true
+                    && instance.minecraftResults?.breaking.isEmpty == true
+
                 Button("View Mods") {
                     isModMenuOpen = true
                 }
@@ -74,17 +82,13 @@ struct PlaceholderInstanceView: View {
                     ModMenu(instance: instance)
                 }
 
-                if instance.ninbotIsChecking {
+                if isChecking {
                     Image(systemName: "circle")
                         .foregroundStyle(.gray)
-                        .popoverLabel("Checking NinjabrainBot settings")
-                } else if let results = instance.ninbotResults {
-                    if results.breaking.isEmpty {
-                        Image(systemName: "checkmark.circle")
-                            .foregroundStyle(.green)
-                            .popoverLabel("NinjabrainBot settings look good, refresh to recheck")
-                    } else {
-                        Button("Fix NinjabrainBot") {
+                        .popoverLabel("Checking Minecraft and NinjabrainBot settings")
+                } else {
+                    if ninbotNeedsFix {
+                        Button("Fix NinjabrainBot Settings") {
                             isNinbotFixOpen = true
                         }
                         .foregroundStyle(.red)
@@ -104,6 +108,35 @@ struct PlaceholderInstanceView: View {
                                     .padding()
                             }
                         }
+                    }
+
+                    if minecraftNeedsFix {
+                        Button("Fix Minecraft Settings") {
+                            isMinecraftFixOpen = true
+                        }
+                        .foregroundStyle(.red)
+                        .onAppear {
+                            Task {
+                                try? await Task.sleep(for: .seconds(1))
+                                NSApp.requestUserAttention(.criticalRequest)
+                            }
+                        }
+                        .popover(isPresented: $isMinecraftFixOpen) {
+                            if let results = instance.minecraftResults {
+                                MinecraftAdjusterFixSheet(instance: instance, results: results)
+                                    .background(Color(nsColor: .windowBackgroundColor).opacity(0.6))
+                            } else {
+                                Text("No Minecraft settings issues found.")
+                                    .padding()
+                            }
+                        }
+                    }
+
+                    if allGood {
+                        Image(systemName: "checkmark.circle")
+                            .foregroundStyle(.green)
+                            .popoverLabel(
+                                "Minecraft and NinjabrainBot settings look good, refresh to recheck")
                     }
                 }
             }
@@ -125,8 +158,10 @@ struct PlaceholderInstanceView: View {
         .task {
             await Task.yield()
             await instance.info.waitForModsToFinishLoading()
-            if instance.ninbotResults == nil && instance.hasMod(.boundless) {
-                instance.refreshNinbotStatus()
+            if instance.ninbotResults == nil || instance.minecraftResults == nil,
+                instance.settings.checkBoateye ?? instance.hasMod(.boundless)
+            {
+                instance.refreshBoatEyeStatus()
             }
         }
     }

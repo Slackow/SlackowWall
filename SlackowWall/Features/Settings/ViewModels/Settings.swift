@@ -43,7 +43,11 @@ final class Settings: ObservableObject {
 
     private func observePreferences() {
         self.storeTask = self.$preferences.sink {
-            try? self.savePreferences($0)
+            do {
+                try self.savePreferences($0)
+            } catch {
+                LogManager.shared.appendLog("Failed to save settings: \(error)")
+            }
         }
     }
 

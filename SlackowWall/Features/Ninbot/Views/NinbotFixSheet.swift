@@ -75,6 +75,10 @@ struct NinbotFixSheet: View {
                 }
             }
 
+            Text("This will close NinjabrainBot while updating your settings.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
             Spacer()
 
             HStack {
@@ -99,7 +103,7 @@ struct NinbotFixSheet: View {
             }
         }
         .padding()
-        .frame(minWidth: 520, minHeight: 420)
+        .frame(minWidth: 420, minHeight: 420)
     }
 
     private func settingRow(for setting: NinjabrainAdjuster.NinBotResult) -> some View {
@@ -109,11 +113,19 @@ struct NinbotFixSheet: View {
             HStack {
                 Text(setting.id.name)
                     .fontWeight(.semibold)
-                Text("\(oldValue) → \(newValue)")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                HStack(spacing: 0) {
+                    Text(.init("[\(oldValue)](0)"))
+                        .tint(.red)
+                    Text(" → ")
+                    Text(.init("[\(newValue)](0)"))
+                        .tint(.green)
+                }
+                .allowsHitTesting(false)
             }
             if let description = setting.id.description {
                 Text(
-                    "\(description.replacingOccurrences(of: "$n", with: newValue).replacingOccurrences(of: "$o", with: oldValue))"
+                    "\(description)"
                 )
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -152,7 +164,7 @@ struct NinbotFixSheet: View {
                 try NinjabrainAdjuster.fix(instance: instance, fixFilter: fixFilter)
                 DispatchQueue.main.async {
                     isFixing = false
-                    instance.refreshNinbotStatus()
+                    instance.refreshBoatEyeStatus()
                     dismiss()
                 }
             } catch {

@@ -164,12 +164,12 @@ struct NinjabrainAdjuster {
         var description: String? {
             switch self {
                 case .sensitivity:
-                    "Your Ninjabrain bot sensitivity must be the same as in SlackowWall ($n) and Minecraft."
+                    "Your Ninjabrain bot sensitivity must be the same as in SlackowWall and Minecraft."
                 case .sigma_boat:
-                    "Your standard deviation should be $n instead of $o, this value is tied to your resolution height."
+                    "Your standard deviation, determines the confidence of your throws, and directly depends on your resolution height."
                 case .resolution_height:
-                    "Your resolution height should be $n, this setting depends on your usage of retiNO mod."
-                case .mc_version: "Your Minecraft version should be set to $n, not $o"
+                    "The height of your window in tall mode, depends on your usage of retiNO mod, and what display you use."
+                case .mc_version: "This setting has to match your instance's version"
 
                 case .alt_clipboard_reader: "This should always be off, it doesn't work on macOS"
                 case .use_precise_angle: "This enables BoatEye Measurements for NinjabrainBot"
