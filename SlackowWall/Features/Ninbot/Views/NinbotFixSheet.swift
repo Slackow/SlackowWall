@@ -16,6 +16,7 @@ struct NinbotFixSheet: View {
     @State private var selectedRecommended: Set<NinjabrainAdjuster.NinBotResult>
     @State private var isFixing: Bool = false
     @State private var fixError: String?
+    @State private var retinoWarningAcknowledged: Bool = false
 
     init(instance: TrackedInstance, results: NinjabrainAdjuster.Results) {
         self.instance = instance
@@ -24,6 +25,20 @@ struct NinbotFixSheet: View {
     }
 
     var body: some View {
+        let screenScale = NSScreen.factor
+        let hasRetino = instance.hasMod(.retino)
+        let resolutionHeight =
+            if case .some(.float(let h)) = results.breaking.first(where: { $0.id == .resolution_height })?.newValue {
+                h
+            } else {
+                Float32(16384.0)
+            }
+        let showResolutionCrashError = resolutionHeight > 16384
+        let showRetinoWarning = hasRetino && screenScale > 1
+        let canApplyFixes =
+            !showResolutionCrashError
+            && (!showRetinoWarning || retinoWarningAcknowledged)
+
         VStack(alignment: .leading, spacing: 12) {
             Text("Fixing NinjabrainBot Settings")
                 .font(.title2)
@@ -75,11 +90,44 @@ struct NinbotFixSheet: View {
                 }
             }
 
-            Text("This will close NinjabrainBot while updating your settings.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-
             Spacer()
+
+            Text("This will close NinjabrainBot while updating your settings.")
+                .font(.callout)
+                .foregroundStyle(.secondary)
+            if showResolutionCrashError || showRetinoWarning {
+                VStack(alignment: .leading, spacing: 8) {
+                    if showResolutionCrashError {
+                        Text(
+                            "Error: Your calculated resolution height (\(Int(resolutionHeight))) is above 16384. \nYou should remove your \"Tall Mode Height\" setting in SlackowWall,\notherwise Minecraft will crash when entering tall mode."
+                        )
+                        .font(.callout)
+                        .foregroundStyle(.red)
+                    }
+                    if showRetinoWarning {
+                        Text(
+                            """
+                            Warning: The retiNO mod is reducing your maximum usable resolution height, decreasing your \
+                            accuracy.
+                            Remove it, or learn more and find alternatives: \
+                            [here](https://docs.google.com/document/d/\
+                            1gD_ZZYFCEOJxImyfpUxLHGn702moP9I69-46fhWe9QM\
+                            /edit), \
+                            or dismiss this warning.
+                            """
+                        )
+                        .font(.callout)
+                        .foregroundStyle(.orange)
+
+                        if !showResolutionCrashError {
+                            Toggle("Got it, ignore", isOn: $retinoWarningAcknowledged)
+                                .toggleStyle(.checkbox)
+                                .controlSize(.small)
+                        }
+                    }
+                }
+                .font(.callout)
+            }
 
             HStack {
                 if let fixError {
@@ -96,9 +144,9 @@ struct NinbotFixSheet: View {
                 Button(isFixing ? "Fixing..." : "Apply Fixes") {
                     applyFixes()
                 }
-                .buttonStyle(.borderedProminent)
-                .keyboardShortcut(.defaultAction)
-                .disabled(isFixing)
+                .if(canApplyFixes) { $0.buttonStyle(.borderedProminent) }
+                //                .keyboardShortcut(.defaultAction)
+                .disabled(isFixing || !canApplyFixes)
 
             }
         }
@@ -155,6 +203,17 @@ struct NinbotFixSheet: View {
     }
 
     private func applyFixes() {
+        let screenScale = NSScreen.factor
+        let hasRetino = instance.hasMod(.retino)
+        let isLoDPI = hasRetino || screenScale == 1
+        let resolutionHeight = Float32(
+            Settings[\.self].tallDimensions(for: instance).1 * (isLoDPI ? 1 : 2))
+        let showResolutionCrashError = resolutionHeight > 16384
+        let showRetinoWarning = hasRetino && screenScale > 1
+        guard
+            !showResolutionCrashError
+                && (!showRetinoWarning || retinoWarningAcknowledged)
+        else { return }
         fixError = nil
         isFixing = true
         let fixFilter = buildFixFilter()

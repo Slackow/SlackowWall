@@ -51,6 +51,10 @@ extension Preferences {
         var tallSensitivityFactorEnabled: Bool = true
         var tallSensitivityFactor: Double = 40
 
+        var ninjabrainBotLocation: URL? = nil
+        var ninjabrainBotAutoLaunch: Bool = false
+        var ninjabrainBotLaunchWhenDetectingInstance: Bool = false
+
         var startupApplicationEnabled: Bool = false
         var startupApplications: [URL] = []
 

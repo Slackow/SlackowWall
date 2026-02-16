@@ -88,6 +88,9 @@ struct ModeSettings: View {
                 mode: $settings.resetMode
             )
 
+            SettingsLabel(
+                title: "Miscellaneous"
+            )
             SettingsCardView {
                 VStack {
                     HStack {

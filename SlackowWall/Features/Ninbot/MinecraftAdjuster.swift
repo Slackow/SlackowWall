@@ -89,11 +89,16 @@ class MinecraftAdjuster {
         let optionsPath = "\(path)/options.txt"
         let boatEyeSensitivity = Settings[\.utility].boatEyeSensitivity
 
-        var breaking: [MinecraftSetting] = []
+        var breaking: [MinecraftResult] = []
 
         let contents = try String(contentsOfFile: optionsPath, encoding: .utf8)
         if contents.contains("fullscreen:true") {
-            breaking.append(.fullscreen)
+            breaking.append(
+                MinecraftResult(
+                    id: .fullscreen,
+                    oldValue: .boolean(true),
+                    newValue: .boolean(false)
+                ))
         }
         guard let match = try MinecraftAdjuster.mouseSensTextRegex.firstMatch(in: contents),
             let sens = Double(match.output.1)
@@ -102,7 +107,12 @@ class MinecraftAdjuster {
             throw AdjustmentError.optionsNotFound
         }
         if abs(sens - boatEyeSensitivity) > 0.0000001 {
-            breaking.append(.mouseSensitivity)
+            breaking.append(
+                MinecraftResult(
+                    id: .mouseSensitivity,
+                    oldValue: .double(sens),
+                    newValue: .double(boatEyeSensitivity)
+                ))
         }
 
         return Results(breaking: breaking)
@@ -120,7 +130,31 @@ class MinecraftAdjuster {
     }
 
     struct Results {
-        var breaking: [MinecraftSetting]
+        var breaking: [MinecraftResult]
+    }
+
+    struct MinecraftResult: Hashable {
+        var id: MinecraftSetting
+        var oldValue: MinecraftValue
+        var newValue: MinecraftValue
+    }
+
+    enum MinecraftValue: Hashable, CustomStringConvertible {
+        case boolean(Bool)
+        case double(Double)
+        case string(String)
+
+        var description: String {
+            switch self {
+                case .boolean(let value):
+                    return value ? "On" : "Off"
+                case .double(let value):
+                    let formatted = value.formatted(.number.precision(.fractionLength(0...8)))
+                    return formatted
+                case .string(let value):
+                    return value
+            }
+        }
     }
 
     enum MinecraftSetting: String {
@@ -136,17 +170,30 @@ class MinecraftAdjuster {
         var description: String? {
             switch self {
                 case .mouseSensitivity:
-                    let sensitivity = Settings[\.utility].boatEyeSensitivity
                     return """
                         Your Minecraft sensitivity must be the same as in SlackowWall and Ninjabrain Bot.
-
-                        [This will change your sensitivity to ~\(Int(sensitivity * 200))%, you should configure your \
-                        sensitivity
-                        scaling settings to compensate](0)
                         """
                 case .fullscreen:
                     return "Fullscreen should be off for BoatEye."
             }
+        }
+
+        var warning: String? {
+            switch self {
+                case .mouseSensitivity:
+                    let sensitivity = Settings[\.utility].boatEyeSensitivity
+                    return """
+                        This will change your Minecraft sensitivity to ~\(Int(sensitivity * 200))%.\nYou can \
+                        compensate for this \
+                        with Sensitivity Scaling (found under Utility Settings)
+                        """
+                default:
+                    return nil
+            }
+        }
+
+        func valueName(_ value: MinecraftValue) -> String {
+            value.description
         }
     }
 

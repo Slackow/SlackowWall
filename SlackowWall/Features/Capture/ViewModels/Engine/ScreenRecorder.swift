@@ -353,7 +353,7 @@ import SwiftUI
             tallHeightPts = h
         }
         let usingRetino = instance.hasMod(.retino)
-        let factor = min(NSScreen.primary?.backingScaleFactor ?? 1, 16384.0 / tallHeightPts)
+        let factor = min(NSScreen.factor, 16384.0 / tallHeightPts)
         let retinoFactor = usingRetino ? 1.0 : factor
         let s =
             if #available(macOS 14.0, *) {

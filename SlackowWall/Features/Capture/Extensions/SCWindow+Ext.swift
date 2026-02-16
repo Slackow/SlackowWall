@@ -33,4 +33,8 @@ extension NSScreen {
     static var primary: NSScreen? {
         return NSScreen.screens.first
     }
+
+    static var factor: CGFloat {
+        NSScreen.primary?.backingScaleFactor ?? 1
+    }
 }

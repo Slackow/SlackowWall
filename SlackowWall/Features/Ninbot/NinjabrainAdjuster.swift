@@ -107,6 +107,28 @@ struct NinjabrainAdjuster {
         var recommend: [Adjuster]
     }
 
+    static var ninjabrainBotProc: Process? = nil
+
+    @discardableResult static func startIfClosed() -> Bool {
+        if let ninjabrainBotProc, ninjabrainBotProc.isRunning {
+            return false
+        }
+
+        if let ninjabrain = Settings[\.utility].ninjabrainBotLocation {
+            guard !isJarAlreadyRunning(at: ninjabrain.path(percentEncoded: false)) else { return false }
+            let process = Process()
+            process.executableURL = URL(filePath: "/usr/bin/java")
+            process.arguments = ["-jar", ninjabrain.path(percentEncoded: false)]
+            do {
+                try process.run()
+            } catch {
+                LogManager.shared.appendLog("Could not launch nin bot: ", error)
+            }
+            ninjabrainBotProc = process
+        }
+        return true
+    }
+
     enum NinBotSetting: String, Codable {
         case sensitivity, sigma_boat, resolution_height, mc_version
 
@@ -199,7 +221,7 @@ struct NinjabrainAdjuster {
 
     static func estimateSigmaFromResHeight(resHeight: Float32) -> Float32 {
         // Calculated from using curve of best fit on a graph, important points are 16384 -> 0.007, 8192 -> 0.0013
-        0.0001485566 + (6877.937 - 0.0001485566)
+        0.0001405566 + (6877.937 - 0.0001305566)
             / pow((1 + pow(abs(resHeight) / 0.0532672, 0.158923)), 7.651672)
     }
 
@@ -216,9 +238,9 @@ struct NinjabrainAdjuster {
         }
     }
 
-    static func fix(instance: TrackedInstance, fixFilter: [NinBotSetting]? = nil) throws {
+    static func fix(instance: TrackedInstance, action: Action = .fixAll, fixFilter: [NinBotSetting]? = nil) throws {
         do {
-            try act(instance: instance, action: .fixAll, fixFilter: fixFilter)
+            try act(instance: instance, action: action, fixFilter: fixFilter)
             if fixFilter?.isEmpty != true {
                 Task { @MainActor in
                     if TrackingManager.shared.killNinjabrainBot() != nil {
@@ -234,6 +256,10 @@ struct NinjabrainAdjuster {
         }
     }
 
+    static func isGodSens(_ sens: Double) -> Bool {
+        [0.02291165, 0.058765005, 0.07446537].contains { abs($0 - sens) < 0.0000001 }
+    }
+
     @discardableResult
     private static func act(
         instance: TrackedInstance, action: Action, fixFilter: [NinBotSetting]? = nil
@@ -246,9 +272,10 @@ struct NinjabrainAdjuster {
         }
 
         let sens = Settings[\.utility].boatEyeSensitivity
+        let isGodSens = isGodSens(sens)
         let isLoDPI =
             (instance.hasMod(.retino))
-            || NSScreen.primary?.backingScaleFactor == 1
+            || NSScreen.factor == 1
         let resolutionHeight = Float32(
             Settings[\.self].tallDimensions(for: instance).1 * (isLoDPI ? 1 : 2))
         let sigmaBoat = estimateSigmaFromResHeight(resHeight: resolutionHeight)
@@ -263,17 +290,19 @@ struct NinjabrainAdjuster {
                 Adjuster(id: .resolution_height, defaultValue: .float(16384.0), adjustment: .float(resolutionHeight)),
                 Adjuster(id: .mc_version, adjustment: .int(mcVersion)),
 
+                isGodSens
+                    ? Adjuster(id: .default_boat_type, adjustment: .int(2), allowedError: 1)
+                    : Adjuster(id: .default_boat_type, adjustment: .int(1)),
+
                 Adjuster(id: .alt_clipboard_reader, adjustment: .boolean(false)),
                 Adjuster(id: .use_precise_angle, adjustment: .boolean(true)),
                 Adjuster(id: .crosshair_correction, adjustment: .double(0)),
 
                 Adjuster(id: .angle_adjustment_type, adjustment: .int(1)),
                 Adjuster(id: .angle_adjustment_display_type, adjustment: .int(1)),
-
-                Adjuster(id: .default_boat_type, adjustment: .int(2), allowedError: 1),
             ],
             recommend: [
-                Adjuster(id: .default_boat_type, adjustment: .int(2)),
+                Adjuster(id: .default_boat_type, adjustment: .int(isGodSens ? 2 : 1)),
                 Adjuster(id: .show_angle_errors, adjustment: .boolean(true)),
                 Adjuster(id: .mismeasure_warning_enabled, adjustment: .boolean(true)),
                 Adjuster(id: .direction_help_enabled, adjustment: .boolean(true)),
@@ -322,9 +351,7 @@ struct NinjabrainAdjuster {
                         results.recommend.append(change)
                         results.breaking.removeAll { $0.id == .default_boat_type }
                         results.recommend.removeAll { $0.id == .hotkey_boat_code }
-                        print("Removed, asshole.", results)
                     }
-                    print("results", results)
                     return results
                 } catch {
                     LogManager.shared.appendLog("Decoding: ", String(data: data, encoding: .utf8) ?? "")

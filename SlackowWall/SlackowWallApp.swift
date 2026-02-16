@@ -208,6 +208,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         OBSManager.shared.writeScript()
         MouseSensitivityManager.shared.setSensitivityFactor(
             factor: Settings[\.utility].sensitivityScale)
+        if Settings[\.utility].ninjabrainBotAutoLaunch,
+            let ninbotPath = Settings[\.utility].ninjabrainBotLocation?.path(percentEncoded: false)
+        {
+            guard !isJarAlreadyRunning(at: ninbotPath) else { return }
+            var task = Process()
+            task.executableURL = URL(filePath: "/usr/bin/java")
+            task.arguments = ["-jar", ninbotPath]
+            try? task.run()
+            NinjabrainAdjuster.ninjabrainBotProc = task
+        }
         #if !DEBUG
             if Settings[\.utility].autoLaunchPaceman {
                 PacemanManager.shared.startPaceman()
@@ -218,8 +228,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     let task = Process()
                     if path.hasSuffix(".jar") {
                         guard !self.isJarAlreadyRunning(at: path) else { return }
-                        task.executableURL = URL(filePath: "/usr/bin/env")
-                        task.arguments = ["java", "-jar", path]
+                        task.executableURL = URL(filePath: "/usr/bin/java")
+                        task.arguments = ["-jar", path]
                     } else {
                         task.executableURL = URL(filePath: "/usr/bin/open")
                         task.arguments = [path]
@@ -233,23 +243,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         TrackingManager.shared.startInstanceCheckTimer()
     }
 
-    private func isJarAlreadyRunning(at path: String) -> Bool {
-        let task = Process()
-        task.executableURL = URL(filePath: "/usr/bin/pgrep")
-        task.arguments = ["-f", path]
-        let pipe = Pipe()
-        task.standardOutput = pipe
-        task.standardError = pipe
-        do {
-            try task.run()
-        } catch {
-            return false
-        }
-        task.waitUntilExit()
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        return !data.isEmpty
-    }
-
     func applicationWillFinishLaunching(_ notification: Notification) {
         NSWindow.allowsAutomaticWindowTabbing = false
     }
@@ -258,4 +251,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Clean up the timer when the app is about to terminate
         TrackingManager.shared.stopInstanceCheckTimer()
     }
+}
+
+func isJarAlreadyRunning(at path: String) -> Bool {
+    let task = Process()
+    task.executableURL = URL(filePath: "/usr/bin/pgrep")
+    task.arguments = ["-f", path]
+    let pipe = Pipe()
+    task.standardOutput = pipe
+    task.standardError = pipe
+    do {
+        try task.run()
+    } catch {
+        return false
+    }
+    task.waitUntilExit()
+    let data = pipe.fileHandleForReading.readDataToEndOfFile()
+    return !data.isEmpty
 }

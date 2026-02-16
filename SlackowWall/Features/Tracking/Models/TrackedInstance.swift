@@ -57,6 +57,32 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable, @unc
                 LogManager.shared.appendLog("Failed to save instance settings: \(error)")
             }
         }
+        Task.detached(priority: .utility) {
+            self.startup()
+        }
+    }
+
+    func startup() {
+        // Clear only every 16 hours
+        if settings.autoWorldClearing {
+            LogManager.shared.appendLog(
+                "Worlds last cleared \(-Int(settings.lastWorldClear.timeIntervalSinceNow)) second(s) ago")
+            if settings.lastWorldClear.timeIntervalSinceNow < -60 * 60 * 16 {
+                settings.lastWorldClear = Date.now
+                LogManager.shared.appendLogNewLine()
+                do {
+                    let worlds = try WorldClearing.worldsToDelete(at: "\(self.info.path)/saves/")
+                    LogManager.shared.appendLog("Clearing \(worlds.count) worlds")
+                    WorldClearing.deleteWorlds(worlds)
+                    LogManager.shared.appendLog("Worlds cleared (\(worlds.count))")
+                } catch {
+                    LogManager.shared.appendLog("Could not clear worlds", error)
+                }
+            }
+        }
+        if Settings[\.utility].ninjabrainBotLaunchWhenDetectingInstance, hasMod(.speedrunigt) || hasMod(.ranked) {
+            NinjabrainAdjuster.startIfClosed()
+        }
     }
 
     var name: Substring {
@@ -76,6 +102,10 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable, @unc
         }
     }
 
+    var shouldCheckBoateye: Bool {
+        settings.checkBoateye ?? hasMod(.boundless)
+    }
+
     func hasMod(_ knownMod: KnownMod) -> Bool {
         return info.hasMod(knownMod)
     }
@@ -85,6 +115,8 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable, @unc
         case standardSettings = "standardsettings"
         case stateOutput = "state-output"
         case boundless = "boundlesswindow"
+        case ranked = "mcsrranked"
+        case speedrunigt = "speedrunigt"
     }
 
     private static func calculateInstanceInfo(pid: pid_t) -> InstanceInfo {
@@ -141,7 +173,7 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable, @unc
     }
 
     func refreshBoatEyeStatus() {
-        if hasMod(.boundless) {
+        if shouldCheckBoateye {
             refreshNinbotStatus()
             refreshMinecraftStatus()
         }
@@ -155,9 +187,15 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable, @unc
         Task.detached(priority: .utility) { [weak self] in
             guard let self else { return }
             do {
-                let results = try NinjabrainAdjuster.get(instance: self)
+                var results: NinjabrainAdjuster.Results? = try NinjabrainAdjuster.get(instance: self)
+                if settings.autoFixNinjabrainBot, let fixFilter = results?.breaking.map(\.id), !fixFilter.isEmpty {
+                    try NinjabrainAdjuster.fix(instance: self, fixFilter: fixFilter)
+                    results = NinjabrainAdjuster.Results(breaking: [], recommend: [])
+                    LogManager.shared.appendLog("Automatically fixed NinjabrainBot")
+                }
+                let finalResults = results
                 await MainActor.run {
-                    self.ninbotResults = results
+                    self.ninbotResults = finalResults
                     self.ninbotIsChecking = false
                 }
             } catch {

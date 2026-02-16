@@ -25,6 +25,7 @@ struct TrackedInstanceView: View {
                 PlaceholderInstanceView(instance: instance)
                     .opacity(gridManager.showInfo ? 1 : 0)
                     .animation(.easeInOut, value: settings.utilityMode)
+                    .preferredColorScheme(.dark)
             } else {
                 CapturePreviewView(instance: instance)
                     .background {

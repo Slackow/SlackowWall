@@ -14,6 +14,7 @@ struct PlaceholderInstanceView: View {
     @State private var isModMenuOpen: Bool = false
     @State private var isNinbotFixOpen: Bool = false
     @State private var isMinecraftFixOpen: Bool = false
+    @State private var isInstanceSettingsOpen: Bool = false
     @StateObject private var deletionModel = WorldDeletionViewModel()
 
     var body: some View {
@@ -30,6 +31,7 @@ struct PlaceholderInstanceView: View {
                 Text(#"Instance "\#(instance.name)""#)
                     .font(.title)
                     .fontWeight(.semibold)
+                    .foregroundStyle(.white)
             }
             HStack {
                 Spacer()
@@ -47,6 +49,9 @@ struct PlaceholderInstanceView: View {
                     }
                     Button("Clear Worlds") {
                         deletionModel.prepareDeletion(instancePath: instance.info.path)
+                    }
+                    Button("Instance Settings") {
+                        isInstanceSettingsOpen = true
                     }
                     Button("View Mods") {
                         isModMenuOpen = true
@@ -75,11 +80,8 @@ struct PlaceholderInstanceView: View {
                     instance.ninbotResults?.breaking.isEmpty == true
                     && instance.minecraftResults?.breaking.isEmpty == true
 
-                Button("View Mods") {
-                    isModMenuOpen = true
-                }
-                .popover(isPresented: $isModMenuOpen) {
-                    ModMenu(instance: instance)
+                Button("Instance Settings") {
+                    isInstanceSettingsOpen = true
                 }
 
                 if isChecking {
@@ -136,7 +138,8 @@ struct PlaceholderInstanceView: View {
                         Image(systemName: "checkmark.circle")
                             .foregroundStyle(.green)
                             .popoverLabel(
-                                "Minecraft and NinjabrainBot settings look good, refresh to recheck")
+                                "Minecraft and NinjabrainBot settings look good, refresh to revalidate.\(instance.hasMod(.retino) && NSScreen.factor > 1 ? "\nretiNO is descreasing accuracy" : "")"
+                            )
                     }
                 }
             }
@@ -155,11 +158,17 @@ struct PlaceholderInstanceView: View {
                 .stroke(.gray, lineWidth: 3)
                 .background(.ultraThinMaterial)
         }
+        .sheet(isPresented: $isInstanceSettingsOpen) {
+            InstanceSettingsView(instance: instance)
+        }
+        .sheet(isPresented: $isModMenuOpen) {
+            ModMenu(instance: instance)
+        }
         .task {
             await Task.yield()
             await instance.info.waitForModsToFinishLoading()
             if instance.ninbotResults == nil || instance.minecraftResults == nil,
-                instance.settings.checkBoateye ?? instance.hasMod(.boundless)
+                instance.shouldCheckBoateye
             {
                 instance.refreshBoatEyeStatus()
             }

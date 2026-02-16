@@ -465,16 +465,20 @@ struct UtilitySettings: View {
                             format: .number.grouping(.never)
                         )
                         .textFieldStyle(.roundedBorder)
-                        .foregroundColor((0.05...100 ~= tallSensitivityFactor) ? .primary : .red)
+                        .foregroundColor((0.025...100 ~= tallSensitivityFactor) ? .primary : .red)
                         .frame(width: 100)
                         .onChange(of: tallSensitivityFactor) { newValue in
-                            Settings[\.utility].tallSensitivityFactor = (0.05...100).clamped(
+                            Settings[\.utility].tallSensitivityFactor = (0.025...100).clamped(
                                 value: newValue)
                         }
                         .disabled(!settings.tallSensitivityFactorEnabled)
                     }
                 }
             }
+            SettingsCardView {
+                SettingsLinkView(title: "NinjabrainBot", destination: NinjabrainBotSettings.init)
+            }
+
             SettingsCardView {
                 SettingsLinkView(
                     title:
@@ -483,8 +487,7 @@ struct UtilitySettings: View {
             }
 
             SettingsCardView {
-                SettingsLinkView(
-                    title: "Startup Applications", destination: StartupAppSettings.init)
+                SettingsLinkView(title: "Startup Applications", destination: StartupAppSettings.init)
             }
         }
     }

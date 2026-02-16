@@ -34,12 +34,12 @@ extension Preferences {
     ) {
         let loDPI =
             if #available(macOS 26.0, *) {
-                NSScreen.primary?.backingScaleFactor == 1
+                NSScreen.factor == 1
             } else if #available(macOS 15.5, *) {
                 (instance?.hasMod(.retino) ?? false)
-                    || NSScreen.primary?.backingScaleFactor == 1
+                    || NSScreen.factor == 1
             } else {
-                NSScreen.primary?.backingScaleFactor == 1
+                NSScreen.factor == 1
             }
         let m = mode.tallMode
         return (

@@ -26,10 +26,8 @@ struct EyeProjectorView: View {
 
     init(instance: TrackedInstance) {
         _previewRenderer = StateObject(wrappedValue: PreviewRenderer(instance: instance))
-        scaleFactor =
-            instance.hasMod(.retino)
-            ? 1 : NSScreen.primary?.backingScaleFactor ?? 1
-        f = NSScreen.primary?.backingScaleFactor ?? 1
+        scaleFactor = instance.hasMod(.retino) ? 1 : NSScreen.factor
+        f = NSScreen.factor
     }
 
     var overlayImage: Image {

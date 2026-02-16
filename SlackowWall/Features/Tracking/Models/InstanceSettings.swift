@@ -16,6 +16,7 @@ struct InstanceSettings: Codable {
     var autoWorldClearing: Bool = false
     var autoUpdateMods: Bool = false
     var quitAppOnInstanceClose: Bool = false
+    var lastWorldClear: Date = .distantPast
 
     init() {}
 

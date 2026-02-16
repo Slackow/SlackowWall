@@ -34,8 +34,8 @@ struct MinecraftAdjusterFixSheet: View {
                         } else {
                             VStack(alignment: .leading, spacing: 8) {
                                 ForEach(Array(results.breaking.enumerated()), id: \.offset) {
-                                    idx, setting in
-                                    settingRow(for: setting)
+                                    idx, result in
+                                    settingRow(for: result)
 
                                     if idx < results.breaking.count - 1 {
                                         Divider()
@@ -47,11 +47,17 @@ struct MinecraftAdjusterFixSheet: View {
                 }
             }
 
+            Spacer()
+
             Text("This will close the instance while updating your settings.")
-                .font(.caption)
+                .font(.callout)
                 .foregroundStyle(.secondary)
 
-            Spacer()
+            ForEach(results.breaking.compactMap(\.id.warning), id: \.self) { description in
+                Text(.init(description))
+                    .font(.callout)
+                    .foregroundStyle(.orange)
+            }
 
             HStack {
                 if let fixError {
@@ -77,15 +83,27 @@ struct MinecraftAdjusterFixSheet: View {
         .frame(minWidth: 520, minHeight: 340)
     }
 
-    private func settingRow(for setting: MinecraftAdjuster.MinecraftSetting) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(setting.name)
-                .fontWeight(.semibold)
-            if let description = setting.description {
+    private func settingRow(for result: MinecraftAdjuster.MinecraftResult) -> some View {
+        let oldValue = result.id.valueName(result.oldValue)
+        let newValue = result.id.valueName(result.newValue)
+        return VStack(alignment: .leading, spacing: 2) {
+            HStack {
+                Text(result.id.name)
+                    .fontWeight(.semibold)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                HStack(spacing: 0) {
+
+                    Text(.init("[\(oldValue)](0)"))
+                        .tint(.red)
+                    Text(" → ")
+                    Text(.init("[\(newValue)](0)"))
+                        .tint(.green)
+                }
+            }
+
+            if let description = result.id.description {
                 Text(.init(description))
                     .font(.caption)
-                    .tint(.orange)
-                    .allowsHitTesting(false)
                     .foregroundStyle(.secondary)
             }
         }
