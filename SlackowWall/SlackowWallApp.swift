@@ -227,7 +227,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     let path = $0.path(percentEncoded: false)
                     let task = Process()
                     if path.hasSuffix(".jar") {
-                        guard !self.isJarAlreadyRunning(at: path) else { return }
+                        guard !isJarAlreadyRunning(at: path) else { return }
                         task.executableURL = URL(filePath: "/usr/bin/java")
                         task.arguments = ["-jar", path]
                     } else {

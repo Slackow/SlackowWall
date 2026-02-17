@@ -245,6 +245,9 @@ struct NinjabrainAdjuster {
                 Task { @MainActor in
                     if TrackingManager.shared.killNinjabrainBot() != nil {
                         LogManager.shared.appendLog("Killed NinjabrainBot")
+                        try? await Task.sleep(for: .seconds(2))
+                        LogManager.shared.appendLog("Restarting NinjabrainBot")
+                        NinjabrainAdjuster.startIfClosed()
                     } else {
                         LogManager.shared.appendLog("Ninjabrain Bot not open/not detected")
                     }
@@ -264,9 +267,7 @@ struct NinjabrainAdjuster {
     private static func act(
         instance: TrackedInstance, action: Action, fixFilter: [NinBotSetting]? = nil
     ) throws -> Results? {
-        guard
-            let prefReader = Bundle.main.url(
-                forResource: "NinbotPrefReader-1.0", withExtension: "jar")
+        guard let prefReader = Bundle.main.url(forResource: "NinbotPrefReader-1.0", withExtension: "jar")
         else {
             throw AdjustmentError.toolNotFound
         }

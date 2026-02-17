@@ -138,7 +138,13 @@ struct PlaceholderInstanceView: View {
                         Image(systemName: "checkmark.circle")
                             .foregroundStyle(.green)
                             .popoverLabel(
-                                "Minecraft and NinjabrainBot settings look good, refresh to revalidate.\(instance.hasMod(.retino) && NSScreen.factor > 1 ? "\nretiNO is descreasing accuracy" : "")"
+                                "Minecraft and NinjabrainBot settings look good, refresh to revalidate.\(instance.hasMod(.retino) && NSScreen.factor > 1 && ProcessInfo.processInfo.operatingSystemVersion.majorVersion != 15 ? "\nretiNO is descreasing accuracy" : "")"
+                            )
+                    } else if instance.ninbotCheckError != nil || instance.minecraftCheckError != nil {
+                        Image(systemName: "circle")
+                            .foregroundStyle(.orange)
+                            .popoverLabel(
+                                "Failed to validate BoatEye settings:\n\([instance.ninbotCheckError, instance.minecraftCheckError].compactMap{$0}.joined(separator: ", "))"
                             )
                     }
                 }

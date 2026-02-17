@@ -36,6 +36,11 @@ struct InstanceSettingsView: View {
                             "Check Minecraft and NinjabrainBot for the correct settings on instance detection.",
                         option: checkBoateyeBinding
                     )
+                    .onChange(of: instance.shouldCheckBoateye) { _ in
+                        instance.ninbotResults = nil
+                        instance.minecraftResults = nil
+                        instance.refreshBoatEyeStatus()
+                    }
                     Divider()
                     SettingsToggleView(
                         title: "Auto Fix NinjabrainBot",
