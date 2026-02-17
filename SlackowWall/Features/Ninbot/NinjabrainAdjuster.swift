@@ -109,6 +109,7 @@ struct NinjabrainAdjuster {
 
     static var ninjabrainBotProc: Process? = nil
 
+    @MainActor
     @discardableResult static func startIfClosed() -> Bool {
         if let ninjabrainBotProc, ninjabrainBotProc.isRunning {
             return false

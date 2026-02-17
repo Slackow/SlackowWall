@@ -81,7 +81,9 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable, @unc
             }
         }
         if Settings[\.utility].ninjabrainBotLaunchWhenDetectingInstance, hasMod(.speedrunigt) || hasMod(.ranked) {
-            NinjabrainAdjuster.startIfClosed()
+            Task { @MainActor in
+                NinjabrainAdjuster.startIfClosed()
+            }
         }
     }
 
