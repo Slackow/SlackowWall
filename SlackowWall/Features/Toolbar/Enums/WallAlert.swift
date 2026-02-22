@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum WallAlert: Error, CaseIterable, Identifiable, Hashable {
+enum WallAlert: Error {
     case noScreenPermission, noAccessibilityPermission
 
     var id: Self {

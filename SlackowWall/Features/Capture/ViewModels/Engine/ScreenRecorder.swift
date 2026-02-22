@@ -168,11 +168,9 @@ import SwiftUI
                 } else {
                     CGRect(origin: .zero, size: .init(width: 1920, height: 1080))
                 }
-            let streamConfiguration = createStreamConfiguration(
-                width: rect.width, height: rect.height)
+            let streamConfiguration = createStreamConfiguration(width: rect.width, height: rect.height)
 
-            instance.stream.captureRect = CGSize(
-                width: rect.width, height: rect.height)
+            instance.stream.captureRect = CGSize(width: rect.width, height: rect.height)
 
             captureEngine.startTask {
                 do {
@@ -353,15 +351,9 @@ import SwiftUI
             tallHeightPts = h
         }
         let usingRetino = instance.hasMod(.retino)
-        let factor = min(NSScreen.factor, 16384.0 / tallHeightPts)
+        let s = NSScreen.factor
+        let factor = min(s, 16384.0 / tallHeightPts)
         let retinoFactor = usingRetino ? 1.0 : factor
-        let s =
-            if #available(macOS 14.0, *) {
-                CGFloat(filter.pointPixelScale)
-            } else {
-                factor
-            }  //  [oai_citation:1‡Apple Developer](https://developer.apple.com/documentation/screencapturekit/sccontentfilter/pointpixelscale)
-
         // Keep the crop rect in POINTS.
 
         let streamConfig = SCStreamConfiguration()
@@ -446,7 +438,7 @@ import SwiftUI
                 let factor = Int(factor)
                 let cropWPx = Int(
                     Settings[\.utility].eyeProjectorOverlayWidth * factor / Int(retinoFactor))
-                let cropHPx = min(1200 * factor, H)
+                let cropHPx = min(4000 / factor, H)
                 LogManager.shared.appendLog("Cropping", cropWPx, cropHPx)
 
                 // middle anchor in pixels
@@ -465,11 +457,11 @@ import SwiftUI
             }
         }
 
+        LogManager.shared.appendLog(
+            "Starting Eye Projector: dim:(", tallWidthPts, "x", tallHeightPts, ") factor:",
+            factor, "s:", s, "usingRetino:", usingRetino, "rects: source", streamConfig.sourceRect)
         if #available(macOS 14.0, *) {
-            LogManager.shared.appendLog(
-                "Starting Eye Projector: dim:(", tallWidthPts, "x", tallHeightPts, ") factor:",
-                factor, s, "usingRetino:", usingRetino, "rects: source", streamConfig.sourceRect,
-                "content", filter.contentRect)
+            LogManager.shared.appendLog("content", filter.contentRect, includeTimestamp: false)
         }
 
         // Start the dedicated capture

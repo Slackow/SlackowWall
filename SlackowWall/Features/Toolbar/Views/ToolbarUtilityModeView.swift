@@ -23,7 +23,10 @@ struct ToolbarUtilityModeView: View {
             }
         }
         .foregroundStyle(Color(nsColor: isHovered ? .labelColor : .secondaryLabelColor))
-        .popoverLabel(settings.utilityMode ? "Utility Mode" : "Wall Mode")
+        .popoverLabel(
+            Text(settings.utilityMode ? "Utility Mode / " : "Wall Mode / ")
+                + Text(settings.utilityMode ? "Wall Mode" : "Utility Mode").foregroundColor(.gray)
+        )
         .onHover { isHovered = $0 }
     }
 }

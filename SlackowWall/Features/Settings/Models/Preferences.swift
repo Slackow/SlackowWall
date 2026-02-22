@@ -35,7 +35,7 @@ extension Preferences {
         let loDPI =
             if #available(macOS 26.0, *) {
                 NSScreen.factor == 1
-            } else if #available(macOS 15.5, *) {
+            } else if #available(macOS 15.4, *) {
                 (instance?.hasMod(.retino) ?? false)
                     || NSScreen.factor == 1
             } else {

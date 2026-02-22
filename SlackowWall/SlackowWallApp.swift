@@ -206,17 +206,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             ShortcutManager.shared.handleGlobalKey(event)
         }
         OBSManager.shared.writeScript()
-        MouseSensitivityManager.shared.setSensitivityFactor(
-            factor: Settings[\.utility].sensitivityScale)
-        if Settings[\.utility].ninjabrainBotAutoLaunch,
-            let ninbotPath = Settings[\.utility].ninjabrainBotLocation?.path(percentEncoded: false)
-        {
-            guard !isJarAlreadyRunning(at: ninbotPath) else { return }
-            var task = Process()
-            task.executableURL = URL(filePath: "/usr/bin/java")
-            task.arguments = ["-jar", ninbotPath]
-            try? task.run()
-            NinjabrainAdjuster.ninjabrainBotProc = task
+        MouseSensitivityManager.shared.setSensitivityFactor(factor: Settings[\.utility].sensitivityScale)
+        if Settings[\.utility].ninjabrainBotAutoLaunch {
+            NinjabrainAdjuster.startIfClosed()
         }
         #if !DEBUG
             if Settings[\.utility].autoLaunchPaceman {
@@ -240,7 +232,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         #endif
         WindowController.startup()
         // Start the instance check timer
-        TrackingManager.shared.startInstanceCheckTimer()
+        TrackingManager.shared.startInstanceChecking()
     }
 
     func applicationWillFinishLaunching(_ notification: Notification) {
@@ -249,7 +241,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationWillTerminate(_ notification: Notification) {
         // Clean up the timer when the app is about to terminate
-        TrackingManager.shared.stopInstanceCheckTimer()
+        TrackingManager.shared.stopInstanceChecking()
     }
 }
 

@@ -18,20 +18,17 @@ class TrackingManager: ObservableObject {
     static let shared = TrackingManager()
 
     // Timer for automatic instance detection
-    private var instanceCheckTimer: Timer?
     private var lastCheckedPIDs = Set<pid_t>()
 
     // Time interval for checking instances (in seconds)
-    private let instanceCheckInterval: TimeInterval = 2.0
 
     init() {
         fetchInstances()
-        startInstanceCheckTimer()
+        startInstanceChecking()
     }
 
     deinit {
-        instanceCheckTimer?.invalidate()
-        instanceCheckTimer = nil
+        stopInstanceChecking()
     }
 
     func getValues<T>(_ path: KeyPath<TrackedInstance, T>) -> [T] {
@@ -151,37 +148,40 @@ class TrackingManager: ObservableObject {
 
     // MARK: - Instance Check Timer
 
+    var observers: [Any] = []
+
     /// Start the timer that periodically checks for Minecraft instances
-    func startInstanceCheckTimer() {
+    func startInstanceChecking() {
         // Stop any existing timer first
-        stopInstanceCheckTimer()
+        stopInstanceChecking()
 
         // Initialize with current PIDs - make sure to include all tracked instances
         fetchInstances()
         lastCheckedPIDs = Set(trackedInstances.map { $0.pid })
 
-        // Create a new timer that fires at the configured interval
-        let timer = Timer.scheduledTimer(
-            timeInterval: instanceCheckInterval,
-            target: self,
-            selector: #selector(checkForInstanceChanges),
-            userInfo: nil,
-            repeats: true
-        )
-        instanceCheckTimer = timer
+        let center = NSWorkspace.shared.notificationCenter
+        let observer1 = center.addObserver(
+            forName: NSWorkspace.didActivateApplicationNotification, object: nil, queue: .main
+        ) {
+            notif in
+            self.checkForInstanceChanges()
+        }
 
-        // Make sure timer runs even during scrolling
-        RunLoop.current.add(timer, forMode: .common)
-
-        LogManager.shared.appendLog(
-            "Instance change detection timer started (checking every \(instanceCheckInterval) seconds)"
-        )
+        let observer2 = center.addObserver(
+            forName: NSWorkspace.didTerminateApplicationNotification, object: nil, queue: .main
+        ) {
+            notif in
+            self.checkForInstanceChanges()
+        }
+        observers = [observer1, observer2]
+        LogManager.shared.appendLog("Started Instance checking")
     }
 
     /// Stop the instance check timer
-    func stopInstanceCheckTimer() {
-        instanceCheckTimer?.invalidate()
-        instanceCheckTimer = nil
+    func stopInstanceChecking() {
+        observers.forEach(NSWorkspace.shared.notificationCenter.removeObserver)
+        observers.removeAll()
+        LogManager.shared.appendLog("Stopped Instance checking")
     }
 
     /// Check for changes in Minecraft instances (added or removed)

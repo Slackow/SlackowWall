@@ -115,14 +115,14 @@ struct PopoverPresenter<ContentView: View>: NSViewRepresentable {
 }
 
 struct PopoverLabelModifier: ViewModifier {
-    let label: String
+    let label: Text
     @State private var isHovered = false
 
     func body(content: Content) -> some View {
         content
             .onHover { isHovered = $0 }
             .instantPopover(isPresented: $isHovered, arrowEdge: .bottom) {
-                Text(label)
+                label
                     .padding(8)
                     .allowsHitTesting(false)
             }
@@ -152,6 +152,9 @@ extension View {
         )
     }
     func popoverLabel(_ label: String) -> some View {
+        self.modifier(PopoverLabelModifier(label: Text(label)))
+    }
+    func popoverLabel(_ label: Text) -> some View {
         self.modifier(PopoverLabelModifier(label: label))
     }
 }
