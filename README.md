@@ -13,7 +13,7 @@ brew install slackow/apps/slackowwall
 # What is SlackowWall?
 SlackowWall is a multi-instance manager for macOS designed specifically for speedrunners, enabling control over multiple instances simultaneously.
 
-SlackowWall also enables the BoatEye measurement strategy via features like the Eye Projector and Sensitivity Scaling. [BoatEye Setup Guide](https://youtu.be/cf0Z2pRC39o)
+SlackowWall also enables the BoatEye measurement strategy via features like the Eye Projector and Sensitivity Scaling. [BoatEye Setup Guide](https://www.youtube.com/watch?v=RmAmL7JhGJw)
 
 If you want to use the wall on a version that does not have the SeedQueue mod available, you should follow this [guide](Info/guide.md).
 
