@@ -87,7 +87,7 @@ struct CreditsView: View {
                             .font(.title)
                             .foregroundStyle(.red)
                         Text(
-                            "For help setting up BoatEye, try this [tutorial](https://youtu.be/cf0Z2pRC39o) by FlaxyBRuns"
+                            "For help setting up BoatEye, try this [tutorial](https://www.youtube.com/watch?v=RmAmL7JhGJw) by FlaxyBRuns"
                         )
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)

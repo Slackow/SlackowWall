@@ -9,7 +9,7 @@ TL-DR at the end for more experienced users.
 It's recommended that you use [SeedQueue](https://github.com/KingContaria/seedqueue) instead, which means you can skip most of the setup here, as your wall would be contained within a single instance and you would need no OBS script. SlackowWall would still be useful for you to resize your window and otherwise manage your instances via the Utility Mode (similar to Jingle on Windows)
 
 Here's a tutorial for setting up BoatEye with SlackowWall:
-[https://youtu.be/cf0Z2pRC39o](https://youtu.be/cf0Z2pRC39o)
+[https://www.youtube.com/watch?v=RmAmL7JhGJw](https://www.youtube.com/watch?v=RmAmL7JhGJw)
 
 ## Required Software
 
