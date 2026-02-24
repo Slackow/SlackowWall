@@ -138,7 +138,7 @@ struct NinjabrainAdjuster {
 
         case default_boat_type, hotkey_boat_code
 
-        case show_angle_errors, mismeasure_warning_enabled, direction_help_enabled
+        case show_angle_errors, mismeasure_warning_enabled, direction_help_enabled, view
 
         var name: String {
             switch self {
@@ -158,7 +158,7 @@ struct NinjabrainAdjuster {
                     "Enables a warning when your error is too large for your standard deviation"
                 case .direction_help_enabled:
                     "Show how far sideways you have to move to get >95% certainty"
-
+                case .view: "View type"
                 case .hotkey_boat_code: "N/A"
             }
         }
@@ -176,6 +176,8 @@ struct NinjabrainAdjuster {
                 case (.default_boat_type, .int(0)): "Gray"
                 case (.default_boat_type, .int(1)): "Blue"
                 case (.default_boat_type, .int(2)): "Green"
+                case (.view, .int(0)): "Basic"
+                case (.view, .int(1)): "Detailed"
                 case (_, .boolean(true)): "On"
                 case (_, .boolean(false)): "Off"
                 case (_, .float(_)), (_, .double(_)):
@@ -208,7 +210,7 @@ struct NinjabrainAdjuster {
                 case .mismeasure_warning_enabled: "Shows a warning for large angle errors"
                 case .direction_help_enabled:
                     "Shows how far sideways you have to move to get >95% certainty"
-
+                case .view: "Shows you the top few results instead of just 1, along with extra information"
                 case .hotkey_boat_code: "N/A"
             }
         }
@@ -308,6 +310,7 @@ struct NinjabrainAdjuster {
                 Adjuster(id: .show_angle_errors, adjustment: .boolean(true)),
                 Adjuster(id: .mismeasure_warning_enabled, adjustment: .boolean(true)),
                 Adjuster(id: .direction_help_enabled, adjustment: .boolean(true)),
+                Adjuster(id: .view, adjustment: .int(1)),
             ]
         )
         if action == .get {
