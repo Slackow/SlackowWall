@@ -99,7 +99,7 @@ struct NinbotFixSheet: View {
                 VStack(alignment: .leading, spacing: 8) {
                     if showResolutionCrashError {
                         Text(
-                            "Error: Your calculated resolution height (\(Int(resolutionHeight))) is above 16384. \nYou should remove your \"Tall Mode Height\" setting in SlackowWall,\notherwise Minecraft will crash when entering tall mode."
+                            "Error: Your calculated resolution height (\(Int(resolutionHeight))) is above 16384. \nYou should remove your \"Window Resizing > Tall Mode > Height\" setting in SlackowWall,\notherwise Minecraft will crash when entering tall mode.\nClick the Refresh icon in the top right to revalidate."
                         )
                         .font(.callout)
                         .foregroundStyle(.red)

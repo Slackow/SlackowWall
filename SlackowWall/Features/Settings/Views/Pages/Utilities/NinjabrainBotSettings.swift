@@ -19,13 +19,13 @@ struct NinjabrainBotSettings: View {
         SettingsCardView {
             VStack {
                 SettingsToggleView(
-                    title: "Auto-Launch NinjabrainBot", description: "Launch Ninjabrain Bot on SlackowWall startup",
+                    title: "Auto-Launch NinjabrainBot", description: "Launch Ninjabrain Bot on SlackowWall startup.",
                     option: $settings.ninjabrainBotAutoLaunch)
                 Divider()
                 SettingsToggleView(
                     title: "Launch NinjabrainBot when detecting instance",
                     description:
-                        "If an MCSR instance is detected, launch NinjabrainBot if its closed",
+                        "If an MCSR instance is detected, launch NinjabrainBot if its closed.",
                     option: $settings.ninjabrainBotLaunchWhenDetectingInstance)
                 Divider()
                 HStack {

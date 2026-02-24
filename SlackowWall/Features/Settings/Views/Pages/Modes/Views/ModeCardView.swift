@@ -31,7 +31,9 @@ struct ModeCardView: View {
 
     private var boundlessWarning: Bool {
         return !insideWindowFrame
-            && TrackingManager.shared.trackedInstances.contains { !$0.hasMod(.boundless) }
+            && TrackingManager.shared.trackedInstances.contains {
+                $0.info.areModsLoading == false && !$0.hasMod(.boundless)
+            }
     }
 
     private var hasResetDimensions: Bool {

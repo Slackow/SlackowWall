@@ -97,7 +97,7 @@ struct UtilitySettings: View {
                                 SettingsLabel(
                                     title: "Height Scale",
                                     description: """
-                                        Adjusts the "Stretch/Squish" of the eye on the y axis
+                                        Adjusts the "Stretch/Squish" of the eye on the y axis.
                                         """,
                                     font: .body
                                 )
@@ -317,7 +317,11 @@ struct UtilitySettings: View {
                     Divider()
                     Group {
                         HStack {
-                            SettingsLabel(title: "Simulated Sensitivity", font: .body)
+                            SettingsLabel(
+                                title: "Simulated Sensitivity",
+                                description:
+                                    "Click the label to type value.",
+                                font: .body)
                             Text(
                                 sensitivityText(
                                     scaleToSens(scale: settings.sensitivityScale) + 0.001)
@@ -497,7 +501,7 @@ struct UtilitySettings: View {
             case 0...0.001:
                 return "*yawn*"
             case 200...200.001:
-                return "HYPERSPEED!!!"
+                return "HYPERSPEED!!"
             default:
                 return "\(Int(sens))%"
         }
