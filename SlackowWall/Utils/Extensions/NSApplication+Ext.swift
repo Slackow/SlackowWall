@@ -30,6 +30,7 @@ extension NSApplication {
             window.styleMask.insert(.titled)
         }
 
+        window.isMovableByWindowBackground = isHidden
         window.setFrame(frame, display: true)
         //        window.standardWindowButton(.closeButton)?.isHidden = isHidden
         //        window.standardWindowButton(.miniaturizeButton)?.isHidden = isHidden
