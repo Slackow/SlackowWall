@@ -12,7 +12,6 @@ struct CapturePreview: NSViewRepresentable {
     // A layer that renders the video contents.
     private let contentLayer = CALayer()
     private var reframe: ((CapturedFrame, CALayer) -> Void)? = nil
-
     public mutating func onNewFrame(_ callback: @escaping (CapturedFrame, CALayer) -> Void) {
         self.reframe = callback
     }
