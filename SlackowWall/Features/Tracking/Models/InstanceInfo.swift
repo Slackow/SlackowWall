@@ -40,28 +40,32 @@ class InstanceInfo: CustomStringConvertible {
 
     var mods: [ModInfo] = []
     var areModsLoading: Bool? = nil
+    var isToolScreen: Bool
 
-    init(pid: pid_t, path: String, version: String) {
+    init(pid: pid_t, path: String, version: String, isToolScreen: Bool) {
         self.pid = pid
         self.path = path
         self.version = version
         self.areModsLoading = true
+        self.isToolScreen = isToolScreen
         Task {
             updateModInfo()
-            try? await Task.sleep(for: .seconds(0.95))
-            DispatchQueue.main.async {
-                if Settings[\.behavior].utilityMode {
-                    ShortcutManager.shared.resizeBase(pid: pid)
-                } else {
-                    ShortcutManager.shared.resizeReset(pid: pid)
+            if !isToolScreen {
+                try? await Task.sleep(for: .seconds(0.95))
+                DispatchQueue.main.async {
+                    if Settings[\.behavior].utilityMode {
+                        ShortcutManager.shared.resizeBase(pid: pid)
+                    } else {
+                        ShortcutManager.shared.resizeReset(pid: pid)
+                    }
                 }
-            }
-            try? await Task.sleep(for: .seconds(0.95))
-            DispatchQueue.main.async {
-                if Settings[\.behavior].utilityMode {
-                    ShortcutManager.shared.resizeBase(pid: pid)
-                } else {
-                    ShortcutManager.shared.resizeReset(pid: pid)
+                try? await Task.sleep(for: .seconds(0.95))
+                DispatchQueue.main.async {
+                    if Settings[\.behavior].utilityMode {
+                        ShortcutManager.shared.resizeBase(pid: pid)
+                    } else {
+                        ShortcutManager.shared.resizeReset(pid: pid)
+                    }
                 }
             }
         }
@@ -139,6 +143,7 @@ class InstanceInfo: CustomStringConvertible {
                 .filter { $0.pathExtension == "jar" }
                 .compactMap { InstanceInfo.extractModInfo(fromJarAt: $0) }
             LogManager.shared.appendLog("mods", mods.map(\.id).sorted())
+            LogManager.shared.appendLog("toolscreen:", isToolScreen)
         }
         areModsLoading = false
     }

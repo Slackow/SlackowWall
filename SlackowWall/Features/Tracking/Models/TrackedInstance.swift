@@ -125,6 +125,7 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable, @unc
     private static func calculateInstanceInfo(pid: pid_t) -> InstanceInfo {
         var path = ""
         var version = ""
+        let isToolScreen = Utilities.hasDYLDInsertLibraries(pid: pid)
         if let args = Utilities.processArguments(pid: pid) {
             // Vanilla Launcher
             if let vanillaIdx = args.firstIndex(of: "--gameDir") {
@@ -148,7 +149,7 @@ class TrackedInstance: ObservableObject, Identifiable, Hashable, Equatable, @unc
                 }
             }
         }
-        let data = InstanceInfo(pid: pid, path: path, version: version)
+        let data = InstanceInfo(pid: pid, path: path, version: version, isToolScreen: isToolScreen)
 
         LogManager.shared
             .appendLog("Added Instance \(pid)")

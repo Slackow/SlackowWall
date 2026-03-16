@@ -38,6 +38,16 @@ struct ModeSettings: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundStyle(.red)
                 }
+                if viewModel.anyToolscreen {
+                    Text(
+                        .init(
+                            "Tux Injector/Linuxscreen detected, use their builtin window resizing instead."
+                        )
+                    )
+                    .font(.caption)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .foregroundStyle(.red)
+                }
             }
             .animation(
                 .easeInOut.delay(viewModel.multipleOutOfBounds ? 0.3 : 0),

@@ -280,8 +280,11 @@ struct NinjabrainAdjuster {
         let isLoDPI =
             (instance.hasMod(.retino))
             || NSScreen.factor == 1
-        let resolutionHeight = Float32(
-            Settings[\.self].tallDimensions(for: instance).1 * (isLoDPI ? 1 : 2))
+        let resolutionHeight =
+            instance.info.isToolScreen
+            ? 16384
+            : Float32(
+                Settings[\.self].tallDimensions(for: instance).1 * (isLoDPI ? 1 : 2))
         let sigmaBoat = estimateSigmaFromResHeight(resHeight: resolutionHeight)
         let mcVersion: Int32 = instance.info.majorVersion < 19 ? 0 : 1
 

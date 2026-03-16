@@ -239,7 +239,8 @@ class ShortcutManager: ObservableObject, Manager {
         force: Bool = false, dontClosePie: Bool = false
     ) -> ResizeResult {
         let pids = TrackingManager.shared.getValues(\.pid)
-        if !(width > 0 && height > 0) || pids.isEmpty {
+        let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid })
+        if !(width > 0 && height > 0) || pids.isEmpty || instance?.info.isToolScreen == true {
             return ResizeResult(type: .noResize)
         }
 

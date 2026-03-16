@@ -92,7 +92,7 @@ class MinecraftAdjuster {
         var breaking: [MinecraftResult] = []
 
         let contents = try String(contentsOfFile: optionsPath, encoding: .utf8)
-        if contents.contains("fullscreen:true") {
+        if contents.contains("fullscreen:true") && !instance.info.isToolScreen {
             breaking.append(
                 MinecraftResult(
                     id: .fullscreen,

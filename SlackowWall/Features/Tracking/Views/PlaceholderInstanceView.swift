@@ -138,7 +138,7 @@ struct PlaceholderInstanceView: View {
                         Image(systemName: "checkmark.circle")
                             .foregroundStyle(.green)
                             .popoverLabel(
-                                "Minecraft and NinjabrainBot settings look good, refresh to revalidate.\(instance.hasMod(.retino) && NSScreen.factor > 1 && ProcessInfo.processInfo.operatingSystemVersion.majorVersion != 15 ? "\nretiNO is descreasing accuracy" : "")"
+                                "Minecraft and NinjabrainBot settings look good, refresh to revalidate.\(instance.hasMod(.retino) && NSScreen.factor > 1 && !instance.info.isToolScreen && ProcessInfo.processInfo.operatingSystemVersion.majorVersion != 15 ? "\nretiNO is descreasing accuracy" : "")"
                             )
                     } else if instance.ninbotCheckError != nil || instance.minecraftCheckError != nil {
                         Image(systemName: "circle")
@@ -146,6 +146,10 @@ struct PlaceholderInstanceView: View {
                             .popoverLabel(
                                 "Failed to validate BoatEye settings:\n\([instance.ninbotCheckError, instance.minecraftCheckError].compactMap{$0}.joined(separator: ", "))"
                             )
+                    }
+                    if instance.info.isToolScreen {
+                        Image(systemName: "info.circle.fill")
+                            .popoverLabel("Detected Tux injector/Linuxscreen:\nBuiltin window resizing disabled.")
                     }
                 }
             }

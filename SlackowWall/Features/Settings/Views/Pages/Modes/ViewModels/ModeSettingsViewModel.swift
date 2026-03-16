@@ -38,6 +38,10 @@ class ModeSettingsViewModel: ObservableObject {
         .count >= 2
     }
 
+    var anyToolscreen: Bool {
+        return TrackingManager.shared.trackedInstances.contains(where: { $0.info.isToolScreen })
+    }
+
     init() {
         self.screenDimensions = NSScreen.primary?.frame.size
         self.visibleScreenDimensions = NSScreen.primary?.visibleFrame.size
