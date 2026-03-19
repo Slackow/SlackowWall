@@ -19,6 +19,8 @@ struct UtilitySettings: View {
 
     @State var tallSensitivityFactor: Double = Settings[\.utility].tallSensitivityFactor
     @State var boatEyeSensitivity: Double = Settings[\.utility].boatEyeSensitivity
+    @State var showECountSettings: Bool = false
+    @State var showNumberOverlaySettings: Bool = false
 
     var usingRetino: Bool {
         trackingManager.trackedInstances.first {
@@ -125,62 +127,95 @@ struct UtilitySettings: View {
                                 .disabled(!settings.eyeProjectorEnabled)
                             }
                             Divider()
-                            HStack {
-                                SettingsLabel(title: "Overlay Opacity", font: .body)
-                                Text("\(Int(settings.eyeProjectorOverlayOpacity * 100))%")
-                                Slider(value: $settings.eyeProjectorOverlayOpacity, in: 0...1)
-                                    .frame(width: 200, height: 25)
-                            }
-                            Divider()
-                            SettingsToggleView(
-                                title: "Stretched Overlay",
-                                option: $settings.eyeProjectorStretchedOverlay
-                            )
-                            .onChange(of: settings.eyeProjectorStretchedOverlay) { newValue in
-                                if ShortcutManager.shared.eyeProjectorOpen,
-                                    let instance = ScreenRecorder.shared.eyeProjectedInstance
-                                {
-                                    Task {
-                                        await ScreenRecorder.shared.startEyeProjectorCapture(
-                                            for: instance)
-                                    }
-                                }
-                            }
-                            Divider()
-                            HStack {
-                                SettingsLabel(title: "Overlay Custom Image", font: .body)
-                                if settings.eyeProjectorOverlayImage != nil {
-                                    Button {
-                                        settings.eyeProjectorOverlayImage = nil
-                                    } label: {
-                                        Image(systemName: "xmark.circle.fill")
-                                            .symbolRenderingMode(.hierarchical)
-                                            .resizable()
-                                            .frame(width: 18, height: 18)
-                                    }
-                                    .buttonStyle(.plain)
-                                }
-                                Button(
-                                    settings.eyeProjectorOverlayImage.flatMap(\.lastPathComponent)
-                                        ?? "Select Image"
-                                ) {
-                                    showingOverlayFileImporter = true
-                                }
-                                .fileImporter(
-                                    isPresented: $showingOverlayFileImporter,
-                                    allowedContentTypes: [.image], allowsMultipleSelection: false
-                                ) { result in
-                                    switch result {
-                                        case .success(let urls):
-                                            settings.eyeProjectorOverlayImage = urls.first
-                                        case .failure(let error):
-                                            LogManager.shared.appendLog(
-                                                "Failed to select overlay image",
-                                                error.localizedDescription)
-                                    }
-                                }
+                            DisclosureGroup(isExpanded: $showNumberOverlaySettings) {
+                                Text("Used to see pixel offset of the eye")
+                                    .font(.caption)
+                                    .foregroundStyle(.gray)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                SettingsCardView {
+                                    VStack {
+                                        SettingsToggleView(
+                                            title: "Stretched Overlay",
+                                            option: $settings.eyeProjectorStretchedOverlay
+                                        )
+                                        .onChange(of: settings.eyeProjectorStretchedOverlay) { newValue in
+                                            if ShortcutManager.shared.eyeProjectorOpen,
+                                                let instance = ScreenRecorder.shared.eyeProjectedInstance
+                                            {
+                                                Task {
+                                                    await ScreenRecorder.shared.startEyeProjectorCapture(
+                                                        for: instance)
+                                                }
+                                            }
+                                        }
+                                        Divider()
+                                        HStack {
+                                            SettingsLabel(title: "Overlay Opacity", font: .body)
+                                            Text("\(Int(settings.eyeProjectorOverlayOpacity * 100))%")
+                                            Slider(value: $settings.eyeProjectorOverlayOpacity, in: 0...1)
+                                                .frame(width: 200, height: 25)
+                                        }
+                                        Divider()
+                                        HStack {
+                                            SettingsLabel(
+                                                title: "Overlay Custom Image",
+                                                font: .body)
+                                            SettingsInfoIcon(
+                                                description:
+                                                    "Intended for custom numeric overlays, don't override with a regular image!"
+                                            )
+                                            if settings.eyeProjectorOverlayImage != nil {
+                                                Button {
+                                                    settings.eyeProjectorOverlayImage = nil
+                                                } label: {
+                                                    Image(systemName: "xmark.circle.fill")
+                                                        .symbolRenderingMode(.hierarchical)
+                                                        .resizable()
+                                                        .frame(width: 18, height: 18)
+                                                }
+                                                .buttonStyle(.plain)
+                                            }
+                                            Button(
+                                                settings.eyeProjectorOverlayImage.flatMap(\.lastPathComponent)
+                                                    ?? "Select Image"
+                                            ) {
+                                                showingOverlayFileImporter = true
+                                            }
+                                            .fileImporter(
+                                                isPresented: $showingOverlayFileImporter,
+                                                allowedContentTypes: [.image], allowsMultipleSelection: false
+                                            ) { result in
+                                                switch result {
+                                                    case .success(let urls):
+                                                        settings.eyeProjectorOverlayImage = urls.first
+                                                    case .failure(let error):
+                                                        LogManager.shared.appendLog(
+                                                            "Failed to select overlay image",
+                                                            error.localizedDescription)
+                                                }
+                                            }
 
+                                        }
+                                    }
+                                }
+                            } label: {
+                                Button(action: {
+                                    withAnimation {
+                                        showNumberOverlaySettings.toggle()
+                                    }
+                                }) {
+                                    HStack {
+                                        Text("Offset Overlay")
+                                    }
+                                }.buttonStyle(.plain)
                             }
+                            Divider()
+                            SettingsSliderView(
+                                title: "Projector Framerate (\(Int(settings.eyeProjectorFramerate)))",
+                                leftIcon: "figure.walk",
+                                rightIcon: "figure.walk.motion", value: $settings.eyeProjectorFramerate,
+                                range: 15...120,
+                                step: 5)
                             Divider()
                             SettingsToggleView(
                                 title: "Always On Top", option: $settings.eyeProjectorAlwaysOnTop
@@ -200,6 +235,7 @@ struct UtilitySettings: View {
                         }
                         .disabled(!settings.eyeProjectorEnabled)
                     }
+
                 }
             } else {
 
@@ -234,49 +270,81 @@ struct UtilitySettings: View {
                                 title: "Open With Thin Mode",
                                 option: $settings.pieProjectorOpenWithThinMode)
                             Divider()
-                            SettingsToggleView(
-                                title: "Show E-Count", option: $settings.pieProjectorECountVisible)
-                            Divider()
-                            HStack {
-                                SettingsLabel(
-                                    title: "E-Count Scale",
-                                    description: """
-                                        Determines the scaling of the e-count on the pie chart
-                                        """,
-                                    font: .body
-                                )
 
-                                TextField(
-                                    "", value: $settings.pieProjectorECountScale,
-                                    format: .number.grouping(.never)
-                                )
-                                .textFieldStyle(.roundedBorder)
-                                .foregroundStyle(.primary)
-                                .frame(width: 60)
-                            }
-                            Divider()
-                            HStack {
-                                SettingsLabel(
-                                    title: "E-Count Translation",
-                                    description: """
-                                        Determines the height offset of the e-count on the pie chart
-                                        """,
-                                    font: .body
-                                )
+                            DisclosureGroup(isExpanded: $showECountSettings) {
+                                Text("Shows Entity Count from the f3 menu")
+                                    .font(.caption)
+                                    .foregroundStyle(.gray)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                SettingsCardView {
+                                    VStack {
+                                        SettingsToggleView(
+                                            title: "Enabled", option: $settings.pieProjectorECountVisible)
+                                        Divider()
+                                        HStack {
+                                            SettingsLabel(
+                                                title: "E-Count Scale",
+                                                description: """
+                                                    Determines the scaling of the e-count on the pie chart
+                                                    """,
+                                                font: .body
+                                            )
 
-                                TextField(
-                                    "",
-                                    value: .init {
-                                        Double(settings.pieProjectorECountTranslation.height)
-                                    } set: {
-                                        settings.pieProjectorECountTranslation.height = CGFloat($0)
-                                    },
-                                    format: .number.grouping(.never)
-                                )
-                                .textFieldStyle(.roundedBorder)
-                                .foregroundStyle(.primary)
-                                .frame(width: 60)
+                                            TextField(
+                                                "", value: $settings.pieProjectorECountScale,
+                                                format: .number.grouping(.never)
+                                            )
+                                            .textFieldStyle(.roundedBorder)
+                                            .foregroundStyle(.primary)
+                                            .frame(width: 60)
+                                        }
+                                        Divider()
+                                        HStack {
+                                            SettingsLabel(
+                                                title: "E-Count Translation",
+                                                description: """
+                                                    Determines the height offset of the e-count on the pie chart
+                                                    """,
+                                                font: .body
+                                            )
+
+                                            TextField(
+                                                "",
+                                                value: .init {
+                                                    Double(settings.pieProjectorECountTranslation.height)
+                                                } set: {
+                                                    settings.pieProjectorECountTranslation.height = CGFloat($0)
+                                                },
+                                                format: .number.grouping(.never)
+                                            )
+                                            .textFieldStyle(.roundedBorder)
+                                            .foregroundStyle(.primary)
+                                            .frame(width: 60)
+                                        }
+                                    }
+                                }
+                            } label: {
+                                Button(action: {
+                                    withAnimation {
+                                        showECountSettings.toggle()
+                                    }
+                                }) {
+                                    Text(
+                                        "E-Count Overlay"
+                                            + (!showECountSettings
+                                                ? " (\(settings.pieProjectorECountVisible ? "Enabled" : "Disabled"))"
+                                                : ""))
+                                }.buttonStyle(.plain)
                             }
+
+                            Divider()
+
+                            SettingsSliderView(
+                                title: "Projector Framerate (\(Int(settings.pieProjectorFramerate)))",
+                                leftIcon: "figure.walk",
+                                rightIcon: "figure.walk.motion", value: $settings.pieProjectorFramerate,
+                                range: 15...120,
+                                step: 5)
                             Divider()
                             SettingsToggleView(
                                 title: "Always On Top", option: $settings.pieProjectorAlwaysOnTop
@@ -492,6 +560,11 @@ struct UtilitySettings: View {
 
             SettingsCardView {
                 SettingsLinkView(title: "Startup Applications", destination: StartupAppSettings.init)
+            }
+        }
+        .onAppear {
+            DispatchQueue.main.async {
+                NSApp.keyWindow?.makeFirstResponder(nil)
             }
         }
     }

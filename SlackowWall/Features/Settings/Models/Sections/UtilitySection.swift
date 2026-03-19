@@ -28,11 +28,13 @@ extension Preferences {
         var eyeProjectorShouldOpenWithTallMode: Bool {
             eyeProjectorEnabled && eyeProjectorOpenWithTallMode
         }
+        var eyeProjectorFramerate: Double = 30.0
 
         var pieProjectorEnabled: Bool = false
         var pieProjectorOpenWithTallMode: Bool = true
         var pieProjectorOpenWithThinMode: Bool = true
         var pieProjectorECountScale: Double = 1.0
+        var pieProjectorFramerate: Double = 60.0
         var pieProjectorECountTranslation: CGSize = .zero
         var pieProjectorECountVisible: Bool = true
         var pieProjectorAlwaysOnTop: Bool = true

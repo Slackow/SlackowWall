@@ -73,7 +73,7 @@ import SwiftUI
         // Always check permissions for eye projector capture
         guard await AlertManager.shared.checkScreenRecordingPermission() else { return }
         projectorMode = mode
-        await setupEyeProjectorCapture(for: instance, size: size)
+        await setupEyeProjectorCapture(for: instance, mode: mode, size: size)
     }
 
     var canRecord: Bool {
@@ -305,7 +305,7 @@ import SwiftUI
     }
 
     private func setupEyeProjectorCapture(
-        for instance: TrackedInstance, size: (CGFloat, CGFloat)? = nil
+        for instance: TrackedInstance, mode: ProjectorMode, size: (CGFloat, CGFloat)? = nil
     ) async {
         // Stop any existing eye projector capture
         await stopEyeProjectorCapture()
@@ -362,7 +362,10 @@ import SwiftUI
         streamConfig.excludesCurrentProcessAudio = false
         streamConfig.scalesToFit = true
         streamConfig.queueDepth = 6
-        streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: 30)
+        streamConfig.minimumFrameInterval = CMTime(
+            value: 1,
+            timescale: Int32(
+                mode == .eye ? Settings[\.utility].eyeProjectorFramerate : Settings[\.utility].pieProjectorFramerate))
 
         // output width/height should be pixels, so scale it.
         streamConfig.width = Int(tallWidthPts * factor)
