@@ -29,6 +29,10 @@ extension Preferences {
 
         var blockResizeInGUI: Bool = true
 
+        var resizeBackgroundEnabled: Bool = false
+        var resizeBackgroundImage: URL? = nil
+        var resizeBackgroundOpacity: Double = 1.0
+
         init() {}
     }
     struct SizeMode: Codable, Hashable {

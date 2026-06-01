@@ -15,6 +15,7 @@ struct ModeCardView: View {
     var isGameplayMode: Bool = false
     @State var isExpanded: Bool = false
     var keybind: Binding<Keybinding>?
+    var resizeBackgroundAction: ShortcutManager.ResizeBackgroundAction = .unchanged
 
     var posHints: (String, String) = ("--", "--")
     @Binding var mode: Preferences.SizeMode
@@ -167,7 +168,8 @@ struct ModeCardView: View {
         guard case (.some(let w), .some(let h), let x, let y) = actualDimensions else { return }
         trackingManager.trackedInstances.forEach { inst in
             ShortcutManager.shared.resize(
-                pid: inst.pid, x: x, y: y, width: w, height: h, force: true)
+                pid: inst.pid, x: x, y: y, width: w, height: h, force: true,
+                resizeBackgroundAction: resizeBackgroundAction)
         }
     }
 

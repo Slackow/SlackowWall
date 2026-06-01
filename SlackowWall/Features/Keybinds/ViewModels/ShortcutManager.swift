@@ -157,23 +157,33 @@ class ShortcutManager: ObservableObject, Manager {
         guard case (.some(let w), let h, let x, let y) = Settings[\.self].wideDimensions else {
             return
         }
-        resize(pid: pid, x: x, y: y, width: w, height: h)
+        resize(pid: pid, x: x, y: y, width: w, height: h, resizeBackgroundAction: .show)
     }
 
     @discardableResult func resizeBase(pid: pid_t? = nil) -> ResizeResult {
         guard let pid = pid ?? activeInstancePID(),
             case (.some(let w), .some(let h), .some(let x), .some(let y)) = Settings[\.self]
                 .baseDimensions
-        else { return ResizeResult(type: .noResize) }
-        return resize(pid: pid, x: x, y: y, width: w, height: h, force: true)
+        else {
+            ResizeBackgroundManager.shared.hide()
+            return ResizeResult(type: .noResize)
+        }
+        return resize(
+            pid: pid, x: x, y: y, width: w, height: h, force: true,
+            resizeBackgroundAction: .hide)
     }
 
     func resizeReset(pid: pid_t) {
         guard
             case (.some(let w), .some(let h), .some(let x), .some(let y)) = Settings[\.self]
                 .resetDimensions
-        else { return }
-        resize(pid: pid, x: x, y: y, width: w, height: h, force: true)
+        else {
+            ResizeBackgroundManager.shared.hide()
+            return
+        }
+        resize(
+            pid: pid, x: x, y: y, width: w, height: h, force: true,
+            resizeBackgroundAction: .hide)
     }
 
     func resizeThin() {
@@ -181,7 +191,9 @@ class ShortcutManager: ObservableObject, Manager {
             case (let w, .some(let h), let x, let y) = Settings[\.self].thinDimensions,
             let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid })
         else { return }
-        let result = resize(pid: pid, x: x, y: y, width: w, height: h, dontClosePie: true)
+        let result = resize(
+            pid: pid, x: x, y: y, width: w, height: h, dontClosePie: true,
+            resizeBackgroundAction: .show)
         if result.type == .resizedToOriginal && Settings[\.utility].pieProjectorEnabled {
             Task(priority: .userInitiated) {
                 _ = await result.task?.result
@@ -202,7 +214,9 @@ class ShortcutManager: ObservableObject, Manager {
         guard let pid = activeInstancePID() else { return }
         let (w, h, x, y) = Settings[\.self].tallDimensions(
             for: TrackingManager.shared.trackedInstances.first { $0.pid == pid })
-        let result = resize(pid: pid, x: x, y: y, width: w, height: h, dontClosePie: !changeSens)
+        let result = resize(
+            pid: pid, x: x, y: y, width: w, height: h, dontClosePie: !changeSens,
+            resizeBackgroundAction: .show)
         if result.type == .resizedToOriginal,
             let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid })
         {
@@ -236,7 +250,8 @@ class ShortcutManager: ObservableObject, Manager {
     // True means resized to dimension, False means resized but not to your dimension, nil means did not resize.
     @discardableResult func resize(
         pid: pid_t, x: CGFloat? = nil, y: CGFloat? = nil, width: CGFloat, height: CGFloat,
-        force: Bool = false, dontClosePie: Bool = false
+        force: Bool = false, dontClosePie: Bool = false,
+        resizeBackgroundAction: ResizeBackgroundAction = .unchanged
     ) -> ResizeResult {
         let pids = TrackingManager.shared.getValues(\.pid)
         let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid })
@@ -310,10 +325,22 @@ class ShortcutManager: ObservableObject, Manager {
                     pid: pid, x: newPosition.x, y: newPosition.y, width: newSize.width,
                     height: newSize.height)
             }
+            switch resizeBackgroundAction {
+                case .show:
+                    ResizeBackgroundManager.shared.show(behind: instance)
+                case .hide:
+                    ResizeBackgroundManager.shared.hide()
+                case .unchanged:
+                    break
+            }
             LogManager.shared.appendLog("Finished Resizing Instance: \(pid), \(newSize)")
             return ResizeResult(type: .resizedToOriginal, task: task)
         }
         return ResizeResult(type: .noResize)
+    }
+
+    enum ResizeBackgroundAction {
+        case show, hide, unchanged
     }
 
     struct ResizeResult {
