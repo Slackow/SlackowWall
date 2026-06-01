@@ -30,6 +30,7 @@ extension Preferences {
         var blockResizeInGUI: Bool = true
 
         var resizeBackgroundEnabled: Bool = false
+        var resizeBackgroundAutoAppearance: Bool = true
         var resizeBackgroundImage: URL? = nil
         var resizeBackgroundOpacity: Double = 1.0
 

@@ -123,6 +123,21 @@ struct ModeSettings: View {
 
                     Divider()
 
+                    SettingsToggleView(
+                        title: "Auto-Background Appearance",
+                        description:
+                            "Automatically shows the background in Tall, Thin, and Wide modes, then hides it in Gameplay or Reset.",
+                        option: $settings.resizeBackgroundAutoAppearance
+                    )
+                    .disabled(!settings.resizeBackgroundEnabled)
+                    .onChange(of: settings.resizeBackgroundAutoAppearance) { isEnabled in
+                        if !isEnabled {
+                            ResizeBackgroundManager.shared.hide()
+                        }
+                    }
+
+                    Divider()
+
                     HStack {
                         SettingsLabel(
                             title: "Background Image",

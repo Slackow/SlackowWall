@@ -63,6 +63,8 @@ class ShortcutManager: ObservableObject, Manager {
             resizeTall(changeSens: false)
         } else if type == .keyDown && settings.sensitivityScalingGKey.matches(event: key) {
             Settings[\.utility].sensitivityScaleEnabled.toggle()
+        } else if type == .keyDown && settings.resizeBackgroundToggleGKey.matches(event: key) {
+            toggleResizeBackground()
         } else {
             return
         }
@@ -152,6 +154,22 @@ class ShortcutManager: ObservableObject, Manager {
         }
     }
 
+    func toggleResizeBackground() {
+        if ResizeBackgroundManager.shared.isVisible {
+            ResizeBackgroundManager.shared.hide()
+            return
+        }
+
+        let activeInstance = activeInstancePID().flatMap { pid in
+            TrackingManager.shared.trackedInstances.first { $0.pid == pid }
+        }
+        guard let instance = activeInstance ?? TrackingManager.shared.trackedInstances.first else {
+            return
+        }
+
+        ResizeBackgroundManager.shared.show(behind: instance)
+    }
+
     func resizeWide() {
         guard let pid = activeInstancePID() else { return }
         guard case (.some(let w), let h, let x, let y) = Settings[\.self].wideDimensions else {
@@ -165,7 +183,7 @@ class ShortcutManager: ObservableObject, Manager {
             case (.some(let w), .some(let h), .some(let x), .some(let y)) = Settings[\.self]
                 .baseDimensions
         else {
-            ResizeBackgroundManager.shared.hide()
+            ResizeBackgroundManager.shared.hideAutomatically()
             return ResizeResult(type: .noResize)
         }
         return resize(
@@ -178,7 +196,7 @@ class ShortcutManager: ObservableObject, Manager {
             case (.some(let w), .some(let h), .some(let x), .some(let y)) = Settings[\.self]
                 .resetDimensions
         else {
-            ResizeBackgroundManager.shared.hide()
+            ResizeBackgroundManager.shared.hideAutomatically()
             return
         }
         resize(
@@ -300,6 +318,7 @@ class ShortcutManager: ObservableObject, Manager {
                 })
             else {
                 LogManager.shared.appendLog("Instance with pid: \(pid) not found")
+                ResizeBackgroundManager.shared.hideIfTargetRemoved(pid: pid)
                 return ResizeResult(type: .noResize)
             }
             if !force && Settings[\.mode].blockResizeInGUI && instance.hasMod(.stateOutput) {
@@ -327,9 +346,9 @@ class ShortcutManager: ObservableObject, Manager {
             }
             switch resizeBackgroundAction {
                 case .show:
-                    ResizeBackgroundManager.shared.show(behind: instance)
+                    ResizeBackgroundManager.shared.showAutomatically(behind: instance)
                 case .hide:
-                    ResizeBackgroundManager.shared.hide()
+                    ResizeBackgroundManager.shared.hideAutomatically()
                 case .unchanged:
                     break
             }

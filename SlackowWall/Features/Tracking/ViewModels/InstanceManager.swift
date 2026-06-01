@@ -99,6 +99,8 @@ import SwiftUI
                     ShortcutManager.shared.globalReset()
                 case .toggleSensitivityScaling:
                     break
+                case .toggleResizeBackground:
+                    ShortcutManager.shared.toggleResizeBackground()
                 case .none:
                     return
             }

@@ -79,6 +79,17 @@ struct KeybindingsSettings: View {
 
                         KeybindingView(keybinding: \.sensitivityScalingGKey)
                     }
+
+                    Divider()
+
+                    HStack {
+                        SettingsLabel(
+                            title: "Toggle Resize Background",
+                            description: "Show or hide the selected resize background.",
+                            font: .body)
+
+                        KeybindingView(keybinding: \.resizeBackgroundToggleGKey)
+                    }
                 }
             }
 

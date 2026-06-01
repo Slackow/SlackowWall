@@ -41,6 +41,7 @@ class TrackingManager: ObservableObject {
         let currentPIDs = Set(currentApps.map(\.processIdentifier))
 
         // Update existing instances and remove those no longer running
+        var removedPIDs = Set<pid_t>()
         trackedInstances.removeAll { trackedInstance in
             if currentPIDs.contains(trackedInstance.pid) {
                 // Update existing tracked instance
@@ -49,8 +50,12 @@ class TrackingManager: ObservableObject {
             } else {
                 // Remove instance that no longer exists
                 LogManager.shared.appendLog("Removing instance \(trackedInstance.pid)")
+                removedPIDs.insert(trackedInstance.pid)
                 return true
             }
+        }
+        if !removedPIDs.isEmpty {
+            ResizeBackgroundManager.shared.hideIfTargetRemoved(removedPIDs)
         }
 
         // Add new instances
@@ -136,6 +141,10 @@ class TrackingManager: ObservableObject {
         return ninBot
     }
 
+    func ninjabrainBotPIDs() -> Set<pid_t> {
+        Set(getAllApps().filter(isNinjabrainBot).map(\.processIdentifier))
+    }
+
     private func getAllApps() -> [NSRunningApplication] {
         return NSWorkspace.shared.runningApplications.filter { $0.activationPolicy == .regular }
     }
@@ -211,6 +220,7 @@ class TrackingManager: ObservableObject {
 
             if !removedPIDs.isEmpty {
                 LogManager.shared.appendLog("Minecraft instances closed: \(removedPIDs)")
+                ResizeBackgroundManager.shared.hideIfTargetRemoved(removedPIDs)
             }
 
             // Update the tracked instances
