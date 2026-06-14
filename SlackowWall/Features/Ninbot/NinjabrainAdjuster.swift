@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import ZIPFoundation
 
 struct NinjabrainAdjuster {
 
@@ -107,27 +108,29 @@ struct NinjabrainAdjuster {
         var recommend: [Adjuster]
     }
 
-    static var ninjabrainBotProc: Process? = nil
-
-    @MainActor
-    @discardableResult static func startIfClosed() -> Bool {
-        if let ninjabrainBotProc, ninjabrainBotProc.isRunning {
-            return false
-        }
-
-        if let ninjabrain = Settings[\.utility].ninjabrainBotLocation {
-            guard !isJarAlreadyRunning(at: ninjabrain.path(percentEncoded: false)) else { return false }
-            let process = Process()
-            process.executableURL = URL(filePath: "/usr/bin/java")
-            process.arguments = ["-jar", ninjabrain.path(percentEncoded: false)]
-            do {
-                try process.run()
-            } catch {
-                LogManager.shared.appendLog("Could not launch nin bot: ", error)
+    static func enableHttpServer() throws {
+        LogManager.shared.appendLog("Checking Http Server")
+        let adjustments = Adjustments(
+            breaking: [
+                Adjuster(id: .enable_http_server, adjustment: .boolean(true))
+            ], recommend: [])
+        let results = try launchAdjustmentProcess(
+            action: .get,
+            adjustments: adjustments)
+        if results?.breaking.isEmpty == false {
+            LogManager.shared.appendLog("Enabling Http Server")
+            try launchAdjustmentProcess(action: .fixAll, adjustments: adjustments)
+            Task { @MainActor in
+                if TrackingManager.shared.killNinjabrainBot() != nil {
+                    LogManager.shared.appendLog("Killed NinjabrainBot")
+                    try? await Task.sleep(for: .seconds(2))
+                    LogManager.shared.appendLog("Restarting NinjabrainBot")
+                    NinjabrainManager.startIfClosed()
+                } else {
+                    LogManager.shared.appendLog("Ninjabrain Bot not open/not detected")
+                }
             }
-            ninjabrainBotProc = process
         }
-        return true
     }
 
     enum NinBotSetting: String, Codable {
@@ -139,6 +142,8 @@ struct NinjabrainAdjuster {
         case default_boat_type, hotkey_boat_code
 
         case show_angle_errors, mismeasure_warning_enabled, direction_help_enabled, view
+
+        case enable_http_server
 
         var name: String {
             switch self {
@@ -159,6 +164,7 @@ struct NinjabrainAdjuster {
                 case .direction_help_enabled:
                     "Show how far sideways you have to move to get >95% certainty"
                 case .view: "View type"
+                case .enable_http_server: "Enable API"
                 case .hotkey_boat_code: "N/A"
             }
         }
@@ -211,6 +217,7 @@ struct NinjabrainAdjuster {
                 case .direction_help_enabled:
                     "Shows how far sideways you have to move to get >95% certainty"
                 case .view: "Shows you the top few results instead of just 1, along with extra information"
+                case .enable_http_server: "Allows External Tools to read Ninjabrain Bot data"
                 case .hotkey_boat_code: "N/A"
             }
         }
@@ -250,7 +257,7 @@ struct NinjabrainAdjuster {
                         LogManager.shared.appendLog("Killed NinjabrainBot")
                         try? await Task.sleep(for: .seconds(2))
                         LogManager.shared.appendLog("Restarting NinjabrainBot")
-                        NinjabrainAdjuster.startIfClosed()
+                        NinjabrainManager.startIfClosed()
                     } else {
                         LogManager.shared.appendLog("Ninjabrain Bot not open/not detected")
                     }
@@ -266,25 +273,21 @@ struct NinjabrainAdjuster {
         [0.02291165, 0.058765005, 0.07446537].contains { abs($0 - sens) < 0.0000001 }
     }
 
-    @discardableResult
-    private static func act(
-        instance: TrackedInstance, action: Action, fixFilter: [NinBotSetting]? = nil
-    ) throws -> Results? {
-        guard let prefReader = Bundle.main.url(forResource: "NinbotPrefReader-1.0", withExtension: "jar")
-        else {
-            throw AdjustmentError.toolNotFound
-        }
-
+    private static func adjustments(
+        for instance: TrackedInstance,
+        action: Action
+    ) throws -> Adjustments {
         let sens = Settings[\.utility].boatEyeSensitivity
         let isGodSens = isGodSens(sens)
-        let isLoDPI =
-            (instance.hasMod(.retino))
-            || NSScreen.factor == 1
+        let isLoDPI = instance.hasMod(.retino) || NSScreen.factor == 1
+
         let resolutionHeight =
             instance.info.isToolScreen
             ? 16384
             : Float32(
-                Settings[\.self].tallDimensions(for: instance).1 * (isLoDPI ? 1 : 2))
+                Settings[\.self].tallDimensions(for: instance).1 * (isLoDPI ? 1 : 2)
+            )
+
         let sigmaBoat = estimateSigmaFromResHeight(resHeight: resolutionHeight)
         let mcVersion: Int32 = instance.info.majorVersion < 19 ? 0 : 1
 
@@ -292,9 +295,16 @@ struct NinjabrainAdjuster {
             breaking: [
                 Adjuster(id: .sensitivity, defaultValue: .double(0.012727597), adjustment: .double(sens)),
                 Adjuster(
-                    id: .sigma_boat, defaultValue: .float(0.001), adjustment: .float(sigmaBoat),
-                    allowedError: 0.00025),
-                Adjuster(id: .resolution_height, defaultValue: .float(16384.0), adjustment: .float(resolutionHeight)),
+                    id: .sigma_boat,
+                    defaultValue: .float(0.001),
+                    adjustment: .float(sigmaBoat),
+                    allowedError: 0.00025
+                ),
+                Adjuster(
+                    id: .resolution_height,
+                    defaultValue: .float(16384.0),
+                    adjustment: .float(resolutionHeight)
+                ),
                 Adjuster(id: .mc_version, adjustment: .int(mcVersion)),
 
                 isGodSens
@@ -304,7 +314,6 @@ struct NinjabrainAdjuster {
                 Adjuster(id: .alt_clipboard_reader, adjustment: .boolean(false)),
                 Adjuster(id: .use_precise_angle, adjustment: .boolean(true)),
                 Adjuster(id: .crosshair_correction, adjustment: .double(0)),
-
                 Adjuster(id: .angle_adjustment_type, adjustment: .int(1)),
                 Adjuster(id: .angle_adjustment_display_type, adjustment: .int(1)),
             ],
@@ -316,60 +325,115 @@ struct NinjabrainAdjuster {
                 Adjuster(id: .view, adjustment: .int(1)),
             ]
         )
+
         if action == .get {
-            // Hack to not suggest switching from gray boat if the hotkey is configured. Yeah I'm hacking around my own project, deal with it.
-            dict.recommend.append(Adjuster(id: .hotkey_boat_code, defaultValue: .int(-1), adjustment: .int(-1)))
+            // Hack to not suggest switching from gray boat if the hotkey is configured.
+            dict.recommend.append(
+                Adjuster(id: .hotkey_boat_code, defaultValue: .int(-1), adjustment: .int(-1))
+            )
         }
-        guard let adjustments = String(data: try JSONEncoder().encode(dict), encoding: .utf8) else {
+        if Settings[\.utility].ninjabrainBotAutoAppear {
+            dict.breaking.append(Adjuster(id: .enable_http_server, adjustment: .boolean(true)))
+        }
+
+        return dict
+    }
+
+    @discardableResult
+    private static func launchAdjustmentProcess(
+        action: Action,
+        adjustments: Adjustments,
+        fixFilter: [NinBotSetting]? = nil
+    ) throws -> Results? {
+        guard
+            let prefReader = Bundle.main.url(
+                forResource: "NinbotPrefReader-1.0",
+                withExtension: "jar"
+            )
+        else {
+            throw AdjustmentError.toolNotFound
+        }
+
+        guard
+            let adjustmentsJSON = String(
+                data: try JSONEncoder().encode(adjustments),
+                encoding: .utf8
+            )
+        else {
             throw AdjustmentError.encodingError
         }
 
         let proc = Process()
         let pipe = Pipe()
+
         proc.executableURL = URL(filePath: "/usr/bin/java")
         proc.arguments = [
             "-jar",
             prefReader.path(percentEncoded: false),
             action.rawValue,
-            adjustments,
+            adjustmentsJSON,
         ]
+
         if let fixFilter {
+            let filterData: Data
             do {
-                let data = try JSONEncoder().encode(fixFilter)
-                guard let arg = String(data: data, encoding: .utf8) else {
-                    throw AdjustmentError.encodingError
-                }
-                proc.arguments?.append(arg)
+                filterData = try JSONEncoder().encode(fixFilter)
             } catch {
                 throw AdjustmentError.encodingError
             }
+
+            guard let filterJSON = String(data: filterData, encoding: .utf8) else {
+                throw AdjustmentError.encodingError
+            }
+
+            proc.arguments?.append(filterJSON)
         }
+
         proc.standardOutput = pipe
+
         do {
             try proc.run()
             proc.waitUntilExit()
-            let data = pipe.fileHandleForReading.readDataToEndOfFile()
 
-            if !data.isEmpty {
-                do {
-                    var results = try JSONDecoder().decode(Results.self, from: data)
-                    if let change = results.breaking.first(where: { $0.id == .default_boat_type }),
-                        results.recommend.contains(where: { $0.id == .hotkey_boat_code })
-                    {
-                        results.recommend.append(change)
-                        results.breaking.removeAll { $0.id == .default_boat_type }
-                        results.recommend.removeAll { $0.id == .hotkey_boat_code }
-                    }
-                    return results
-                } catch {
-                    LogManager.shared.appendLog("Decoding: ", String(data: data, encoding: .utf8) ?? "")
-                    throw AdjustmentError.decodingError
+            let data = pipe.fileHandleForReading.readDataToEndOfFile()
+            guard !data.isEmpty else { return nil }
+
+            do {
+                var results = try JSONDecoder().decode(Results.self, from: data)
+
+                if let change = results.breaking.first(where: { $0.id == .default_boat_type }),
+                    results.recommend.contains(where: { $0.id == .hotkey_boat_code })
+                {
+                    results.recommend.append(change)
+                    results.breaking.removeAll { $0.id == .default_boat_type }
                 }
+                results.recommend.removeAll { $0.id == .hotkey_boat_code }
+
+                return results
+            } catch {
+                LogManager.shared.appendLog(
+                    "Decoding: ",
+                    String(data: data, encoding: .utf8) ?? ""
+                )
+                throw AdjustmentError.decodingError
             }
         } catch {
             throw AdjustmentError.executionError
         }
-        return nil
+    }
+
+    @discardableResult
+    private static func act(
+        instance: TrackedInstance,
+        action: Action,
+        fixFilter: [NinBotSetting]? = nil
+    ) throws -> Results? {
+        let adjustments = try adjustments(for: instance, action: action)
+        return try launchAdjustmentProcess(
+            action: action,
+            adjustments: adjustments,
+            fixFilter: fixFilter
+        )
     }
 
     struct Results: Codable {

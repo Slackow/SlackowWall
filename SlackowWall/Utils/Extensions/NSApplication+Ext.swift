@@ -16,12 +16,18 @@ extension NSApplication {
         self.getWindow(id)?.level = isFloating ? .floating : .normal
     }
 
-    func setTitleBarVisibility(_ id: SWWindowID, isHidden: Bool) {
+    func setTitleBarVisibility(_ id: SWWindowID, isHidden: Bool, noReposition: Bool = false) {
         guard let window = self.getWindow(id) else { return }
+
+        // Editing the titlebar in this manner seems to crash the entire app on 13.7.8-
+        // If you can find a fix, I'm happy to include it
+        if #unavailable(macOS 14.0) {
+            return
+        }
         //hide titlebar
         var frame = window.frame
-        if isHidden == window.styleMask.contains(.titled) {
-            frame.size.height -= isHidden ? 30 : -30
+        if !noReposition && isHidden == window.styleMask.contains(.titled) {
+            frame.size.height -= isHidden ? 31 : -31
         }
 
         if isHidden {

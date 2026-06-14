@@ -79,6 +79,17 @@ struct KeybindingsSettings: View {
 
                         KeybindingView(keybinding: \.sensitivityScalingGKey)
                     }
+
+                    Divider()
+
+                    HStack {
+                        SettingsLabel(
+                            title: "Toggle NinjabrainBot visibility (experimental)",
+                            description: "Toggle NinjabrainBot.",
+                            font: .body)
+
+                        KeybindingView(keybinding: \.ninjabrainBotHideGKey)
+                    }
                 }
             }
 

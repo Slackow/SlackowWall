@@ -14,6 +14,8 @@ struct EyeProjectorView: View {
     @ObservedObject private var gridManager = GridManager.shared
     @StateObject var previewRenderer: PreviewRenderer
 
+    @ObservedObject private var ninManager = NinjabrainManager.shared
+
     @AppSettings(\.instance)
     private var instances
     @AppSettings(\.mode)
@@ -53,6 +55,15 @@ struct EyeProjectorView: View {
                         .resizable()
                         .frame(width: geo.size.width)
                         .opacity(utility.eyeProjectorOverlayOpacity)
+                    if let offset = ninManager.strongholdResult?.eyeThrows.last?.correctionIncrements {
+                        Rectangle()
+                            .foregroundStyle(.green)
+                            .frame(width: geo.size.width / 240)
+                            .opacity(0.7)
+                            .offset(
+                                x: CGFloat(offset) * geo.size.width / Double(utility.eyeProjectorOverlayWidth)
+                                    - (geo.size.width / 240 / 2))
+                    }
                 } else if screenRecorder.projectorMode == .pie_and_e {
                     previewRenderer.instance.eyeProjectorStream.capturePreview
                     previewRenderer.instance.eCountProjectorStream.capturePreview

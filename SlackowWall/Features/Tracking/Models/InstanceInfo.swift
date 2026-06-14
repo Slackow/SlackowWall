@@ -27,7 +27,7 @@ class InstanceInfo: CustomStringConvertible {
     let path: String
     let version: String
     var majorVersion: Int {
-        var major = version.starts(with: "1.") ? version.dropFirst(2) : version.dropFirst(0)
+        var major = version.dropFirst(version.starts(with: "1.") ? 2 : 0)
         if let idx = major.firstIndex(of: ".") {
             major = major[..<idx]
         }
@@ -83,6 +83,10 @@ class InstanceInfo: CustomStringConvertible {
 
     func hasMod(_ knownMod: TrackedInstance.KnownMod) -> Bool {
         return self.mods.map(\.id).contains(knownMod.rawValue)
+    }
+
+    func getMod(_ knownMod: TrackedInstance.KnownMod) -> ModInfo? {
+        return self.mods.first { $0.id == knownMod.rawValue }
     }
 
     func readBoundlessPort() -> UInt16 {

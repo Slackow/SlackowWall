@@ -1,5 +1,5 @@
 {
-  "originHash" : "25c6c0dad1b0e2ba9794d14763f76c20f028ca5cb442ae089436e0be7bf582ba",
+  "originHash" : "bcf28204113a91efbf0d6ca2e747caeb523666efb14ebcdecf386d18629d4d75",
   "pins" : [
     {
       "identity" : "defaultcodable",
@@ -8,6 +8,15 @@
       "state" : {
         "branch" : "main",
         "revision" : "669d088e429dd67cea421dc5c57eac257a884491"
+      }
+    },
+    {
+      "identity" : "eventsource",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Recouse/EventSource",
+      "state" : {
+        "revision" : "713f8c0a0270a80a968c007ddc0d6067e80a5393",
+        "version" : "0.1.7"
       }
     },
     {

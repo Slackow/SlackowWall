@@ -94,6 +94,16 @@ struct SlackowWallApp: App {
                     actions: { Button("OK", role: .cancel) {} })
         }
         .windowResizability(.contentSize)
+        .onChange(of: shortcutManager.eyeProjectorOpen) { newValue in
+            if newValue {
+                NSApp.openProjectorWindow(.eyeProjector)
+            }
+        }
+        .onChange(of: shortcutManager.pieProjectorOpen) { newValue in
+            if newValue {
+                NSApp.openProjectorWindow(.pieProjector)
+            }
+        }
 
         Window("Settings", id: SWWindowID.settings.rawValue) {
             SettingsView()
@@ -156,38 +166,6 @@ struct SlackowWallApp: App {
             }
         }
         .windowResizability(.contentSize)
-
-        Window("Eye Projector", id: SWWindowID.eyeProjector.rawValue) {
-            EyeProjectorWindowView()
-                .frame(minWidth: 300, minHeight: 200)
-        }
-        .windowResizability(.contentSize)
-        .defaultPosition(.trailing)
-        .defaultSize(width: 600, height: 400)
-        .onChange(of: shortcutManager.eyeProjectorOpen) { newValue in
-            if newValue {
-                openWindow(id: SWWindowID.eyeProjector.rawValue)
-                NSApp.setWindowFloating(.eyeProjector, isFloating: utility.eyeProjectorAlwaysOnTop)
-                NSApp.setTitleBarVisibility(
-                    .eyeProjector, isHidden: Settings[\.utility].eyeProjectorTitleBarHidden)
-            }
-        }
-
-        Window("Pie Projector", id: SWWindowID.pieProjector.rawValue) {
-            PieProjectorWindowView()
-                .frame(minWidth: 384, minHeight: 384)
-        }
-        .windowResizability(.contentSize)
-        .defaultPosition(.bottom)
-        .defaultSize(width: 384, height: 384)
-        .onChange(of: shortcutManager.pieProjectorOpen) { newValue in
-            if newValue {
-                openWindow(id: SWWindowID.pieProjector.rawValue)
-                NSApp.setWindowFloating(.pieProjector, isFloating: utility.pieProjectorAlwaysOnTop)
-                NSApp.setTitleBarVisibility(
-                    .pieProjector, isHidden: Settings[\.utility].pieProjectorTitleBarHidden)
-            }
-        }
     }
 }
 
@@ -208,7 +186,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         OBSManager.shared.writeScript()
         MouseSensitivityManager.shared.setSensitivityFactor(factor: Settings[\.utility].sensitivityScale)
         if Settings[\.utility].ninjabrainBotAutoLaunch {
-            NinjabrainAdjuster.startIfClosed()
+            NinjabrainManager.startIfClosed()
+            NinjabrainManager.shared.listenToNinbot()
         }
         #if !DEBUG
             if Settings[\.utility].autoLaunchPaceman {
@@ -233,6 +212,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         WindowController.startup()
         // Start the instance check timer
         TrackingManager.shared.startInstanceChecking()
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(windowDidBecomeKey(_:)), name: NSWindow.didBecomeKeyNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(windowDidResignKey(_:)), name: NSWindow.didResignKeyNotification, object: nil)
     }
 
     func applicationWillFinishLaunching(_ notification: Notification) {
@@ -242,6 +225,44 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationWillTerminate(_ notification: Notification) {
         // Clean up the timer when the app is about to terminate
         TrackingManager.shared.stopInstanceChecking()
+    }
+
+    @objc private func windowDidBecomeKey(_ notification: Notification) {
+        guard let window = notification.object as? NSWindow,
+            let id = SWWindowID(rawValue: window.identifier?.rawValue ?? "")
+        else { return }
+        switch id {
+            case .eyeProjector:
+                if Settings[\.utility].eyeProjectorTitleBarHidden {
+                    NSApp.setTitleBarVisibility(id, isHidden: false)
+                }
+            case .pieProjector:
+                if Settings[\.utility].pieProjectorTitleBarHidden {
+                    NSApp.setTitleBarVisibility(id, isHidden: false)
+                }
+            default:
+                break
+        }
+
+    }
+
+    @objc private func windowDidResignKey(_ notification: Notification) {
+        guard let window = notification.object as? NSWindow,
+            let id = SWWindowID(rawValue: window.identifier?.rawValue ?? "")
+        else { return }
+        switch id {
+            case .eyeProjector:
+                if Settings[\.utility].eyeProjectorTitleBarHidden {
+                    NSApp.setTitleBarVisibility(id, isHidden: true)
+                }
+            case .pieProjector:
+                if Settings[\.utility].pieProjectorTitleBarHidden {
+                    NSApp.setTitleBarVisibility(id, isHidden: true)
+                }
+            default:
+                break
+        }
+
     }
 }
 

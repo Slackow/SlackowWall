@@ -104,7 +104,7 @@ class TrackingManager: ObservableObject {
         return minecraftArgs.contains { arg in args.contains(where: { $0.contains(arg) }) }
     }
 
-    private func isNinjabrainBot(app: NSRunningApplication) -> Bool {
+    func isNinjabrainBot(app: NSRunningApplication) -> Bool {
         guard let args = Utilities.processArguments(pid: app.processIdentifier) else {
             return false
         }

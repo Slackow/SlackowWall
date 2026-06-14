@@ -52,7 +52,7 @@ struct SettingsView: View {
                         CreditsView()
                 }
             }
-            .navigationSplitViewColumnWidth(500)
+            // .navigationSplitViewColumnWidth(500)
         }
         .toolbar {
             ToolbarItem(placement: .navigation) {

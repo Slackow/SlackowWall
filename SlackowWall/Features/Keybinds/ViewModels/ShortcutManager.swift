@@ -51,20 +51,22 @@ class ShortcutManager: ObservableObject, Manager {
         let settings = Settings[\.keybinds]
         if type == .keyUp && settings.resetGKey.matches(event: key) {
             globalReset()
-        } else if type == .keyDown && settings.planarGKey.matches(event: key) {
-            resizeWide()
-        } else if type == .keyDown && settings.baseGKey.matches(event: key) {
-            resizeBase()
-        } else if type == .keyDown && settings.tallGKey.matches(event: key) {
-            resizeTall()
-        } else if type == .keyDown && settings.thinGKey.matches(event: key) {
-            resizeThin()
-        } else if type == .keyDown && settings.tallNoSensGKey.matches(event: key) {
-            resizeTall(changeSens: false)
-        } else if type == .keyDown && settings.sensitivityScalingGKey.matches(event: key) {
-            Settings[\.utility].sensitivityScaleEnabled.toggle()
-        } else {
-            return
+        } else if type == .keyDown {
+            if settings.planarGKey.matches(event: key) {
+                resizeWide()
+            } else if settings.baseGKey.matches(event: key) {
+                resizeBase()
+            } else if settings.tallGKey.matches(event: key) {
+                resizeTall()
+            } else if settings.thinGKey.matches(event: key) {
+                resizeThin()
+            } else if settings.tallNoSensGKey.matches(event: key) {
+                resizeTall(changeSens: false)
+            } else if settings.sensitivityScalingGKey.matches(event: key) {
+                Settings[\.utility].sensitivityScaleEnabled.toggle()
+            } else if settings.ninjabrainBotHideGKey.matches(event: key) {
+                NinjabrainManager.changeVisibility()
+            }
         }
     }
 
@@ -291,7 +293,7 @@ class ShortcutManager: ObservableObject, Manager {
                 instance.info.updateState(force: true)
                 LogManager.shared.appendLog("Instance state:", instance.info.state)
 
-                if instance.info.state == .inGameScreen {
+                if instance.info.state != .unpaused {
                     return ResizeResult(type: .noResize)
                 }
             }

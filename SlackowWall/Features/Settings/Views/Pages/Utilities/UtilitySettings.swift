@@ -9,7 +9,6 @@ import SwiftUI
 
 struct UtilitySettings: View {
     @Environment(\.openURL) private var openURL
-    @Environment(\.openWindow) private var openWindow
 
     @AppSettings(\.utility) private var settings
     @AppSettings(\.keybinds) private var keybinds
@@ -74,7 +73,7 @@ struct UtilitySettings: View {
                             SettingsLabel(title: "Enabled", font: .body)
 
                             Button("Open") {
-                                openWindow(id: SWWindowID.eyeProjector.rawValue)
+                                NSApp.openProjectorWindow(.eyeProjector)
                             }
                             .disabled(!settings.eyeProjectorEnabled)
 
@@ -250,7 +249,7 @@ struct UtilitySettings: View {
                             SettingsLabel(title: "Enabled", font: .body)
 
                             Button("Open") {
-                                openWindow(id: SWWindowID.pieProjector.rawValue)
+                                NSApp.openProjectorWindow(.pieProjector)
                             }
                             .disabled(!settings.pieProjectorEnabled)
 
@@ -563,9 +562,7 @@ struct UtilitySettings: View {
             }
         }
         .onAppear {
-            DispatchQueue.main.async {
-                NSApp.keyWindow?.makeFirstResponder(nil)
-            }
+            NSApp.keyWindow?.makeFirstResponder(nil)
         }
     }
 

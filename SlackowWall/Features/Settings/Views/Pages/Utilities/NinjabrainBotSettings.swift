@@ -15,19 +15,13 @@ struct NinjabrainBotSettings: View {
     @State var showingOverlayFileImporter: Bool = false
 
     var body: some View {
-        SettingsLabel(title: "NinjabrainBot", description: "NinjabrainBot settings")
+        SettingsLabel(
+            title: "NinjabrainBot",
+            description: .init(
+                "[NinjabrainBot](https://www.github.com/ninjabrain1/ninjabrain-bot) is the calculator used to calculate the stronghold location"
+            ))
         SettingsCardView {
             VStack {
-                SettingsToggleView(
-                    title: "Auto-Launch NinjabrainBot", description: "Launch Ninjabrain Bot on SlackowWall startup.",
-                    option: $settings.ninjabrainBotAutoLaunch)
-                Divider()
-                SettingsToggleView(
-                    title: "Launch NinjabrainBot when detecting instance",
-                    description:
-                        "If an MCSR instance is detected, launch NinjabrainBot if its closed.",
-                    option: $settings.ninjabrainBotLaunchWhenDetectingInstance)
-                Divider()
                 HStack {
                     SettingsLabel(title: "NinjabrainBot Location", font: .body)
                     if settings.ninjabrainBotLocation != nil {
@@ -60,7 +54,30 @@ struct NinjabrainBotSettings: View {
                                     error.localizedDescription)
                         }
                     }
-
+                    .if(settings.ninjabrainBotLocation != nil) {
+                        $0.popoverLabel(settings.ninjabrainBotLocation?.path(percentEncoded: false) ?? "")
+                    }
+                }
+                Divider()
+                SettingsToggleView(
+                    title: "Auto-Launch NinjabrainBot", description: "Launch Ninjabrain Bot on SlackowWall startup.",
+                    option: $settings.ninjabrainBotAutoLaunch)
+                Divider()
+                SettingsToggleView(
+                    title: "Launch NinjabrainBot when detecting instance",
+                    description:
+                        "If an MCSR instance is detected, launch NinjabrainBot if its closed.",
+                    option: $settings.ninjabrainBotLaunchWhenDetectingInstance)
+                Divider()
+                SettingsToggleView(
+                    title: "Show/Hide with results (experimental)",
+                    description: "Show when at least one angle is measured, Hide when no results are present.",
+                    option: $settings.ninjabrainBotAutoAppear
+                )
+                .onChange(of: settings.ninjabrainBotAutoAppear) { newValue in
+                    if newValue {
+                        try? NinjabrainAdjuster.enableHttpServer()
+                    }
                 }
             }
         }

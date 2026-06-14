@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		496BFAC52DE7E9F600209079 /* PacemanWrapper in Copy Files */ = {isa = PBXBuildFile; fileRef = 496BFAB92DE7D7B600209079 /* PacemanWrapper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		49A4E0B12F7B838F00A22F4E /* EventSource in Frameworks */ = {isa = PBXBuildFile; productRef = 49A4E0B02F7B838F00A22F4E /* EventSource */; };
 		B62B05652C0ADE7500EC087E /* Gzip in Frameworks */ = {isa = PBXBuildFile; productRef = B62B05642C0ADE7500EC087E /* Gzip */; };
 		B6527B732DE4BC63008A1264 /* DefaultCodable in Frameworks */ = {isa = PBXBuildFile; productRef = B6527B722DE4BC63008A1264 /* DefaultCodable */; };
 		B67CD4E42E04DB1F00FC7037 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = B67CD4E32E04DB1F00FC7037 /* ZIPFoundation */; };
@@ -101,6 +102,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49A4E0B12F7B838F00A22F4E /* EventSource in Frameworks */,
 				B6B9FE8D2BA1698D0026C268 /* Sparkle in Frameworks */,
 				B6527B732DE4BC63008A1264 /* DefaultCodable in Frameworks */,
 				B6A1FDEB2BDF5BF000EF2180 /* CachedAsyncImage in Frameworks */,
@@ -189,6 +191,7 @@
 				B62B05642C0ADE7500EC087E /* Gzip */,
 				B6527B722DE4BC63008A1264 /* DefaultCodable */,
 				B67CD4E32E04DB1F00FC7037 /* ZIPFoundation */,
+				49A4E0B02F7B838F00A22F4E /* EventSource */,
 			);
 			productName = SlackowWall;
 			productReference = 498FB3C828987F5B00405753 /* SlackowWall.app */;
@@ -253,6 +256,7 @@
 				B62B05632C0ADE7500EC087E /* XCRemoteSwiftPackageReference "GzipSwift" */,
 				B6527B712DE4BC63008A1264 /* XCRemoteSwiftPackageReference "DefaultCodable" */,
 				B67CD4E22E04DB1F00FC7037 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
+				49A4E0AF2F7B838F00A22F4E /* XCRemoteSwiftPackageReference "EventSource" */,
 			);
 			preferredProjectObjectVersion = 55;
 			productRefGroup = 498FB3C928987F5B00405753 /* Products */;
@@ -511,6 +515,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = SlackowWall/SlackowWall.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 260319;
@@ -548,6 +553,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = SlackowWall/SlackowWall.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 260319;
@@ -668,6 +674,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		49A4E0AF2F7B838F00A22F4E /* XCRemoteSwiftPackageReference "EventSource" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Recouse/EventSource";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.7;
+			};
+		};
 		B62B05632C0ADE7500EC087E /* XCRemoteSwiftPackageReference "GzipSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/1024jp/GzipSwift";
@@ -711,6 +725,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		49A4E0B02F7B838F00A22F4E /* EventSource */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 49A4E0AF2F7B838F00A22F4E /* XCRemoteSwiftPackageReference "EventSource" */;
+			productName = EventSource;
+		};
 		B62B05642C0ADE7500EC087E /* Gzip */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B62B05632C0ADE7500EC087E /* XCRemoteSwiftPackageReference "GzipSwift" */;
