@@ -79,6 +79,18 @@ struct NinjabrainBotSettings: View {
                         try? NinjabrainAdjuster.enableHttpServer()
                     }
                 }
+
+                Divider()
+                SettingsToggleView(
+                    title: "Show Offset Overlay on Eye Projector (experimental)",
+                    description: "Show a green dividing line to represent the position of the offset",
+                    option: $settings.ninjabrainBotShowOffsetOverlay
+                )
+                .onChange(of: settings.ninjabrainBotShowOffsetOverlay) { newValue in
+                    if newValue {
+                        try? NinjabrainAdjuster.enableHttpServer()
+                    }
+                }
             }
         }
     }

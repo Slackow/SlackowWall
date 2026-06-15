@@ -55,7 +55,9 @@ struct EyeProjectorView: View {
                         .resizable()
                         .frame(width: geo.size.width)
                         .opacity(utility.eyeProjectorOverlayOpacity)
-                    if let offset = ninManager.strongholdResult?.eyeThrows.last?.correctionIncrements {
+                    if utility.ninjabrainBotShowOffsetOverlay,
+                        let offset = ninManager.strongholdResult?.eyeThrows.last?.correctionIncrements
+                    {
                         Rectangle()
                             .foregroundStyle(.green)
                             .frame(width: geo.size.width / 240)

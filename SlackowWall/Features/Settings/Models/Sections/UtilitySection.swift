@@ -57,6 +57,7 @@ extension Preferences {
         var ninjabrainBotAutoLaunch: Bool = false
         var ninjabrainBotLaunchWhenDetectingInstance: Bool = false
         var ninjabrainBotAutoAppear: Bool = false
+        var ninjabrainBotShowOffsetOverlay: Bool = false
 
         var startupApplicationEnabled: Bool = false
         var startupApplications: [URL] = []
