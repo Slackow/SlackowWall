@@ -28,6 +28,11 @@ extension Preferences {
         var resetMode: SizeMode = .init()
 
         var blockResizeInGUI: Bool = true
+        var tallKeyUsesNoModifiersFromThin: Bool = true
+        var resizeBackgroundEnabled: Bool = false
+        var resizeBackgroundAutoAppearance: Bool = true
+        var resizeBackgroundImage: URL? = nil
+        var resizeBackgroundOpacity: Double = 1.0
 
         init() {}
     }

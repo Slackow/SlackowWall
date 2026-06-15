@@ -13,6 +13,8 @@ import SwiftUI
 class ShortcutManager: ObservableObject, Manager {
     static let shared = ShortcutManager()
 
+    private var tallModeEntries: [pid_t: TallModeEntry] = [:]
+
     @Published var eyeProjectorOpen: Bool = false {
         didSet {
             if !eyeProjectorOpen {
@@ -66,6 +68,8 @@ class ShortcutManager: ObservableObject, Manager {
                 Settings[\.utility].sensitivityScaleEnabled.toggle()
             } else if settings.ninjabrainBotHideGKey.matches(event: key) {
                 NinjabrainManager.changeVisibility()
+            } else if settings.resizeBackgroundToggleGKey.matches(event: key) {
+                toggleResizeBackground()
             }
         }
     }
@@ -159,23 +163,54 @@ class ShortcutManager: ObservableObject, Manager {
         guard case (.some(let w), let h, let x, let y) = Settings[\.self].wideDimensions else {
             return
         }
-        resize(pid: pid, x: x, y: y, width: w, height: h)
+        let result = resize(
+            pid: pid, x: x, y: y, width: w, height: h, resizeBackgroundAction: .show)
+        clearTallModeEntry(pid: pid, if: result)
+    }
+
+    func toggleResizeBackground() {
+        if ResizeBackgroundManager.shared.isVisible {
+            ResizeBackgroundManager.shared.hide()
+            return
+        }
+
+        let activeInstance = activeInstancePID().flatMap { pid in
+            TrackingManager.shared.trackedInstances.first { $0.pid == pid }
+        }
+        guard let instance = activeInstance ?? TrackingManager.shared.trackedInstances.first else {
+            return
+        }
+
+        ResizeBackgroundManager.shared.show(behind: instance)
     }
 
     @discardableResult func resizeBase(pid: pid_t? = nil) -> ResizeResult {
         guard let pid = pid ?? activeInstancePID(),
             case (.some(let w), .some(let h), .some(let x), .some(let y)) = Settings[\.self]
                 .baseDimensions
-        else { return ResizeResult(type: .noResize) }
-        return resize(pid: pid, x: x, y: y, width: w, height: h, force: true)
+        else {
+            ResizeBackgroundManager.shared.hideAutomatically()
+            return ResizeResult(type: .noResize)
+        }
+        let result = resize(
+            pid: pid, x: x, y: y, width: w, height: h, force: true,
+            resizeBackgroundAction: .hide)
+        clearTallModeEntry(pid: pid, if: result)
+        return result
     }
 
     func resizeReset(pid: pid_t) {
         guard
             case (.some(let w), .some(let h), .some(let x), .some(let y)) = Settings[\.self]
                 .resetDimensions
-        else { return }
-        resize(pid: pid, x: x, y: y, width: w, height: h, force: true)
+        else {
+            ResizeBackgroundManager.shared.hideAutomatically()
+            return
+        }
+        let result = resize(
+            pid: pid, x: x, y: y, width: w, height: h, force: true,
+            resizeBackgroundAction: .hide)
+        clearTallModeEntry(pid: pid, if: result)
     }
 
     func resizeThin() {
@@ -183,50 +218,81 @@ class ShortcutManager: ObservableObject, Manager {
             case (let w, .some(let h), let x, let y) = Settings[\.self].thinDimensions,
             let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid })
         else { return }
-        let result = resize(pid: pid, x: x, y: y, width: w, height: h, dontClosePie: true)
+        let shouldClearTallModeEntry = tallModeEntries[pid] != nil
+        let projectorTransitionID = ScreenRecorder.shared.beginEyeProjectorTransition()
+        let result = resize(
+            pid: pid, x: x, y: y, width: w, height: h, dontClosePie: true,
+            resizeBackgroundAction: .show,
+            projectorTransitionID: projectorTransitionID)
+        if shouldClearTallModeEntry {
+            clearTallModeEntry(pid: pid, if: result)
+        }
         if result.type == .resizedToOriginal && Settings[\.utility].pieProjectorEnabled {
             Task(priority: .userInitiated) {
                 _ = await result.task?.result
-                ScreenRecorder.shared.eyeProjectedInstance = instance
-                await ScreenRecorder.shared.startEyeProjectorCapture(
+                let didStartProjector = await ScreenRecorder.shared.startEyeProjectorCapture(
                     for: instance,
                     mode: Settings[\.utility].pieProjectorECountVisible ? .pie_and_e : .pie,
-                    size: (w, h)
+                    size: (w, h),
+                    transitionID: projectorTransitionID
                 )
-                if Settings[\.utility].pieProjectorShouldOpenWithThinMode {
+                if didStartProjector && Settings[\.utility].pieProjectorShouldOpenWithThinMode {
                     pieProjectorOpen = true
                 }
             }
+        } else {
+            clearTallModeEntry(pid: pid, if: result)
         }
     }
 
     func resizeTall(changeSens: Bool = true) {
         guard let pid = activeInstancePID() else { return }
+
+        if changeSens,
+            tallModeEntries[pid] == .noModifiersFromThin,
+            isTallMode(pid: pid)
+        {
+            resizeThin()
+            return
+        }
+
+        let usesNoModifiersFromThin =
+            changeSens && Settings[\.mode].tallKeyUsesNoModifiersFromThin && isThinMode(pid: pid)
+        let shouldChangeSens = usesNoModifiersFromThin ? false : changeSens
+
         let (w, h, x, y) = Settings[\.self].tallDimensions(
             for: TrackingManager.shared.trackedInstances.first { $0.pid == pid })
-        let result = resize(pid: pid, x: x, y: y, width: w, height: h, dontClosePie: !changeSens)
+        let projectorTransitionID = ScreenRecorder.shared.beginEyeProjectorTransition()
+        let result = resize(
+            pid: pid, x: x, y: y, width: w, height: h, dontClosePie: !shouldChangeSens,
+            resizeBackgroundAction: .show,
+            projectorTransitionID: projectorTransitionID)
+
         if result.type == .resizedToOriginal,
             let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid })
         {
+            tallModeEntries[pid] = usesNoModifiersFromThin ? .noModifiersFromThin : .standard
+
             Task(priority: .userInitiated) {
                 _ = await result.task?.result
-                if changeSens {
+                if shouldChangeSens {
                     MouseSensitivityManager.shared.setSensitivityFactor(
                         factor: Settings[\.utility].sensitivityScale
                             / Settings[\.utility].tallSensitivityFactor,
                         if: Settings[\.utility].tallSensitivityFactorEnabled)
                 }
-                ScreenRecorder.shared.eyeProjectedInstance = instance
-                await ScreenRecorder.shared.startEyeProjectorCapture(
+                let didStartProjector = await ScreenRecorder.shared.startEyeProjectorCapture(
                     for: instance,
-                    mode: changeSens
-                        ? .eye : (Settings[\.utility].pieProjectorECountVisible ? .pie_and_e : .pie)
+                    mode: shouldChangeSens
+                        ? .eye : (Settings[\.utility].pieProjectorECountVisible ? .pie_and_e : .pie),
+                    transitionID: projectorTransitionID
                 )
-                if changeSens
-                    ? Settings[\.utility].eyeProjectorShouldOpenWithTallMode
-                    : Settings[\.utility].pieProjectorShouldOpenWithTallMode
+                if didStartProjector
+                    && (shouldChangeSens
+                        ? Settings[\.utility].eyeProjectorShouldOpenWithTallMode
+                        : Settings[\.utility].pieProjectorShouldOpenWithTallMode)
                 {
-                    if changeSens {
+                    if shouldChangeSens {
                         eyeProjectorOpen = true
                     } else {
                         pieProjectorOpen = true
@@ -238,7 +304,9 @@ class ShortcutManager: ObservableObject, Manager {
     // True means resized to dimension, False means resized but not to your dimension, nil means did not resize.
     @discardableResult func resize(
         pid: pid_t, x: CGFloat? = nil, y: CGFloat? = nil, width: CGFloat, height: CGFloat,
-        force: Bool = false, dontClosePie: Bool = false
+        force: Bool = false, dontClosePie: Bool = false,
+        resizeBackgroundAction: ResizeBackgroundAction = .unchanged,
+        projectorTransitionID: Int? = nil
     ) -> ResizeResult {
         let pids = TrackingManager.shared.getValues(\.pid)
         let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid })
@@ -255,8 +323,8 @@ class ShortcutManager: ObservableObject, Manager {
             var task: Task<Void, Never>? = nil
             if currentSize == CGSize(width: w, height: h) {
                 task = Task(priority: .userInitiated) {
-                    await ScreenRecorder.shared.stopEyeProjectorCapture()
-                    ScreenRecorder.shared.eyeProjectedInstance = nil
+                    await ScreenRecorder.shared.stopEyeProjectorCapture(
+                        transitionID: projectorTransitionID)
                 }
                 if Settings[\.utility].eyeProjectorShouldOpenWithTallMode || dontClosePie {
                     eyeProjectorOpen = false
@@ -273,8 +341,8 @@ class ShortcutManager: ObservableObject, Manager {
             {
                 pieProjectorOpen = false
                 task = Task(priority: .userInitiated) {
-                    await ScreenRecorder.shared.stopEyeProjectorCapture()
-                    ScreenRecorder.shared.eyeProjectedInstance = nil
+                    await ScreenRecorder.shared.stopEyeProjectorCapture(
+                        transitionID: projectorTransitionID)
                 }
             }
             if !force && currentSize.width == width && currentSize.height == height {
@@ -287,6 +355,7 @@ class ShortcutManager: ObservableObject, Manager {
                 })
             else {
                 LogManager.shared.appendLog("Instance with pid: \(pid) not found")
+                ResizeBackgroundManager.shared.hideIfTargetRemoved(pid: pid)
                 return ResizeResult(type: .noResize)
             }
             if !force && Settings[\.mode].blockResizeInGUI && instance.hasMod(.stateOutput) {
@@ -312,10 +381,22 @@ class ShortcutManager: ObservableObject, Manager {
                     pid: pid, x: newPosition.x, y: newPosition.y, width: newSize.width,
                     height: newSize.height)
             }
+            switch resizeBackgroundAction {
+                case .show:
+                    ResizeBackgroundManager.shared.showAutomatically(behind: instance)
+                case .hide:
+                    ResizeBackgroundManager.shared.hideAutomatically()
+                case .unchanged:
+                    break
+            }
             LogManager.shared.appendLog("Finished Resizing Instance: \(pid), \(newSize)")
             return ResizeResult(type: .resizedToOriginal, task: task)
         }
         return ResizeResult(type: .noResize)
+    }
+
+    enum ResizeBackgroundAction {
+        case show, hide, unchanged
     }
 
     struct ResizeResult {
@@ -324,6 +405,40 @@ class ShortcutManager: ObservableObject, Manager {
         }
         let type: ResizeResultType
         var task: Task<Void, Never>? = nil
+    }
+
+    private func clearTallModeEntry(pid: pid_t, if result: ResizeResult) {
+        guard result.type == .resizedToOriginal || result.type == .resizedToOther else {
+            return
+        }
+
+        tallModeEntries[pid] = nil
+    }
+
+    private func isThinMode(pid: pid_t) -> Bool {
+        guard
+            let currentSize = WindowController.getWindowSize(pid: pid),
+            case (let width, .some(let height), _, _) = Settings[\.self].thinDimensions
+        else {
+            return false
+        }
+
+        return currentSize == CGSize(width: width ?? currentSize.width, height: height)
+    }
+
+    private func isTallMode(pid: pid_t) -> Bool {
+        guard let currentSize = WindowController.getWindowSize(pid: pid) else {
+            return false
+        }
+
+        let (width, height, _, _) = Settings[\.self].tallDimensions(
+            for: TrackingManager.shared.trackedInstances.first { $0.pid == pid })
+        return currentSize == CGSize(width: width, height: height)
+    }
+
+    private enum TallModeEntry {
+        case standard
+        case noModifiersFromThin
     }
 
     func resetKeybinds() {

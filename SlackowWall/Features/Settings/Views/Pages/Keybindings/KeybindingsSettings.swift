@@ -90,6 +90,17 @@ struct KeybindingsSettings: View {
 
                         KeybindingView(keybinding: \.ninjabrainBotHideGKey)
                     }
+
+                    Divider()
+
+                    HStack {
+                        SettingsLabel(
+                            title: "Toggle Resize Background (experimental)",
+                            description: "Show or hide the selected resize background.",
+                            font: .body)
+
+                        KeybindingView(keybinding: \.resizeBackgroundToggleGKey)
+                    }
                 }
             }
 

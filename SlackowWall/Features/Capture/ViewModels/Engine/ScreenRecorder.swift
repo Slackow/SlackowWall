@@ -22,6 +22,7 @@ import SwiftUI
     // Dedicated eye projector capture that works regardless of utility mode
     private var eyeProjectorCapture: CaptureEngine? = nil
     private var eyeProjectorFilter: SCContentFilter? = nil
+    private var eyeProjectorTransitionID = 0
 
     private var availableApps = [SCRunningApplication]()
     private var windowFilters: [CGWindowID: SCContentFilter] = [:]
@@ -63,17 +64,23 @@ import SwiftUI
         }
     }
 
+    @discardableResult
     func startEyeProjectorCapture(
         for instance: TrackedInstance,
         mode: ProjectorMode = .eye,
-        size: (CGFloat, CGFloat)? = nil
-    ) async {
-        guard needsEyeProjectorCapture else { return }
+        size: (CGFloat, CGFloat)? = nil,
+        transitionID: Int? = nil
+    ) async -> Bool {
+        let transitionID = transitionID ?? beginEyeProjectorTransition()
+        guard needsEyeProjectorCapture else { return false }
 
         // Always check permissions for eye projector capture
-        guard await AlertManager.shared.checkScreenRecordingPermission() else { return }
+        guard await AlertManager.shared.checkScreenRecordingPermission() else { return false }
+        guard isCurrentEyeProjectorTransition(transitionID) else { return false }
         projectorMode = mode
-        await setupEyeProjectorCapture(for: instance, mode: mode, size: size)
+        eyeProjectedInstance = instance
+        return await setupEyeProjectorCapture(
+            for: instance, mode: mode, size: size, transitionID: transitionID)
     }
 
     var canRecord: Bool {
@@ -211,7 +218,24 @@ import SwiftUI
         isRunning = false
     }
 
-    func stopEyeProjectorCapture() async {
+    func beginEyeProjectorTransition() -> Int {
+        eyeProjectorTransitionID += 1
+        return eyeProjectorTransitionID
+    }
+
+    func stopEyeProjectorCapture(transitionID: Int? = nil) async {
+        let transitionID = transitionID ?? beginEyeProjectorTransition()
+        guard isCurrentEyeProjectorTransition(transitionID) else { return }
+        await stopCurrentEyeProjectorCapture()
+        guard isCurrentEyeProjectorTransition(transitionID) else { return }
+        eyeProjectedInstance = nil
+    }
+
+    private func isCurrentEyeProjectorTransition(_ transitionID: Int) -> Bool {
+        self.eyeProjectorTransitionID == transitionID
+    }
+
+    private func stopCurrentEyeProjectorCapture() async {
         if let eyeProjectorCapture = eyeProjectorCapture {
             await eyeProjectorCapture.stopCapture(removeStreams: true)
             self.eyeProjectorCapture = nil
@@ -305,11 +329,15 @@ import SwiftUI
     }
 
     private func setupEyeProjectorCapture(
-        for instance: TrackedInstance, mode: ProjectorMode, size: (CGFloat, CGFloat)? = nil
-    ) async {
+        for instance: TrackedInstance, mode: ProjectorMode, size: (CGFloat, CGFloat)? = nil,
+        transitionID: Int
+    ) async -> Bool {
         // Stop any existing eye projector capture
-        await stopEyeProjectorCapture()
-        eyeProjectorCapture = CaptureEngine()
+        await stopCurrentEyeProjectorCapture()
+        guard isCurrentEyeProjectorTransition(transitionID) else { return false }
+
+        let capture = CaptureEngine()
+        eyeProjectorCapture = capture
 
         // Attempt to reuse the stored filter for this instance to avoid the
         // expensive window enumeration that occurs when starting the eye
@@ -323,6 +351,7 @@ import SwiftUI
         } else {
             // Refresh available windows only if needed
             await refreshAvailableContent()
+            guard isCurrentEyeProjectorTransition(transitionID) else { return false }
 
             guard
                 let window = availableWindows.first(where: {
@@ -332,7 +361,7 @@ import SwiftUI
                 LogManager.shared.appendLog(
                     "Could not find window for eye projector instance \(instance.pid)"
                 )
-                return
+                return false
             }
 
             let newFilter = SCContentFilter(desktopIndependentWindow: window)
@@ -340,6 +369,8 @@ import SwiftUI
             instance.windowID = window.windowID
             filter = newFilter
         }
+
+        guard isCurrentEyeProjectorTransition(transitionID) else { return false }
 
         // Store the filter and create dedicated capture engine
         eyeProjectorFilter = filter
@@ -468,14 +499,15 @@ import SwiftUI
         }
 
         // Start the dedicated capture
-        guard let eyeProjectorCapture else { return }
+        guard isCurrentEyeProjectorTransition(transitionID) else { return false }
 
-        eyeProjectorCapture.startTask {
+        capture.startTask {
             do {
-                for try await frame in eyeProjectorCapture.startCapture(
+                for try await frame in capture.startCapture(
                     configuration: streamConfig, filter: filter
                 ) {
                     await MainActor.run {
+                        guard self.isCurrentEyeProjectorTransition(transitionID) else { return }
                         instance.eyeProjectorStream.capturePreview.updateFrame(frame)
                         if self.projectorMode == .pie_and_e {
                             instance.eCountProjectorStream.capturePreview.updateFrame(frame)
@@ -499,5 +531,6 @@ import SwiftUI
         }
 
         LogManager.shared.appendLog("Started eye projector capture for instance \(instance.pid)")
+        return true
     }
 }

@@ -99,6 +99,12 @@ import SwiftUI
                     ShortcutManager.shared.globalReset()
                 case .toggleSensitivityScaling:
                     break
+                case .toggleResizeBackground:
+                    if ResizeBackgroundManager.shared.isVisible {
+                        ResizeBackgroundManager.shared.hide()
+                    } else {
+                        ResizeBackgroundManager.shared.show(behind: instance)
+                    }
                 case .none:
                     return
             }

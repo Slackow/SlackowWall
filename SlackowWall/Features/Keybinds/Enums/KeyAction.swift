@@ -15,6 +15,7 @@ enum KeyAction {
     case resetAll
     case lock
     case toggleSensitivityScaling
+    case toggleResizeBackground
 
     static func from(event: NSEvent) -> KeyAction? {
         let profile = Settings[\.keybinds]
@@ -25,6 +26,7 @@ enum KeyAction {
         if profile.lockKey.matches(event: event) { return .lock }
         if profile.resetGKey.matches(event: event) { return .resetGlobal }
         if profile.sensitivityScalingGKey.matches(event: event) { return .toggleSensitivityScaling }
+        if profile.resizeBackgroundToggleGKey.matches(event: event) { return .toggleResizeBackground }
         return nil
     }
 }

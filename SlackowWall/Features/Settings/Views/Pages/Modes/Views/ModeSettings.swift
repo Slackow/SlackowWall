@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct ModeSettings: View {
     @StateObject private var viewModel = ModeSettingsViewModel()
+    @State private var showingResizeBackgroundFileImporter = false
 
     @AppSettings(\.mode) private var settings
     @AppSettings(\.keybinds) private var keybinds
@@ -59,6 +61,7 @@ struct ModeSettings: View {
                     "The size of the game while you are in an instance, required for other modes to work.\nOptional Keybind goes directly to gameplay, other keybinds toggle their sizes.",
                 actualDimensions: Settings[\.self].baseDimensions,
                 isGameplayMode: true, isExpanded: true, keybind: $keybinds.baseGKey,
+                resizeBackgroundAction: .hide,
                 posHints: ("", ""),
                 mode: $settings.baseMode
             )
@@ -69,6 +72,7 @@ struct ModeSettings: View {
                 actualDimensions: Settings[\.self].tallDimensions(
                     for: TrackingManager.shared.trackedInstances.first),
                 keybind: $keybinds.tallGKey,
+                resizeBackgroundAction: .show,
                 mode: $settings.tallMode
             )
 
@@ -78,6 +82,7 @@ struct ModeSettings: View {
                     "Thin is generally used for buried treasures, preemptive, and/or e-ray.",
                 actualDimensions: Settings[\.self].thinDimensions,
                 keybind: $keybinds.thinGKey,
+                resizeBackgroundAction: .show,
                 mode: $settings.thinMode
             )
 
@@ -86,6 +91,7 @@ struct ModeSettings: View {
                 description: "Wide is generally used for seeing further with planar fog.",
                 actualDimensions: Settings[\.self].wideDimensions,
                 keybind: $keybinds.planarGKey,
+                resizeBackgroundAction: .show,
                 mode: $settings.wideMode
             )
 
@@ -94,9 +100,110 @@ struct ModeSettings: View {
                 description:
                     "Reset is used for wall mode, and is used to make your instances wider so you can see more on the preview.",
                 actualDimensions: Settings[\.self].resetDimensions,
+                resizeBackgroundAction: .hide,
                 posHints: ("", ""),
                 mode: $settings.resetMode
             )
+
+            SettingsLabel(
+                title: "Experimental"
+            )
+            SettingsCardView {
+                VStack {
+                    SettingsToggleView(
+                        title: "Resize Background",
+                        description:
+                            "Shows a selected image behind Minecraft while Tall, Thin, or Wide mode is active.",
+                        option: $settings.resizeBackgroundEnabled
+                    )
+                    .onChange(of: settings.resizeBackgroundEnabled) { isEnabled in
+                        if !isEnabled {
+                            ResizeBackgroundManager.shared.hide()
+                        }
+                    }
+
+                    Divider()
+
+                    SettingsToggleView(
+                        title: "Auto Background",
+                        description:
+                            "Shows the background when entering Tall, Thin, or Wide mode and hides it when returning to Gameplay or Reset.",
+                        option: $settings.resizeBackgroundAutoAppearance
+                    )
+                    .disabled(!settings.resizeBackgroundEnabled)
+                    .onChange(of: settings.resizeBackgroundAutoAppearance) { isEnabled in
+                        if !isEnabled {
+                            ResizeBackgroundManager.shared.hide()
+                        }
+                    }
+
+                    Divider()
+
+                    HStack {
+                        SettingsLabel(
+                            title: "Background Image",
+                            description: resizeBackgroundImageDescription,
+                            font: .body)
+
+                        if settings.resizeBackgroundImage != nil {
+                            Button {
+                                settings.resizeBackgroundImage = nil
+                                ResizeBackgroundManager.shared.hide()
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .symbolRenderingMode(.hierarchical)
+                                    .resizable()
+                                    .frame(width: 18, height: 18)
+                            }
+                            .buttonStyle(.plain)
+                        }
+
+                        Button {
+                            showingResizeBackgroundFileImporter = true
+                        } label: {
+                            HStack(spacing: 8) {
+                                Text(settings.resizeBackgroundImage == nil ? "Select" : "Change")
+
+                                if let image = resizeBackgroundPreviewImage {
+                                    Image(nsImage: image)
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 28, height: 28)
+                                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                                }
+                            }
+                        }
+                    }
+                    .disabled(!settings.resizeBackgroundEnabled)
+                    .fileImporter(
+                        isPresented: $showingResizeBackgroundFileImporter,
+                        allowedContentTypes: [.image],
+                        allowsMultipleSelection: false
+                    ) { result in
+                        switch result {
+                            case .success(let urls):
+                                settings.resizeBackgroundImage = urls.first
+                                ResizeBackgroundManager.shared.hide()
+                            case .failure(let error):
+                                LogManager.shared.appendLog(
+                                    "Failed to select resize background image",
+                                    error.localizedDescription)
+                        }
+                    }
+
+                    //                    Divider()
+                    //
+                    //                    SettingsSliderView(
+                    //                        title: "Background Opacity: \(Int(settings.resizeBackgroundOpacity * 100))%",
+                    //                        leftIcon: "circle.lefthalf.filled",
+                    //                        rightIcon: "circle.fill",
+                    //                        value: $settings.resizeBackgroundOpacity,
+                    //                        range: 0...1,
+                    //                        step: 0.05
+                    //                    )
+                    //                    .disabled(!settings.resizeBackgroundEnabled)
+                }
+            }
 
             SettingsLabel(
                 title: "Miscellaneous"
@@ -113,6 +220,13 @@ struct ModeSettings: View {
                     }
                     Divider()
                     SettingsToggleView(
+                        title: "Tall Key Uses No Modifiers From Thin",
+                        description:
+                            "Pressing Tall while in Thin enters Tall without modifiers. Pressing Tall again returns to Thin.",
+                        option: $settings.tallKeyUsesNoModifiersFromThin
+                    )
+                    Divider()
+                    SettingsToggleView(
                         title: "Don't resize while in a GUI",
                         description: "Disables resizing hotkeys while mouse is not grabbed.",
                         infoBlurb: "Requires State Output Mod",
@@ -125,6 +239,14 @@ struct ModeSettings: View {
             .smooth.delay(viewModel.multipleOutOfBounds ? 0 : 0.3),
             value: viewModel.multipleOutOfBounds
         )
+    }
+
+    private var resizeBackgroundImageDescription: String {
+        settings.resizeBackgroundImage?.lastPathComponent ?? "No image selected."
+    }
+
+    private var resizeBackgroundPreviewImage: NSImage? {
+        settings.resizeBackgroundImage.flatMap { NSImage(contentsOf: $0) }
     }
 }
 

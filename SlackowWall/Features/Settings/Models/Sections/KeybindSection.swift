@@ -18,6 +18,7 @@ extension Preferences {
         var baseGKey: Keybinding = .none
         var sensitivityScalingGKey: Keybinding = .none
         var ninjabrainBotHideGKey: Keybinding = .none
+        var resizeBackgroundToggleGKey: Keybinding = .none
         var tallNoSensGKey: Keybinding = .none
 
         var resetAllKey: Keybinding = .init(.t)
