@@ -230,7 +230,7 @@ struct ModeSettings: View {
                         title: "Don't resize while in a GUI",
                         description: "Disables resizing hotkeys while mouse is not grabbed.",
                         infoBlurb: "Requires State Output Mod",
-                        option: $settings.blockResizeInGUI
+                        option: $settings.blockResizeWhenInGUI
                     )
                 }
             }

@@ -358,7 +358,7 @@ class ShortcutManager: ObservableObject, Manager {
                 ResizeBackgroundManager.shared.hideIfTargetRemoved(pid: pid)
                 return ResizeResult(type: .noResize)
             }
-            if !force && Settings[\.mode].blockResizeInGUI && instance.hasMod(.stateOutput) {
+            if !force && Settings[\.mode].blockResizeWhenInGUI && instance.hasMod(.stateOutput) {
                 instance.info.updateState(force: true)
                 LogManager.shared.appendLog("Instance state:", instance.info.state)
 

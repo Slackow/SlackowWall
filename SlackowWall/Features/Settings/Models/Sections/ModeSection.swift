@@ -27,7 +27,7 @@ extension Preferences {
 
         var resetMode: SizeMode = .init()
 
-        var blockResizeInGUI: Bool = true
+        var blockResizeWhenInGUI: Bool = false
         var tallKeyUsesNoModifiersFromThin: Bool = true
         var resizeBackgroundEnabled: Bool = false
         var resizeBackgroundAutoAppearance: Bool = true
