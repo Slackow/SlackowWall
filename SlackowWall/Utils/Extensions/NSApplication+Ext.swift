@@ -52,6 +52,7 @@ enum SWWindowID: String {
     case eyeProjector = "eye-projector-window"
     case pieProjector = "pie-projector-window"
     case resizeBackground = "resize-background-window"
+    case crosshair = "crosshair-window"
     case settings = "settings-window"
     case slackowwall = "slackowwall-window"
 }
