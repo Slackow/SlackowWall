@@ -273,6 +273,10 @@ class ShortcutManager: ObservableObject, Manager {
         {
             tallModeEntries[pid] = usesNoModifiersFromThin ? .noModifiersFromThin : .standard
 
+            if shouldChangeSens {
+                CrosshairManager.shared.showAutomatically(over: instance)
+            }
+
             Task(priority: .userInitiated) {
                 _ = await result.task?.result
                 if shouldChangeSens {
@@ -326,6 +330,7 @@ class ShortcutManager: ObservableObject, Manager {
                     await ScreenRecorder.shared.stopEyeProjectorCapture(
                         transitionID: projectorTransitionID)
                 }
+                CrosshairManager.shared.hideAutomatically()
                 if Settings[\.utility].eyeProjectorShouldOpenWithTallMode || dontClosePie {
                     eyeProjectorOpen = false
                 }
@@ -356,6 +361,7 @@ class ShortcutManager: ObservableObject, Manager {
             else {
                 LogManager.shared.appendLog("Instance with pid: \(pid) not found")
                 ResizeBackgroundManager.shared.hideIfTargetRemoved(pid: pid)
+                CrosshairManager.shared.hideIfTargetRemoved(pid: pid)
                 return ResizeResult(type: .noResize)
             }
             if !force && Settings[\.mode].blockResizeWhenInGUI && instance.hasMod(.stateOutput) {

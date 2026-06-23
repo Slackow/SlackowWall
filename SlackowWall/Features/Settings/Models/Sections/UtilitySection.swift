@@ -43,6 +43,19 @@ extension Preferences {
         var eyeProjectorOverlayBandOpacity: Double = 1.0
         var eyeProjectorShowDecadeMarkers: Bool = false
 
+        // Center crosshair overlay (eye-measure / dragon perch)
+        var eyeCrosshairEnabled: Bool = false
+        var eyeCrosshairStyle: CrosshairStyle = .cross
+        var eyeCrosshairImage: URL? = nil
+        var eyeCrosshairColor: CodableColor = CodableColor(r: 0, g: 1, b: 0)  // green
+        var eyeCrosshairSize: Double = 20
+        var eyeCrosshairThickness: Double = 2
+        var eyeCrosshairGap: Double = 4
+        var eyeCrosshairOpacity: Double = 1.0
+        var eyeCrosshairOffsetX: Double = 0
+        var eyeCrosshairOffsetY: Double = 0
+        var eyeCrosshairHideFromCapture: Bool = true
+
         var pieProjectorEnabled: Bool = false
         var pieProjectorOpenWithTallMode: Bool = true
         var pieProjectorOpenWithThinMode: Bool = true
