@@ -99,6 +99,50 @@ struct DynamicEyeOverlay: View {
     }
 }
 
+/// Live preview of the eye projector overlay (dynamic bands or custom/asset
+/// image) for the settings panel. Mirrors EyeProjectorView's overlay logic.
+struct EyeProjectorOverlayPreview: View {
+    @AppSettings(\.utility) private var settings
+
+    private var staticOverlayImage: Image {
+        Image(
+            settings.eyeProjectorOverlayImage
+                .flatMap { NSImage(contentsOf: $0) }
+                .flatMap { ImageType.nsImage($0) }
+                ?? .asset(
+                    settings.eyeProjectorStretchedOverlay ? "stretched_overlay" : "tall_overlay"))
+    }
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 8).fill(Color(white: 0.12))
+            RoundedRectangle(cornerRadius: 8).strokeBorder(Color.white.opacity(0.1), lineWidth: 1)
+
+            Group {
+                if settings.eyeProjectorDynamicOverlay {
+                    DynamicEyeOverlay(
+                        columnsPerSide: settings.eyeProjectorColumnsPerSide,
+                        color1: settings.eyeProjectorOverlayColor1.color,
+                        color2: settings.eyeProjectorOverlayColor2.color,
+                        textColor: settings.eyeProjectorOverlayTextColor.color,
+                        centerLineColor: settings.eyeProjectorOverlayCenterColor.color,
+                        bandOpacity: settings.eyeProjectorOverlayBandOpacity,
+                        showDecadeMarkers: settings.eyeProjectorShowDecadeMarkers
+                    )
+                    .opacity(settings.eyeProjectorOverlayOpacity)
+                } else {
+                    staticOverlayImage
+                        .resizable()
+                        .opacity(settings.eyeProjectorOverlayOpacity)
+                }
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+        }
+        .frame(height: 120)
+        .frame(maxWidth: .infinity)
+    }
+}
+
 #Preview {
     ZStack {
         Color.white

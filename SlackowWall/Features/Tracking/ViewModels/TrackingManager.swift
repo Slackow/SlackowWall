@@ -56,7 +56,7 @@ class TrackingManager: ObservableObject {
         }
         if !removedPIDs.isEmpty {
             ResizeBackgroundManager.shared.hideIfTargetRemoved(removedPIDs)
-            CrosshairManager.shared.hideIfTargetRemoved(removedPIDs)
+            CustomOverlayManager.shared.hideIfTargetRemoved(removedPIDs)
         }
 
         // Add new instances
@@ -222,7 +222,7 @@ class TrackingManager: ObservableObject {
             if !removedPIDs.isEmpty {
                 LogManager.shared.appendLog("Minecraft instances closed: \(removedPIDs)")
                 ResizeBackgroundManager.shared.hideIfTargetRemoved(removedPIDs)
-                CrosshairManager.shared.hideIfTargetRemoved(removedPIDs)
+                CustomOverlayManager.shared.hideIfTargetRemoved(removedPIDs)
             }
 
             // Update the tracked instances

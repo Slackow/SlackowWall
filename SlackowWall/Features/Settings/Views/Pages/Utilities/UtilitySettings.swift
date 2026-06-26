@@ -48,7 +48,7 @@ struct UtilitySettings: View {
     @FocusState var sensFieldInFocus
     @State var sensFieldNum: Double? = nil
     @State var showingOverlayFileImporter = false
-    @State var showingCrosshairFileImporter = false
+    @State var showingCustomOverlayFileImporter = false
     @State var configuringEyeProjector: Bool = true
 
     var body: some View {
@@ -131,6 +131,8 @@ struct UtilitySettings: View {
                                 Slider(value: $settings.eyeProjectorOverlayOpacity, in: 0...1)
                                     .frame(width: 200, height: 25)
                             }
+                            Divider()
+                            EyeProjectorOverlayPreview()
                             Divider()
                             SettingsToggleView(
                                 title: "Dynamic Overlay",
@@ -261,133 +263,6 @@ struct UtilitySettings: View {
                                 rightIcon: "figure.walk.motion", value: $settings.eyeProjectorFramerate,
                                 range: 15...120,
                                 step: 5)
-                            Divider()
-                            SettingsToggleView(
-                                title: "Center Crosshair",
-                                description:
-                                    "Show a crosshair at the center of the screen while in eye-measure (Tall) mode.",
-                                option: $settings.eyeCrosshairEnabled
-                            )
-                            .onChange(of: settings.eyeCrosshairEnabled) { _ in
-                                CrosshairManager.shared.refreshAppearance()
-                            }
-                            if settings.eyeCrosshairEnabled {
-                                Picker("Style", selection: $settings.eyeCrosshairStyle) {
-                                    ForEach(CrosshairStyle.allCases) { style in
-                                        Text(style.label).tag(style)
-                                    }
-                                }
-                                .onChange(of: settings.eyeCrosshairStyle) { _ in
-                                    CrosshairManager.shared.refreshAppearance()
-                                }
-                                if settings.eyeCrosshairStyle == .customImage {
-                                    HStack {
-                                        SettingsLabel(title: "Crosshair Image", font: .body)
-                                        if settings.eyeCrosshairImage != nil {
-                                            Button {
-                                                settings.eyeCrosshairImage = nil
-                                                CrosshairManager.shared.refreshAppearance()
-                                            } label: {
-                                                Image(systemName: "xmark.circle.fill")
-                                                    .symbolRenderingMode(.hierarchical)
-                                                    .resizable()
-                                                    .frame(width: 18, height: 18)
-                                            }
-                                            .buttonStyle(.plain)
-                                        }
-                                        Button(
-                                            settings.eyeCrosshairImage.flatMap(\.lastPathComponent)
-                                                ?? "Select Image"
-                                        ) {
-                                            showingCrosshairFileImporter = true
-                                        }
-                                        .fileImporter(
-                                            isPresented: $showingCrosshairFileImporter,
-                                            allowedContentTypes: [.image],
-                                            allowsMultipleSelection: false
-                                        ) { result in
-                                            switch result {
-                                                case .success(let urls):
-                                                    settings.eyeCrosshairImage = urls.first
-                                                    CrosshairManager.shared.refreshAppearance()
-                                                case .failure(let error):
-                                                    LogManager.shared.appendLog(
-                                                        "Failed to select crosshair image",
-                                                        error.localizedDescription)
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    HStack {
-                                        SettingsLabel(title: "Color", font: .body)
-                                        ColorPicker(
-                                            "",
-                                            selection: colorBinding(\.eyeCrosshairColor),
-                                            supportsOpacity: false
-                                        )
-                                        .labelsHidden()
-                                    }
-                                    HStack {
-                                        SettingsLabel(title: "Thickness", font: .body)
-                                        Slider(value: $settings.eyeCrosshairThickness, in: 1...10)
-                                            .frame(width: 150)
-                                    }
-                                    if settings.eyeCrosshairStyle == .cross
-                                        || settings.eyeCrosshairStyle == .crossDot
-                                    {
-                                        HStack {
-                                            SettingsLabel(title: "Center Gap", font: .body)
-                                            Slider(value: $settings.eyeCrosshairGap, in: 0...30)
-                                                .frame(width: 150)
-                                        }
-                                    }
-                                }
-                                HStack {
-                                    SettingsLabel(title: "Size", font: .body)
-                                    Slider(value: $settings.eyeCrosshairSize, in: 4...80)
-                                        .frame(width: 150)
-                                        .onChange(of: settings.eyeCrosshairSize) { _ in
-                                            CrosshairManager.shared.refreshAppearance()
-                                        }
-                                }
-                                HStack {
-                                    SettingsLabel(title: "Opacity", font: .body)
-                                    Text("\(Int(settings.eyeCrosshairOpacity * 100))%")
-                                    Slider(value: $settings.eyeCrosshairOpacity, in: 0...1)
-                                        .frame(width: 150)
-                                }
-                                HStack {
-                                    SettingsLabel(title: "Offset X", font: .body)
-                                    TextField(
-                                        "", value: $settings.eyeCrosshairOffsetX,
-                                        format: .number.grouping(.never)
-                                    )
-                                    .textFieldStyle(.roundedBorder)
-                                    .frame(width: 60)
-                                    .onChange(of: settings.eyeCrosshairOffsetX) { _ in
-                                        CrosshairManager.shared.refreshAppearance()
-                                    }
-                                    SettingsLabel(title: "Offset Y", font: .body)
-                                    TextField(
-                                        "", value: $settings.eyeCrosshairOffsetY,
-                                        format: .number.grouping(.never)
-                                    )
-                                    .textFieldStyle(.roundedBorder)
-                                    .frame(width: 60)
-                                    .onChange(of: settings.eyeCrosshairOffsetY) { _ in
-                                        CrosshairManager.shared.refreshAppearance()
-                                    }
-                                }
-                                SettingsToggleView(
-                                    title: "Hide from Screen Capture",
-                                    description:
-                                        "Keep the crosshair off OBS and screen recordings.",
-                                    option: $settings.eyeCrosshairHideFromCapture
-                                )
-                                .onChange(of: settings.eyeCrosshairHideFromCapture) { _ in
-                                    CrosshairManager.shared.refreshAppearance()
-                                }
-                            }
                             Divider()
                             SettingsToggleView(
                                 title: "Always On Top", option: $settings.eyeProjectorAlwaysOnTop
@@ -530,6 +405,135 @@ struct UtilitySettings: View {
                             }
                         }
                         .disabled(!settings.pieProjectorEnabled)
+                    }
+                }
+            }
+
+            SettingsLabel(
+                title: "Custom Overlay",
+                description: """
+                    A click-through overlay (such as a crosshair) centered on the \
+                    Minecraft window during eye-measure (Tall) mode.
+                    """
+            )
+
+            SettingsCardView {
+                VStack {
+                    SettingsToggleView(
+                        title: "Enabled",
+                        description:
+                            "Show the overlay centered on the Minecraft window in the selected resize modes.",
+                        option: $settings.customOverlayEnabled
+                    )
+                    .onChange(of: settings.customOverlayEnabled) { _ in
+                        CustomOverlayManager.shared.refreshAppearance()
+                    }
+                    if settings.customOverlayEnabled {
+                        Divider()
+                        SettingsToggleView(
+                            title: "Show in Wide", option: $settings.customOverlayShowInWide)
+                        SettingsToggleView(
+                            title: "Show in Thin", option: $settings.customOverlayShowInThin)
+                        SettingsToggleView(
+                            title: "Show in Tall", option: $settings.customOverlayShowInTall)
+                        SettingsToggleView(
+                            title: "Show in Tall (no modifiers)",
+                            option: $settings.customOverlayShowInTallNoSens)
+                        Divider()
+                        CustomOverlayPreview()
+                        Picker("Style", selection: $settings.customOverlayStyle) {
+                            ForEach(CustomOverlayStyle.allCases) { style in
+                                Text(style.label).tag(style)
+                            }
+                        }
+                        .onChange(of: settings.customOverlayStyle) { _ in
+                            CustomOverlayManager.shared.refreshAppearance()
+                        }
+                        if settings.customOverlayStyle == .customImage {
+                            HStack {
+                                SettingsLabel(title: "Overlay Image", font: .body)
+                                if settings.customOverlayImage != nil {
+                                    Button {
+                                        settings.customOverlayImage = nil
+                                        CustomOverlayManager.shared.refreshAppearance()
+                                    } label: {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .symbolRenderingMode(.hierarchical)
+                                            .resizable()
+                                            .frame(width: 18, height: 18)
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                                Button(
+                                    settings.customOverlayImage.flatMap(\.lastPathComponent)
+                                        ?? "Select Image"
+                                ) {
+                                    showingCustomOverlayFileImporter = true
+                                }
+                                .fileImporter(
+                                    isPresented: $showingCustomOverlayFileImporter,
+                                    allowedContentTypes: [.image],
+                                    allowsMultipleSelection: false
+                                ) { result in
+                                    switch result {
+                                        case .success(let urls):
+                                            settings.customOverlayImage = urls.first
+                                            CustomOverlayManager.shared.refreshAppearance()
+                                        case .failure(let error):
+                                            LogManager.shared.appendLog(
+                                                "Failed to select crosshair image",
+                                                error.localizedDescription)
+                                    }
+                                }
+                            }
+                        } else {
+                            HStack {
+                                SettingsLabel(title: "Color", font: .body)
+                                ColorPicker(
+                                    "",
+                                    selection: colorBinding(\.customOverlayColor),
+                                    supportsOpacity: false
+                                )
+                                .labelsHidden()
+                            }
+                            HStack {
+                                SettingsLabel(title: "Thickness", font: .body)
+                                Slider(value: $settings.customOverlayThickness, in: 1...10)
+                                    .frame(width: 150)
+                            }
+                            if settings.customOverlayStyle == .cross
+                                || settings.customOverlayStyle == .crossDot
+                            {
+                                HStack {
+                                    SettingsLabel(title: "Center Gap", font: .body)
+                                    Slider(value: $settings.customOverlayGap, in: 0...30)
+                                        .frame(width: 150)
+                                }
+                            }
+                        }
+                        HStack {
+                            SettingsLabel(title: "Size", font: .body)
+                            Slider(value: $settings.customOverlaySize, in: 4...80)
+                                .frame(width: 150)
+                                .onChange(of: settings.customOverlaySize) { _ in
+                                    CustomOverlayManager.shared.refreshAppearance()
+                                }
+                        }
+                        HStack {
+                            SettingsLabel(title: "Opacity", font: .body)
+                            Text("\(Int(settings.customOverlayOpacity * 100))%")
+                            Slider(value: $settings.customOverlayOpacity, in: 0...1)
+                                .frame(width: 150)
+                        }
+                        SettingsToggleView(
+                            title: "Hide from Screen Capture",
+                            description:
+                                "Keep the crosshair off OBS and screen recordings.",
+                            option: $settings.customOverlayHideFromCapture
+                        )
+                        .onChange(of: settings.customOverlayHideFromCapture) { _ in
+                            CustomOverlayManager.shared.refreshAppearance()
+                        }
                     }
                 }
             }
