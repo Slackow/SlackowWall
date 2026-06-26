@@ -166,6 +166,11 @@ class ShortcutManager: ObservableObject, Manager {
         let result = resize(
             pid: pid, x: x, y: y, width: w, height: h, resizeBackgroundAction: .show)
         clearTallModeEntry(pid: pid, if: result)
+        if result.type != .noResize {
+            CustomOverlayManager.shared.updateVisibility(
+                for: .wide,
+                over: TrackingManager.shared.trackedInstances.first { $0.pid == pid })
+        }
     }
 
     func toggleResizeBackground() {
@@ -196,6 +201,8 @@ class ShortcutManager: ObservableObject, Manager {
             pid: pid, x: x, y: y, width: w, height: h, force: true,
             resizeBackgroundAction: .hide)
         clearTallModeEntry(pid: pid, if: result)
+        // Base is the normal/default size; never show the overlay there.
+        CustomOverlayManager.shared.hide()
         return result
     }
 
@@ -211,6 +218,8 @@ class ShortcutManager: ObservableObject, Manager {
             pid: pid, x: x, y: y, width: w, height: h, force: true,
             resizeBackgroundAction: .hide)
         clearTallModeEntry(pid: pid, if: result)
+        // Reset is a transient state; never show the overlay during it.
+        CustomOverlayManager.shared.hide()
     }
 
     func resizeThin() {
@@ -224,6 +233,9 @@ class ShortcutManager: ObservableObject, Manager {
             pid: pid, x: x, y: y, width: w, height: h, dontClosePie: true,
             resizeBackgroundAction: .show,
             projectorTransitionID: projectorTransitionID)
+        if result.type != .noResize {
+            CustomOverlayManager.shared.updateVisibility(for: .thin, over: instance)
+        }
         if shouldClearTallModeEntry {
             clearTallModeEntry(pid: pid, if: result)
         }
@@ -272,6 +284,9 @@ class ShortcutManager: ObservableObject, Manager {
             let instance = TrackingManager.shared.trackedInstances.first(where: { $0.pid == pid })
         {
             tallModeEntries[pid] = usesNoModifiersFromThin ? .noModifiersFromThin : .standard
+
+            CustomOverlayManager.shared.updateVisibility(
+                for: shouldChangeSens ? .tall : .tallNoSens, over: instance)
 
             Task(priority: .userInitiated) {
                 _ = await result.task?.result
@@ -356,6 +371,7 @@ class ShortcutManager: ObservableObject, Manager {
             else {
                 LogManager.shared.appendLog("Instance with pid: \(pid) not found")
                 ResizeBackgroundManager.shared.hideIfTargetRemoved(pid: pid)
+                CustomOverlayManager.shared.hideIfTargetRemoved(pid: pid)
                 return ResizeResult(type: .noResize)
             }
             if !force && Settings[\.mode].blockResizeWhenInGUI && instance.hasMod(.stateOutput) {

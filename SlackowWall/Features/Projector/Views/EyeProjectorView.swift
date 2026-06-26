@@ -51,10 +51,24 @@ struct EyeProjectorView: View {
                             y: utility.eyeProjectorHeightScale * f
                                 * (Double(utility.eyeProjectorOverlayWidth) / 384)
                         )
-                    overlayImage
-                        .resizable()
+                    if utility.eyeProjectorDynamicOverlay {
+                        DynamicEyeOverlay(
+                            columnsPerSide: utility.eyeProjectorColumnsPerSide,
+                            color1: utility.eyeProjectorOverlayColor1.color,
+                            color2: utility.eyeProjectorOverlayColor2.color,
+                            textColor: utility.eyeProjectorOverlayTextColor.color,
+                            centerLineColor: utility.eyeProjectorOverlayCenterColor.color,
+                            bandOpacity: utility.eyeProjectorOverlayBandOpacity,
+                            showDecadeMarkers: utility.eyeProjectorShowDecadeMarkers
+                        )
                         .frame(width: geo.size.width)
                         .opacity(utility.eyeProjectorOverlayOpacity)
+                    } else {
+                        overlayImage
+                            .resizable()
+                            .frame(width: geo.size.width)
+                            .opacity(utility.eyeProjectorOverlayOpacity)
+                    }
                     if utility.ninjabrainBotShowOffsetOverlay,
                         let offset = ninManager.strongholdResult?.eyeThrows.last?.correctionIncrements
                     {
@@ -66,12 +80,21 @@ struct EyeProjectorView: View {
                                 x: CGFloat(offset) * geo.size.width / Double(utility.eyeProjectorOverlayWidth)
                                     - (geo.size.width / 240 / 2))
                     }
-                } else if screenRecorder.projectorMode == .pie_and_e {
+                } else if screenRecorder.projectorMode == .pie
+                    || screenRecorder.projectorMode == .pie_and_e
+                {
                     previewRenderer.instance.eyeProjectorStream.capturePreview
-                    previewRenderer.instance.eCountProjectorStream.capturePreview
-                        .scaleEffect(4 * utility.pieProjectorECountScale / f)
-                        .offset(utility.pieProjectorECountTranslation)
-                        .opacity(utility.pieProjectorECountVisible ? 1 : 0)
+                        .scaleEffect(
+                            x: utility.pieProjectorFlatten ? utility.pieProjectorScaleX : 1,
+                            y: utility.pieProjectorFlatten ? utility.pieProjectorScaleY : 1
+                        )
+                        .offset(y: utility.pieProjectorFlatten ? utility.pieProjectorOffsetY : 0)
+                    if screenRecorder.projectorMode == .pie_and_e {
+                        previewRenderer.instance.eCountProjectorStream.capturePreview
+                            .scaleEffect(4 * utility.pieProjectorECountScale / f)
+                            .offset(utility.pieProjectorECountTranslation)
+                            .opacity(utility.pieProjectorECountVisible ? 1 : 0)
+                    }
                 } else {
                     previewRenderer.instance.eyeProjectorStream.capturePreview
                 }
