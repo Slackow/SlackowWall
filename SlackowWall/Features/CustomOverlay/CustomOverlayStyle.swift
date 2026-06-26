@@ -1,13 +1,14 @@
 //
-//  CrosshairStyle.swift
+//  CustomOverlayStyle.swift
 //  SlackowWall
 //
-//  Style options for the center crosshair overlay shown during eye-measure mode.
+//  Shape options for the custom overlay (e.g. a center crosshair) shown over
+//  the Minecraft window.
 //
 
 import SwiftUI
 
-enum CrosshairStyle: String, SettingsOption {
+enum CustomOverlayStyle: String, SettingsOption {
     case cross = "Cross"
     case dot = "Dot"
     case circle = "Circle"

@@ -1,17 +1,33 @@
 //
-//  CrosshairManager.swift
+//  CustomOverlayManager.swift
 //  SlackowWall
 //
-//  Floats a click-through crosshair window centered on the Minecraft window
-//  during eye-measure (Tall) mode. Mirrors ResizeBackgroundManager, but the
-//  window is centered on the game and ordered ABOVE it.
+//  Floats a click-through custom overlay window centered on the Minecraft
+//  window during eye-measure (Tall) mode. Mirrors ResizeBackgroundManager, but
+//  the window is centered on the game and ordered ABOVE it.
 //
 
 import AppKit
 import SwiftUI
 
-final class CrosshairManager: ObservableObject {
-    static let shared = CrosshairManager()
+/// The resize modes the overlay can be shown in, each gated by its own setting.
+enum OverlayMode {
+    case wide, thin, tall, tallNoSens
+
+    /// Whether the overlay is configured to show in this mode.
+    var isEnabledInSettings: Bool {
+        let settings = Settings[\.utility]
+        switch self {
+            case .wide: return settings.customOverlayShowInWide
+            case .thin: return settings.customOverlayShowInThin
+            case .tall: return settings.customOverlayShowInTall
+            case .tallNoSens: return settings.customOverlayShowInTallNoSens
+        }
+    }
+}
+
+final class CustomOverlayManager: ObservableObject {
+    static let shared = CustomOverlayManager()
 
     @Published private(set) var image: NSImage?
     @Published private(set) var isVisible = false
@@ -22,11 +38,21 @@ final class CrosshairManager: ObservableObject {
 
     private init() {}
 
-    func showAutomatically(over instance: TrackedInstance) {
+    /// Show or hide the overlay for the resize mode an instance just entered,
+    /// based on the master toggle and that mode's per-mode setting. Passing a
+    /// nil instance (or a transient mode like reset) hides it.
+    func updateVisibility(for mode: OverlayMode, over instance: TrackedInstance?) {
+        guard let instance else {
+            hide()
+            return
+        }
         let pid = instance.pid
         let windowID = instance.windowID
         DispatchQueue.main.async {
-            guard Settings[\.utility].eyeCrosshairEnabled else { return }
+            guard Settings[\.utility].customOverlayEnabled, mode.isEnabledInSettings else {
+                self.hideImmediately()
+                return
+            }
             self.show(pid: pid, windowID: windowID)
         }
     }
@@ -59,29 +85,29 @@ final class CrosshairManager: ObservableObject {
             guard self.isVisible, let pid = self.targetPID, let window = self.window else { return }
             let settings = Settings[\.utility]
             self.image =
-                settings.eyeCrosshairStyle == .customImage
-                ? settings.eyeCrosshairImage.flatMap { NSImage(contentsOf: $0) } : nil
-            window.sharingType = settings.eyeCrosshairHideFromCapture ? .none : .readOnly
+                settings.customOverlayStyle == .customImage
+                ? settings.customOverlayImage.flatMap { NSImage(contentsOf: $0) } : nil
+            window.sharingType = settings.customOverlayHideFromCapture ? .none : .readOnly
             self.positionWindow(pid: pid)
         }
     }
 
     private func show(pid: pid_t, windowID: CGWindowID?) {
         let settings = Settings[\.utility]
-        guard settings.eyeCrosshairEnabled else {
+        guard settings.customOverlayEnabled else {
             hideImmediately()
             return
         }
 
         image =
-            settings.eyeCrosshairStyle == .customImage
-            ? settings.eyeCrosshairImage.flatMap { NSImage(contentsOf: $0) } : nil
+            settings.customOverlayStyle == .customImage
+            ? settings.customOverlayImage.flatMap { NSImage(contentsOf: $0) } : nil
 
         targetPID = pid
         targetWindowID = windowID
 
         let window = makeWindow()
-        window.sharingType = settings.eyeCrosshairHideFromCapture ? .none : .readOnly
+        window.sharingType = settings.customOverlayHideFromCapture ? .none : .readOnly
 
         guard positionWindow(pid: pid) else {
             hideImmediately()
@@ -106,16 +132,14 @@ final class CrosshairManager: ObservableObject {
         }
 
         let settings = Settings[\.utility]
-        let size = CGFloat(settings.eyeCrosshairSize)
-        let offsetX = CGFloat(settings.eyeCrosshairOffsetX)
-        let offsetY = CGFloat(settings.eyeCrosshairOffsetY)
+        let size = CGFloat(settings.customOverlaySize)
 
         // AX position is top-left origin (y grows downward); convert center to Cocoa
         // global coordinates (bottom-left origin) using the primary screen height.
         let centerAXX = position.x + mcSize.width / 2
         let centerAXY = position.y + mcSize.height / 2
-        let centerX = centerAXX + offsetX
-        let centerY = primary.frame.maxY - centerAXY - offsetY
+        let centerX = centerAXX
+        let centerY = primary.frame.maxY - centerAXY
 
         window?.setFrame(
             CGRect(x: centerX - size / 2, y: centerY - size / 2, width: size, height: size),
@@ -136,14 +160,14 @@ final class CrosshairManager: ObservableObject {
             return window
         }
 
-        let window = CrosshairWindow(
+        let window = CustomOverlayWindow(
             contentRect: .zero,
             styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered,
             defer: false
         )
-        window.identifier = NSUserInterfaceItemIdentifier(SWWindowID.crosshair.rawValue)
-        window.contentView = NSHostingView(rootView: CrosshairOverlayView())
+        window.identifier = NSUserInterfaceItemIdentifier(SWWindowID.customOverlay.rawValue)
+        window.contentView = NSHostingView(rootView: CustomOverlayView())
         window.backgroundColor = .clear
         window.isOpaque = false
         window.hasShadow = false
@@ -164,7 +188,7 @@ final class CrosshairManager: ObservableObject {
     }
 }
 
-private final class CrosshairWindow: NSPanel {
+private final class CustomOverlayWindow: NSPanel {
     override var canBecomeKey: Bool { false }
     override var canBecomeMain: Bool { false }
 }
