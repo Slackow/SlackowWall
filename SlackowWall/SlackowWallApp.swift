@@ -185,6 +185,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         OBSManager.shared.writeScript()
         MouseSensitivityManager.shared.setSensitivityFactor(factor: Settings[\.utility].sensitivityScale)
+        KeyRemapManager.shared.start()
         if Settings[\.utility].ninjabrainBotAutoLaunch {
             NinjabrainManager.startIfClosed()
             NinjabrainManager.shared.listenToNinbot()

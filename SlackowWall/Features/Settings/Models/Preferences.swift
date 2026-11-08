@@ -17,6 +17,7 @@ struct Preferences: Codable, Hashable {
     var keybinds: KeybindSection = .init()
     var personalize: PersonalizeSection = .init()
     var utility: UtilitySection = .init()
+    var remap: RemapSection = .init()
 
     init() {}
 }
