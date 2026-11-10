@@ -36,6 +36,7 @@ extension NSApplication {
             window.styleMask.insert(.titled)
         }
 
+        window.isMovableByWindowBackground = isHidden
         window.setFrame(frame, display: true)
         //        window.standardWindowButton(.closeButton)?.isHidden = isHidden
         //        window.standardWindowButton(.miniaturizeButton)?.isHidden = isHidden
@@ -51,6 +52,7 @@ enum SWWindowID: String {
     case eyeProjector = "eye-projector-window"
     case pieProjector = "pie-projector-window"
     case resizeBackground = "resize-background-window"
+    case customOverlay = "custom-overlay-window"
     case settings = "settings-window"
     case slackowwall = "slackowwall-window"
 }
